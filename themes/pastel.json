@@ -1,0 +1,87 @@
+{
+  "id": "pastel",
+  "name": "Pastel",
+  "description": "Candy colours on cream",
+  "colors": {
+    "base": {
+      "fg": "#4a4458",
+      "bg": "#fdf6f0"
+    },
+    "header": {
+      "fg": "#4a4458",
+      "bg": "#f8ece4"
+    },
+    "sidebar": {
+      "fg": "#4a4458",
+      "bg": "#fdf6f0"
+    },
+    "sidebar_selected": {
+      "fg": "#4a4458",
+      "bg": "#f1dfd4"
+    },
+    "badge": {
+      "fg": "#fdf6f0",
+      "bg": "#9a86e0"
+    },
+    "chat": {
+      "fg": "#4a4458",
+      "bg": "#fdf6f0"
+    },
+    "bubble_me": {
+      "fg": "#4a4458",
+      "bg": "#e3f2e9"
+    },
+    "bubble_them": {
+      "fg": "#4a4458",
+      "bg": "#f1dfd4"
+    },
+    "sender": {
+      "fg": "#f28fad",
+      "bg": "#f1dfd4"
+    },
+    "timestamp": {
+      "fg": "#9c93a8",
+      "bg": "#fdf6f0"
+    },
+    "day_separator": {
+      "fg": "#9c93a8",
+      "bg": "#f1dfd4"
+    },
+    "composer": {
+      "fg": "#4a4458",
+      "bg": "#f8ece4"
+    },
+    "accent": {
+      "fg": "#9a86e0",
+      "bg": "#fdf6f0"
+    },
+    "ok": {
+      "fg": "#7ec8a4",
+      "bg": "#f8ece4"
+    },
+    "warn": {
+      "fg": "#f5b971",
+      "bg": "#f8ece4"
+    },
+    "blink": {
+      "fg": "#fdf6f0",
+      "bg": "#9a86e0"
+    },
+    "media": {
+      "fg": "#f28fad",
+      "bg": "#fdf6f0"
+    },
+    "dim": {
+      "fg": "#9c93a8",
+      "bg": "#fdf6f0"
+    },
+    "border": {
+      "fg": "#f1dfd4",
+      "bg": "#fdf6f0"
+    },
+    "unread": {
+      "fg": "#9a86e0",
+      "bg": "#f8ece4"
+    }
+  }
+}

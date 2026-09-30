@@ -1,0 +1,87 @@
+{
+  "id": "dracula",
+  "name": "Dracula",
+  "description": "Purple, pink and neon on midnight",
+  "colors": {
+    "base": {
+      "fg": "#f8f8f2",
+      "bg": "#282a36"
+    },
+    "header": {
+      "fg": "#f8f8f2",
+      "bg": "#21222c"
+    },
+    "sidebar": {
+      "fg": "#f8f8f2",
+      "bg": "#282a36"
+    },
+    "sidebar_selected": {
+      "fg": "#f8f8f2",
+      "bg": "#44475a"
+    },
+    "badge": {
+      "fg": "#282a36",
+      "bg": "#bd93f9"
+    },
+    "chat": {
+      "fg": "#f8f8f2",
+      "bg": "#282a36"
+    },
+    "bubble_me": {
+      "fg": "#f8f8f2",
+      "bg": "#44475a"
+    },
+    "bubble_them": {
+      "fg": "#f8f8f2",
+      "bg": "#44475a"
+    },
+    "sender": {
+      "fg": "#ff79c6",
+      "bg": "#44475a"
+    },
+    "timestamp": {
+      "fg": "#6272a4",
+      "bg": "#282a36"
+    },
+    "day_separator": {
+      "fg": "#6272a4",
+      "bg": "#44475a"
+    },
+    "composer": {
+      "fg": "#f8f8f2",
+      "bg": "#21222c"
+    },
+    "accent": {
+      "fg": "#bd93f9",
+      "bg": "#282a36"
+    },
+    "ok": {
+      "fg": "#50fa7b",
+      "bg": "#21222c"
+    },
+    "warn": {
+      "fg": "#ffb86c",
+      "bg": "#21222c"
+    },
+    "blink": {
+      "fg": "#282a36",
+      "bg": "#bd93f9"
+    },
+    "media": {
+      "fg": "#ff79c6",
+      "bg": "#282a36"
+    },
+    "dim": {
+      "fg": "#6272a4",
+      "bg": "#282a36"
+    },
+    "border": {
+      "fg": "#44475a",
+      "bg": "#282a36"
+    },
+    "unread": {
+      "fg": "#bd93f9",
+      "bg": "#21222c"
+    }
+  }
+}

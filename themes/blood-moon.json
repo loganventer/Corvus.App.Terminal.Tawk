@@ -1,0 +1,87 @@
+{
+  "id": "blood-moon",
+  "name": "Blood Moon",
+  "description": "Deep crimson night",
+  "colors": {
+    "base": {
+      "fg": "#f2d6d8",
+      "bg": "#140a0c"
+    },
+    "header": {
+      "fg": "#f2d6d8",
+      "bg": "#0e0708"
+    },
+    "sidebar": {
+      "fg": "#f2d6d8",
+      "bg": "#140a0c"
+    },
+    "sidebar_selected": {
+      "fg": "#f2d6d8",
+      "bg": "#2a1215"
+    },
+    "badge": {
+      "fg": "#140a0c",
+      "bg": "#e0313d"
+    },
+    "chat": {
+      "fg": "#f2d6d8",
+      "bg": "#140a0c"
+    },
+    "bubble_me": {
+      "fg": "#ffe8ea",
+      "bg": "#3d1419"
+    },
+    "bubble_them": {
+      "fg": "#f2d6d8",
+      "bg": "#2a1215"
+    },
+    "sender": {
+      "fg": "#ff7a59",
+      "bg": "#2a1215"
+    },
+    "timestamp": {
+      "fg": "#8e6167",
+      "bg": "#140a0c"
+    },
+    "day_separator": {
+      "fg": "#8e6167",
+      "bg": "#2a1215"
+    },
+    "composer": {
+      "fg": "#f2d6d8",
+      "bg": "#0e0708"
+    },
+    "accent": {
+      "fg": "#e0313d",
+      "bg": "#140a0c"
+    },
+    "ok": {
+      "fg": "#8fd694",
+      "bg": "#0e0708"
+    },
+    "warn": {
+      "fg": "#ffb347",
+      "bg": "#0e0708"
+    },
+    "blink": {
+      "fg": "#140a0c",
+      "bg": "#e0313d"
+    },
+    "media": {
+      "fg": "#ff7a59",
+      "bg": "#140a0c"
+    },
+    "dim": {
+      "fg": "#8e6167",
+      "bg": "#140a0c"
+    },
+    "border": {
+      "fg": "#2a1215",
+      "bg": "#140a0c"
+    },
+    "unread": {
+      "fg": "#e0313d",
+      "bg": "#0e0708"
+    }
+  }
+}

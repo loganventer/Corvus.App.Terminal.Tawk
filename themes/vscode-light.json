@@ -1,0 +1,87 @@
+{
+  "id": "vscode-light",
+  "name": "VS Code Light+",
+  "description": "The default editor light",
+  "colors": {
+    "base": {
+      "fg": "#1f1f1f",
+      "bg": "#ffffff"
+    },
+    "header": {
+      "fg": "#1f1f1f",
+      "bg": "#f3f3f3"
+    },
+    "sidebar": {
+      "fg": "#1f1f1f",
+      "bg": "#ffffff"
+    },
+    "sidebar_selected": {
+      "fg": "#1f1f1f",
+      "bg": "#e4e6f1"
+    },
+    "badge": {
+      "fg": "#ffffff",
+      "bg": "#005fb8"
+    },
+    "chat": {
+      "fg": "#1f1f1f",
+      "bg": "#ffffff"
+    },
+    "bubble_me": {
+      "fg": "#1f1f1f",
+      "bg": "#d6ebff"
+    },
+    "bubble_them": {
+      "fg": "#1f1f1f",
+      "bg": "#e4e6f1"
+    },
+    "sender": {
+      "fg": "#af00db",
+      "bg": "#e4e6f1"
+    },
+    "timestamp": {
+      "fg": "#6e7681",
+      "bg": "#ffffff"
+    },
+    "day_separator": {
+      "fg": "#6e7681",
+      "bg": "#e4e6f1"
+    },
+    "composer": {
+      "fg": "#1f1f1f",
+      "bg": "#f3f3f3"
+    },
+    "accent": {
+      "fg": "#005fb8",
+      "bg": "#ffffff"
+    },
+    "ok": {
+      "fg": "#008000",
+      "bg": "#f3f3f3"
+    },
+    "warn": {
+      "fg": "#795e26",
+      "bg": "#f3f3f3"
+    },
+    "blink": {
+      "fg": "#ffffff",
+      "bg": "#005fb8"
+    },
+    "media": {
+      "fg": "#af00db",
+      "bg": "#ffffff"
+    },
+    "dim": {
+      "fg": "#6e7681",
+      "bg": "#ffffff"
+    },
+    "border": {
+      "fg": "#e4e6f1",
+      "bg": "#ffffff"
+    },
+    "unread": {
+      "fg": "#005fb8",
+      "bg": "#f3f3f3"
+    }
+  }
+}

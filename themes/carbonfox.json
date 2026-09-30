@@ -1,0 +1,87 @@
+{
+  "id": "carbonfox",
+  "name": "Carbonfox",
+  "description": "IBM carbon greys",
+  "colors": {
+    "base": {
+      "fg": "#f2f4f8",
+      "bg": "#161616"
+    },
+    "header": {
+      "fg": "#f2f4f8",
+      "bg": "#0c0c0c"
+    },
+    "sidebar": {
+      "fg": "#f2f4f8",
+      "bg": "#161616"
+    },
+    "sidebar_selected": {
+      "fg": "#f2f4f8",
+      "bg": "#2a2a2a"
+    },
+    "badge": {
+      "fg": "#161616",
+      "bg": "#78a9ff"
+    },
+    "chat": {
+      "fg": "#f2f4f8",
+      "bg": "#161616"
+    },
+    "bubble_me": {
+      "fg": "#f2f4f8",
+      "bg": "#2a2a2a"
+    },
+    "bubble_them": {
+      "fg": "#f2f4f8",
+      "bg": "#2a2a2a"
+    },
+    "sender": {
+      "fg": "#be95ff",
+      "bg": "#2a2a2a"
+    },
+    "timestamp": {
+      "fg": "#7b7c7e",
+      "bg": "#161616"
+    },
+    "day_separator": {
+      "fg": "#7b7c7e",
+      "bg": "#2a2a2a"
+    },
+    "composer": {
+      "fg": "#f2f4f8",
+      "bg": "#0c0c0c"
+    },
+    "accent": {
+      "fg": "#78a9ff",
+      "bg": "#161616"
+    },
+    "ok": {
+      "fg": "#25be6a",
+      "bg": "#0c0c0c"
+    },
+    "warn": {
+      "fg": "#08bdba",
+      "bg": "#0c0c0c"
+    },
+    "blink": {
+      "fg": "#161616",
+      "bg": "#78a9ff"
+    },
+    "media": {
+      "fg": "#be95ff",
+      "bg": "#161616"
+    },
+    "dim": {
+      "fg": "#7b7c7e",
+      "bg": "#161616"
+    },
+    "border": {
+      "fg": "#2a2a2a",
+      "bg": "#161616"
+    },
+    "unread": {
+      "fg": "#78a9ff",
+      "bg": "#0c0c0c"
+    }
+  }
+}

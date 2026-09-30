@@ -1,0 +1,87 @@
+{
+  "id": "sunset",
+  "name": "Sunset",
+  "description": "Orange skies over purple dusk",
+  "colors": {
+    "base": {
+      "fg": "#ffe6d5",
+      "bg": "#23162b"
+    },
+    "header": {
+      "fg": "#ffe6d5",
+      "bg": "#1b1022"
+    },
+    "sidebar": {
+      "fg": "#ffe6d5",
+      "bg": "#23162b"
+    },
+    "sidebar_selected": {
+      "fg": "#ffe6d5",
+      "bg": "#35213f"
+    },
+    "badge": {
+      "fg": "#23162b",
+      "bg": "#ff8a4c"
+    },
+    "chat": {
+      "fg": "#ffe6d5",
+      "bg": "#23162b"
+    },
+    "bubble_me": {
+      "fg": "#fff1e6",
+      "bg": "#4a2a52"
+    },
+    "bubble_them": {
+      "fg": "#ffe6d5",
+      "bg": "#35213f"
+    },
+    "sender": {
+      "fg": "#ff5f87",
+      "bg": "#35213f"
+    },
+    "timestamp": {
+      "fg": "#a07e92",
+      "bg": "#23162b"
+    },
+    "day_separator": {
+      "fg": "#a07e92",
+      "bg": "#35213f"
+    },
+    "composer": {
+      "fg": "#ffe6d5",
+      "bg": "#1b1022"
+    },
+    "accent": {
+      "fg": "#ff8a4c",
+      "bg": "#23162b"
+    },
+    "ok": {
+      "fg": "#9ee493",
+      "bg": "#1b1022"
+    },
+    "warn": {
+      "fg": "#ffc15e",
+      "bg": "#1b1022"
+    },
+    "blink": {
+      "fg": "#23162b",
+      "bg": "#ff8a4c"
+    },
+    "media": {
+      "fg": "#ff5f87",
+      "bg": "#23162b"
+    },
+    "dim": {
+      "fg": "#a07e92",
+      "bg": "#23162b"
+    },
+    "border": {
+      "fg": "#35213f",
+      "bg": "#23162b"
+    },
+    "unread": {
+      "fg": "#ff8a4c",
+      "bg": "#1b1022"
+    }
+  }
+}

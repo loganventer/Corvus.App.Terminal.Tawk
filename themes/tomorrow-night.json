@@ -1,0 +1,87 @@
+{
+  "id": "tomorrow-night",
+  "name": "Tomorrow Night",
+  "description": "Chris Kempson's classic",
+  "colors": {
+    "base": {
+      "fg": "#c5c8c6",
+      "bg": "#1d1f21"
+    },
+    "header": {
+      "fg": "#c5c8c6",
+      "bg": "#161719"
+    },
+    "sidebar": {
+      "fg": "#c5c8c6",
+      "bg": "#1d1f21"
+    },
+    "sidebar_selected": {
+      "fg": "#c5c8c6",
+      "bg": "#373b41"
+    },
+    "badge": {
+      "fg": "#1d1f21",
+      "bg": "#81a2be"
+    },
+    "chat": {
+      "fg": "#c5c8c6",
+      "bg": "#1d1f21"
+    },
+    "bubble_me": {
+      "fg": "#c5c8c6",
+      "bg": "#373b41"
+    },
+    "bubble_them": {
+      "fg": "#c5c8c6",
+      "bg": "#373b41"
+    },
+    "sender": {
+      "fg": "#b294bb",
+      "bg": "#373b41"
+    },
+    "timestamp": {
+      "fg": "#969896",
+      "bg": "#1d1f21"
+    },
+    "day_separator": {
+      "fg": "#969896",
+      "bg": "#373b41"
+    },
+    "composer": {
+      "fg": "#c5c8c6",
+      "bg": "#161719"
+    },
+    "accent": {
+      "fg": "#81a2be",
+      "bg": "#1d1f21"
+    },
+    "ok": {
+      "fg": "#b5bd68",
+      "bg": "#161719"
+    },
+    "warn": {
+      "fg": "#f0c674",
+      "bg": "#161719"
+    },
+    "blink": {
+      "fg": "#1d1f21",
+      "bg": "#81a2be"
+    },
+    "media": {
+      "fg": "#b294bb",
+      "bg": "#1d1f21"
+    },
+    "dim": {
+      "fg": "#969896",
+      "bg": "#1d1f21"
+    },
+    "border": {
+      "fg": "#373b41",
+      "bg": "#1d1f21"
+    },
+    "unread": {
+      "fg": "#81a2be",
+      "bg": "#161719"
+    }
+  }
+}

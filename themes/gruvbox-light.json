@@ -1,0 +1,87 @@
+{
+  "id": "gruvbox-light",
+  "name": "Gruvbox Light",
+  "description": "Retro groove on cream",
+  "colors": {
+    "base": {
+      "fg": "#3c3836",
+      "bg": "#fbf1c7"
+    },
+    "header": {
+      "fg": "#3c3836",
+      "bg": "#f2e5bc"
+    },
+    "sidebar": {
+      "fg": "#3c3836",
+      "bg": "#fbf1c7"
+    },
+    "sidebar_selected": {
+      "fg": "#3c3836",
+      "bg": "#ebdbb2"
+    },
+    "badge": {
+      "fg": "#fbf1c7",
+      "bg": "#b57614"
+    },
+    "chat": {
+      "fg": "#3c3836",
+      "bg": "#fbf1c7"
+    },
+    "bubble_me": {
+      "fg": "#3c3836",
+      "bg": "#d5c4a1"
+    },
+    "bubble_them": {
+      "fg": "#3c3836",
+      "bg": "#ebdbb2"
+    },
+    "sender": {
+      "fg": "#076678",
+      "bg": "#ebdbb2"
+    },
+    "timestamp": {
+      "fg": "#7c6f64",
+      "bg": "#fbf1c7"
+    },
+    "day_separator": {
+      "fg": "#7c6f64",
+      "bg": "#ebdbb2"
+    },
+    "composer": {
+      "fg": "#3c3836",
+      "bg": "#f2e5bc"
+    },
+    "accent": {
+      "fg": "#b57614",
+      "bg": "#fbf1c7"
+    },
+    "ok": {
+      "fg": "#79740e",
+      "bg": "#f2e5bc"
+    },
+    "warn": {
+      "fg": "#af3a03",
+      "bg": "#f2e5bc"
+    },
+    "blink": {
+      "fg": "#fbf1c7",
+      "bg": "#b57614"
+    },
+    "media": {
+      "fg": "#076678",
+      "bg": "#fbf1c7"
+    },
+    "dim": {
+      "fg": "#7c6f64",
+      "bg": "#fbf1c7"
+    },
+    "border": {
+      "fg": "#ebdbb2",
+      "bg": "#fbf1c7"
+    },
+    "unread": {
+      "fg": "#b57614",
+      "bg": "#f2e5bc"
+    }
+  }
+}

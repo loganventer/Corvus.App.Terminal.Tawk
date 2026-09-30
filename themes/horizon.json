@@ -1,0 +1,87 @@
+{
+  "id": "horizon",
+  "name": "Horizon",
+  "description": "Warm dusk tones",
+  "colors": {
+    "base": {
+      "fg": "#e0e0e0",
+      "bg": "#1c1e26"
+    },
+    "header": {
+      "fg": "#e0e0e0",
+      "bg": "#16161c"
+    },
+    "sidebar": {
+      "fg": "#e0e0e0",
+      "bg": "#1c1e26"
+    },
+    "sidebar_selected": {
+      "fg": "#e0e0e0",
+      "bg": "#2e303e"
+    },
+    "badge": {
+      "fg": "#1c1e26",
+      "bg": "#e95678"
+    },
+    "chat": {
+      "fg": "#e0e0e0",
+      "bg": "#1c1e26"
+    },
+    "bubble_me": {
+      "fg": "#e0e0e0",
+      "bg": "#2e303e"
+    },
+    "bubble_them": {
+      "fg": "#e0e0e0",
+      "bg": "#2e303e"
+    },
+    "sender": {
+      "fg": "#26bbd9",
+      "bg": "#2e303e"
+    },
+    "timestamp": {
+      "fg": "#6c6f93",
+      "bg": "#1c1e26"
+    },
+    "day_separator": {
+      "fg": "#6c6f93",
+      "bg": "#2e303e"
+    },
+    "composer": {
+      "fg": "#e0e0e0",
+      "bg": "#16161c"
+    },
+    "accent": {
+      "fg": "#e95678",
+      "bg": "#1c1e26"
+    },
+    "ok": {
+      "fg": "#29d398",
+      "bg": "#16161c"
+    },
+    "warn": {
+      "fg": "#fab795",
+      "bg": "#16161c"
+    },
+    "blink": {
+      "fg": "#1c1e26",
+      "bg": "#e95678"
+    },
+    "media": {
+      "fg": "#26bbd9",
+      "bg": "#1c1e26"
+    },
+    "dim": {
+      "fg": "#6c6f93",
+      "bg": "#1c1e26"
+    },
+    "border": {
+      "fg": "#2e303e",
+      "bg": "#1c1e26"
+    },
+    "unread": {
+      "fg": "#e95678",
+      "bg": "#16161c"
+    }
+  }
+}

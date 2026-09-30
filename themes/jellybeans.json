@@ -1,0 +1,87 @@
+{
+  "id": "jellybeans",
+  "name": "Jellybeans",
+  "description": "Colourful and vibrant",
+  "colors": {
+    "base": {
+      "fg": "#e8e8d3",
+      "bg": "#151515"
+    },
+    "header": {
+      "fg": "#e8e8d3",
+      "bg": "#101010"
+    },
+    "sidebar": {
+      "fg": "#e8e8d3",
+      "bg": "#151515"
+    },
+    "sidebar_selected": {
+      "fg": "#e8e8d3",
+      "bg": "#2c2c2c"
+    },
+    "badge": {
+      "fg": "#151515",
+      "bg": "#8197bf"
+    },
+    "chat": {
+      "fg": "#e8e8d3",
+      "bg": "#151515"
+    },
+    "bubble_me": {
+      "fg": "#e8e8d3",
+      "bg": "#303a4a"
+    },
+    "bubble_them": {
+      "fg": "#e8e8d3",
+      "bg": "#2c2c2c"
+    },
+    "sender": {
+      "fg": "#c6b6ee",
+      "bg": "#2c2c2c"
+    },
+    "timestamp": {
+      "fg": "#888888",
+      "bg": "#151515"
+    },
+    "day_separator": {
+      "fg": "#888888",
+      "bg": "#2c2c2c"
+    },
+    "composer": {
+      "fg": "#e8e8d3",
+      "bg": "#101010"
+    },
+    "accent": {
+      "fg": "#8197bf",
+      "bg": "#151515"
+    },
+    "ok": {
+      "fg": "#99ad6a",
+      "bg": "#101010"
+    },
+    "warn": {
+      "fg": "#fad07a",
+      "bg": "#101010"
+    },
+    "blink": {
+      "fg": "#151515",
+      "bg": "#8197bf"
+    },
+    "media": {
+      "fg": "#c6b6ee",
+      "bg": "#151515"
+    },
+    "dim": {
+      "fg": "#888888",
+      "bg": "#151515"
+    },
+    "border": {
+      "fg": "#2c2c2c",
+      "bg": "#151515"
+    },
+    "unread": {
+      "fg": "#8197bf",
+      "bg": "#101010"
+    }
+  }
+}

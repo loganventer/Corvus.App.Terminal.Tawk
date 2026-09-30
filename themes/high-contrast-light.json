@@ -1,0 +1,87 @@
+{
+  "id": "high-contrast-light",
+  "name": "High Contrast Light",
+  "description": "Maximum legibility on white",
+  "colors": {
+    "base": {
+      "fg": "#000000",
+      "bg": "#ffffff"
+    },
+    "header": {
+      "fg": "#000000",
+      "bg": "#ffffff"
+    },
+    "sidebar": {
+      "fg": "#000000",
+      "bg": "#ffffff"
+    },
+    "sidebar_selected": {
+      "fg": "#000000",
+      "bg": "#e5e5e5"
+    },
+    "badge": {
+      "fg": "#ffffff",
+      "bg": "#0000c0"
+    },
+    "chat": {
+      "fg": "#000000",
+      "bg": "#ffffff"
+    },
+    "bubble_me": {
+      "fg": "#000000",
+      "bg": "#cfe8ff"
+    },
+    "bubble_them": {
+      "fg": "#000000",
+      "bg": "#e5e5e5"
+    },
+    "sender": {
+      "fg": "#800080",
+      "bg": "#e5e5e5"
+    },
+    "timestamp": {
+      "fg": "#3a3a3a",
+      "bg": "#ffffff"
+    },
+    "day_separator": {
+      "fg": "#3a3a3a",
+      "bg": "#e5e5e5"
+    },
+    "composer": {
+      "fg": "#000000",
+      "bg": "#ffffff"
+    },
+    "accent": {
+      "fg": "#0000c0",
+      "bg": "#ffffff"
+    },
+    "ok": {
+      "fg": "#006400",
+      "bg": "#ffffff"
+    },
+    "warn": {
+      "fg": "#a04000",
+      "bg": "#ffffff"
+    },
+    "blink": {
+      "fg": "#ffffff",
+      "bg": "#0000c0"
+    },
+    "media": {
+      "fg": "#800080",
+      "bg": "#ffffff"
+    },
+    "dim": {
+      "fg": "#3a3a3a",
+      "bg": "#ffffff"
+    },
+    "border": {
+      "fg": "#e5e5e5",
+      "bg": "#ffffff"
+    },
+    "unread": {
+      "fg": "#0000c0",
+      "bg": "#ffffff"
+    }
+  }
+}

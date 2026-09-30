@@ -1,0 +1,42 @@
+#include "engines/emoticon_converter.h"
+
+#include <string.h>
+
+typedef struct { const char *text; const char *emoji; } Emoticon;
+
+static const Emoticon TABLE[] = {
+    { ":)", "\xF0\x9F\x99\x82" },  { ":-)", "\xF0\x9F\x99\x82" },  { "(:", "\xF0\x9F\x99\x82" },
+    { ":D", "\xF0\x9F\x98\x83" },  { ":-D", "\xF0\x9F\x98\x83" },
+    { "xD", "\xF0\x9F\x98\x86" },  { "XD", "\xF0\x9F\x98\x86" },
+    { ";)", "\xF0\x9F\x98\x89" },  { ";-)", "\xF0\x9F\x98\x89" },
+    { ":(", "\xF0\x9F\x99\x81" },  { ":-(", "\xF0\x9F\x99\x81" },  { "):", "\xF0\x9F\x99\x81" },
+    { ":'(", "\xF0\x9F\x98\xA2" }, { ":,(", "\xF0\x9F\x98\xA2" },
+    { ":P", "\xF0\x9F\x98\x9B" },  { ":p", "\xF0\x9F\x98\x9B" },  { ":-P", "\xF0\x9F\x98\x9B" },  { ":-p", "\xF0\x9F\x98\x9B" },
+    { ";P", "\xF0\x9F\x98\x9C" },  { ";p", "\xF0\x9F\x98\x9C" },
+    { ":o", "\xF0\x9F\x98\xAE" },  { ":O", "\xF0\x9F\x98\xAE" },  { ":-o", "\xF0\x9F\x98\xAE" },  { ":-O", "\xF0\x9F\x98\xAE" },
+    { ":*", "\xF0\x9F\x98\x98" },  { ":-*", "\xF0\x9F\x98\x98" },
+    { ":|", "\xF0\x9F\x98\x90" },  { ":-|", "\xF0\x9F\x98\x90" },
+    { ":/", "\xF0\x9F\x98\x95" },  { ":-/", "\xF0\x9F\x98\x95" },  { ":\\", "\xF0\x9F\x98\x95" },
+    { ":$", "\xF0\x9F\x98\xB3" },
+    { ">:(", "\xF0\x9F\x98\xA0" }, { ">:-(", "\xF0\x9F\x98\xA0" },
+    { "O:)", "\xF0\x9F\x98\x87" }, { "o:)", "\xF0\x9F\x98\x87" },
+    { "B)", "\xF0\x9F\x98\x8E" },  { "8)", "\xF0\x9F\x98\x8E" },  { "B-)", "\xF0\x9F\x98\x8E" },
+    { "^^", "\xF0\x9F\x98\x8A" },  { "^_^", "\xF0\x9F\x98\x8A" },
+    { "-_-", "\xF0\x9F\x98\x91" },
+    { "<3", "\xE2\x9D\xA4\xEF\xB8\x8F" }, { "</3", "\xF0\x9F\x92\x94" },
+    { "o/", "\xF0\x9F\x91\x8B" },  { "\\o", "\xF0\x9F\x91\x8B" },  { "\\o/", "\xF0\x9F\x99\x8C" },
+    { "(y)", "\xF0\x9F\x91\x8D" }, { "(Y)", "\xF0\x9F\x91\x8D" }, { "(n)", "\xF0\x9F\x91\x8E" }, { "(N)", "\xF0\x9F\x91\x8E" },
+    { ":+1:", "\xF0\x9F\x91\x8D" }, { ":-1:", "\xF0\x9F\x91\x8E" },
+    { ":heart:", "\xE2\x9D\xA4\xEF\xB8\x8F" }, { ":joy:", "\xF0\x9F\x98\x82" }, { ":fire:", "\xF0\x9F\x94\xA5" },
+    { ":tada:", "\xF0\x9F\x8E\x89" }, { ":pray:", "\xF0\x9F\x99\x8F" }, { ":ok:", "\xF0\x9F\x91\x8C" },
+    { ":wave:", "\xF0\x9F\x91\x8B" }, { ":smile:", "\xF0\x9F\x98\x84" }, { ":cry:", "\xF0\x9F\x98\xA2" },
+    { ":thinking:", "\xF0\x9F\xA4\x94" }, { ":clap:", "\xF0\x9F\x91\x8F" }, { ":100:", "\xF0\x9F\x92\xAF" },
+};
+
+const char *emoticon_to_emoji(const char *word) {
+    if (!word || !word[0] || strlen(word) > 12) return NULL;
+    for (size_t i = 0; i < sizeof(TABLE) / sizeof(TABLE[0]); i++) {
+        if (strcmp(TABLE[i].text, word) == 0) return TABLE[i].emoji;
+    }
+    return NULL;
+}

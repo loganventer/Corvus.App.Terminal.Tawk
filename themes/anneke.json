@@ -1,0 +1,87 @@
+{
+  "id": "anneke",
+  "name": "Anneke",
+  "description": "Royal purple and lilac with butterfly gold: warm and steadfast",
+  "colors": {
+    "base": {
+      "fg": "#eeeeee",
+      "bg": "#121212"
+    },
+    "header": {
+      "fg": "#ffffff",
+      "bg": "#5f0087"
+    },
+    "sidebar": {
+      "fg": "#eeeeee",
+      "bg": "#121212"
+    },
+    "sidebar_selected": {
+      "fg": "#ffffff",
+      "bg": "#5f5f87"
+    },
+    "badge": {
+      "fg": "#000000",
+      "bg": "#af87ff"
+    },
+    "chat": {
+      "fg": "#eeeeee",
+      "bg": "#121212"
+    },
+    "bubble_me": {
+      "fg": "#ffffff",
+      "bg": "#5f00af"
+    },
+    "bubble_them": {
+      "fg": "#ffffff",
+      "bg": "#5f5f87"
+    },
+    "sender": {
+      "fg": "#ffff87",
+      "bg": "#5f5f87"
+    },
+    "timestamp": {
+      "fg": "#af87d7",
+      "bg": "#121212"
+    },
+    "day_separator": {
+      "fg": "#ffffff",
+      "bg": "#5f5f87"
+    },
+    "composer": {
+      "fg": "#eeeeee",
+      "bg": "#262626"
+    },
+    "accent": {
+      "fg": "#af87ff",
+      "bg": "#121212"
+    },
+    "ok": {
+      "fg": "#87d787",
+      "bg": "#5f0087"
+    },
+    "warn": {
+      "fg": "#ffd75f",
+      "bg": "#5f0087"
+    },
+    "blink": {
+      "fg": "#000000",
+      "bg": "#ffd75f"
+    },
+    "media": {
+      "fg": "#87d7ff",
+      "bg": "#121212"
+    },
+    "dim": {
+      "fg": "#8a8a8a",
+      "bg": "#121212"
+    },
+    "border": {
+      "fg": "#5f5f87",
+      "bg": "#121212"
+    },
+    "unread": {
+      "fg": "#ffd75f",
+      "bg": "#5f0087"
+    }
+  }
+}

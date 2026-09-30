@@ -1,0 +1,87 @@
+{
+  "id": "everforest",
+  "name": "Everforest",
+  "description": "Green forest comfort",
+  "colors": {
+    "base": {
+      "fg": "#d3c6aa",
+      "bg": "#2d353b"
+    },
+    "header": {
+      "fg": "#d3c6aa",
+      "bg": "#272e33"
+    },
+    "sidebar": {
+      "fg": "#d3c6aa",
+      "bg": "#2d353b"
+    },
+    "sidebar_selected": {
+      "fg": "#d3c6aa",
+      "bg": "#3d484d"
+    },
+    "badge": {
+      "fg": "#2d353b",
+      "bg": "#a7c080"
+    },
+    "chat": {
+      "fg": "#d3c6aa",
+      "bg": "#2d353b"
+    },
+    "bubble_me": {
+      "fg": "#d3c6aa",
+      "bg": "#425047"
+    },
+    "bubble_them": {
+      "fg": "#d3c6aa",
+      "bg": "#3d484d"
+    },
+    "sender": {
+      "fg": "#7fbbb3",
+      "bg": "#3d484d"
+    },
+    "timestamp": {
+      "fg": "#859289",
+      "bg": "#2d353b"
+    },
+    "day_separator": {
+      "fg": "#859289",
+      "bg": "#3d484d"
+    },
+    "composer": {
+      "fg": "#d3c6aa",
+      "bg": "#272e33"
+    },
+    "accent": {
+      "fg": "#a7c080",
+      "bg": "#2d353b"
+    },
+    "ok": {
+      "fg": "#a7c080",
+      "bg": "#272e33"
+    },
+    "warn": {
+      "fg": "#dbbc7f",
+      "bg": "#272e33"
+    },
+    "blink": {
+      "fg": "#2d353b",
+      "bg": "#a7c080"
+    },
+    "media": {
+      "fg": "#7fbbb3",
+      "bg": "#2d353b"
+    },
+    "dim": {
+      "fg": "#859289",
+      "bg": "#2d353b"
+    },
+    "border": {
+      "fg": "#3d484d",
+      "bg": "#2d353b"
+    },
+    "unread": {
+      "fg": "#a7c080",
+      "bg": "#272e33"
+    }
+  }
+}

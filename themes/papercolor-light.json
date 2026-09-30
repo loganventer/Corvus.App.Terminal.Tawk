@@ -1,0 +1,87 @@
+{
+  "id": "papercolor-light",
+  "name": "PaperColor Light",
+  "description": "Printed paper and ink",
+  "colors": {
+    "base": {
+      "fg": "#444444",
+      "bg": "#eeeeee"
+    },
+    "header": {
+      "fg": "#444444",
+      "bg": "#e4e4e4"
+    },
+    "sidebar": {
+      "fg": "#444444",
+      "bg": "#eeeeee"
+    },
+    "sidebar_selected": {
+      "fg": "#444444",
+      "bg": "#d0d0d0"
+    },
+    "badge": {
+      "fg": "#eeeeee",
+      "bg": "#005f87"
+    },
+    "chat": {
+      "fg": "#444444",
+      "bg": "#eeeeee"
+    },
+    "bubble_me": {
+      "fg": "#444444",
+      "bg": "#d7e8f5"
+    },
+    "bubble_them": {
+      "fg": "#444444",
+      "bg": "#d0d0d0"
+    },
+    "sender": {
+      "fg": "#8700af",
+      "bg": "#d0d0d0"
+    },
+    "timestamp": {
+      "fg": "#878787",
+      "bg": "#eeeeee"
+    },
+    "day_separator": {
+      "fg": "#878787",
+      "bg": "#d0d0d0"
+    },
+    "composer": {
+      "fg": "#444444",
+      "bg": "#e4e4e4"
+    },
+    "accent": {
+      "fg": "#005f87",
+      "bg": "#eeeeee"
+    },
+    "ok": {
+      "fg": "#008700",
+      "bg": "#e4e4e4"
+    },
+    "warn": {
+      "fg": "#d75f00",
+      "bg": "#e4e4e4"
+    },
+    "blink": {
+      "fg": "#eeeeee",
+      "bg": "#005f87"
+    },
+    "media": {
+      "fg": "#8700af",
+      "bg": "#eeeeee"
+    },
+    "dim": {
+      "fg": "#878787",
+      "bg": "#eeeeee"
+    },
+    "border": {
+      "fg": "#d0d0d0",
+      "bg": "#eeeeee"
+    },
+    "unread": {
+      "fg": "#005f87",
+      "bg": "#e4e4e4"
+    }
+  }
+}

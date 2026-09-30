@@ -1,0 +1,87 @@
+{
+  "id": "catppuccin-latte",
+  "name": "Catppuccin Latte",
+  "description": "Soothing pastels, light roast",
+  "colors": {
+    "base": {
+      "fg": "#4c4f69",
+      "bg": "#eff1f5"
+    },
+    "header": {
+      "fg": "#4c4f69",
+      "bg": "#e6e9ef"
+    },
+    "sidebar": {
+      "fg": "#4c4f69",
+      "bg": "#eff1f5"
+    },
+    "sidebar_selected": {
+      "fg": "#4c4f69",
+      "bg": "#ccd0da"
+    },
+    "badge": {
+      "fg": "#eff1f5",
+      "bg": "#8839ef"
+    },
+    "chat": {
+      "fg": "#4c4f69",
+      "bg": "#eff1f5"
+    },
+    "bubble_me": {
+      "fg": "#4c4f69",
+      "bg": "#dce0e8"
+    },
+    "bubble_them": {
+      "fg": "#4c4f69",
+      "bg": "#ccd0da"
+    },
+    "sender": {
+      "fg": "#1e66f5",
+      "bg": "#ccd0da"
+    },
+    "timestamp": {
+      "fg": "#8c8fa1",
+      "bg": "#eff1f5"
+    },
+    "day_separator": {
+      "fg": "#8c8fa1",
+      "bg": "#ccd0da"
+    },
+    "composer": {
+      "fg": "#4c4f69",
+      "bg": "#e6e9ef"
+    },
+    "accent": {
+      "fg": "#8839ef",
+      "bg": "#eff1f5"
+    },
+    "ok": {
+      "fg": "#40a02b",
+      "bg": "#e6e9ef"
+    },
+    "warn": {
+      "fg": "#fe640b",
+      "bg": "#e6e9ef"
+    },
+    "blink": {
+      "fg": "#eff1f5",
+      "bg": "#8839ef"
+    },
+    "media": {
+      "fg": "#1e66f5",
+      "bg": "#eff1f5"
+    },
+    "dim": {
+      "fg": "#8c8fa1",
+      "bg": "#eff1f5"
+    },
+    "border": {
+      "fg": "#ccd0da",
+      "bg": "#eff1f5"
+    },
+    "unread": {
+      "fg": "#8839ef",
+      "bg": "#e6e9ef"
+    }
+  }
+}

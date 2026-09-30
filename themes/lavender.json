@@ -1,0 +1,87 @@
+{
+  "id": "lavender",
+  "name": "Lavender",
+  "description": "Soft violet evening",
+  "colors": {
+    "base": {
+      "fg": "#e6e0ff",
+      "bg": "#1f1b2e"
+    },
+    "header": {
+      "fg": "#e6e0ff",
+      "bg": "#18152a"
+    },
+    "sidebar": {
+      "fg": "#e6e0ff",
+      "bg": "#1f1b2e"
+    },
+    "sidebar_selected": {
+      "fg": "#e6e0ff",
+      "bg": "#2e2745"
+    },
+    "badge": {
+      "fg": "#1f1b2e",
+      "bg": "#b8a4ff"
+    },
+    "chat": {
+      "fg": "#e6e0ff",
+      "bg": "#1f1b2e"
+    },
+    "bubble_me": {
+      "fg": "#f3efff",
+      "bg": "#3b3160"
+    },
+    "bubble_them": {
+      "fg": "#e6e0ff",
+      "bg": "#2e2745"
+    },
+    "sender": {
+      "fg": "#ff9ecd",
+      "bg": "#2e2745"
+    },
+    "timestamp": {
+      "fg": "#8a80b0",
+      "bg": "#1f1b2e"
+    },
+    "day_separator": {
+      "fg": "#8a80b0",
+      "bg": "#2e2745"
+    },
+    "composer": {
+      "fg": "#e6e0ff",
+      "bg": "#18152a"
+    },
+    "accent": {
+      "fg": "#b8a4ff",
+      "bg": "#1f1b2e"
+    },
+    "ok": {
+      "fg": "#9fe2bf",
+      "bg": "#18152a"
+    },
+    "warn": {
+      "fg": "#ffd58a",
+      "bg": "#18152a"
+    },
+    "blink": {
+      "fg": "#1f1b2e",
+      "bg": "#b8a4ff"
+    },
+    "media": {
+      "fg": "#ff9ecd",
+      "bg": "#1f1b2e"
+    },
+    "dim": {
+      "fg": "#8a80b0",
+      "bg": "#1f1b2e"
+    },
+    "border": {
+      "fg": "#2e2745",
+      "bg": "#1f1b2e"
+    },
+    "unread": {
+      "fg": "#b8a4ff",
+      "bg": "#18152a"
+    }
+  }
+}

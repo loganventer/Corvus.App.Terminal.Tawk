@@ -1,0 +1,87 @@
+{
+  "id": "ayu-mirage",
+  "name": "Ayu Mirage",
+  "description": "Ayu, softened",
+  "colors": {
+    "base": {
+      "fg": "#cccac2",
+      "bg": "#1f2430"
+    },
+    "header": {
+      "fg": "#cccac2",
+      "bg": "#1c212b"
+    },
+    "sidebar": {
+      "fg": "#cccac2",
+      "bg": "#1f2430"
+    },
+    "sidebar_selected": {
+      "fg": "#cccac2",
+      "bg": "#2d3342"
+    },
+    "badge": {
+      "fg": "#1f2430",
+      "bg": "#ffcc66"
+    },
+    "chat": {
+      "fg": "#cccac2",
+      "bg": "#1f2430"
+    },
+    "bubble_me": {
+      "fg": "#cccac2",
+      "bg": "#33415e"
+    },
+    "bubble_them": {
+      "fg": "#cccac2",
+      "bg": "#2d3342"
+    },
+    "sender": {
+      "fg": "#73d0ff",
+      "bg": "#2d3342"
+    },
+    "timestamp": {
+      "fg": "#707a8c",
+      "bg": "#1f2430"
+    },
+    "day_separator": {
+      "fg": "#707a8c",
+      "bg": "#2d3342"
+    },
+    "composer": {
+      "fg": "#cccac2",
+      "bg": "#1c212b"
+    },
+    "accent": {
+      "fg": "#ffcc66",
+      "bg": "#1f2430"
+    },
+    "ok": {
+      "fg": "#d5ff80",
+      "bg": "#1c212b"
+    },
+    "warn": {
+      "fg": "#ffad66",
+      "bg": "#1c212b"
+    },
+    "blink": {
+      "fg": "#1f2430",
+      "bg": "#ffcc66"
+    },
+    "media": {
+      "fg": "#73d0ff",
+      "bg": "#1f2430"
+    },
+    "dim": {
+      "fg": "#707a8c",
+      "bg": "#1f2430"
+    },
+    "border": {
+      "fg": "#2d3342",
+      "bg": "#1f2430"
+    },
+    "unread": {
+      "fg": "#ffcc66",
+      "bg": "#1c212b"
+    }
+  }
+}

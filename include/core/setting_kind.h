@@ -1,0 +1,12 @@
+#ifndef APP_CORE_SETTING_KIND_H
+#define APP_CORE_SETTING_KIND_H
+
+typedef enum SettingKind {
+    SETTING_KIND_BOOL = 0,
+    SETTING_KIND_INT,
+    SETTING_KIND_STRING,
+    SETTING_KIND_THEME,
+    SETTING_KIND_CHOICE
+} SettingKind;
+
+#endif

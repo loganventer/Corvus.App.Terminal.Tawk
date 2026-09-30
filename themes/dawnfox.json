@@ -1,0 +1,87 @@
+{
+  "id": "dawnfox",
+  "name": "Dawnfox",
+  "description": "Fox at dawn",
+  "colors": {
+    "base": {
+      "fg": "#575279",
+      "bg": "#faf4ed"
+    },
+    "header": {
+      "fg": "#575279",
+      "bg": "#ebe5df"
+    },
+    "sidebar": {
+      "fg": "#575279",
+      "bg": "#faf4ed"
+    },
+    "sidebar_selected": {
+      "fg": "#575279",
+      "bg": "#ebe0df"
+    },
+    "badge": {
+      "fg": "#faf4ed",
+      "bg": "#286983"
+    },
+    "chat": {
+      "fg": "#575279",
+      "bg": "#faf4ed"
+    },
+    "bubble_me": {
+      "fg": "#575279",
+      "bg": "#e5e9f0"
+    },
+    "bubble_them": {
+      "fg": "#575279",
+      "bg": "#ebe0df"
+    },
+    "sender": {
+      "fg": "#907aa9",
+      "bg": "#ebe0df"
+    },
+    "timestamp": {
+      "fg": "#9893a5",
+      "bg": "#faf4ed"
+    },
+    "day_separator": {
+      "fg": "#9893a5",
+      "bg": "#ebe0df"
+    },
+    "composer": {
+      "fg": "#575279",
+      "bg": "#ebe5df"
+    },
+    "accent": {
+      "fg": "#286983",
+      "bg": "#faf4ed"
+    },
+    "ok": {
+      "fg": "#618774",
+      "bg": "#ebe5df"
+    },
+    "warn": {
+      "fg": "#ea9d34",
+      "bg": "#ebe5df"
+    },
+    "blink": {
+      "fg": "#faf4ed",
+      "bg": "#286983"
+    },
+    "media": {
+      "fg": "#907aa9",
+      "bg": "#faf4ed"
+    },
+    "dim": {
+      "fg": "#9893a5",
+      "bg": "#faf4ed"
+    },
+    "border": {
+      "fg": "#ebe0df",
+      "bg": "#faf4ed"
+    },
+    "unread": {
+      "fg": "#286983",
+      "bg": "#ebe5df"
+    }
+  }
+}

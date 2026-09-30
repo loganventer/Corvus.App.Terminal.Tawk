@@ -1,0 +1,288 @@
+.TH @APP@ 1 "2026" "@APP@ @VERSION@" "User Commands"
+.SH NAME
+@APP@ \- WhatsApp in your terminal
+.SH SYNOPSIS
+.B @APP@
+[\fB\-\-config\fR \fIPATH\fR] [\fB\-\-backend\fR \fIwhatsmeow\fR|\fIbaileys\fR] [\fB\-\-debug\fR]
+.br
+.B @APP@
+\fB\-\-doctor\fR [\fB\-\-config\fR \fIPATH\fR] [\fB\-\-backend\fR \fINAME\fR]
+.br
+.B @APP@
+\fB\-\-update\fR | \fB\-\-reinstall\fR [\fB\-\-yes\fR]
+.br
+.B @APP@
+\fB\-\-encrypt\fR [\fB\-\-yes\fR] | \fB\-\-decrypt\fR | \fB\-\-change\-passphrase\fR
+.br
+.B @APP@
+\fB\-\-backup\fR \fIFILE\fR [\fB\-\-with\-media\fR] [\fB\-\-with\-login\fR]
+.br
+.B @APP@
+\fB\-\-restore\fR \fIFILE\fR [\fB\-\-yes\fR]
+.br
+.B @APP@
+\fB\-\-version\fR | \fB\-\-help\fR
+.br
+.B @APP@
+\fBsend\fR \fICHAT\fR \fITEXT\fR... | \fBsend\fR \fICHAT\fR \fB\-\fR
+.br
+.B @APP@
+\fBtail\fR [\fICHAT\fR...] [\fB\-\-json\fR] | \fBunread\fR [\fB\-\-json\fR] | \fBstatus\-line\fR [\fB\-\-format\fR \fIF\fR]
+.SH DESCRIPTION
+.B @APP@
+is a terminal WhatsApp client. It links to your phone like WhatsApp Web,
+stores chats locally in SQLite, and supports notifications, voice notes,
+media with inline previews (including the pages of PDFs), replies,
+reactions, edits, deleting for you or for everyone, full-text search,
+an emoji picker with emoticons turned into emoji as you type, profile
+pictures, contact and group details, blocking, chat export, a prompt for
+incoming voice calls (declined in tawk or answered on the phone),
+per-chat themes and tones, soft-locked chats, editing your own name, about
+text and photo, viewing statuses (kept in an archive for
+\fBstatus_keep_days\fR) and posting them (whatsmeow only), photos and videos
+from the camera, slash commands and an idle screensaver. It reconnects
+by itself when the network adapter changes. On first run a wizard links it with a QR code or a
+phone-number pairing code.
+.SH OPTIONS
+.TP
+.BI \-\-config " PATH"
+Use this configuration file instead of ~/.config/@APP@/config.ini.
+.TP
+.BI \-\-backend " NAME"
+\fBwhatsmeow\fR runs the WhatsApp protocol in-process (default);
+\fBbaileys\fR runs it in a Node.js sidecar.
+.TP
+.B \-\-debug
+Write verbose diagnostics to the log files.
+.TP
+.B \-\-doctor
+Check the setup and exit: the terminal (TERM, UTF\-8 locale, colours),
+the config file, data folder, themes and emoji list, the WhatsApp backend,
+ffmpeg, the audio tools, a media viewer, the PDF page tools (pdftoppm and
+pdfinfo from poppler), the screensaver command and whether the chats are
+encrypted.
+Missing items are printed with a hint on how to install them. The
+database is not opened, no file is written and nothing connects to WhatsApp.
+.TP
+.B \-\-update
+Install the newest version from GitHub where this copy is installed, with
+the same backends. When this build's commit is already the newest, it says
+so and stops. Otherwise it shows the installed version and the newest
+commit and asks first; \fB\-\-yes\fR skips the question.
+.TP
+.B \-\-reinstall
+Like \fB\-\-update\fR, but installs even when already up to date. The installer script is
+downloaded to a private temporary file, run and removed.
+.TP
+.B \-\-encrypt
+Encrypt your chats (the database) with a passphrase, asked twice. From then
+on @APP@ asks for it every time it starts, before the screen is taken over.
+There is no way to recover the chats without it. Unencrypted copies kept
+before database upgrades are offered for removal; \fB\-\-yes\fR removes them
+without asking. Needs a build with SQLCipher. The WhatsApp login stays in
+its own unencrypted folder.
+.TP
+.B \-\-decrypt
+Remove the encryption again, after asking for the passphrase.
+.TP
+.B \-\-change\-passphrase
+Change the passphrase: asks for the current one, then the new one twice.
+.IP
+These three rewrite the database into a new file, check it table by table
+against the original and only then replace it; on any failure the original
+is left as it was. They refuse to run while @APP@ is running.
+.TP
+.BI \-\-backup " FILE"
+Write a backup of your chats (the database, encrypted or not), settings and
+your own themes to \fIFILE\fR, which must not exist yet. The whole file is
+encrypted with openssl (AES\-256, PBKDF2) under a passphrase asked twice.
+\fB\-\-with\-media\fR adds the media folder; \fB\-\-with\-login\fR adds the
+WhatsApp login, which lets whoever has the file and its passphrase use your
+account as a linked device.
+.TP
+.BI \-\-restore " FILE"
+Restore a backup after asking (\fB\-\-yes\fR skips the question) and asking
+for its passphrase. Every member is checked before anything is extracted;
+a backup holding links or paths outside its own folders is refused. What
+the restore replaces is kept beside it with a \fB.before\-restore\-\fR
+date suffix. Both refuse to run while @APP@ is running.
+.TP
+.B \-\-version
+Print the version, with the commit this build came from when it was built
+from a git checkout, and exit.
+.TP
+.B \-\-help
+Print a short usage summary and exit.
+.SH COMMANDS
+These talk to the @APP@ that is running, over its control socket, when
+Settings, Automation, Agent access is on. See CONTROL.md for the protocol
+and tawk\-mcp (https://github.com/loganventer/tawk\-mcp) for AI assistants.
+A chat is a name, the start of a word in its name, or a phone number.
+.TP
+.B send \fICHAT\fR \fITEXT\fR...
+Send a message; with \fB\-\fR the text is read from standard input.
+.TP
+.B tail \fR[\fICHAT\fR...] [\fB\-\-json\fR]
+Print new messages as they arrive, in every chat or those named.
+.TP
+.B unread \fR[\fB\-\-json\fR]
+Print the unread count of each chat.
+.TP
+.B status\-line \fR[\fB\-\-format\fR \fIF\fR]
+Print a short summary for tmux or waybar, such as \(lq💬 3 @1\(rq, or an
+empty line when nothing is unread or @APP@ is not running.
+\fIF\fR may use {unread}, {mentions} and {chats}.
+.SH KEYS
+.TP
+.B Tab
+Cycle focus between the chat list, messages and the input line.
+.TP
+.B Enter
+Open a chat, send a message, or open the selected media.
+.TP
+.B Shift+Enter\fR or \fBAlt+Enter
+Start a new line in the input or the status composer. Where the terminal
+sends Shift+Enter like Enter, bind it to send \fB\\e[13;2u\fR.
+.TP
+.B Ctrl+K
+Search messages in every chat.
+.TP
+.B Ctrl+F\fR or \fB/
+Filter the chat list by name (\fB/\fR in the chat list).
+.TP
+.B Ctrl+N
+Jump to the next chat with unread messages.
+.TP
+.B Ctrl+E
+Open the emoji picker.
+.TP
+.B Ctrl+O
+Attach a file. The \fB+\fR in the input also offers to take a photo or
+record a video with the camera (also \fB/camera\fR).
+.TP
+.B Ctrl+R
+Record a voice note; Enter sends it and Esc discards it.
+.TP
+.B Ctrl+B
+Collapse or expand the chat list.
+.TP
+.B Ctrl+D
+Toggle do not disturb.
+.TP
+.B Ctrl+L
+Start the screensaver.
+.TP
+.B Alt+V
+Attach the picture on the clipboard (also \fB/paste\fR).
+.TP
+.B Alt+L\fR or \fBCtrl+Shift+L
+Soft-lock the selected or open chat, or show it again (also \fB/softlock\fR).
+The conversation is drawn as shaded shapes until it is shown again.
+Ctrl+Shift+L works only where the terminal reports it apart from Ctrl+L.
+.TP
+.B Alt+O
+Chat options: mute, pin, archive, soft lock, chat theme, notification tone,
+contact info.
+.TP
+.B Alt+I
+Contact or group details for the selected or open chat (also \fB/info\fR, or
+click the name in the title bar): about text, business details, group
+description and members, and actions to view the profile picture, search,
+soft lock, export the chat with or without media, block or unblock, clear
+the chat on this computer, or delete it. Block, clear and delete ask first.
+Click the portrait in the title bar to see the picture full size.
+.TP
+.B Alt+Q\fR, \fBAlt+E\fR, \fBAlt+Shift+E\fR, \fBAlt+M
+On a selected message: reply, react, edit, open the message menu.
+Typing letters in the chat list searches it; typing on a message writes in the input.
+.TP
+.B Up
+In an empty input: edit your last message, when it is the newest in the chat
+and can still be edited.
+.TP
+.B Ctrl+End
+In the input: go to the end of the text; pressed again, scroll the chat to
+the newest message. In the conversation: scroll to the newest message.
+.TP
+.B Delete
+On a selected message: delete it for you, or for everyone when it is
+yours and recent enough.
+.TP
+.B Left\fR, \fBRight
+On a group header in the chat list: fold or unfold the Pinned or Chats group.
+In the viewer: turn the pages of a PDF, then move to the next or previous
+item; \fBUp\fR and \fBDown\fR move between items, \fBHome\fR and \fBEnd\fR go to the
+first and last page.
+.TP
+.B d
+While a call rings: decline it. Enter or Esc closes the prompt so you can
+answer on the phone; tawk cannot carry call audio.
+.TP
+.B F2
+Open the settings panel.
+.TP
+.B F3
+Switch between the Chats and Agentic tabs: requests from agents to
+answer, who is connected, the log and permissions.
+.TP
+.B Ctrl+Q
+Quit.
+.PP
+Type
+.B /help
+in the input line for the list of slash commands, such as
+.BR /search ,
+.BR /mute ,
+.BR /theme ,
+.BR /tone ,
+.BR /softlock ,
+.BR /info ,
+.B /profile
+(your name, about text and photo),
+.B /status
+(post a status),
+.B /statuses
+(see statuses)
+and
+.BR /screensaver .
+In the header, click your name for your profile, \fB+\fR to post a status
+and the circle to see statuses.
+.SH FILES
+.TP
+.I ~/.config/@APP@/config.ini
+Settings, also edited from the settings panel.
+.TP
+.I ~/.config/@APP@/themes/
+Your own JSON themes.
+.TP
+.I ~/.local/share/@APP@/
+Chat database and WhatsApp login.
+.TP
+.I ~/.cache/@APP@/media/
+Downloaded media, with video frames, rendered PDF pages and profile
+pictures; safe to delete.
+.TP
+.I ~/Downloads
+Where Save to Downloads copies files and chat exports are written, unless \fBdownload_dir\fR or
+XDG_DOWNLOAD_DIR names another folder.
+.TP
+.I ~/.local/state/@APP@/
+Log files.
+.SH EXIT STATUS
+0 on a normal exit, 1 when tawk cannot start (for example when the
+database cannot be opened).
+With \fB\-\-doctor\fR, 1 when something required is missing and 0
+otherwise. The commands exit with 0 when done, 1 when something failed, 2
+when the request was declined, not allowed or not answered, and 3 when no
+@APP@ is listening. 2 for an unknown option or when no interactive terminal is
+attached.
+.SH ENVIRONMENT
+XDG_CONFIG_HOME, XDG_DATA_HOME, XDG_CACHE_HOME and XDG_STATE_HOME move the
+folders above. XDG_DOWNLOAD_DIR sets the downloads folder when
+\fBdownload_dir\fR is empty. XDG_RUNTIME_DIR holds the control socket
+(\fBtawk/control.sock\fR); TAWK_CONTROL_SOCKET names another path for it.
+.SH AUTHOR
+Written by Logan Venter <logan.venter@outlook.com>.
+Source and issues: https://github.com/loganventer/tawk
+.SH SEE ALSO
+Full documentation: https://github.com/loganventer/tawk

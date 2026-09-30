@@ -1,0 +1,87 @@
+{
+  "id": "iceberg",
+  "name": "Iceberg",
+  "description": "Cold blue restraint",
+  "colors": {
+    "base": {
+      "fg": "#c6c8d1",
+      "bg": "#161821"
+    },
+    "header": {
+      "fg": "#c6c8d1",
+      "bg": "#0f1117"
+    },
+    "sidebar": {
+      "fg": "#c6c8d1",
+      "bg": "#161821"
+    },
+    "sidebar_selected": {
+      "fg": "#c6c8d1",
+      "bg": "#1e2132"
+    },
+    "badge": {
+      "fg": "#161821",
+      "bg": "#84a0c6"
+    },
+    "chat": {
+      "fg": "#c6c8d1",
+      "bg": "#161821"
+    },
+    "bubble_me": {
+      "fg": "#c6c8d1",
+      "bg": "#2a3158"
+    },
+    "bubble_them": {
+      "fg": "#c6c8d1",
+      "bg": "#1e2132"
+    },
+    "sender": {
+      "fg": "#a093c7",
+      "bg": "#1e2132"
+    },
+    "timestamp": {
+      "fg": "#6b7089",
+      "bg": "#161821"
+    },
+    "day_separator": {
+      "fg": "#6b7089",
+      "bg": "#1e2132"
+    },
+    "composer": {
+      "fg": "#c6c8d1",
+      "bg": "#0f1117"
+    },
+    "accent": {
+      "fg": "#84a0c6",
+      "bg": "#161821"
+    },
+    "ok": {
+      "fg": "#b4be82",
+      "bg": "#0f1117"
+    },
+    "warn": {
+      "fg": "#e2a478",
+      "bg": "#0f1117"
+    },
+    "blink": {
+      "fg": "#161821",
+      "bg": "#84a0c6"
+    },
+    "media": {
+      "fg": "#a093c7",
+      "bg": "#161821"
+    },
+    "dim": {
+      "fg": "#6b7089",
+      "bg": "#161821"
+    },
+    "border": {
+      "fg": "#1e2132",
+      "bg": "#161821"
+    },
+    "unread": {
+      "fg": "#84a0c6",
+      "bg": "#0f1117"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "id": "gruvbox-dark",
+  "name": "Gruvbox Dark",
+  "description": "Retro groove, warm browns",
+  "colors": {
+    "base": {
+      "fg": "#ebdbb2",
+      "bg": "#282828"
+    },
+    "header": {
+      "fg": "#ebdbb2",
+      "bg": "#32302f"
+    },
+    "sidebar": {
+      "fg": "#ebdbb2",
+      "bg": "#282828"
+    },
+    "sidebar_selected": {
+      "fg": "#ebdbb2",
+      "bg": "#504945"
+    },
+    "badge": {
+      "fg": "#282828",
+      "bg": "#fabd2f"
+    },
+    "chat": {
+      "fg": "#ebdbb2",
+      "bg": "#282828"
+    },
+    "bubble_me": {
+      "fg": "#fbf1c7",
+      "bg": "#458588"
+    },
+    "bubble_them": {
+      "fg": "#ebdbb2",
+      "bg": "#504945"
+    },
+    "sender": {
+      "fg": "#83a598",
+      "bg": "#504945"
+    },
+    "timestamp": {
+      "fg": "#928374",
+      "bg": "#282828"
+    },
+    "day_separator": {
+      "fg": "#928374",
+      "bg": "#504945"
+    },
+    "composer": {
+      "fg": "#ebdbb2",
+      "bg": "#32302f"
+    },
+    "accent": {
+      "fg": "#fabd2f",
+      "bg": "#282828"
+    },
+    "ok": {
+      "fg": "#b8bb26",
+      "bg": "#32302f"
+    },
+    "warn": {
+      "fg": "#fe8019",
+      "bg": "#32302f"
+    },
+    "blink": {
+      "fg": "#282828",
+      "bg": "#fabd2f"
+    },
+    "media": {
+      "fg": "#83a598",
+      "bg": "#282828"
+    },
+    "dim": {
+      "fg": "#928374",
+      "bg": "#282828"
+    },
+    "border": {
+      "fg": "#504945",
+      "bg": "#282828"
+    },
+    "unread": {
+      "fg": "#fabd2f",
+      "bg": "#32302f"
+    }
+  }
+}

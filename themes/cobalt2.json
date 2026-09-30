@@ -1,0 +1,87 @@
+{
+  "id": "cobalt2",
+  "name": "Cobalt2",
+  "description": "Wes Bos blue and gold",
+  "colors": {
+    "base": {
+      "fg": "#ffffff",
+      "bg": "#193549"
+    },
+    "header": {
+      "fg": "#ffffff",
+      "bg": "#122738"
+    },
+    "sidebar": {
+      "fg": "#ffffff",
+      "bg": "#193549"
+    },
+    "sidebar_selected": {
+      "fg": "#ffffff",
+      "bg": "#1f4662"
+    },
+    "badge": {
+      "fg": "#193549",
+      "bg": "#ffc600"
+    },
+    "chat": {
+      "fg": "#ffffff",
+      "bg": "#193549"
+    },
+    "bubble_me": {
+      "fg": "#ffffff",
+      "bg": "#0d3a58"
+    },
+    "bubble_them": {
+      "fg": "#ffffff",
+      "bg": "#1f4662"
+    },
+    "sender": {
+      "fg": "#0088ff",
+      "bg": "#1f4662"
+    },
+    "timestamp": {
+      "fg": "#8fa5b8",
+      "bg": "#193549"
+    },
+    "day_separator": {
+      "fg": "#8fa5b8",
+      "bg": "#1f4662"
+    },
+    "composer": {
+      "fg": "#ffffff",
+      "bg": "#122738"
+    },
+    "accent": {
+      "fg": "#ffc600",
+      "bg": "#193549"
+    },
+    "ok": {
+      "fg": "#3ad900",
+      "bg": "#122738"
+    },
+    "warn": {
+      "fg": "#ff9d00",
+      "bg": "#122738"
+    },
+    "blink": {
+      "fg": "#193549",
+      "bg": "#ffc600"
+    },
+    "media": {
+      "fg": "#0088ff",
+      "bg": "#193549"
+    },
+    "dim": {
+      "fg": "#8fa5b8",
+      "bg": "#193549"
+    },
+    "border": {
+      "fg": "#1f4662",
+      "bg": "#193549"
+    },
+    "unread": {
+      "fg": "#ffc600",
+      "bg": "#122738"
+    }
+  }
+}

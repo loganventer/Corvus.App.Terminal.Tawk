@@ -1,0 +1,87 @@
+{
+  "id": "oceanic-next",
+  "name": "Oceanic Next",
+  "description": "Calm sea blues",
+  "colors": {
+    "base": {
+      "fg": "#d8dee9",
+      "bg": "#1b2b34"
+    },
+    "header": {
+      "fg": "#d8dee9",
+      "bg": "#16232a"
+    },
+    "sidebar": {
+      "fg": "#d8dee9",
+      "bg": "#1b2b34"
+    },
+    "sidebar_selected": {
+      "fg": "#d8dee9",
+      "bg": "#343d46"
+    },
+    "badge": {
+      "fg": "#1b2b34",
+      "bg": "#6699cc"
+    },
+    "chat": {
+      "fg": "#d8dee9",
+      "bg": "#1b2b34"
+    },
+    "bubble_me": {
+      "fg": "#d8dee9",
+      "bg": "#343d46"
+    },
+    "bubble_them": {
+      "fg": "#d8dee9",
+      "bg": "#343d46"
+    },
+    "sender": {
+      "fg": "#c594c5",
+      "bg": "#343d46"
+    },
+    "timestamp": {
+      "fg": "#65737e",
+      "bg": "#1b2b34"
+    },
+    "day_separator": {
+      "fg": "#65737e",
+      "bg": "#343d46"
+    },
+    "composer": {
+      "fg": "#d8dee9",
+      "bg": "#16232a"
+    },
+    "accent": {
+      "fg": "#6699cc",
+      "bg": "#1b2b34"
+    },
+    "ok": {
+      "fg": "#99c794",
+      "bg": "#16232a"
+    },
+    "warn": {
+      "fg": "#fac863",
+      "bg": "#16232a"
+    },
+    "blink": {
+      "fg": "#1b2b34",
+      "bg": "#6699cc"
+    },
+    "media": {
+      "fg": "#c594c5",
+      "bg": "#1b2b34"
+    },
+    "dim": {
+      "fg": "#65737e",
+      "bg": "#1b2b34"
+    },
+    "border": {
+      "fg": "#343d46",
+      "bg": "#1b2b34"
+    },
+    "unread": {
+      "fg": "#6699cc",
+      "bg": "#16232a"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "id": "sepia",
+  "name": "Sepia",
+  "description": "Old photographs and parchment",
+  "colors": {
+    "base": {
+      "fg": "#5b4636",
+      "bg": "#f4ecd8"
+    },
+    "header": {
+      "fg": "#5b4636",
+      "bg": "#eadfc4"
+    },
+    "sidebar": {
+      "fg": "#5b4636",
+      "bg": "#f4ecd8"
+    },
+    "sidebar_selected": {
+      "fg": "#5b4636",
+      "bg": "#dccfae"
+    },
+    "badge": {
+      "fg": "#f4ecd8",
+      "bg": "#8b5a2b"
+    },
+    "chat": {
+      "fg": "#5b4636",
+      "bg": "#f4ecd8"
+    },
+    "bubble_me": {
+      "fg": "#5b4636",
+      "bg": "#e5d6b0"
+    },
+    "bubble_them": {
+      "fg": "#5b4636",
+      "bg": "#dccfae"
+    },
+    "sender": {
+      "fg": "#a0522d",
+      "bg": "#dccfae"
+    },
+    "timestamp": {
+      "fg": "#8a7560",
+      "bg": "#f4ecd8"
+    },
+    "day_separator": {
+      "fg": "#8a7560",
+      "bg": "#dccfae"
+    },
+    "composer": {
+      "fg": "#5b4636",
+      "bg": "#eadfc4"
+    },
+    "accent": {
+      "fg": "#8b5a2b",
+      "bg": "#f4ecd8"
+    },
+    "ok": {
+      "fg": "#6b8e23",
+      "bg": "#eadfc4"
+    },
+    "warn": {
+      "fg": "#b8860b",
+      "bg": "#eadfc4"
+    },
+    "blink": {
+      "fg": "#f4ecd8",
+      "bg": "#8b5a2b"
+    },
+    "media": {
+      "fg": "#a0522d",
+      "bg": "#f4ecd8"
+    },
+    "dim": {
+      "fg": "#8a7560",
+      "bg": "#f4ecd8"
+    },
+    "border": {
+      "fg": "#dccfae",
+      "bg": "#f4ecd8"
+    },
+    "unread": {
+      "fg": "#8b5a2b",
+      "bg": "#eadfc4"
+    }
+  }
+}

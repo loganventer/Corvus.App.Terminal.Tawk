@@ -1,0 +1,166 @@
+#include "core/settings_schema.h"
+#include "utilities/str_util.h"
+
+#include <stdio.h>
+#include <string.h>
+
+#define B(cat, key, label, help, member) \
+    { cat, key, label, help, SETTING_KIND_BOOL, offsetof(Settings, member), 0, 0, 1, 1, NULL, 0 }
+#define I(cat, key, label, help, member, mn, mx, st, rs) \
+    { cat, key, label, help, SETTING_KIND_INT, offsetof(Settings, member), 0, mn, mx, st, NULL, rs }
+#define S(cat, key, label, help, member, rs) \
+    { cat, key, label, help, SETTING_KIND_STRING, offsetof(Settings, member), sizeof(((Settings *)0)->member), 0, 0, 0, NULL, rs }
+
+static const SettingField FIELDS[] = {
+    { SETTING_CATEGORY_APPEARANCE, "theme", "Theme", "Colour theme; step through the list to preview, Enter to apply",
+      SETTING_KIND_THEME, offsetof(Settings, theme), sizeof(((Settings *)0)->theme), 0, 0, 0, NULL, 0 },
+    I(SETTING_CATEGORY_APPEARANCE, "sidebar_width", "Sidebar width", "Chat list width in columns", sidebar_width, 20, 80, 2, 0),
+    { SETTING_CATEGORY_APPEARANCE, "chat_list_style", "Chat list", "detailed shows the last message under each chat; compact shows one line per chat",
+      SETTING_KIND_CHOICE, offsetof(Settings, chat_list_style), sizeof(((Settings *)0)->chat_list_style), 0, 0, 0, "detailed|compact", 0 },
+    I(SETTING_CATEGORY_APPEARANCE, "chat_spacing", "Space between chats", "Blank lines between chats in the list (0 to 2)", chat_spacing, 0, 2, 1, 0),
+    B(SETTING_CATEGORY_APPEARANCE, "pinned_folded", "Fold pinned chats", "Kept up to date as you fold the Pinned group (Enter on its header)", pinned_folded),
+    B(SETTING_CATEGORY_APPEARANCE, "chats_folded", "Fold other chats", "Kept up to date as you fold the Chats group", chats_folded),
+    B(SETTING_CATEGORY_APPEARANCE, "sidebar_collapsed", "Start with sidebar collapsed", "Ctrl+B toggles it at any time", sidebar_collapsed),
+    B(SETTING_CATEGORY_APPEARANCE, "use_24h_clock", "24-hour clock", "Show 14:05 instead of 2:05 PM", use_24h_clock),
+    B(SETTING_CATEGORY_APPEARANCE, "inline_thumbnails", "Photo previews", "Show photos and video previews in the chat; click one to open it", inline_thumbnails),
+    B(SETTING_CATEGORY_APPEARANCE, "portraits", "Profile pictures", "Show contacts' and groups' pictures in the chat list and the title bar", portraits),
+    { SETTING_CATEGORY_APPEARANCE, "image_mode", "Photo quality", "sixel draws real pixels (Windows Terminal, WezTerm, foot); blocks works everywhere; auto picks",
+      SETTING_KIND_CHOICE, offsetof(Settings, image_mode), sizeof(((Settings *)0)->image_mode), 0, 0, 0, "auto|sixel|blocks", 0 },
+    B(SETTING_CATEGORY_APPEARANCE, "mouse", "Mouse support", "Click chats, scroll, and open media", mouse),
+    B(SETTING_CATEGORY_APPEARANCE, "splash", "Startup splash", "Show the animated logo while tawk connects; any key skips it", splash),
+
+    B(SETTING_CATEGORY_CHATS, "format_text", "Text formatting", "Show *bold*, _italic_, ~strikethrough~ and `code` as WhatsApp does; off shows the marks", format_text),
+    B(SETTING_CATEGORY_CHATS, "link_previews", "Link previews for links you send", "Fetches the page to show its title and picture; the site sees your IP address. Previews others send always show", link_previews),
+    B(SETTING_CATEGORY_CHATS, "convert_emoticons", "Emoticons to emoji", "Turn :) <3 :D and (pizza) into emoji as you type", convert_emoticons),
+    B(SETTING_CATEGORY_CHATS, "enter_sends", "Enter is send", "When off, Enter adds a new line and Ctrl+S sends", enter_sends),
+    I(SETTING_CATEGORY_CHATS, "message_page_size", "Messages loaded per chat", "How much history the chat view keeps in memory", message_page_size, 50, 2000, 50, 0),
+    B(SETTING_CATEGORY_CHATS, "share_typing", "Share typing", "Show \"typing\u2026\" to the other person while you type", share_typing),
+    B(SETTING_CATEGORY_CHATS, "appear_online", "Appear online", "Show as online while tawk is in use (needed to see others typing)", appear_online),
+    B(SETTING_CATEGORY_CHATS, "reopen_last_chat", "Reopen last chat", "Open the chat you had open when tawk last quit", reopen_last_chat),
+    S(SETTING_CATEGORY_CHATS, "last_chat", "Last chat", "Kept up to date as you open chats", last_chat, 0),
+    S(SETTING_CATEGORY_CHATS, "recent_emoji", "Recent emoji", "Kept up to date by the emoji picker", recent_emoji, 0),
+    I(SETTING_CATEGORY_CHATS, "status_keep_days", "Keep statuses (days)", "WhatsApp shows a status for a day; tawk keeps it this long in the Status archive (1 keeps none)", status_keep_days, 1, 365, 1, 0),
+    B(SETTING_CATEGORY_CHATS, "send_read_receipts", "Read receipts", "Tell senders when you have read their messages", send_read_receipts),
+
+    B(SETTING_CATEGORY_NOTIFICATIONS, "enabled", "Notifications", "Master switch for all alerts", notifications),
+    B(SETTING_CATEGORY_NOTIFICATIONS, "do_not_disturb", "Do not disturb", "Silence everything; Ctrl+D toggles it", do_not_disturb),
+    B(SETTING_CATEGORY_NOTIFICATIONS, "mention_notifications", "Mentions always notify", "Being @mentioned notifies you even in a muted chat or with group notifications off (not during do not disturb)", mention_notifications),
+    B(SETTING_CATEGORY_NOTIFICATIONS, "group_notifications", "Group notifications", "Alert for group messages", group_notifications),
+    B(SETTING_CATEGORY_NOTIFICATIONS, "show_preview", "Show preview", "Include message text in the title bar", show_preview),
+    B(SETTING_CATEGORY_NOTIFICATIONS, "sound", "Notification sound", "Play a sound for new messages", sound),
+    S(SETTING_CATEGORY_NOTIFICATIONS, "sound_file", "Sound file", "WAV/OGG file to play", sound_file, 0),
+    B(SETTING_CATEGORY_NOTIFICATIONS, "blink", "Blink new chats", "Blink the chat in the list and the status bar", blink),
+    I(SETTING_CATEGORY_NOTIFICATIONS, "blink_seconds", "Blink duration (s)", "How long the blink lasts", blink_seconds, 1, 60, 1, 0),
+    B(SETTING_CATEGORY_NOTIFICATIONS, "title_flash", "Flash window title", "Show per-type unread counts in the terminal title and flash it", title_flash),
+    B(SETTING_CATEGORY_NOTIFICATIONS, "terminal_bell", "Terminal bell", "Ring the bell; Windows Terminal flashes the taskbar", terminal_bell),
+    B(SETTING_CATEGORY_NOTIFICATIONS, "screen_flash", "Screen flash", "Flash the whole screen once", screen_flash),
+
+    B(SETTING_CATEGORY_MEDIA, "auto_download", "Auto-download media", "Fetch photos and videos when they arrive", auto_download_media),
+    I(SETTING_CATEGORY_MEDIA, "auto_download_max_mb", "Auto-download limit (MB)", "Larger files download when clicked", auto_download_max_mb, 1, 512, 1, 0),
+    S(SETTING_CATEGORY_MEDIA, "image_viewer", "Image viewer", "builtin shows photos inside tawk; system uses the default viewer; or a command such as eog", image_viewer, 0),
+    S(SETTING_CATEGORY_MEDIA, "video_player", "Video player", "Empty tries mpv, vlc, celluloid, totem, ffplay, then the system default; or a command", video_player, 0),
+    S(SETTING_CATEGORY_MEDIA, "download_dir", "Save folder", "Where Save to Downloads puts files; empty uses your Downloads folder", download_dir, 0),
+    S(SETTING_CATEGORY_MEDIA, "attach_dir", "Attachment folder", "Where the file picker opens; kept up to date as you attach files", attach_dir, 0),
+    I(SETTING_CATEGORY_MEDIA, "media_cache_mb", "Media cache limit (MB)", "Oldest downloads are removed above this size", media_cache_mb, 50, 100000, 50, 0),
+    S(SETTING_CATEGORY_MEDIA, "media_dir", "Media folder", "Downloaded media (a cache: safe to delete)", media_dir, 1),
+
+    { SETTING_CATEGORY_MEDIA, "audio_backend", "Audio system", "auto detects PulseAudio, PipeWire, ALSA, CoreAudio or DirectShow",
+      SETTING_KIND_CHOICE, offsetof(Settings, audio_backend), sizeof(((Settings *)0)->audio_backend), 0, 0, 0, "auto|pulse|pipewire|alsa|coreaudio|dshow", 0 },
+    S(SETTING_CATEGORY_MEDIA, "mic_device", "Microphone", "Capture device for the audio system; \"default\" uses the system default", mic_device, 0),
+    I(SETTING_CATEGORY_MEDIA, "voice_max_seconds", "Max voice note length (s)", "Recording stops and sends at this length", voice_max_seconds, 10, 900, 10, 0),
+    B(SETTING_CATEGORY_SCREENSAVER, "enabled", "Screensaver", "Run a command after a period of inactivity", screensaver),
+    I(SETTING_CATEGORY_SCREENSAVER, "idle_minutes", "Idle minutes", "Inactivity before the screensaver starts", idle_minutes, 1, 240, 1, 0),
+    S(SETTING_CATEGORY_SCREENSAVER, "command", "Command", "Shell command to run; any key stops it", screensaver_command, 0),
+    B(SETTING_CATEGORY_SCREENSAVER, "wake_on_message", "Wake on message", "Stop the screensaver when a message arrives", wake_on_message),
+
+    I(SETTING_CATEGORY_RESILIENCE, "backoff_initial_ms", "Initial retry delay (ms)", "First reconnect delay; doubles each attempt", backoff_initial_ms, 100, 60000, 100, 0),
+    I(SETTING_CATEGORY_RESILIENCE, "backoff_max_ms", "Maximum retry delay (ms)", "Upper bound for the exponential backoff", backoff_max_ms, 1000, 600000, 1000, 0),
+    I(SETTING_CATEGORY_RESILIENCE, "breaker_threshold", "Circuit breaker threshold", "Consecutive failures before retries pause", breaker_threshold, 1, 50, 1, 0),
+    I(SETTING_CATEGORY_RESILIENCE, "breaker_cooldown_s", "Circuit breaker cooldown (s)", "Pause before a trial reconnect", breaker_cooldown_s, 5, 3600, 5, 0),
+
+    B(SETTING_CATEGORY_AUTOMATION, "control_socket", "Agent access (MCP)", "Let tawk-mcp and the tawk send, tail and unread commands reach this tawk; off, nothing can connect", control_socket),
+    { SETTING_CATEGORY_AUTOMATION, "access", "What they may do", "read lists and reads chats; send also sends, reacts, schedules and drafts; manage changes chats, statuses, your profile and settings. You allow each change",
+      SETTING_KIND_CHOICE, offsetof(Settings, automation_access), sizeof(((Settings *)0)->automation_access), 0, 0, 0, "read|send|manage", 0 },
+    S(SETTING_CATEGORY_AUTOMATION, "chats", "Chats they may use", "Names or numbers, separated by commas; empty allows every chat except locked ones", automation_chats, 0),
+    B(SETTING_CATEGORY_AUTOMATION, "confirm_cli", "Ask for shell commands too", "tawk send asks first as well; programs acting for a model always ask", automation_confirm_cli),
+    I(SETTING_CATEGORY_AUTOMATION, "writes_per_minute", "Writes per minute", "More than this are refused until a minute has passed", automation_rate, 1, 60, 1, 0),
+
+    { SETTING_CATEGORY_ADVANCED, "backend", "WhatsApp backend", "whatsmeow runs in-process; baileys runs a Node.js sidecar",
+      SETTING_KIND_CHOICE, offsetof(Settings, backend), sizeof(((Settings *)0)->backend), 0, 0, 0, "whatsmeow|baileys", 1 },
+    S(SETTING_CATEGORY_ADVANCED, "data_dir", "Data folder", "Chat database and WhatsApp login", data_dir, 1),
+    S(SETTING_CATEGORY_ADVANCED, "sidecar_dir", "Sidecar folder", "Location of the WhatsApp bridge", sidecar_dir, 1),
+    S(SETTING_CATEGORY_ADVANCED, "node_binary", "Node.js binary", "Runtime used for the bridge", node_binary, 1),
+    { SETTING_CATEGORY_ADVANCED, "log_level", "Log level", "debug, info, warn or error",
+      SETTING_KIND_CHOICE, offsetof(Settings, log_level), sizeof(((Settings *)0)->log_level), 0, 0, 0, "debug|info|warn|error", 1 },
+};
+
+#define FIELD_COUNT ((int)(sizeof(FIELDS) / sizeof(FIELDS[0])))
+
+int settings_schema_count(void) { return FIELD_COUNT; }
+
+const SettingField *settings_schema_at(int index) {
+    return (index >= 0 && index < FIELD_COUNT) ? &FIELDS[index] : NULL;
+}
+
+const SettingField *settings_schema_find(SettingCategory category, const char *key) {
+    for (int i = 0; i < FIELD_COUNT; i++) {
+        if (FIELDS[i].category == category && strcmp(FIELDS[i].key, key) == 0) return &FIELDS[i];
+    }
+    return NULL;
+}
+
+int setting_get_int(const Settings *s, const SettingField *f) {
+    return *(const int *)((const char *)s + f->offset);
+}
+
+void setting_set_int(Settings *s, const SettingField *f, int value) {
+    if (f->kind == SETTING_KIND_BOOL) value = value ? 1 : 0;
+    else if (f->kind == SETTING_KIND_INT) {
+        if (value < f->min) value = f->min;
+        if (value > f->max) value = f->max;
+    }
+    *(int *)((char *)s + f->offset) = value;
+}
+
+const char *setting_get_string(const Settings *s, const SettingField *f) {
+    return (const char *)s + f->offset;
+}
+
+static int choice_allowed(const char *choices, const char *value) {
+    char copy[128];
+    str_copy(copy, sizeof(copy), choices);
+    char *save = NULL;
+    for (char *tok = strtok_r(copy, "|", &save); tok; tok = strtok_r(NULL, "|", &save)) {
+        if (strcmp(tok, value) == 0) return 1;
+    }
+    return 0;
+}
+
+void setting_set_string(Settings *s, const SettingField *f, const char *value) {
+    if (f->kind == SETTING_KIND_CHOICE && !choice_allowed(f->choices, value)) return;
+    char *dst = (char *)s + f->offset;
+    str_copy(dst, f->size, value);
+    str_strip_controls(dst);
+}
+
+void setting_set_from_text(Settings *s, const SettingField *f, const char *text) {
+    switch (f->kind) {
+        case SETTING_KIND_BOOL:
+            setting_set_int(s, f, str_parse_bool(text, setting_get_int(s, f)));
+            break;
+        case SETTING_KIND_INT:
+            setting_set_int(s, f, str_parse_int(text, f->min, f->max, setting_get_int(s, f)));
+            break;
+        default:
+            setting_set_string(s, f, text);
+            break;
+    }
+}
+
+void setting_to_text(const Settings *s, const SettingField *f, char *out, size_t size) {
+    switch (f->kind) {
+        case SETTING_KIND_BOOL: str_copy(out, size, setting_get_int(s, f) ? "true" : "false"); break;
+        case SETTING_KIND_INT:  snprintf(out, size, "%d", setting_get_int(s, f)); break;
+        default:                str_copy(out, size, setting_get_string(s, f)); break;
+    }
+}

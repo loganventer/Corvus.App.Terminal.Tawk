@@ -1,0 +1,87 @@
+{
+  "id": "kanagawa",
+  "name": "Kanagawa",
+  "description": "The Great Wave, ink and indigo",
+  "colors": {
+    "base": {
+      "fg": "#dcd7ba",
+      "bg": "#1f1f28"
+    },
+    "header": {
+      "fg": "#dcd7ba",
+      "bg": "#16161d"
+    },
+    "sidebar": {
+      "fg": "#dcd7ba",
+      "bg": "#1f1f28"
+    },
+    "sidebar_selected": {
+      "fg": "#dcd7ba",
+      "bg": "#2a2a37"
+    },
+    "badge": {
+      "fg": "#1f1f28",
+      "bg": "#7e9cd8"
+    },
+    "chat": {
+      "fg": "#dcd7ba",
+      "bg": "#1f1f28"
+    },
+    "bubble_me": {
+      "fg": "#dcd7ba",
+      "bg": "#2d4f67"
+    },
+    "bubble_them": {
+      "fg": "#dcd7ba",
+      "bg": "#2a2a37"
+    },
+    "sender": {
+      "fg": "#957fb8",
+      "bg": "#2a2a37"
+    },
+    "timestamp": {
+      "fg": "#727169",
+      "bg": "#1f1f28"
+    },
+    "day_separator": {
+      "fg": "#727169",
+      "bg": "#2a2a37"
+    },
+    "composer": {
+      "fg": "#dcd7ba",
+      "bg": "#16161d"
+    },
+    "accent": {
+      "fg": "#7e9cd8",
+      "bg": "#1f1f28"
+    },
+    "ok": {
+      "fg": "#98bb6c",
+      "bg": "#16161d"
+    },
+    "warn": {
+      "fg": "#ffa066",
+      "bg": "#16161d"
+    },
+    "blink": {
+      "fg": "#1f1f28",
+      "bg": "#7e9cd8"
+    },
+    "media": {
+      "fg": "#957fb8",
+      "bg": "#1f1f28"
+    },
+    "dim": {
+      "fg": "#727169",
+      "bg": "#1f1f28"
+    },
+    "border": {
+      "fg": "#2a2a37",
+      "bg": "#1f1f28"
+    },
+    "unread": {
+      "fg": "#7e9cd8",
+      "bg": "#16161d"
+    }
+  }
+}

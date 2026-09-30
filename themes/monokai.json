@@ -1,0 +1,87 @@
+{
+  "id": "monokai",
+  "name": "Monokai",
+  "description": "Editor classic: pink, lime, orange",
+  "colors": {
+    "base": {
+      "fg": "#f8f8f2",
+      "bg": "#272822"
+    },
+    "header": {
+      "fg": "#f8f8f2",
+      "bg": "#1e1f1c"
+    },
+    "sidebar": {
+      "fg": "#f8f8f2",
+      "bg": "#272822"
+    },
+    "sidebar_selected": {
+      "fg": "#f8f8f2",
+      "bg": "#3e3d32"
+    },
+    "badge": {
+      "fg": "#272822",
+      "bg": "#f92672"
+    },
+    "chat": {
+      "fg": "#f8f8f2",
+      "bg": "#272822"
+    },
+    "bubble_me": {
+      "fg": "#f8f8f2",
+      "bg": "#49483e"
+    },
+    "bubble_them": {
+      "fg": "#f8f8f2",
+      "bg": "#3e3d32"
+    },
+    "sender": {
+      "fg": "#66d9ef",
+      "bg": "#3e3d32"
+    },
+    "timestamp": {
+      "fg": "#75715e",
+      "bg": "#272822"
+    },
+    "day_separator": {
+      "fg": "#75715e",
+      "bg": "#3e3d32"
+    },
+    "composer": {
+      "fg": "#f8f8f2",
+      "bg": "#1e1f1c"
+    },
+    "accent": {
+      "fg": "#f92672",
+      "bg": "#272822"
+    },
+    "ok": {
+      "fg": "#a6e22e",
+      "bg": "#1e1f1c"
+    },
+    "warn": {
+      "fg": "#fd971f",
+      "bg": "#1e1f1c"
+    },
+    "blink": {
+      "fg": "#272822",
+      "bg": "#f92672"
+    },
+    "media": {
+      "fg": "#66d9ef",
+      "bg": "#272822"
+    },
+    "dim": {
+      "fg": "#75715e",
+      "bg": "#272822"
+    },
+    "border": {
+      "fg": "#3e3d32",
+      "bg": "#272822"
+    },
+    "unread": {
+      "fg": "#f92672",
+      "bg": "#1e1f1c"
+    }
+  }
+}

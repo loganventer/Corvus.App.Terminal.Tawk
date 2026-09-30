@@ -1,0 +1,87 @@
+{
+  "id": "palenight",
+  "name": "Palenight",
+  "description": "Material palenight",
+  "colors": {
+    "base": {
+      "fg": "#a6accd",
+      "bg": "#292d3e"
+    },
+    "header": {
+      "fg": "#a6accd",
+      "bg": "#242837"
+    },
+    "sidebar": {
+      "fg": "#a6accd",
+      "bg": "#292d3e"
+    },
+    "sidebar_selected": {
+      "fg": "#a6accd",
+      "bg": "#34324a"
+    },
+    "badge": {
+      "fg": "#292d3e",
+      "bg": "#82aaff"
+    },
+    "chat": {
+      "fg": "#a6accd",
+      "bg": "#292d3e"
+    },
+    "bubble_me": {
+      "fg": "#eeffff",
+      "bg": "#3c435e"
+    },
+    "bubble_them": {
+      "fg": "#a6accd",
+      "bg": "#34324a"
+    },
+    "sender": {
+      "fg": "#c792ea",
+      "bg": "#34324a"
+    },
+    "timestamp": {
+      "fg": "#676e95",
+      "bg": "#292d3e"
+    },
+    "day_separator": {
+      "fg": "#676e95",
+      "bg": "#34324a"
+    },
+    "composer": {
+      "fg": "#a6accd",
+      "bg": "#242837"
+    },
+    "accent": {
+      "fg": "#82aaff",
+      "bg": "#292d3e"
+    },
+    "ok": {
+      "fg": "#c3e88d",
+      "bg": "#242837"
+    },
+    "warn": {
+      "fg": "#ffcb6b",
+      "bg": "#242837"
+    },
+    "blink": {
+      "fg": "#292d3e",
+      "bg": "#82aaff"
+    },
+    "media": {
+      "fg": "#c792ea",
+      "bg": "#292d3e"
+    },
+    "dim": {
+      "fg": "#676e95",
+      "bg": "#292d3e"
+    },
+    "border": {
+      "fg": "#34324a",
+      "bg": "#292d3e"
+    },
+    "unread": {
+      "fg": "#82aaff",
+      "bg": "#242837"
+    }
+  }
+}

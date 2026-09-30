@@ -1,0 +1,87 @@
+{
+  "id": "commodore-64",
+  "name": "Commodore 64",
+  "description": "READY. Light blue on blue",
+  "colors": {
+    "base": {
+      "fg": "#7869c4",
+      "bg": "#40318d"
+    },
+    "header": {
+      "fg": "#7869c4",
+      "bg": "#352879"
+    },
+    "sidebar": {
+      "fg": "#7869c4",
+      "bg": "#40318d"
+    },
+    "sidebar_selected": {
+      "fg": "#7869c4",
+      "bg": "#5a4ab5"
+    },
+    "badge": {
+      "fg": "#40318d",
+      "bg": "#a5a5ff"
+    },
+    "chat": {
+      "fg": "#7869c4",
+      "bg": "#40318d"
+    },
+    "bubble_me": {
+      "fg": "#ffffff",
+      "bg": "#5a4ab5"
+    },
+    "bubble_them": {
+      "fg": "#7869c4",
+      "bg": "#5a4ab5"
+    },
+    "sender": {
+      "fg": "#ffffff",
+      "bg": "#5a4ab5"
+    },
+    "timestamp": {
+      "fg": "#6c5eb5",
+      "bg": "#40318d"
+    },
+    "day_separator": {
+      "fg": "#6c5eb5",
+      "bg": "#5a4ab5"
+    },
+    "composer": {
+      "fg": "#7869c4",
+      "bg": "#352879"
+    },
+    "accent": {
+      "fg": "#a5a5ff",
+      "bg": "#40318d"
+    },
+    "ok": {
+      "fg": "#94e089",
+      "bg": "#352879"
+    },
+    "warn": {
+      "fg": "#bfce72",
+      "bg": "#352879"
+    },
+    "blink": {
+      "fg": "#40318d",
+      "bg": "#a5a5ff"
+    },
+    "media": {
+      "fg": "#ffffff",
+      "bg": "#40318d"
+    },
+    "dim": {
+      "fg": "#6c5eb5",
+      "bg": "#40318d"
+    },
+    "border": {
+      "fg": "#5a4ab5",
+      "bg": "#40318d"
+    },
+    "unread": {
+      "fg": "#a5a5ff",
+      "bg": "#352879"
+    }
+  }
+}

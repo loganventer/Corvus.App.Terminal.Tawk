@@ -1,0 +1,87 @@
+{
+  "id": "one-dark",
+  "name": "One Dark",
+  "description": "Atom's balanced dark",
+  "colors": {
+    "base": {
+      "fg": "#abb2bf",
+      "bg": "#282c34"
+    },
+    "header": {
+      "fg": "#abb2bf",
+      "bg": "#21252b"
+    },
+    "sidebar": {
+      "fg": "#abb2bf",
+      "bg": "#282c34"
+    },
+    "sidebar_selected": {
+      "fg": "#abb2bf",
+      "bg": "#3e4451"
+    },
+    "badge": {
+      "fg": "#282c34",
+      "bg": "#61afef"
+    },
+    "chat": {
+      "fg": "#abb2bf",
+      "bg": "#282c34"
+    },
+    "bubble_me": {
+      "fg": "#dcdfe4",
+      "bg": "#2c313a"
+    },
+    "bubble_them": {
+      "fg": "#abb2bf",
+      "bg": "#3e4451"
+    },
+    "sender": {
+      "fg": "#c678dd",
+      "bg": "#3e4451"
+    },
+    "timestamp": {
+      "fg": "#5c6370",
+      "bg": "#282c34"
+    },
+    "day_separator": {
+      "fg": "#5c6370",
+      "bg": "#3e4451"
+    },
+    "composer": {
+      "fg": "#abb2bf",
+      "bg": "#21252b"
+    },
+    "accent": {
+      "fg": "#61afef",
+      "bg": "#282c34"
+    },
+    "ok": {
+      "fg": "#98c379",
+      "bg": "#21252b"
+    },
+    "warn": {
+      "fg": "#e5c07b",
+      "bg": "#21252b"
+    },
+    "blink": {
+      "fg": "#282c34",
+      "bg": "#61afef"
+    },
+    "media": {
+      "fg": "#c678dd",
+      "bg": "#282c34"
+    },
+    "dim": {
+      "fg": "#5c6370",
+      "bg": "#282c34"
+    },
+    "border": {
+      "fg": "#3e4451",
+      "bg": "#282c34"
+    },
+    "unread": {
+      "fg": "#61afef",
+      "bg": "#21252b"
+    }
+  }
+}

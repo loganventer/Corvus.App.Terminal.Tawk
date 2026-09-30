@@ -1,0 +1,87 @@
+{
+  "id": "matrix",
+  "name": "Matrix",
+  "description": "Green phosphor rain on pure black",
+  "colors": {
+    "base": {
+      "fg": "#00ff41",
+      "bg": "#000000"
+    },
+    "header": {
+      "fg": "#00ff41",
+      "bg": "#000000"
+    },
+    "sidebar": {
+      "fg": "#00ff41",
+      "bg": "#000000"
+    },
+    "sidebar_selected": {
+      "fg": "#00ff41",
+      "bg": "#003b00"
+    },
+    "badge": {
+      "fg": "#000000",
+      "bg": "#00ff41"
+    },
+    "chat": {
+      "fg": "#00ff41",
+      "bg": "#000000"
+    },
+    "bubble_me": {
+      "fg": "#00ff41",
+      "bg": "#003b00"
+    },
+    "bubble_them": {
+      "fg": "#00ff41",
+      "bg": "#003b00"
+    },
+    "sender": {
+      "fg": "#00d02a",
+      "bg": "#003b00"
+    },
+    "timestamp": {
+      "fg": "#008f11",
+      "bg": "#000000"
+    },
+    "day_separator": {
+      "fg": "#008f11",
+      "bg": "#003b00"
+    },
+    "composer": {
+      "fg": "#00ff41",
+      "bg": "#000000"
+    },
+    "accent": {
+      "fg": "#00ff41",
+      "bg": "#000000"
+    },
+    "ok": {
+      "fg": "#00ff41",
+      "bg": "#000000"
+    },
+    "warn": {
+      "fg": "#d0ff00",
+      "bg": "#000000"
+    },
+    "blink": {
+      "fg": "#000000",
+      "bg": "#00ff41"
+    },
+    "media": {
+      "fg": "#00d02a",
+      "bg": "#000000"
+    },
+    "dim": {
+      "fg": "#008f11",
+      "bg": "#000000"
+    },
+    "border": {
+      "fg": "#003b00",
+      "bg": "#000000"
+    },
+    "unread": {
+      "fg": "#00ff41",
+      "bg": "#000000"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "id": "one-light",
+  "name": "One Light",
+  "description": "Atom's balanced light",
+  "colors": {
+    "base": {
+      "fg": "#383a42",
+      "bg": "#fafafa"
+    },
+    "header": {
+      "fg": "#383a42",
+      "bg": "#f0f0f0"
+    },
+    "sidebar": {
+      "fg": "#383a42",
+      "bg": "#fafafa"
+    },
+    "sidebar_selected": {
+      "fg": "#383a42",
+      "bg": "#e5e5e6"
+    },
+    "badge": {
+      "fg": "#fafafa",
+      "bg": "#4078f2"
+    },
+    "chat": {
+      "fg": "#383a42",
+      "bg": "#fafafa"
+    },
+    "bubble_me": {
+      "fg": "#383a42",
+      "bg": "#dde6f5"
+    },
+    "bubble_them": {
+      "fg": "#383a42",
+      "bg": "#e5e5e6"
+    },
+    "sender": {
+      "fg": "#a626a4",
+      "bg": "#e5e5e6"
+    },
+    "timestamp": {
+      "fg": "#a0a1a7",
+      "bg": "#fafafa"
+    },
+    "day_separator": {
+      "fg": "#a0a1a7",
+      "bg": "#e5e5e6"
+    },
+    "composer": {
+      "fg": "#383a42",
+      "bg": "#f0f0f0"
+    },
+    "accent": {
+      "fg": "#4078f2",
+      "bg": "#fafafa"
+    },
+    "ok": {
+      "fg": "#50a14f",
+      "bg": "#f0f0f0"
+    },
+    "warn": {
+      "fg": "#c18401",
+      "bg": "#f0f0f0"
+    },
+    "blink": {
+      "fg": "#fafafa",
+      "bg": "#4078f2"
+    },
+    "media": {
+      "fg": "#a626a4",
+      "bg": "#fafafa"
+    },
+    "dim": {
+      "fg": "#a0a1a7",
+      "bg": "#fafafa"
+    },
+    "border": {
+      "fg": "#e5e5e6",
+      "bg": "#fafafa"
+    },
+    "unread": {
+      "fg": "#4078f2",
+      "bg": "#f0f0f0"
+    }
+  }
+}

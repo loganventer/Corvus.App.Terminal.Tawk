@@ -1,0 +1,87 @@
+{
+  "id": "vscode-dark",
+  "name": "VS Code Dark+",
+  "description": "The default editor dark",
+  "colors": {
+    "base": {
+      "fg": "#d4d4d4",
+      "bg": "#1e1e1e"
+    },
+    "header": {
+      "fg": "#d4d4d4",
+      "bg": "#252526"
+    },
+    "sidebar": {
+      "fg": "#d4d4d4",
+      "bg": "#1e1e1e"
+    },
+    "sidebar_selected": {
+      "fg": "#d4d4d4",
+      "bg": "#37373d"
+    },
+    "badge": {
+      "fg": "#1e1e1e",
+      "bg": "#007acc"
+    },
+    "chat": {
+      "fg": "#d4d4d4",
+      "bg": "#1e1e1e"
+    },
+    "bubble_me": {
+      "fg": "#ffffff",
+      "bg": "#264f78"
+    },
+    "bubble_them": {
+      "fg": "#d4d4d4",
+      "bg": "#37373d"
+    },
+    "sender": {
+      "fg": "#c586c0",
+      "bg": "#37373d"
+    },
+    "timestamp": {
+      "fg": "#858585",
+      "bg": "#1e1e1e"
+    },
+    "day_separator": {
+      "fg": "#858585",
+      "bg": "#37373d"
+    },
+    "composer": {
+      "fg": "#d4d4d4",
+      "bg": "#252526"
+    },
+    "accent": {
+      "fg": "#007acc",
+      "bg": "#1e1e1e"
+    },
+    "ok": {
+      "fg": "#6a9955",
+      "bg": "#252526"
+    },
+    "warn": {
+      "fg": "#dcdcaa",
+      "bg": "#252526"
+    },
+    "blink": {
+      "fg": "#1e1e1e",
+      "bg": "#007acc"
+    },
+    "media": {
+      "fg": "#c586c0",
+      "bg": "#1e1e1e"
+    },
+    "dim": {
+      "fg": "#858585",
+      "bg": "#1e1e1e"
+    },
+    "border": {
+      "fg": "#37373d",
+      "bg": "#1e1e1e"
+    },
+    "unread": {
+      "fg": "#007acc",
+      "bg": "#252526"
+    }
+  }
+}

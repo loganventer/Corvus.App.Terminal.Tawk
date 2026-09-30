@@ -1,0 +1,87 @@
+{
+  "id": "whatsapp-light",
+  "name": "WhatsApp Light",
+  "description": "The classic green header on warm paper",
+  "colors": {
+    "base": {
+      "fg": "#111b21",
+      "bg": "#efeae2"
+    },
+    "header": {
+      "fg": "#111b21",
+      "bg": "#ffffff"
+    },
+    "sidebar": {
+      "fg": "#111b21",
+      "bg": "#efeae2"
+    },
+    "sidebar_selected": {
+      "fg": "#111b21",
+      "bg": "#f0f2f5"
+    },
+    "badge": {
+      "fg": "#ffffff",
+      "bg": "#008069"
+    },
+    "chat": {
+      "fg": "#111b21",
+      "bg": "#efeae2"
+    },
+    "bubble_me": {
+      "fg": "#111b21",
+      "bg": "#d9fdd3"
+    },
+    "bubble_them": {
+      "fg": "#111b21",
+      "bg": "#f0f2f5"
+    },
+    "sender": {
+      "fg": "#027eb5",
+      "bg": "#f0f2f5"
+    },
+    "timestamp": {
+      "fg": "#667781",
+      "bg": "#efeae2"
+    },
+    "day_separator": {
+      "fg": "#667781",
+      "bg": "#f0f2f5"
+    },
+    "composer": {
+      "fg": "#111b21",
+      "bg": "#ffffff"
+    },
+    "accent": {
+      "fg": "#008069",
+      "bg": "#efeae2"
+    },
+    "ok": {
+      "fg": "#25d366",
+      "bg": "#ffffff"
+    },
+    "warn": {
+      "fg": "#f7b928",
+      "bg": "#ffffff"
+    },
+    "blink": {
+      "fg": "#ffffff",
+      "bg": "#008069"
+    },
+    "media": {
+      "fg": "#027eb5",
+      "bg": "#efeae2"
+    },
+    "dim": {
+      "fg": "#667781",
+      "bg": "#efeae2"
+    },
+    "border": {
+      "fg": "#f0f2f5",
+      "bg": "#efeae2"
+    },
+    "unread": {
+      "fg": "#008069",
+      "bg": "#ffffff"
+    }
+  }
+}

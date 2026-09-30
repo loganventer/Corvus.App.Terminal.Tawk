@@ -1,0 +1,87 @@
+{
+  "id": "outrun",
+  "name": "Outrun",
+  "description": "Sunset grid, hot pink horizon",
+  "colors": {
+    "base": {
+      "fg": "#f4d8ff",
+      "bg": "#0d0221"
+    },
+    "header": {
+      "fg": "#f4d8ff",
+      "bg": "#090118"
+    },
+    "sidebar": {
+      "fg": "#f4d8ff",
+      "bg": "#0d0221"
+    },
+    "sidebar_selected": {
+      "fg": "#f4d8ff",
+      "bg": "#241734"
+    },
+    "badge": {
+      "fg": "#0d0221",
+      "bg": "#ff2a6d"
+    },
+    "chat": {
+      "fg": "#f4d8ff",
+      "bg": "#0d0221"
+    },
+    "bubble_me": {
+      "fg": "#f4d8ff",
+      "bg": "#2d1b4e"
+    },
+    "bubble_them": {
+      "fg": "#f4d8ff",
+      "bg": "#241734"
+    },
+    "sender": {
+      "fg": "#05d9e8",
+      "bg": "#241734"
+    },
+    "timestamp": {
+      "fg": "#8a5fa7",
+      "bg": "#0d0221"
+    },
+    "day_separator": {
+      "fg": "#8a5fa7",
+      "bg": "#241734"
+    },
+    "composer": {
+      "fg": "#f4d8ff",
+      "bg": "#090118"
+    },
+    "accent": {
+      "fg": "#ff2a6d",
+      "bg": "#0d0221"
+    },
+    "ok": {
+      "fg": "#01ff89",
+      "bg": "#090118"
+    },
+    "warn": {
+      "fg": "#ff8c00",
+      "bg": "#090118"
+    },
+    "blink": {
+      "fg": "#0d0221",
+      "bg": "#ff2a6d"
+    },
+    "media": {
+      "fg": "#05d9e8",
+      "bg": "#0d0221"
+    },
+    "dim": {
+      "fg": "#8a5fa7",
+      "bg": "#0d0221"
+    },
+    "border": {
+      "fg": "#241734",
+      "bg": "#0d0221"
+    },
+    "unread": {
+      "fg": "#ff2a6d",
+      "bg": "#090118"
+    }
+  }
+}

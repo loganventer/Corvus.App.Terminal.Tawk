@@ -1,0 +1,87 @@
+{
+  "id": "tokyo-night",
+  "name": "Tokyo Night",
+  "description": "Neon city blues and violets",
+  "colors": {
+    "base": {
+      "fg": "#c0caf5",
+      "bg": "#1a1b26"
+    },
+    "header": {
+      "fg": "#c0caf5",
+      "bg": "#16161e"
+    },
+    "sidebar": {
+      "fg": "#c0caf5",
+      "bg": "#1a1b26"
+    },
+    "sidebar_selected": {
+      "fg": "#c0caf5",
+      "bg": "#292e42"
+    },
+    "badge": {
+      "fg": "#1a1b26",
+      "bg": "#7aa2f7"
+    },
+    "chat": {
+      "fg": "#c0caf5",
+      "bg": "#1a1b26"
+    },
+    "bubble_me": {
+      "fg": "#c0caf5",
+      "bg": "#2f3549"
+    },
+    "bubble_them": {
+      "fg": "#c0caf5",
+      "bg": "#292e42"
+    },
+    "sender": {
+      "fg": "#bb9af7",
+      "bg": "#292e42"
+    },
+    "timestamp": {
+      "fg": "#565f89",
+      "bg": "#1a1b26"
+    },
+    "day_separator": {
+      "fg": "#565f89",
+      "bg": "#292e42"
+    },
+    "composer": {
+      "fg": "#c0caf5",
+      "bg": "#16161e"
+    },
+    "accent": {
+      "fg": "#7aa2f7",
+      "bg": "#1a1b26"
+    },
+    "ok": {
+      "fg": "#9ece6a",
+      "bg": "#16161e"
+    },
+    "warn": {
+      "fg": "#e0af68",
+      "bg": "#16161e"
+    },
+    "blink": {
+      "fg": "#1a1b26",
+      "bg": "#7aa2f7"
+    },
+    "media": {
+      "fg": "#bb9af7",
+      "bg": "#1a1b26"
+    },
+    "dim": {
+      "fg": "#565f89",
+      "bg": "#1a1b26"
+    },
+    "border": {
+      "fg": "#292e42",
+      "bg": "#1a1b26"
+    },
+    "unread": {
+      "fg": "#7aa2f7",
+      "bg": "#16161e"
+    }
+  }
+}

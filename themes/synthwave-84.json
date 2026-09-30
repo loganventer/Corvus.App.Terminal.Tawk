@@ -1,0 +1,87 @@
+{
+  "id": "synthwave-84",
+  "name": "Synthwave '84",
+  "description": "Neon retro-future",
+  "colors": {
+    "base": {
+      "fg": "#ffffff",
+      "bg": "#262335"
+    },
+    "header": {
+      "fg": "#ffffff",
+      "bg": "#1e1a2e"
+    },
+    "sidebar": {
+      "fg": "#ffffff",
+      "bg": "#262335"
+    },
+    "sidebar_selected": {
+      "fg": "#ffffff",
+      "bg": "#34294f"
+    },
+    "badge": {
+      "fg": "#262335",
+      "bg": "#ff7edb"
+    },
+    "chat": {
+      "fg": "#ffffff",
+      "bg": "#262335"
+    },
+    "bubble_me": {
+      "fg": "#ffffff",
+      "bg": "#463465"
+    },
+    "bubble_them": {
+      "fg": "#ffffff",
+      "bg": "#34294f"
+    },
+    "sender": {
+      "fg": "#36f9f6",
+      "bg": "#34294f"
+    },
+    "timestamp": {
+      "fg": "#848bbd",
+      "bg": "#262335"
+    },
+    "day_separator": {
+      "fg": "#848bbd",
+      "bg": "#34294f"
+    },
+    "composer": {
+      "fg": "#ffffff",
+      "bg": "#1e1a2e"
+    },
+    "accent": {
+      "fg": "#ff7edb",
+      "bg": "#262335"
+    },
+    "ok": {
+      "fg": "#72f1b8",
+      "bg": "#1e1a2e"
+    },
+    "warn": {
+      "fg": "#fede5d",
+      "bg": "#1e1a2e"
+    },
+    "blink": {
+      "fg": "#262335",
+      "bg": "#ff7edb"
+    },
+    "media": {
+      "fg": "#36f9f6",
+      "bg": "#262335"
+    },
+    "dim": {
+      "fg": "#848bbd",
+      "bg": "#262335"
+    },
+    "border": {
+      "fg": "#34294f",
+      "bg": "#262335"
+    },
+    "unread": {
+      "fg": "#ff7edb",
+      "bg": "#1e1a2e"
+    }
+  }
+}

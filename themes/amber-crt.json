@@ -1,0 +1,87 @@
+{
+  "id": "amber-crt",
+  "name": "Amber CRT",
+  "description": "1980s monochrome amber terminal",
+  "colors": {
+    "base": {
+      "fg": "#ffb000",
+      "bg": "#000000"
+    },
+    "header": {
+      "fg": "#ffb000",
+      "bg": "#0a0600"
+    },
+    "sidebar": {
+      "fg": "#ffb000",
+      "bg": "#000000"
+    },
+    "sidebar_selected": {
+      "fg": "#ffb000",
+      "bg": "#2a1a00"
+    },
+    "badge": {
+      "fg": "#000000",
+      "bg": "#ffcc00"
+    },
+    "chat": {
+      "fg": "#ffb000",
+      "bg": "#000000"
+    },
+    "bubble_me": {
+      "fg": "#ffcc00",
+      "bg": "#2a1a00"
+    },
+    "bubble_them": {
+      "fg": "#ffb000",
+      "bg": "#2a1a00"
+    },
+    "sender": {
+      "fg": "#ff8c00",
+      "bg": "#2a1a00"
+    },
+    "timestamp": {
+      "fg": "#9c6b00",
+      "bg": "#000000"
+    },
+    "day_separator": {
+      "fg": "#9c6b00",
+      "bg": "#2a1a00"
+    },
+    "composer": {
+      "fg": "#ffb000",
+      "bg": "#0a0600"
+    },
+    "accent": {
+      "fg": "#ffcc00",
+      "bg": "#000000"
+    },
+    "ok": {
+      "fg": "#ffcc00",
+      "bg": "#0a0600"
+    },
+    "warn": {
+      "fg": "#ff6a00",
+      "bg": "#0a0600"
+    },
+    "blink": {
+      "fg": "#000000",
+      "bg": "#ffcc00"
+    },
+    "media": {
+      "fg": "#ff8c00",
+      "bg": "#000000"
+    },
+    "dim": {
+      "fg": "#9c6b00",
+      "bg": "#000000"
+    },
+    "border": {
+      "fg": "#2a1a00",
+      "bg": "#000000"
+    },
+    "unread": {
+      "fg": "#ffcc00",
+      "bg": "#0a0600"
+    }
+  }
+}

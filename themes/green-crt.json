@@ -1,0 +1,87 @@
+{
+  "id": "green-crt",
+  "name": "Green CRT",
+  "description": "Monochrome P1 phosphor",
+  "colors": {
+    "base": {
+      "fg": "#33ff33",
+      "bg": "#001100"
+    },
+    "header": {
+      "fg": "#33ff33",
+      "bg": "#000d00"
+    },
+    "sidebar": {
+      "fg": "#33ff33",
+      "bg": "#001100"
+    },
+    "sidebar_selected": {
+      "fg": "#33ff33",
+      "bg": "#002b00"
+    },
+    "badge": {
+      "fg": "#001100",
+      "bg": "#66ff66"
+    },
+    "chat": {
+      "fg": "#33ff33",
+      "bg": "#001100"
+    },
+    "bubble_me": {
+      "fg": "#66ff66",
+      "bg": "#003300"
+    },
+    "bubble_them": {
+      "fg": "#33ff33",
+      "bg": "#002b00"
+    },
+    "sender": {
+      "fg": "#33cc33",
+      "bg": "#002b00"
+    },
+    "timestamp": {
+      "fg": "#1a991a",
+      "bg": "#001100"
+    },
+    "day_separator": {
+      "fg": "#1a991a",
+      "bg": "#002b00"
+    },
+    "composer": {
+      "fg": "#33ff33",
+      "bg": "#000d00"
+    },
+    "accent": {
+      "fg": "#66ff66",
+      "bg": "#001100"
+    },
+    "ok": {
+      "fg": "#66ff66",
+      "bg": "#000d00"
+    },
+    "warn": {
+      "fg": "#ccff33",
+      "bg": "#000d00"
+    },
+    "blink": {
+      "fg": "#001100",
+      "bg": "#66ff66"
+    },
+    "media": {
+      "fg": "#33cc33",
+      "bg": "#001100"
+    },
+    "dim": {
+      "fg": "#1a991a",
+      "bg": "#001100"
+    },
+    "border": {
+      "fg": "#002b00",
+      "bg": "#001100"
+    },
+    "unread": {
+      "fg": "#66ff66",
+      "bg": "#000d00"
+    }
+  }
+}

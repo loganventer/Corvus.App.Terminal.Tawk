@@ -1,0 +1,87 @@
+{
+  "id": "pink-ocean",
+  "name": "Pink Ocean",
+  "description": "Rose pink and ocean blue: soft, warm and elegant",
+  "colors": {
+    "base": {
+      "fg": "#ffd7ff",
+      "bg": "#121212"
+    },
+    "header": {
+      "fg": "#ffffff",
+      "bg": "#005f87"
+    },
+    "sidebar": {
+      "fg": "#ffd7ff",
+      "bg": "#121212"
+    },
+    "sidebar_selected": {
+      "fg": "#ffffff",
+      "bg": "#005f87"
+    },
+    "badge": {
+      "fg": "#000000",
+      "bg": "#ff87d7"
+    },
+    "chat": {
+      "fg": "#ffd7ff",
+      "bg": "#121212"
+    },
+    "bubble_me": {
+      "fg": "#ffffff",
+      "bg": "#af005f"
+    },
+    "bubble_them": {
+      "fg": "#ffffff",
+      "bg": "#005f87"
+    },
+    "sender": {
+      "fg": "#ffd7ff",
+      "bg": "#005f87"
+    },
+    "timestamp": {
+      "fg": "#87afd7",
+      "bg": "#121212"
+    },
+    "day_separator": {
+      "fg": "#ffffff",
+      "bg": "#005f87"
+    },
+    "composer": {
+      "fg": "#ffd7ff",
+      "bg": "#262626"
+    },
+    "accent": {
+      "fg": "#ff87d7",
+      "bg": "#121212"
+    },
+    "ok": {
+      "fg": "#87ffff",
+      "bg": "#005f87"
+    },
+    "warn": {
+      "fg": "#ffd7af",
+      "bg": "#005f87"
+    },
+    "blink": {
+      "fg": "#000000",
+      "bg": "#ff87d7"
+    },
+    "media": {
+      "fg": "#5fd7ff",
+      "bg": "#121212"
+    },
+    "dim": {
+      "fg": "#8a8a8a",
+      "bg": "#121212"
+    },
+    "border": {
+      "fg": "#005f87",
+      "bg": "#121212"
+    },
+    "unread": {
+      "fg": "#ffd7ff",
+      "bg": "#005f87"
+    }
+  }
+}

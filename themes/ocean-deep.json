@@ -1,0 +1,87 @@
+{
+  "id": "ocean-deep",
+  "name": "Ocean Deep",
+  "description": "Abyssal blues and bioluminescence",
+  "colors": {
+    "base": {
+      "fg": "#cfe8ff",
+      "bg": "#07141f"
+    },
+    "header": {
+      "fg": "#cfe8ff",
+      "bg": "#051019"
+    },
+    "sidebar": {
+      "fg": "#cfe8ff",
+      "bg": "#07141f"
+    },
+    "sidebar_selected": {
+      "fg": "#cfe8ff",
+      "bg": "#0d2233"
+    },
+    "badge": {
+      "fg": "#07141f",
+      "bg": "#00c2ff"
+    },
+    "chat": {
+      "fg": "#cfe8ff",
+      "bg": "#07141f"
+    },
+    "bubble_me": {
+      "fg": "#e6f6ff",
+      "bg": "#0f3550"
+    },
+    "bubble_them": {
+      "fg": "#cfe8ff",
+      "bg": "#0d2233"
+    },
+    "sender": {
+      "fg": "#7cf5ff",
+      "bg": "#0d2233"
+    },
+    "timestamp": {
+      "fg": "#5d7c96",
+      "bg": "#07141f"
+    },
+    "day_separator": {
+      "fg": "#5d7c96",
+      "bg": "#0d2233"
+    },
+    "composer": {
+      "fg": "#cfe8ff",
+      "bg": "#051019"
+    },
+    "accent": {
+      "fg": "#00c2ff",
+      "bg": "#07141f"
+    },
+    "ok": {
+      "fg": "#35e0a0",
+      "bg": "#051019"
+    },
+    "warn": {
+      "fg": "#ffc857",
+      "bg": "#051019"
+    },
+    "blink": {
+      "fg": "#07141f",
+      "bg": "#00c2ff"
+    },
+    "media": {
+      "fg": "#7cf5ff",
+      "bg": "#07141f"
+    },
+    "dim": {
+      "fg": "#5d7c96",
+      "bg": "#07141f"
+    },
+    "border": {
+      "fg": "#0d2233",
+      "bg": "#07141f"
+    },
+    "unread": {
+      "fg": "#00c2ff",
+      "bg": "#051019"
+    }
+  }
+}

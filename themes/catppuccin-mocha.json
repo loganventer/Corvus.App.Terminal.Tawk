@@ -1,0 +1,87 @@
+{
+  "id": "catppuccin-mocha",
+  "name": "Catppuccin Mocha",
+  "description": "Soothing pastels on dark mocha",
+  "colors": {
+    "base": {
+      "fg": "#cdd6f4",
+      "bg": "#1e1e2e"
+    },
+    "header": {
+      "fg": "#cdd6f4",
+      "bg": "#181825"
+    },
+    "sidebar": {
+      "fg": "#cdd6f4",
+      "bg": "#1e1e2e"
+    },
+    "sidebar_selected": {
+      "fg": "#cdd6f4",
+      "bg": "#313244"
+    },
+    "badge": {
+      "fg": "#1e1e2e",
+      "bg": "#cba6f7"
+    },
+    "chat": {
+      "fg": "#cdd6f4",
+      "bg": "#1e1e2e"
+    },
+    "bubble_me": {
+      "fg": "#cdd6f4",
+      "bg": "#45475a"
+    },
+    "bubble_them": {
+      "fg": "#cdd6f4",
+      "bg": "#313244"
+    },
+    "sender": {
+      "fg": "#89b4fa",
+      "bg": "#313244"
+    },
+    "timestamp": {
+      "fg": "#7f849c",
+      "bg": "#1e1e2e"
+    },
+    "day_separator": {
+      "fg": "#7f849c",
+      "bg": "#313244"
+    },
+    "composer": {
+      "fg": "#cdd6f4",
+      "bg": "#181825"
+    },
+    "accent": {
+      "fg": "#cba6f7",
+      "bg": "#1e1e2e"
+    },
+    "ok": {
+      "fg": "#a6e3a1",
+      "bg": "#181825"
+    },
+    "warn": {
+      "fg": "#fab387",
+      "bg": "#181825"
+    },
+    "blink": {
+      "fg": "#1e1e2e",
+      "bg": "#cba6f7"
+    },
+    "media": {
+      "fg": "#89b4fa",
+      "bg": "#1e1e2e"
+    },
+    "dim": {
+      "fg": "#7f849c",
+      "bg": "#1e1e2e"
+    },
+    "border": {
+      "fg": "#313244",
+      "bg": "#1e1e2e"
+    },
+    "unread": {
+      "fg": "#cba6f7",
+      "bg": "#181825"
+    }
+  }
+}

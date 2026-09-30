@@ -1,0 +1,87 @@
+{
+  "id": "oxocarbon",
+  "name": "Oxocarbon",
+  "description": "IBM Carbon, oxidised",
+  "colors": {
+    "base": {
+      "fg": "#f2f4f8",
+      "bg": "#161616"
+    },
+    "header": {
+      "fg": "#f2f4f8",
+      "bg": "#262626"
+    },
+    "sidebar": {
+      "fg": "#f2f4f8",
+      "bg": "#161616"
+    },
+    "sidebar_selected": {
+      "fg": "#f2f4f8",
+      "bg": "#393939"
+    },
+    "badge": {
+      "fg": "#161616",
+      "bg": "#ee5396"
+    },
+    "chat": {
+      "fg": "#f2f4f8",
+      "bg": "#161616"
+    },
+    "bubble_me": {
+      "fg": "#f2f4f8",
+      "bg": "#393939"
+    },
+    "bubble_them": {
+      "fg": "#f2f4f8",
+      "bg": "#393939"
+    },
+    "sender": {
+      "fg": "#33b1ff",
+      "bg": "#393939"
+    },
+    "timestamp": {
+      "fg": "#6f6f6f",
+      "bg": "#161616"
+    },
+    "day_separator": {
+      "fg": "#6f6f6f",
+      "bg": "#393939"
+    },
+    "composer": {
+      "fg": "#f2f4f8",
+      "bg": "#262626"
+    },
+    "accent": {
+      "fg": "#ee5396",
+      "bg": "#161616"
+    },
+    "ok": {
+      "fg": "#42be65",
+      "bg": "#262626"
+    },
+    "warn": {
+      "fg": "#ff7eb6",
+      "bg": "#262626"
+    },
+    "blink": {
+      "fg": "#161616",
+      "bg": "#ee5396"
+    },
+    "media": {
+      "fg": "#33b1ff",
+      "bg": "#161616"
+    },
+    "dim": {
+      "fg": "#6f6f6f",
+      "bg": "#161616"
+    },
+    "border": {
+      "fg": "#393939",
+      "bg": "#161616"
+    },
+    "unread": {
+      "fg": "#ee5396",
+      "bg": "#262626"
+    }
+  }
+}

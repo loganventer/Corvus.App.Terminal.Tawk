@@ -1,0 +1,87 @@
+{
+  "id": "zenburn",
+  "name": "Zenburn",
+  "description": "Low-contrast alien fruit salad",
+  "colors": {
+    "base": {
+      "fg": "#dcdccc",
+      "bg": "#3f3f3f"
+    },
+    "header": {
+      "fg": "#dcdccc",
+      "bg": "#383838"
+    },
+    "sidebar": {
+      "fg": "#dcdccc",
+      "bg": "#3f3f3f"
+    },
+    "sidebar_selected": {
+      "fg": "#dcdccc",
+      "bg": "#4f4f4f"
+    },
+    "badge": {
+      "fg": "#3f3f3f",
+      "bg": "#8cd0d3"
+    },
+    "chat": {
+      "fg": "#dcdccc",
+      "bg": "#3f3f3f"
+    },
+    "bubble_me": {
+      "fg": "#dcdccc",
+      "bg": "#5f5f5f"
+    },
+    "bubble_them": {
+      "fg": "#dcdccc",
+      "bg": "#4f4f4f"
+    },
+    "sender": {
+      "fg": "#dc8cc3",
+      "bg": "#4f4f4f"
+    },
+    "timestamp": {
+      "fg": "#7f9f7f",
+      "bg": "#3f3f3f"
+    },
+    "day_separator": {
+      "fg": "#7f9f7f",
+      "bg": "#4f4f4f"
+    },
+    "composer": {
+      "fg": "#dcdccc",
+      "bg": "#383838"
+    },
+    "accent": {
+      "fg": "#8cd0d3",
+      "bg": "#3f3f3f"
+    },
+    "ok": {
+      "fg": "#7f9f7f",
+      "bg": "#383838"
+    },
+    "warn": {
+      "fg": "#f0dfaf",
+      "bg": "#383838"
+    },
+    "blink": {
+      "fg": "#3f3f3f",
+      "bg": "#8cd0d3"
+    },
+    "media": {
+      "fg": "#dc8cc3",
+      "bg": "#3f3f3f"
+    },
+    "dim": {
+      "fg": "#7f9f7f",
+      "bg": "#3f3f3f"
+    },
+    "border": {
+      "fg": "#4f4f4f",
+      "bg": "#3f3f3f"
+    },
+    "unread": {
+      "fg": "#8cd0d3",
+      "bg": "#383838"
+    }
+  }
+}

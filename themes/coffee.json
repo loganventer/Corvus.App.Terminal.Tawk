@@ -1,0 +1,87 @@
+{
+  "id": "coffee",
+  "name": "Coffee",
+  "description": "Espresso and crema",
+  "colors": {
+    "base": {
+      "fg": "#e8d8c3",
+      "bg": "#2b211c"
+    },
+    "header": {
+      "fg": "#e8d8c3",
+      "bg": "#231a16"
+    },
+    "sidebar": {
+      "fg": "#e8d8c3",
+      "bg": "#2b211c"
+    },
+    "sidebar_selected": {
+      "fg": "#e8d8c3",
+      "bg": "#3d2f28"
+    },
+    "badge": {
+      "fg": "#2b211c",
+      "bg": "#c8915c"
+    },
+    "chat": {
+      "fg": "#e8d8c3",
+      "bg": "#2b211c"
+    },
+    "bubble_me": {
+      "fg": "#f3e9dc",
+      "bg": "#4a3a31"
+    },
+    "bubble_them": {
+      "fg": "#e8d8c3",
+      "bg": "#3d2f28"
+    },
+    "sender": {
+      "fg": "#d4a373",
+      "bg": "#3d2f28"
+    },
+    "timestamp": {
+      "fg": "#a08878",
+      "bg": "#2b211c"
+    },
+    "day_separator": {
+      "fg": "#a08878",
+      "bg": "#3d2f28"
+    },
+    "composer": {
+      "fg": "#e8d8c3",
+      "bg": "#231a16"
+    },
+    "accent": {
+      "fg": "#c8915c",
+      "bg": "#2b211c"
+    },
+    "ok": {
+      "fg": "#a3b18a",
+      "bg": "#231a16"
+    },
+    "warn": {
+      "fg": "#e9c46a",
+      "bg": "#231a16"
+    },
+    "blink": {
+      "fg": "#2b211c",
+      "bg": "#c8915c"
+    },
+    "media": {
+      "fg": "#d4a373",
+      "bg": "#2b211c"
+    },
+    "dim": {
+      "fg": "#a08878",
+      "bg": "#2b211c"
+    },
+    "border": {
+      "fg": "#3d2f28",
+      "bg": "#2b211c"
+    },
+    "unread": {
+      "fg": "#c8915c",
+      "bg": "#231a16"
+    }
+  }
+}

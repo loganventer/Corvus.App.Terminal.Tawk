@@ -1,0 +1,87 @@
+{
+  "id": "ms-dos",
+  "name": "MS-DOS",
+  "description": "Edit.com blue and grey",
+  "colors": {
+    "base": {
+      "fg": "#aaaaaa",
+      "bg": "#0000aa"
+    },
+    "header": {
+      "fg": "#aaaaaa",
+      "bg": "#0000aa"
+    },
+    "sidebar": {
+      "fg": "#aaaaaa",
+      "bg": "#0000aa"
+    },
+    "sidebar_selected": {
+      "fg": "#aaaaaa",
+      "bg": "#00aaaa"
+    },
+    "badge": {
+      "fg": "#0000aa",
+      "bg": "#ffff55"
+    },
+    "chat": {
+      "fg": "#aaaaaa",
+      "bg": "#0000aa"
+    },
+    "bubble_me": {
+      "fg": "#000000",
+      "bg": "#00aaaa"
+    },
+    "bubble_them": {
+      "fg": "#aaaaaa",
+      "bg": "#00aaaa"
+    },
+    "sender": {
+      "fg": "#55ffff",
+      "bg": "#00aaaa"
+    },
+    "timestamp": {
+      "fg": "#5555ff",
+      "bg": "#0000aa"
+    },
+    "day_separator": {
+      "fg": "#5555ff",
+      "bg": "#00aaaa"
+    },
+    "composer": {
+      "fg": "#aaaaaa",
+      "bg": "#0000aa"
+    },
+    "accent": {
+      "fg": "#ffff55",
+      "bg": "#0000aa"
+    },
+    "ok": {
+      "fg": "#55ff55",
+      "bg": "#0000aa"
+    },
+    "warn": {
+      "fg": "#ffff55",
+      "bg": "#0000aa"
+    },
+    "blink": {
+      "fg": "#0000aa",
+      "bg": "#ffff55"
+    },
+    "media": {
+      "fg": "#55ffff",
+      "bg": "#0000aa"
+    },
+    "dim": {
+      "fg": "#5555ff",
+      "bg": "#0000aa"
+    },
+    "border": {
+      "fg": "#00aaaa",
+      "bg": "#0000aa"
+    },
+    "unread": {
+      "fg": "#ffff55",
+      "bg": "#0000aa"
+    }
+  }
+}

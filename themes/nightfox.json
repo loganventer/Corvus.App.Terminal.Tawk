@@ -1,0 +1,87 @@
+{
+  "id": "nightfox",
+  "name": "Nightfox",
+  "description": "Soft dark fox",
+  "colors": {
+    "base": {
+      "fg": "#cdcecf",
+      "bg": "#192330"
+    },
+    "header": {
+      "fg": "#cdcecf",
+      "bg": "#131a24"
+    },
+    "sidebar": {
+      "fg": "#cdcecf",
+      "bg": "#192330"
+    },
+    "sidebar_selected": {
+      "fg": "#cdcecf",
+      "bg": "#29394f"
+    },
+    "badge": {
+      "fg": "#192330",
+      "bg": "#719cd6"
+    },
+    "chat": {
+      "fg": "#cdcecf",
+      "bg": "#192330"
+    },
+    "bubble_me": {
+      "fg": "#cdcecf",
+      "bg": "#2b3b51"
+    },
+    "bubble_them": {
+      "fg": "#cdcecf",
+      "bg": "#29394f"
+    },
+    "sender": {
+      "fg": "#9d79d6",
+      "bg": "#29394f"
+    },
+    "timestamp": {
+      "fg": "#738091",
+      "bg": "#192330"
+    },
+    "day_separator": {
+      "fg": "#738091",
+      "bg": "#29394f"
+    },
+    "composer": {
+      "fg": "#cdcecf",
+      "bg": "#131a24"
+    },
+    "accent": {
+      "fg": "#719cd6",
+      "bg": "#192330"
+    },
+    "ok": {
+      "fg": "#81b29a",
+      "bg": "#131a24"
+    },
+    "warn": {
+      "fg": "#dbc074",
+      "bg": "#131a24"
+    },
+    "blink": {
+      "fg": "#192330",
+      "bg": "#719cd6"
+    },
+    "media": {
+      "fg": "#9d79d6",
+      "bg": "#192330"
+    },
+    "dim": {
+      "fg": "#738091",
+      "bg": "#192330"
+    },
+    "border": {
+      "fg": "#29394f",
+      "bg": "#192330"
+    },
+    "unread": {
+      "fg": "#719cd6",
+      "bg": "#131a24"
+    }
+  }
+}

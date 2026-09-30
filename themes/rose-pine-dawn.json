@@ -1,0 +1,87 @@
+{
+  "id": "rose-pine-dawn",
+  "name": "Rosé Pine Dawn",
+  "description": "Rosé Pine at sunrise",
+  "colors": {
+    "base": {
+      "fg": "#575279",
+      "bg": "#faf4ed"
+    },
+    "header": {
+      "fg": "#575279",
+      "bg": "#fffaf3"
+    },
+    "sidebar": {
+      "fg": "#575279",
+      "bg": "#faf4ed"
+    },
+    "sidebar_selected": {
+      "fg": "#575279",
+      "bg": "#f2e9e1"
+    },
+    "badge": {
+      "fg": "#faf4ed",
+      "bg": "#d7827e"
+    },
+    "chat": {
+      "fg": "#575279",
+      "bg": "#faf4ed"
+    },
+    "bubble_me": {
+      "fg": "#575279",
+      "bg": "#f4ede8"
+    },
+    "bubble_them": {
+      "fg": "#575279",
+      "bg": "#f2e9e1"
+    },
+    "sender": {
+      "fg": "#907aa9",
+      "bg": "#f2e9e1"
+    },
+    "timestamp": {
+      "fg": "#9893a5",
+      "bg": "#faf4ed"
+    },
+    "day_separator": {
+      "fg": "#9893a5",
+      "bg": "#f2e9e1"
+    },
+    "composer": {
+      "fg": "#575279",
+      "bg": "#fffaf3"
+    },
+    "accent": {
+      "fg": "#d7827e",
+      "bg": "#faf4ed"
+    },
+    "ok": {
+      "fg": "#56949f",
+      "bg": "#fffaf3"
+    },
+    "warn": {
+      "fg": "#ea9d34",
+      "bg": "#fffaf3"
+    },
+    "blink": {
+      "fg": "#faf4ed",
+      "bg": "#d7827e"
+    },
+    "media": {
+      "fg": "#907aa9",
+      "bg": "#faf4ed"
+    },
+    "dim": {
+      "fg": "#9893a5",
+      "bg": "#faf4ed"
+    },
+    "border": {
+      "fg": "#f2e9e1",
+      "bg": "#faf4ed"
+    },
+    "unread": {
+      "fg": "#d7827e",
+      "bg": "#fffaf3"
+    }
+  }
+}

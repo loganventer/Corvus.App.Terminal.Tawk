@@ -1,0 +1,87 @@
+{
+  "id": "night-owl",
+  "name": "Night Owl",
+  "description": "For the night owls",
+  "colors": {
+    "base": {
+      "fg": "#d6deeb",
+      "bg": "#011627"
+    },
+    "header": {
+      "fg": "#d6deeb",
+      "bg": "#01111d"
+    },
+    "sidebar": {
+      "fg": "#d6deeb",
+      "bg": "#011627"
+    },
+    "sidebar_selected": {
+      "fg": "#d6deeb",
+      "bg": "#0b2942"
+    },
+    "badge": {
+      "fg": "#011627",
+      "bg": "#82aaff"
+    },
+    "chat": {
+      "fg": "#d6deeb",
+      "bg": "#011627"
+    },
+    "bubble_me": {
+      "fg": "#d6deeb",
+      "bg": "#1d3b53"
+    },
+    "bubble_them": {
+      "fg": "#d6deeb",
+      "bg": "#0b2942"
+    },
+    "sender": {
+      "fg": "#c792ea",
+      "bg": "#0b2942"
+    },
+    "timestamp": {
+      "fg": "#637777",
+      "bg": "#011627"
+    },
+    "day_separator": {
+      "fg": "#637777",
+      "bg": "#0b2942"
+    },
+    "composer": {
+      "fg": "#d6deeb",
+      "bg": "#01111d"
+    },
+    "accent": {
+      "fg": "#82aaff",
+      "bg": "#011627"
+    },
+    "ok": {
+      "fg": "#addb67",
+      "bg": "#01111d"
+    },
+    "warn": {
+      "fg": "#ecc48d",
+      "bg": "#01111d"
+    },
+    "blink": {
+      "fg": "#011627",
+      "bg": "#82aaff"
+    },
+    "media": {
+      "fg": "#c792ea",
+      "bg": "#011627"
+    },
+    "dim": {
+      "fg": "#637777",
+      "bg": "#011627"
+    },
+    "border": {
+      "fg": "#0b2942",
+      "bg": "#011627"
+    },
+    "unread": {
+      "fg": "#82aaff",
+      "bg": "#01111d"
+    }
+  }
+}

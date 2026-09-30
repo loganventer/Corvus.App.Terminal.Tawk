@@ -1,0 +1,10 @@
+#ifndef APP_CLIENTS_TUI_FILE_PICKER_RESULT_H
+#define APP_CLIENTS_TUI_FILE_PICKER_RESULT_H
+
+typedef enum FilePickerResult {
+    FILE_PICKER_BROWSING = 0,
+    FILE_PICKER_PICKED,
+    FILE_PICKER_CANCELLED
+} FilePickerResult;
+
+#endif

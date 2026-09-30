@@ -1,0 +1,87 @@
+{
+  "id": "cyberpunk",
+  "name": "Cyberpunk",
+  "description": "Yellow and cyan on black chrome",
+  "colors": {
+    "base": {
+      "fg": "#0abdc6",
+      "bg": "#000b1e"
+    },
+    "header": {
+      "fg": "#0abdc6",
+      "bg": "#00050f"
+    },
+    "sidebar": {
+      "fg": "#0abdc6",
+      "bg": "#000b1e"
+    },
+    "sidebar_selected": {
+      "fg": "#0abdc6",
+      "bg": "#0a1a33"
+    },
+    "badge": {
+      "fg": "#000b1e",
+      "bg": "#fcee0c"
+    },
+    "chat": {
+      "fg": "#0abdc6",
+      "bg": "#000b1e"
+    },
+    "bubble_me": {
+      "fg": "#fcee0c",
+      "bg": "#133e7c"
+    },
+    "bubble_them": {
+      "fg": "#0abdc6",
+      "bg": "#0a1a33"
+    },
+    "sender": {
+      "fg": "#ea00d9",
+      "bg": "#0a1a33"
+    },
+    "timestamp": {
+      "fg": "#133e7c",
+      "bg": "#000b1e"
+    },
+    "day_separator": {
+      "fg": "#133e7c",
+      "bg": "#0a1a33"
+    },
+    "composer": {
+      "fg": "#0abdc6",
+      "bg": "#00050f"
+    },
+    "accent": {
+      "fg": "#fcee0c",
+      "bg": "#000b1e"
+    },
+    "ok": {
+      "fg": "#00ff9f",
+      "bg": "#00050f"
+    },
+    "warn": {
+      "fg": "#ff9e00",
+      "bg": "#00050f"
+    },
+    "blink": {
+      "fg": "#000b1e",
+      "bg": "#fcee0c"
+    },
+    "media": {
+      "fg": "#ea00d9",
+      "bg": "#000b1e"
+    },
+    "dim": {
+      "fg": "#133e7c",
+      "bg": "#000b1e"
+    },
+    "border": {
+      "fg": "#0a1a33",
+      "bg": "#000b1e"
+    },
+    "unread": {
+      "fg": "#fcee0c",
+      "bg": "#00050f"
+    }
+  }
+}

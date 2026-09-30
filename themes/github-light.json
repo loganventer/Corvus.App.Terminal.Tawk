@@ -1,0 +1,87 @@
+{
+  "id": "github-light",
+  "name": "GitHub Light",
+  "description": "Familiar crisp light UI",
+  "colors": {
+    "base": {
+      "fg": "#24292f",
+      "bg": "#ffffff"
+    },
+    "header": {
+      "fg": "#24292f",
+      "bg": "#f6f8fa"
+    },
+    "sidebar": {
+      "fg": "#24292f",
+      "bg": "#ffffff"
+    },
+    "sidebar_selected": {
+      "fg": "#24292f",
+      "bg": "#eaeef2"
+    },
+    "badge": {
+      "fg": "#ffffff",
+      "bg": "#0969da"
+    },
+    "chat": {
+      "fg": "#24292f",
+      "bg": "#ffffff"
+    },
+    "bubble_me": {
+      "fg": "#24292f",
+      "bg": "#ddf4ff"
+    },
+    "bubble_them": {
+      "fg": "#24292f",
+      "bg": "#eaeef2"
+    },
+    "sender": {
+      "fg": "#8250df",
+      "bg": "#eaeef2"
+    },
+    "timestamp": {
+      "fg": "#57606a",
+      "bg": "#ffffff"
+    },
+    "day_separator": {
+      "fg": "#57606a",
+      "bg": "#eaeef2"
+    },
+    "composer": {
+      "fg": "#24292f",
+      "bg": "#f6f8fa"
+    },
+    "accent": {
+      "fg": "#0969da",
+      "bg": "#ffffff"
+    },
+    "ok": {
+      "fg": "#1a7f37",
+      "bg": "#f6f8fa"
+    },
+    "warn": {
+      "fg": "#9a6700",
+      "bg": "#f6f8fa"
+    },
+    "blink": {
+      "fg": "#ffffff",
+      "bg": "#0969da"
+    },
+    "media": {
+      "fg": "#8250df",
+      "bg": "#ffffff"
+    },
+    "dim": {
+      "fg": "#57606a",
+      "bg": "#ffffff"
+    },
+    "border": {
+      "fg": "#eaeef2",
+      "bg": "#ffffff"
+    },
+    "unread": {
+      "fg": "#0969da",
+      "bg": "#f6f8fa"
+    }
+  }
+}

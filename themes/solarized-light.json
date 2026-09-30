@@ -1,0 +1,87 @@
+{
+  "id": "solarized-light",
+  "name": "Solarized Light",
+  "description": "Precision colours, light base",
+  "colors": {
+    "base": {
+      "fg": "#586e75",
+      "bg": "#fdf6e3"
+    },
+    "header": {
+      "fg": "#586e75",
+      "bg": "#eee8d5"
+    },
+    "sidebar": {
+      "fg": "#586e75",
+      "bg": "#fdf6e3"
+    },
+    "sidebar_selected": {
+      "fg": "#586e75",
+      "bg": "#e4ddc8"
+    },
+    "badge": {
+      "fg": "#fdf6e3",
+      "bg": "#268bd2"
+    },
+    "chat": {
+      "fg": "#586e75",
+      "bg": "#fdf6e3"
+    },
+    "bubble_me": {
+      "fg": "#073642",
+      "bg": "#d8e8d0"
+    },
+    "bubble_them": {
+      "fg": "#586e75",
+      "bg": "#e4ddc8"
+    },
+    "sender": {
+      "fg": "#2aa198",
+      "bg": "#e4ddc8"
+    },
+    "timestamp": {
+      "fg": "#93a1a1",
+      "bg": "#fdf6e3"
+    },
+    "day_separator": {
+      "fg": "#93a1a1",
+      "bg": "#e4ddc8"
+    },
+    "composer": {
+      "fg": "#586e75",
+      "bg": "#eee8d5"
+    },
+    "accent": {
+      "fg": "#268bd2",
+      "bg": "#fdf6e3"
+    },
+    "ok": {
+      "fg": "#859900",
+      "bg": "#eee8d5"
+    },
+    "warn": {
+      "fg": "#b58900",
+      "bg": "#eee8d5"
+    },
+    "blink": {
+      "fg": "#fdf6e3",
+      "bg": "#268bd2"
+    },
+    "media": {
+      "fg": "#2aa198",
+      "bg": "#fdf6e3"
+    },
+    "dim": {
+      "fg": "#93a1a1",
+      "bg": "#fdf6e3"
+    },
+    "border": {
+      "fg": "#e4ddc8",
+      "bg": "#fdf6e3"
+    },
+    "unread": {
+      "fg": "#268bd2",
+      "bg": "#eee8d5"
+    }
+  }
+}

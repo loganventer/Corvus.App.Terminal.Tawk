@@ -1,0 +1,87 @@
+{
+  "id": "nord",
+  "name": "Nord",
+  "description": "Arctic, north-bluish calm",
+  "colors": {
+    "base": {
+      "fg": "#eceff4",
+      "bg": "#2e3440"
+    },
+    "header": {
+      "fg": "#eceff4",
+      "bg": "#3b4252"
+    },
+    "sidebar": {
+      "fg": "#eceff4",
+      "bg": "#2e3440"
+    },
+    "sidebar_selected": {
+      "fg": "#eceff4",
+      "bg": "#434c5e"
+    },
+    "badge": {
+      "fg": "#2e3440",
+      "bg": "#88c0d0"
+    },
+    "chat": {
+      "fg": "#eceff4",
+      "bg": "#2e3440"
+    },
+    "bubble_me": {
+      "fg": "#eceff4",
+      "bg": "#5e81ac"
+    },
+    "bubble_them": {
+      "fg": "#eceff4",
+      "bg": "#434c5e"
+    },
+    "sender": {
+      "fg": "#81a1c1",
+      "bg": "#434c5e"
+    },
+    "timestamp": {
+      "fg": "#7b88a1",
+      "bg": "#2e3440"
+    },
+    "day_separator": {
+      "fg": "#7b88a1",
+      "bg": "#434c5e"
+    },
+    "composer": {
+      "fg": "#eceff4",
+      "bg": "#3b4252"
+    },
+    "accent": {
+      "fg": "#88c0d0",
+      "bg": "#2e3440"
+    },
+    "ok": {
+      "fg": "#a3be8c",
+      "bg": "#3b4252"
+    },
+    "warn": {
+      "fg": "#ebcb8b",
+      "bg": "#3b4252"
+    },
+    "blink": {
+      "fg": "#2e3440",
+      "bg": "#88c0d0"
+    },
+    "media": {
+      "fg": "#81a1c1",
+      "bg": "#2e3440"
+    },
+    "dim": {
+      "fg": "#7b88a1",
+      "bg": "#2e3440"
+    },
+    "border": {
+      "fg": "#434c5e",
+      "bg": "#2e3440"
+    },
+    "unread": {
+      "fg": "#88c0d0",
+      "bg": "#3b4252"
+    }
+  }
+}

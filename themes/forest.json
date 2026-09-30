@@ -1,0 +1,87 @@
+{
+  "id": "forest",
+  "name": "Forest",
+  "description": "Moss, bark and leaves",
+  "colors": {
+    "base": {
+      "fg": "#dde5cf",
+      "bg": "#1b2418"
+    },
+    "header": {
+      "fg": "#dde5cf",
+      "bg": "#151c13"
+    },
+    "sidebar": {
+      "fg": "#dde5cf",
+      "bg": "#1b2418"
+    },
+    "sidebar_selected": {
+      "fg": "#dde5cf",
+      "bg": "#27331f"
+    },
+    "badge": {
+      "fg": "#1b2418",
+      "bg": "#8fbf5a"
+    },
+    "chat": {
+      "fg": "#dde5cf",
+      "bg": "#1b2418"
+    },
+    "bubble_me": {
+      "fg": "#eef3e4",
+      "bg": "#2f4526"
+    },
+    "bubble_them": {
+      "fg": "#dde5cf",
+      "bg": "#27331f"
+    },
+    "sender": {
+      "fg": "#c7a66a",
+      "bg": "#27331f"
+    },
+    "timestamp": {
+      "fg": "#7f8f70",
+      "bg": "#1b2418"
+    },
+    "day_separator": {
+      "fg": "#7f8f70",
+      "bg": "#27331f"
+    },
+    "composer": {
+      "fg": "#dde5cf",
+      "bg": "#151c13"
+    },
+    "accent": {
+      "fg": "#8fbf5a",
+      "bg": "#1b2418"
+    },
+    "ok": {
+      "fg": "#9ccc65",
+      "bg": "#151c13"
+    },
+    "warn": {
+      "fg": "#e0b050",
+      "bg": "#151c13"
+    },
+    "blink": {
+      "fg": "#1b2418",
+      "bg": "#8fbf5a"
+    },
+    "media": {
+      "fg": "#c7a66a",
+      "bg": "#1b2418"
+    },
+    "dim": {
+      "fg": "#7f8f70",
+      "bg": "#1b2418"
+    },
+    "border": {
+      "fg": "#27331f",
+      "bg": "#1b2418"
+    },
+    "unread": {
+      "fg": "#8fbf5a",
+      "bg": "#151c13"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "id": "ayu-dark",
+  "name": "Ayu Dark",
+  "description": "Bright colours on deep dark",
+  "colors": {
+    "base": {
+      "fg": "#bfbdb6",
+      "bg": "#0b0e14"
+    },
+    "header": {
+      "fg": "#bfbdb6",
+      "bg": "#0d1017"
+    },
+    "sidebar": {
+      "fg": "#bfbdb6",
+      "bg": "#0b0e14"
+    },
+    "sidebar_selected": {
+      "fg": "#bfbdb6",
+      "bg": "#131721"
+    },
+    "badge": {
+      "fg": "#0b0e14",
+      "bg": "#e6b450"
+    },
+    "chat": {
+      "fg": "#bfbdb6",
+      "bg": "#0b0e14"
+    },
+    "bubble_me": {
+      "fg": "#bfbdb6",
+      "bg": "#1b3a5b"
+    },
+    "bubble_them": {
+      "fg": "#bfbdb6",
+      "bg": "#131721"
+    },
+    "sender": {
+      "fg": "#59c2ff",
+      "bg": "#131721"
+    },
+    "timestamp": {
+      "fg": "#565b66",
+      "bg": "#0b0e14"
+    },
+    "day_separator": {
+      "fg": "#565b66",
+      "bg": "#131721"
+    },
+    "composer": {
+      "fg": "#bfbdb6",
+      "bg": "#0d1017"
+    },
+    "accent": {
+      "fg": "#e6b450",
+      "bg": "#0b0e14"
+    },
+    "ok": {
+      "fg": "#aad94c",
+      "bg": "#0d1017"
+    },
+    "warn": {
+      "fg": "#ff8f40",
+      "bg": "#0d1017"
+    },
+    "blink": {
+      "fg": "#0b0e14",
+      "bg": "#e6b450"
+    },
+    "media": {
+      "fg": "#59c2ff",
+      "bg": "#0b0e14"
+    },
+    "dim": {
+      "fg": "#565b66",
+      "bg": "#0b0e14"
+    },
+    "border": {
+      "fg": "#131721",
+      "bg": "#0b0e14"
+    },
+    "unread": {
+      "fg": "#e6b450",
+      "bg": "#0d1017"
+    }
+  }
+}

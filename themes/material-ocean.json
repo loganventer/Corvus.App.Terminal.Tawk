@@ -1,0 +1,87 @@
+{
+  "id": "material-ocean",
+  "name": "Material Ocean",
+  "description": "Material design, deep ocean",
+  "colors": {
+    "base": {
+      "fg": "#a6accd",
+      "bg": "#0f111a"
+    },
+    "header": {
+      "fg": "#a6accd",
+      "bg": "#090b10"
+    },
+    "sidebar": {
+      "fg": "#a6accd",
+      "bg": "#0f111a"
+    },
+    "sidebar_selected": {
+      "fg": "#a6accd",
+      "bg": "#1f2233"
+    },
+    "badge": {
+      "fg": "#0f111a",
+      "bg": "#82aaff"
+    },
+    "chat": {
+      "fg": "#a6accd",
+      "bg": "#0f111a"
+    },
+    "bubble_me": {
+      "fg": "#eeffff",
+      "bg": "#1f2233"
+    },
+    "bubble_them": {
+      "fg": "#a6accd",
+      "bg": "#1f2233"
+    },
+    "sender": {
+      "fg": "#c792ea",
+      "bg": "#1f2233"
+    },
+    "timestamp": {
+      "fg": "#464b5d",
+      "bg": "#0f111a"
+    },
+    "day_separator": {
+      "fg": "#464b5d",
+      "bg": "#1f2233"
+    },
+    "composer": {
+      "fg": "#a6accd",
+      "bg": "#090b10"
+    },
+    "accent": {
+      "fg": "#82aaff",
+      "bg": "#0f111a"
+    },
+    "ok": {
+      "fg": "#c3e88d",
+      "bg": "#090b10"
+    },
+    "warn": {
+      "fg": "#ffcb6b",
+      "bg": "#090b10"
+    },
+    "blink": {
+      "fg": "#0f111a",
+      "bg": "#82aaff"
+    },
+    "media": {
+      "fg": "#c792ea",
+      "bg": "#0f111a"
+    },
+    "dim": {
+      "fg": "#464b5d",
+      "bg": "#0f111a"
+    },
+    "border": {
+      "fg": "#1f2233",
+      "bg": "#0f111a"
+    },
+    "unread": {
+      "fg": "#82aaff",
+      "bg": "#090b10"
+    }
+  }
+}
