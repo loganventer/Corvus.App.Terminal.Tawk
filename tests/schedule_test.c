@@ -62,6 +62,14 @@ static void test_parser(void) {
           "today's weekday is today while the time is ahead, else next week");
     CHECK(refused("hello there", now) && refused("25:00 x", now) && refused("18 x", now) && refused("+5x hi", now) &&
           refused("", now) && refused("+0m", now), "anything else is refused");
+
+    int64_t seconds = 0;
+    CHECK(schedule_time_parse_adjustment("+37s", &seconds) == 0 && seconds == 37 &&
+          schedule_time_parse_adjustment(" -12s ", &seconds) == 0 && seconds == -12,
+          "an adjustment in seconds reads either way");
+    CHECK(schedule_time_parse_adjustment("12s", &seconds) != 0 && schedule_time_parse_adjustment("+5m", &seconds) != 0 &&
+          schedule_time_parse_adjustment("+5s hi", &seconds) != 0 && schedule_time_parse_adjustment("+86401s", &seconds) != 0,
+          "an adjustment must be a signed number of seconds and nothing more");
 }
 
 static ScheduledMessage *find(ScheduledMessage *items, int count, const char *id) {
@@ -94,6 +102,13 @@ static void test_manager(const char *dir) {
           "a time in the past is refused");
     CHECK(scheduling_manager_schedule(m, "27820000002@s.whatsapp.net", "Stand-up in 5", NULL, now + 300, now, c, sizeof(c)) == 0,
           "and one in five minutes");
+
+    CHECK(scheduling_manager_parse_when(m, "18:00 +37s", now, &due) == 0 && due == local(1, 18, 0) + 37 &&
+          scheduling_manager_parse_when(m, "+5m -12s", now, &due) == 0 && due == now + 288,
+          "a control request's time can be nudged by seconds");
+    CHECK(scheduling_manager_parse_when(m, "+1m -60s", now, &due) == 0 && due == now + 1,
+          "a nudge never moves a message into the past");
+    CHECK(scheduling_manager_parse_when(m, "18:00 hello", now, &due) != 0, "anything else after the time is still refused");
 
     ScheduledMessage *items = NULL;
     int count = 0;

@@ -102,9 +102,14 @@ int scheduling_manager_parse_when(SchedulingManager *m, const char *when, int64_
     int64_t due = 0;
     const char *rest = NULL;
     m->error[0] = '\0';
-    if (!when || schedule_time_parse(when, now, &due, &rest) != 0 || (rest && *rest) || due <= now) {
+    int64_t adjustment = 0;
+    if (!when || schedule_time_parse(when, now, &due, &rest) != 0 || due <= now
+        || (rest && *rest && schedule_time_parse_adjustment(rest, &adjustment) != 0)) {
         return refuse(m, "Give a time such as 18:00, +30m, tomorrow 9:00 or fri 17:30.");
     }
+    /* An adjustment never moves a message into the past: at worst it goes a second from now. */
+    due += adjustment;
+    if (due <= now) due = now + 1;
     *due_out = due;
     return 0;
 }

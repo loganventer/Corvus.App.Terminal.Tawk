@@ -134,3 +134,19 @@ int schedule_time_parse(const char *text, int64_t now, int64_t *due, const char 
     *rest = p;
     return 0;
 }
+
+int schedule_time_parse_adjustment(const char *text, int64_t *seconds) {
+    if (!text) return -1;
+    const char *p = skip_spaces(text);
+    int sign = *p == '-' ? -1 : *p == '+' ? 1 : 0;
+    if (!sign) return -1;
+    p++;
+    int64_t value = 0;
+    int digits = 0;
+    while (isdigit((unsigned char)*p) && value <= 86400) { value = value * 10 + (*p++ - '0'); digits++; }
+    if (!digits || value > 86400 || tolower((unsigned char)*p) != 's') return -1;
+    p = skip_spaces(p + 1);
+    if (*p) return -1;
+    *seconds = sign * value;
+    return 0;
+}

@@ -13,4 +13,8 @@
  * returns 0; returns -1 when there is no time there or it is not in the future. */
 int schedule_time_parse(const char *text, int64_t now, int64_t *due, const char **rest);
 
+/* Reads a whole adjustment in seconds such as "+37s" or "-12s" (at most a
+ * day either way) and nothing else. Sets *seconds and returns 0, or -1. */
+int schedule_time_parse_adjustment(const char *text, int64_t *seconds);
+
 #endif

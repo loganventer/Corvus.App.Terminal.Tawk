@@ -157,7 +157,7 @@ Writes need `access = send` (or `manage`) in `[automation]`. Each is checked aga
 | --- | --- | --- |
 | `send_message` | `chat` (required), `text` (required, up to 65536 bytes), `reply_to` (a message id in that chat) | `{"id":"3EB0…"}`, the new message's id; it is queued and goes out as any message you send |
 | `react` | `message_id` (required), `emoji` (required; an empty string removes your reaction) | `{}` |
-| `schedule_message` | `chat` (required), `when` (as `/later` takes it: `18:00`, `+30m`, `tomorrow 9:00`, `fri 17:30`), `text` (required) | `{"id":"…","due_at":ts}` |
+| `schedule_message` | `chat` (required), `when` (as `/later` takes it: `18:00`, `+30m`, `tomorrow 9:00`, `fri 17:30`, optionally followed by an adjustment in seconds such as `+37s` or `-12s`, which never moves it into the past), `text` (required) | `{"id":"…","due_at":ts}` |
 | `mark_read` | `chat` (required) | `{}`; sends read receipts when `send_read_receipts` is on |
 | `draft_message` | `chat` (required), `text` (required) | `{"drafted":true}`; the text waits in that chat's input box in tawk for you to edit and send. Nothing is sent and nothing is asked. Fails with `draft_exists` when the chat already has a draft |
 
@@ -215,7 +215,7 @@ Messages to send later:
 | Operation | Arguments | Result |
 | --- | --- | --- |
 | `cancel_scheduled` | `id` | `{}` |
-| `reschedule` | `id`, `when` | `{"due_at":ts}` |
+| `reschedule` | `id`, `when` (as for `schedule_message`) | `{"due_at":ts}` |
 | `send_scheduled_now` | `id` | `{}` |
 
 Statuses:
