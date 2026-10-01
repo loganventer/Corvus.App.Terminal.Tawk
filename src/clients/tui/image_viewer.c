@@ -47,14 +47,24 @@ void image_viewer_open_portrait(ImageViewer *v, const char *jid, const char *nam
     v->open = 1;
 }
 
-/* A profile picture: the name, the picture fitted to the window, Esc to close. */
+const char *image_viewer_profile_jid(const ImageViewer *v) {
+    return v->open && v->portrait && !v->file ? v->portrait_jid : NULL;
+}
+
+void image_viewer_open_file(ImageViewer *v, const char *id, const char *name, const char *label, const char *path) {
+    image_viewer_open_portrait(v, id, name, path);
+    v->file = 1;
+    str_copy(v->file_label, sizeof(v->file_label), label ? label : "");
+}
+
+/* A profile picture or a picture file: the name, the picture fitted to the window, Esc to close. */
 static int render_portrait(ImageViewer *v, UiRect area, ThumbnailCache *thumbs, int pixel_images, ImagePlacement *placement) {
     int bg = tui_palette_attr(THEME_SLOT_BASE), dim = tui_palette_attr(THEME_SLOT_DIM);
     int header = tui_palette_attr(THEME_SLOT_HEADER);
     tui_fill(area, bg);
     tui_fill((UiRect){ area.y, area.x, 1, area.w }, header);
     char top[200];
-    snprintf(top, sizeof(top), " %s " DOT " profile picture", v->portrait_name);
+    snprintf(top, sizeof(top), " %s " DOT " %s", v->portrait_name, v->file ? v->file_label : "profile picture");
     tui_text(area.y, area.x, area.w, top, header | ATTR_BOLD);
     tui_text_right(area.y + area.h - 1, area.x + area.w, area.w, "Esc close ", dim);
     UiRect box = { area.y + 2, area.x + 2, area.h - 4, area.w - 4 };
@@ -62,8 +72,9 @@ static int render_portrait(ImageViewer *v, UiRect area, ThumbnailCache *thumbs, 
         tui_text_center(box.y + box.h / 2, box.x, box.w, "Loading the picture\xE2\x80\xA6", dim);
         return 0;
     }
-    /* Square pictures: as wide as twice the height in cells keeps them square. */
-    int rows = box.h, cols = rows * 2;
+    /* Square pictures: as wide as twice the height in cells keeps them square.
+     * A picture file can be any shape, so it gets the whole box to fit into. */
+    int rows = box.h, cols = v->file ? box.w : rows * 2;
     if (cols > box.w) { cols = box.w; rows = cols / 2; }
     UiRect pic = { box.y + (box.h - rows) / 2, box.x + (box.w - cols) / 2, rows, cols };
     if (pixel_images && placement) {

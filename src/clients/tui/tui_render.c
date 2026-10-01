@@ -215,8 +215,9 @@ void tui_render_frame(TuiApp *app, int64_t now) {
                       l->body.w > 104 ? 100 : l->body.w - 2 };
     ImagePlacement contact_image;
     int contact_pixels = 0;
-    if (app->viewer.open && app->viewer.portrait) {                    /* keep the sharpest picture showing */
-        const char *full = profile_manager_full_picture(app->deps.profiles, app->viewer.portrait_jid);
+    const char *profile_jid = image_viewer_profile_jid(&app->viewer);  /* keep the sharpest profile picture showing */
+    if (profile_jid) {
+        const char *full = profile_manager_full_picture(app->deps.profiles, profile_jid);
         if (full) str_copy(app->viewer.portrait_path, sizeof(app->viewer.portrait_path), full);
     }
     if (app->viewer.open && !login) {

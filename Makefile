@@ -254,7 +254,7 @@ TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_
          $(BUILD)/tests/markup_test $(BUILD)/tests/mentions_test $(BUILD)/tests/link_preview_test \
          $(BUILD)/tests/database_crypt_test $(BUILD)/tests/backup_test $(BUILD)/tests/forward_test $(BUILD)/tests/schedule_test \
          $(BUILD)/tests/status_answer_test $(BUILD)/tests/message_search_test \
-         $(BUILD)/tests/control_transport_test $(BUILD)/tests/control_protocol_test
+         $(BUILD)/tests/control_transport_test $(BUILD)/tests/control_protocol_test $(BUILD)/tests/status_photo_viewer_test
 
 test: $(TESTS)
 	$(call say,Running tests)
@@ -286,6 +286,10 @@ $(BUILD)/tests/message_receipts_test: $(BUILD)/tests/message_receipts_test.o $(f
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
 $(BUILD)/tests/message_search_test: $(BUILD)/tests/message_search_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
+	$(call step,LD,$@)
+	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
+
+$(BUILD)/tests/status_photo_viewer_test: $(BUILD)/tests/status_photo_viewer_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
 	$(call step,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 

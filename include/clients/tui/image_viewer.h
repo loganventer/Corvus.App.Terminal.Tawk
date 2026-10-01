@@ -24,6 +24,10 @@ typedef struct ImageViewer {
     char                portrait_jid[128];
     char                portrait_name[128];
     char                portrait_path[600];   /* the best picture so far; the app keeps it current */
+    /* A picture file shown the same way that is not a profile picture (a
+     * status photo): it keeps the file it was given and fills the window. */
+    int                 file;
+    char                file_label[32];       /* what it is, for the title: "status" */
 } ImageViewer;
 
 /* True for messages the viewer can show: photos, videos and PDFs. */
@@ -32,6 +36,11 @@ void              image_viewer_open(ImageViewer *viewer, const Message *message,
 void              image_viewer_close(ImageViewer *viewer);
 /* Shows a contact's or group's profile picture, as large as the window allows. */
 void              image_viewer_open_portrait(ImageViewer *viewer, const char *jid, const char *name, const char *path);
+/* The JID whose profile picture is showing, for the app to keep it as sharp
+ * as it can; NULL when it shows anything else, such as a status photo. */
+const char       *image_viewer_profile_jid(const ImageViewer *viewer);
+/* Shows a picture file (a status photo) as large as the window allows, titled "name · label". */
+void              image_viewer_open_file(ImageViewer *viewer, const char *id, const char *name, const char *label, const char *path);
 ImageViewerAction image_viewer_key(ImageViewer *viewer, const Message *messages, int count, int is_key_code, int ch);
 ImageViewerAction image_viewer_wheel(ImageViewer *viewer, const Message *messages, int count, int delta);
 ImageViewerAction image_viewer_click(ImageViewer *viewer, const Message *messages, int count, int y, int x);

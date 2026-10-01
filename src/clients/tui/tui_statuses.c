@@ -71,7 +71,7 @@ static void open_media(TuiApp *app) {
         status_feed_manager_fetch_media(app->deps.feed, u.id);
         tui_app_toast(app, "Still downloading; try again in a moment", 0);
     } else if (u.type == MESSAGE_TYPE_IMAGE && (!settings(app)->image_viewer[0] || strcmp(settings(app)->image_viewer, "builtin") == 0)) {
-        image_viewer_open_portrait(&app->viewer, u.author_jid, app->feed.viewer.title, u.media_path);
+        image_viewer_open_file(&app->viewer, u.id, app->feed.viewer.title, "status", u.media_path);
     } else if (media_manager_activate(app->deps.media, u.media_path, u.type) != 0) {
         tui_app_toast(app, "Could not open it", 1);
     }
