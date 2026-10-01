@@ -1,6 +1,7 @@
 /* Looking at statuses: the feed dialogs, carried out through the status
  * feed manager. */
 #include "tui_app_state.h"
+#include "utilities/clock_util.h"
 #include "utilities/str_util.h"
 
 #include <stdio.h>
@@ -32,18 +33,36 @@ void tui_app_open_statuses(TuiApp *app) {
 }
 
 /* The chosen author's statuses start at the first one not yet seen. */
+/* Shows one person's statuses, from the first they have not been seen. */
+static void view_author(TuiApp *app, const StatusAuthor *author) {
+    StatusUpdate items[MAX_UPDATES];
+    int count = status_feed_manager_updates(app->deps.feed, author->jid, app->feed.list.archived, items, MAX_UPDATES);
+    int start = 0;
+    while (!author->from_me && start < count - 1 && items[start].viewed) start++;
+    status_update_array_free(items, count);
+    const char *title = author->from_me ? "My status" : author_name(app, author);
+    status_feed_dialogs_view(&app->feed, author->jid, title, start, count);
+}
+
 static void open_author(TuiApp *app) {
     StatusAuthor authors[MAX_AUTHORS];
     int n = status_feed_manager_authors(app->deps.feed, app->feed.list.archived, authors, MAX_AUTHORS);
     int chosen = status_feed_dialogs_author(&app->feed);
     if (chosen < 0 || chosen >= n) return;
-    StatusUpdate items[MAX_UPDATES];
-    int count = status_feed_manager_updates(app->deps.feed, authors[chosen].jid, app->feed.list.archived, items, MAX_UPDATES);
-    int start = 0;
-    while (!authors[chosen].from_me && start < count - 1 && items[start].viewed) start++;
-    status_update_array_free(items, count);
-    const char *title = authors[chosen].from_me ? "My status" : author_name(app, &authors[chosen]);
-    status_feed_dialogs_view(&app->feed, authors[chosen].jid, title, start, count);
+    view_author(app, &authors[chosen]);
+}
+
+/* After the last of one person's statuses played out: on to the next person
+ * with something unseen, as on the phone, or back to the list when there is none. */
+static void view_next_unseen(TuiApp *app) {
+    StatusAuthor authors[MAX_AUTHORS];
+    int n = status_feed_manager_authors(app->deps.feed, app->feed.list.archived, authors, MAX_AUTHORS);
+    for (int i = 0; i < n; i++) {
+        if (authors[i].from_me || authors[i].unviewed <= 0) continue;
+        if (strcmp(authors[i].jid, app->feed.viewer.author_jid) == 0) continue;     /* the one just finished */
+        view_author(app, &authors[i]);
+        return;
+    }
 }
 
 /* The status in view, copied into `out` (the caller disposes it). */
@@ -144,6 +163,33 @@ void tui_app_statuses_request(TuiApp *app, StatusFeedRequest request) {
     app->dirty = 1;
 }
 
+/* How long a status stays before the next: photos and videos a fixed time,
+ * words longer the more there is to read. */
+#define STATUS_SHOW_MS       6000
+#define STATUS_TEXT_BASE_MS  4000
+#define STATUS_TEXT_CHAR_MS  50
+#define STATUS_TEXT_MAX_MS   12000
+
+/* Steps to the next status by itself, as on the phone. It waits while the
+ * photo is still downloading and while the full size picture is open; the
+ * dialogs add a reply being typed and the viewers list. */
+static void advance_by_itself(TuiApp *app) {
+    if (!status_feed_dialogs_viewing(&app->feed)) return;
+    StatusUpdate u;
+    if (current(app, &u) != 0) return;
+    int media = u.type == MESSAGE_TYPE_IMAGE || u.type == MESSAGE_TYPE_VIDEO;
+    int64_t show_ms = STATUS_SHOW_MS;
+    if (!media) {
+        show_ms = STATUS_TEXT_BASE_MS + (int64_t)STATUS_TEXT_CHAR_MS * (int64_t)(u.text ? strlen(u.text) : 0);
+        if (show_ms > STATUS_TEXT_MAX_MS) show_ms = STATUS_TEXT_MAX_MS;
+    }
+    int hold = (media && !u.media_path[0]) || app->viewer.open;
+    if (!u.viewed) status_feed_manager_mark_viewed(app->deps.feed, u.id);   /* before the list is asked who is unseen */
+    status_update_dispose(&u);
+    tui_app_statuses_request(app, status_feed_dialogs_tick(&app->feed, clock_now_ms(), show_ms, hold));
+    if (!status_feed_dialogs_viewing(&app->feed) && status_feed_dialogs_is_open(&app->feed)) view_next_unseen(app);
+}
+
 /* The status that just came into view counts as seen, and its photo or
  * video is fetched. Nothing is sent back to its author. */
 void tui_app_statuses_tick(TuiApp *app) {
@@ -158,6 +204,7 @@ void tui_app_statuses_tick(TuiApp *app) {
         tui_app_toast(app, msg, 0);
         app->dirty = 1;
     }
+    advance_by_itself(app);
     if (!status_feed_dialogs_take_moved(&app->feed)) return;
     StatusUpdate u;
     if (current(app, &u) != 0) return;

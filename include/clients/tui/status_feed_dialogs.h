@@ -1,6 +1,8 @@
 #ifndef APP_CLIENTS_TUI_STATUS_FEED_DIALOGS_H
 #define APP_CLIENTS_TUI_STATUS_FEED_DIALOGS_H
 
+#include <stdint.h>
+
 #include "clients/tui/status_feed_request.h"
 #include "clients/tui/status_list_dialog.h"
 #include "clients/tui/status_viewer_dialog.h"
@@ -43,6 +45,9 @@ void        status_feed_dialogs_reply_sent(StatusFeedDialogs *dialogs);
 /* Typing a reply (for the caret and for paste). */
 int         status_feed_dialogs_replying(const StatusFeedDialogs *dialogs);
 void        status_feed_dialogs_paste(StatusFeedDialogs *dialogs, const char *utf8);
+/* Runs the viewer's timer, which steps to the next status by itself; `show_ms`
+ * is how long the status in view stays and `hold` keeps it there. */
+StatusFeedRequest status_feed_dialogs_tick(StatusFeedDialogs *dialogs, int64_t now_ms, int64_t show_ms, int hold);
 /* True once after the viewer moved to another status. */
 int  status_feed_dialogs_take_moved(StatusFeedDialogs *dialogs);
 

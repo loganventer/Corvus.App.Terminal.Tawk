@@ -90,6 +90,11 @@ void status_feed_dialogs_view(StatusFeedDialogs *d, const char *jid, const char 
 
 int status_feed_dialogs_index(const StatusFeedDialogs *d) { return d->viewer.index; }
 
+StatusFeedRequest status_feed_dialogs_tick(StatusFeedDialogs *d, int64_t now_ms, int64_t show_ms, int hold) {
+    if (!status_feed_dialogs_viewing(d)) return STATUS_FEED_NONE;
+    return from_viewer(status_viewer_dialog_tick(&d->viewer, now_ms, show_ms, hold || d->viewers.open));
+}
+
 int status_feed_dialogs_take_moved(StatusFeedDialogs *d) {
     int moved = d->viewer.open && d->viewer.moved;
     d->viewer.moved = 0;

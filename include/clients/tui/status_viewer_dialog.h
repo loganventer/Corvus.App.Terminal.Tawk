@@ -1,6 +1,8 @@
 #ifndef APP_CLIENTS_TUI_STATUS_VIEWER_DIALOG_H
 #define APP_CLIENTS_TUI_STATUS_VIEWER_DIALOG_H
 
+#include <stdint.h>
+
 #include "clients/tui/media_sources.h"
 #include "clients/tui/popup_result.h"
 #include "clients/tui/status_viewer_intent.h"
@@ -20,6 +22,10 @@ typedef struct StatusViewerDialog {
     int    index;
     int    count;           /* statuses in the last render */
     int    moved;           /* index changed since the owner last looked */
+    /* Each status stays for a while and then gives way to the next, as on the phone. */
+    int64_t elapsed_ms;      /* how long the status in view has been up, not counting holds */
+    int64_t show_ms;         /* how long it stays */
+    int64_t ticked_ms;       /* when the timer was last advanced; 0 before the first tick */
     UiRect last_rect;
     UiRect media_rect;
     UiRect prev_zone;
@@ -42,6 +48,12 @@ void        status_viewer_dialog_open(StatusViewerDialog *dialog, const char *au
  * the photo or video, POPUP_CLOSED back to the list (Esc, or past the last). */
 PopupResult status_viewer_dialog_key(StatusViewerDialog *dialog, int is_key_code, int ch);
 PopupResult status_viewer_dialog_click(StatusViewerDialog *dialog, int y, int x);
+/* Runs the timer: once the status in view has been up for `show_ms` it steps
+ * to the next (POPUP_CHANGED), or past the last back to the list
+ * (POPUP_CLOSED). With `hold` set the timer waits: a reply being typed is
+ * always a hold; the owner adds the photo still downloading, and the full
+ * size picture or the viewers list being open. */
+PopupResult status_viewer_dialog_tick(StatusViewerDialog *dialog, int64_t now_ms, int64_t show_ms, int hold);
 /* The quick emoji offered under other people's statuses, as on the phone. */
 const char *status_viewer_dialog_quick_emoji(int index);
 /* The reply typed, as UTF-8; the caller frees it. */

@@ -51,7 +51,19 @@ static PopupResult step(StatusViewerDialog *d, int dir) {
     d->index = next;
     d->moved = 1;
     d->replying = 0;
+    d->elapsed_ms = 0;                                  /* the next status gets its full time */
     return POPUP_CHANGED;
+}
+
+PopupResult status_viewer_dialog_tick(StatusViewerDialog *d, int64_t now_ms, int64_t show_ms, int hold) {
+    if (!d->open) return POPUP_NONE;
+    int64_t since = d->ticked_ms ? now_ms - d->ticked_ms : 0;
+    d->ticked_ms = now_ms;
+    d->show_ms = show_ms;
+    if (hold || d->replying || since <= 0) return POPUP_NONE;
+    if (since > 1000) since = 1000;                     /* a stalled loop does not skip statuses */
+    d->elapsed_ms += since;
+    return d->elapsed_ms >= show_ms ? step(d, 1) : POPUP_NONE;
 }
 
 /* Typing a reply: Enter sends it, Esc drops it, everything else edits it. */
@@ -100,7 +112,8 @@ PopupResult status_viewer_dialog_click(StatusViewerDialog *d, int y, int x) {
     return POPUP_NONE;
 }
 
-/* A bar per status: the ones before and the shown one full, the rest light. */
+/* A bar per status: the ones before full, the shown one filling as its time
+ * runs, the rest light. */
 static void draw_progress(const StatusViewerDialog *d, int y, UiRect box) {
     int n = d->count > 0 ? d->count : 1;
     int span = box.w - 4, gap = n > 1 ? 1 : 0;
@@ -108,8 +121,14 @@ static void draw_progress(const StatusViewerDialog *d, int y, UiRect box) {
     if (each < 1) each = 1;
     int x = box.x + 2;
     for (int i = 0; i < n && x < box.x + box.w - 2; i++) {
-        int attr = i <= d->index ? tui_palette_attr(THEME_SLOT_ACCENT) | ATTR_BOLD : tui_palette_attr(THEME_SLOT_DIM);
-        for (int k = 0; k < each && x + k < box.x + box.w - 2; k++) tui_text(y, x + k, 1, i <= d->index ? "\xE2\x94\x81" : "\xE2\x94\x80", attr);
+        int filled = i < d->index ? each : i > d->index ? 0
+                   : d->show_ms > 0 ? (int)(d->elapsed_ms * each / d->show_ms) + 1 : each;
+        if (filled > each) filled = each;
+        for (int k = 0; k < each && x + k < box.x + box.w - 2; k++) {
+            int on = k < filled;
+            tui_text(y, x + k, 1, on ? "\xE2\x94\x81" : "\xE2\x94\x80",
+                     on ? tui_palette_attr(THEME_SLOT_ACCENT) | ATTR_BOLD : tui_palette_attr(THEME_SLOT_DIM));
+        }
         x += each + gap;
     }
 }

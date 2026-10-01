@@ -728,7 +728,7 @@ Each row shows the person's name as saved in your contacts (or the name they cho
 | + or n, or `[ + New status ]` | [Post a status](#posting-a-status) |
 | Esc, q or a click outside | Close the list |
 
-The viewer opens at the person's first status you have not seen (your own and archived ones open at the first). A bar across the top has a segment per status, filled up to the one shown, with the name, how long ago it was posted and its position ("2/5") underneath. A text status fills the viewer with its own background colour where the terminal has 256 colours; a photo or video shows its picture with the caption below it, and a video carries a play button.
+The viewer opens at the person's first status you have not seen (your own and archived ones open at the first). A bar across the top has a segment per status, filled up to the one shown, with the name, how long ago it was posted and its position ("2/5") underneath. Statuses play by themselves, as on the phone: each one stays for about six seconds (a text status a little longer the more there is to read) while its segment fills, then the next comes; after a person's last status the viewer goes on to the next person with something you have not seen, or back to the list. It waits while a photo is still downloading, while you type a reply, and while the full size picture or the viewers list is open; stepping by hand restarts the time. A text status fills the viewer with its own background colour where the terminal has 256 colours; a photo or video shows its picture with the caption below it, and a video carries a play button.
 
 <table><tr><td width="50%">
 

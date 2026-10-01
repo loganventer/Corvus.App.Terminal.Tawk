@@ -1449,6 +1449,7 @@ static int animating(TuiApp *app, int64_t now) {
            messaging_manager_auth_state(app->deps.messaging) == AUTH_STATE_RECONNECTING ||
            (app->confirm.open && app->confirm.danger) ||                   /* the flashing warning */
            app->status_composer.busy ||                                    /* waiting to hear the status went out */
+           status_feed_dialogs_viewing(&app->feed) ||                      /* the status progress bar filling */
            call_manager_ringing(app->deps.calls) != NULL ||                /* the pulsing call box */
            someone_typing(app) ||                                          /* the typing dots */
            media_manager_playing(app->deps.media)[0] != '\0';             /* the voice note progress */
