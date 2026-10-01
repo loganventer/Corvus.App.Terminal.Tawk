@@ -106,6 +106,8 @@ PopupResult status_viewer_dialog_click(StatusViewerDialog *d, int y, int x) {
             return POPUP_CHANGED;
         }
     }
+    if (d->prev_arrow.w > 0 && ui_rect_contains(d->prev_arrow, y, x)) return step(d, -1);
+    if (d->next_arrow.w > 0 && ui_rect_contains(d->next_arrow, y, x)) return step(d, 1);
     if (ui_rect_contains(d->media_rect, y, x)) return POPUP_CHOSEN;
     if (ui_rect_contains(d->prev_zone, y, x)) return step(d, -1);
     if (ui_rect_contains(d->next_zone, y, x)) return step(d, 1);
@@ -261,6 +263,19 @@ void status_viewer_dialog_render(StatusViewerDialog *d, UiRect a, const StatusUp
     }
     d->prev_zone = (UiRect){ body.y, box.x, body.h, body.w / 4 };
     d->next_zone = (UiRect){ body.y, box.x + box.w - body.w / 4, body.h, body.w / 4 };
+
+    /* Arrows to click beside the status, in the margin so they never cover it;
+     * three rows tall to be easy to hit. */
+    int mid = body.y + body.h / 2, arrow = tui_palette_attr(THEME_SLOT_ACCENT) | ATTR_BOLD;
+    d->prev_arrow = d->next_arrow = (UiRect){ 0, 0, 0, 0 };
+    if (body.h >= 3 && box.w >= 12) {
+        if (d->index > 0) {
+            tui_text(mid, box.x + 1, 1, "\xE2\x97\x80", arrow);                    /* ◀ */
+            d->prev_arrow = (UiRect){ mid - 1, box.x, 3, 2 };
+        }
+        tui_text(mid, box.x + box.w - 2, 1, "\xE2\x96\xB6", arrow);                /* ▶ */
+        d->next_arrow = (UiRect){ mid - 1, box.x + box.w - 2, 3, 2 };
+    }
 
     /* Under your own statuses: who saw it, a button to the list. Under
      * anyone else's: the quick emoji, a like, and a reply. */

@@ -30,6 +30,8 @@ typedef struct StatusViewerDialog {
     UiRect media_rect;
     UiRect prev_zone;
     UiRect next_zone;
+    UiRect prev_arrow;       /* ◀ and ▶ beside the status, to click; ◀ is absent on the first */
+    UiRect next_arrow;
     UiRect viewers_button;   /* "Seen by 5 · ❤ 2" under your own statuses */
     int    mine;             /* the status in view is yours (set while drawing) */
     StatusViewerIntent intent;       /* asked for by the last key or click; taken by the owner */

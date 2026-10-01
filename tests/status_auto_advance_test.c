@@ -51,6 +51,21 @@ int main(void) {
     CHECK(run(&d, &now, SHOW + 100, 0) == POPUP_CLOSED && !d.open, "after the last it goes back to the list");
     CHECK(status_viewer_dialog_tick(&d, now + 100, SHOW, 0) == POPUP_NONE, "a closed viewer does nothing");
 
+    /* The arrows beside a status step back and forth, even where they touch the picture. */
+    status_viewer_dialog_open(&d, "27820000000@s.whatsapp.net", "Mom", 1, 3);
+    d.last_rect = (UiRect){ 0, 0, 30, 76 };
+    d.media_rect = (UiRect){ 4, 0, 20, 76 };
+    d.prev_arrow = (UiRect){ 13, 0, 3, 2 };
+    d.next_arrow = (UiRect){ 13, 74, 3, 2 };
+    CHECK(status_viewer_dialog_click(&d, 14, 75) == POPUP_CHANGED && d.index == 2, "the right arrow goes forwards");
+    CHECK(status_viewer_dialog_click(&d, 14, 1) == POPUP_CHANGED && d.index == 1, "the left arrow goes back");
+    CHECK(status_viewer_dialog_click(&d, 14, 30) == POPUP_CHOSEN && d.index == 1, "a click on the picture still opens it");
+    d.index = 0;
+    d.prev_arrow = (UiRect){ 0, 0, 0, 0 };                           /* as drawn on the first status */
+    d.media_rect = (UiRect){ 4, 10, 20, 50 };
+    d.prev_zone = (UiRect){ 0, 0, 0, 0 };
+    CHECK(status_viewer_dialog_click(&d, 14, 1) == POPUP_NONE && d.index == 0, "there is no way back from the first");
+
     /* Through the feed dialogs: the viewers list over a status holds it too. */
     StatusFeedDialogs f;
     memset(&f, 0, sizeof(f));

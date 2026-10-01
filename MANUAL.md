@@ -744,7 +744,7 @@ The viewer opens at the person's first status you have not seen (your own and ar
 |---|---|
 | →, n or Space (or the wheel) | Next status; past the last one the viewer returns to the list |
 | ← or p (or the wheel) | Previous status |
-| A click on the left or right quarter | Previous or next status |
+| A click on ◀ or ▶ beside the status, or on its left or right quarter | Previous or next status (◀ is not shown on the first one) |
 | Enter or a click on the picture | A photo opens full size in the [photo viewer](#the-photo-viewer) (or the image viewer set in Settings, Media, Photos and videos); a video plays in your video player |
 | 1 to 8, or a click on an emoji | Send that emoji to the person (someone else's status) |
 | l, or a click on `❤️ like` | Like the status |
