@@ -1,6 +1,6 @@
 # Manual
 
-The screenshots in this manual were taken from tawk running on a demo account with made-up chats. Chat names and message text are blurred; everything else is exactly what tawk draws. They were taken inside tmux, so photos appear in block mode; in Windows Terminal and other Sixel terminals they are drawn in full resolution. The pictures of your profile, statuses, the camera, the formatted conversation and the start-up splash are drawn by tawk's own code with made-up data (`make screenshots` draws them again).
+The screenshots in this manual were taken from tawk running on a demo account with made-up chats. Chat names and message text are blurred; everything else is exactly what tawk draws. They were taken inside tmux, so photos appear in block mode; in Windows Terminal and other Sixel terminals they are drawn in full resolution. The pictures of your profile, statuses, the camera, the formatted conversation and the start-up splash are drawn by tawk's own code with made-up data (`make screenshots` draws them again; it needs Python with Pillow and the DejaVu fonts, whose folder `TAWK_SHOT_FONTS` names when it is not `/usr/share/fonts/truetype/dejavu`).
 
 ## Table of Contents
 
@@ -395,7 +395,9 @@ tawk uses the small picture WhatsApp sends with the message and switches to a sh
 
 A long text message (more than about eight lines) opens in a scrollable reader when you press Enter on it or choose "Read in full" from the message menu.
 
-The conversation keeps the newest messages in memory (`message_page_size`, 200 by default). Scroll up past the oldest one, with the wheel, PgUp or ↑, and tawk loads the next page from the local database. When the database has nothing older, tawk asks your phone for the next 50 messages; the title bar shows "⟳ loading older messages…" while it waits, and a note appears if the phone sends nothing within 20 seconds. Whenever you have scrolled up, a `↓ newer` badge at the bottom right takes you back to the newest message.
+The conversation keeps only the messages around what is on screen in memory: 50 either side by default (Settings, Chats, Messages kept around the screen, or `message_margin`). A chat opens with its newest messages, so a busy group opens as fast as a quiet one. Scroll up, with the wheel, PgUp or ↑, and the window slides with you: older messages are read from the local database ahead of where you are, and the newest ones are let go once they are more than the margin below the screen. Scroll back down and they return the same way. When the database has nothing older, tawk asks your phone for the next 50 messages; the title bar shows "⟳ loading older messages…" while it waits, and a note appears if the phone sends nothing within 20 seconds. Whenever you have scrolled up, a `↓ newer` badge at the bottom right takes you back to the newest message.
+
+![Scrolled back in a chat, with the newer badge at the bottom right](docs/images/conversation-older.png)
 
 Downloaded media is kept in `~/.cache/tawk/media`. The oldest files are removed once the folder passes the cache limit (1 GB by default).
 
@@ -728,7 +730,7 @@ Each row shows the person's name as saved in your contacts (or the name they cho
 | + or n, or `[ + New status ]` | [Post a status](#posting-a-status) |
 | Esc, q or a click outside | Close the list |
 
-The viewer opens at the person's first status you have not seen (your own and archived ones open at the first). A bar across the top has a segment per status, filled up to the one shown, with the name, how long ago it was posted and its position ("2/5") underneath. Statuses play by themselves, as on the phone: each one stays for about six seconds (a text status a little longer the more there is to read) while its segment fills, then the next comes; after a person's last status the viewer goes on to the next person with something you have not seen, or back to the list. It waits while a photo is still downloading, while you type a reply, and while the full size picture or the viewers list is open; stepping by hand restarts the time. A text status fills the viewer with its own background colour where the terminal has 256 colours; a photo or video shows its picture with the caption below it, and a video carries a play button.
+The viewer opens at the person's first status you have not seen (your own and archived ones open at the first). A bar across the top has a segment per status, filled up to the one shown, with the name, how long ago it was posted and its position ("2/5") underneath. Statuses play by themselves, as on the phone: each one stays for about six seconds (a text status a little longer the more there is to read) while its segment fills, then the next comes; after a person's last status the viewer goes on to the next person down the list with something you have not seen, then round to those above, and back to the list when nobody is left. Stepping past the last status by hand (→, Space, the ▶ arrow or the wheel) goes on in the same way; Esc always returns to the list. It waits while a photo is still downloading, while you type a reply, and while the full size picture or the viewers list is open; stepping by hand restarts the time. A text status fills the viewer with its own background colour where the terminal has 256 colours; a photo or video shows its picture with the caption below it, and a video carries a play button.
 
 <table><tr><td width="50%">
 

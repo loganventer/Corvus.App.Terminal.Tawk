@@ -315,7 +315,7 @@ sequenceDiagram
     U->>T: scroll above the oldest loaded message
     T->>M: messaging_manager_load_older
     opt the window is full, so the database may have more
-        M->>S: recent (window grown by message_page_size)
+        M->>S: slice (window grown by message_margin)
         S-->>M: rows
     end
     alt more rows came back
@@ -337,7 +337,9 @@ sequenceDiagram
     end
 ```
 
-The open chat keeps a window of the newest messages in memory. Scrolling up with the wheel, PgUp or ↑ on the oldest message grows the window by one page and reloads from the database. When the database has nothing older, tawk sends a `history` command anchored on the oldest message it has, and only one such request is in flight at a time. The phone files a one-to-one chat under either the phone number or the LID and only answers for the form it uses, so both backends send the request under both when they know the other form. Opening a search result uses the same path to load pages until the message is in view.
+The open chat keeps a window of messages in memory: what is on screen and `message_margin` messages either side (50 by default). `IMessageStore.slice` reads the window by how many of the newest messages to skip, so the cost of opening or scrolling a chat does not depend on how long the chat is. After each frame `TuiApp` tells `MessagingManager` which messages are on screen (`messaging_manager_focus_window`); when fewer than half a margin is left above or below, the window slides, and `MessageView` holds the message at the top of the screen in place across the reload so nothing jumps. A message that arrives while the window is away from the end moves the skip count along rather than the view, and the `↓ newer` badge or End returns to the newest messages. Scrolling up with the wheel, PgUp or ↑ on the oldest message grows the window by one margin and reloads from the database. When the database has nothing older, tawk sends a `history` command anchored on the oldest message it has, and only one such request is in flight at a time. The phone files a one-to-one chat under either the phone number or the LID and only answers for the form it uses, so both backends send the request under both when they know the other form. Opening a search result uses the same path to load pages until the message is in view.
+
+Pictures are decoded once per width: layout and drawing ask the thumbnail cache for the same size, and the cache holds more pictures than a full window can contain. A delivery tick or a read receipt reloads the conversation only when its message is among those loaded.
 
 ## One chat per person
 

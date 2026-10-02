@@ -433,8 +433,9 @@ The schema is versioned with `PRAGMA user_version`. `sqlite_database.c` creates 
 | 13 | Link cards: `link_url`, `link_title` and `link_desc` on messages |
 | 14 | `quoted_status` on messages: the reply answers a status, and `quoted_id` is the status's id |
 | 15 | The `automation_log` table: `id`, `at`, `origin`, `client`, `op`, `chat_jid`, `summary` and `outcome`, with an index on `at` |
+| 16 | No new columns: indexes on `reactions(sender_jid)` and `message_receipts(jid)`, used when a contact's address changes |
 
-Before the first migration of an upgrade runs, the database is copied to `tawk.db.pre-v<N>` (once, 0600), so a failed upgrade can be rolled back by hand. The schema after version 15 is below. The tables declare no foreign keys; the relationships are by value (a message's `chat_jid` matches a chat's `jid`, a reaction's or receipt's `message_id` matches a message's `id`, a status's `author_jid` matches a contact's `jid`, a profile's `jid` matches a chat's or contact's `jid`, and an alias maps a LID to the phone number JID used everywhere else). `messages_fts` is an external-content FTS5 table over `messages.text`, keyed by the message `rowid` and kept in step by the triggers `messages_fts_ai`, `messages_fts_ad` and `messages_fts_au`.
+Before the first migration of an upgrade runs, the database is copied to `tawk.db.pre-v<N>` (once, 0600), so a failed upgrade can be rolled back by hand. The schema after version 16 is below. The tables declare no foreign keys; the relationships are by value (a message's `chat_jid` matches a chat's `jid`, a reaction's or receipt's `message_id` matches a message's `id`, a status's `author_jid` matches a contact's `jid`, a profile's `jid` matches a chat's or contact's `jid`, and an alias maps a LID to the phone number JID used everywhere else). `messages_fts` is an external-content FTS5 table over `messages.text`, keyed by the message `rowid` and kept in step by the triggers `messages_fts_ai`, `messages_fts_ad` and `messages_fts_au`.
 
 ```mermaid
 erDiagram

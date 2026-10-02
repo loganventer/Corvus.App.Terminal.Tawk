@@ -91,7 +91,7 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `link_previews` | `false` | Fetch a preview card (title, description, picture) for the first https link in messages you send. The site sees your IP address; addresses on your own network are never fetched. Cards in messages you receive always show and fetch nothing |
 | `format_text` | `true` | Show WhatsApp's formatting (`*bold*`, `_italic_`, `~strikethrough~`, `` `code` ``, blocks, quotes, lists and mentions) as the phone does; `false` shows the marks as typed |
 | `convert_emoticons` | `true` | Turn emoticons such as `:)`, `<3`, `:D`, `;)` and `:P`, and shortcodes such as `:fire:` and `:tada:`, into emoji when you type a space or press Enter. Only a whole word is converted, so links are left alone. Also offers emoji for a word typed after a bracket, such as `(hu`, and replaces a closed `(pizza)` that fits only one |
-| `message_page_size` | `200` | How much history the chat view keeps in memory (50 to 2000); scrolling up loads another page of this size |
+| `message_margin` | `50` | How many messages the chat view keeps in memory either side of what is on screen (20 to 500). The window slides as you scroll, so a long chat opens as fast as a short one |
 | `share_typing` | `true` | Show "typing…" (or recording audio) to the other person while you type or record |
 | `appear_online` | `true` | Show as online while tawk is in use; needed to see others typing |
 | `reopen_last_chat` | `true` | When tawk starts, open the chat that was open when it last quit. Skipped when that chat was deleted or is in Locked chats |
