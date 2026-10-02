@@ -104,6 +104,15 @@ int            messaging_manager_search(MessagingManager *mgr, const char *query
 int            messaging_manager_load_older(MessagingManager *mgr);
 /* True while older history has been requested from the phone. */
 int            messaging_manager_history_pending(MessagingManager *mgr);
+/* Tells the manager which loaded messages are on screen (indexes into
+ * messaging_manager_messages). It keeps about a margin of messages either side
+ * of them, loading and letting go as the user scrolls. Returns 1 when the
+ * loaded messages changed. */
+int            messaging_manager_focus_window(MessagingManager *mgr, int first_visible, int last_visible);
+/* Goes back to the newest messages. Returns 1 when the loaded messages changed. */
+int            messaging_manager_show_latest(MessagingManager *mgr);
+/* True when messages newer than the loaded ones exist. */
+int            messaging_manager_has_newer(MessagingManager *mgr);
 /* Chat options */
 void           messaging_manager_mute_until(MessagingManager *mgr, const char *jid, int64_t until);
 void           messaging_manager_set_tone(MessagingManager *mgr, const char *jid, const char *tone);

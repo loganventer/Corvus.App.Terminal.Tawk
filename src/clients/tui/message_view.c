@@ -306,6 +306,7 @@ static void layout(MessageView *v, UiRect r, const Message *msgs, int count, con
     int max_inner = r.w * 3 / 4 - 2;
     if (max_inner > 72) max_inner = 72;
     if (max_inner < 10) max_inner = r.w - 4 > 4 ? r.w - 4 : 4;
+    v->thumb_cols = max_inner;
     int64_t last_day = -1;
 
     for (int i = 0; i < count; i++) {
@@ -460,7 +461,7 @@ static void place_images(MessageView *v, UiRect body, int start, const Message *
         if (row->kind != MESSAGE_ROW_THUMB || row->sub != 0) continue;
         const Message *m = &msgs[row->message];
         MediaPicture picture;
-        const Thumbnail *t = picture_for(m, ctx, row->width - 2, &picture);
+        const Thumbnail *t = picture_for(m, ctx, v->thumb_cols, &picture);
         if (!t || k + t->rows > body.h) continue;
         ImagePlacement *p = &v->placements[v->placement_count++];
         memset(p, 0, sizeof(*p));
@@ -549,7 +550,7 @@ static void draw_row(const MessageView *v, const MessageRow *row, int y, UiRect 
                 text_veil_text(y, x + 1, room, shown_text(v, row->message, m) + row->offset, row->length, veil);
                 break;
             case MESSAGE_ROW_THUMB: {
-                const Thumbnail *t = thumbnail_for(m, ctx, room);
+                const Thumbnail *t = thumbnail_for(m, ctx, v->thumb_cols);
                 text_veil_draw(y, x + 1, t ? t->cols : room, veil);
                 break;
             }
@@ -590,7 +591,7 @@ static void draw_row(const MessageView *v, const MessageRow *row, int y, UiRect 
             break;
         }
         case MESSAGE_ROW_THUMB: {
-            const Thumbnail *t = thumbnail_for(m, ctx, room);
+            const Thumbnail *t = thumbnail_for(m, ctx, v->thumb_cols);
             if (is_placed(v, row->message)) break;          /* a pixel image goes here */
             if (t && row->sub < t->rows) {
                 Thumbnail one = { t->cols, 1, t->top + row->sub * t->cols, t->bottom + row->sub * t->cols };
@@ -636,6 +637,25 @@ static void draw_row(const MessageView *v, const MessageRow *row, int y, UiRect 
 
 static int is_body_row(MessageRowKind kind) {
     return kind != MESSAGE_ROW_DAY && kind != MESSAGE_ROW_GAP && !is_scheduled_row(kind);
+}
+
+/* Puts the view back where message_view_hold found it, now that the array has changed. */
+static void restore_held(MessageView *v, int body_h, const Message *msgs, int count) {
+    if (!v->held) return;
+    v->held = 0;
+    int had_selection = v->selected >= 0;
+    if (had_selection) v->selected = -1;
+    for (int i = 0; i < count; i++) {
+        if (had_selection && v->held_selected[0] && strcmp(msgs[i].id, v->held_selected) == 0) v->selected = i;
+    }
+    for (int i = 0; i < v->row_count; i++) {
+        const MessageRow *row = &v->rows[i];
+        if (is_scheduled_row(row->kind) || row->message < 0 || row->message >= count) continue;
+        if (strcmp(msgs[row->message].id, v->held_top) != 0) continue;
+        v->scroll = v->row_count - body_h - (i + v->held_offset);
+        if (v->scroll < 0) v->scroll = 0;
+        return;
+    }
 }
 
 void message_view_render(MessageView *v, UiRect r, const Message *msgs, int count, const MessageViewContext *ctx) {
@@ -686,6 +706,7 @@ void message_view_render(MessageView *v, UiRect r, const Message *msgs, int coun
     }
 
     layout(v, body, msgs, count, ctx);
+    restore_held(v, body.h, msgs, count);
     int max_scroll = v->row_count - body.h;
     if (max_scroll < 0) max_scroll = 0;
     if (v->scroll > max_scroll) v->scroll = max_scroll;
@@ -721,12 +742,44 @@ void message_view_render(MessageView *v, UiRect r, const Message *msgs, int coun
             v->screen_x1[k] = (short)(body.x + row->x + row->width);
         }
     }
+    v->drawn = 1;
     v->newer_button = (UiRect){ 0, 0, 0, 0 };
-    if (v->scroll > 0) {
+    if (v->scroll > 0 || v->has_newer) {
         int w = tui_text_right(body.y + body.h - 1, body.x + body.w - 1, 16, " \xE2\x86\x93 newer ", conv(THEME_SLOT_BADGE) | ATTR_BOLD);
         v->newer_button = (UiRect){ body.y + body.h - 1, body.x + body.w - 1 - w, 1, w };
     }
 }
+
+int message_view_visible_range(const MessageView *v, int *first, int *last) {
+    *first = *last = -1;
+    for (int k = 0; k < MESSAGE_VIEW_MAX_SCREEN_ROWS; k++) {
+        int index = v->screen_rows[k];
+        if (index < 0) continue;
+        if (*first < 0 || index < *first) *first = index;
+        if (index > *last) *last = index;
+    }
+    return *first >= 0;
+}
+
+void message_view_hold(MessageView *v, const Message *msgs, int count) {
+    v->held = 0;
+    v->held_selected[0] = '\0';
+    if (!msgs || count <= 0 || v->row_count == 0) return;
+    int body_h = v->last_rect.h - v->header_rows;
+    int top = v->row_count - body_h - v->scroll;
+    if (top < 0) top = 0;
+    /* The first row from the top that belongs to a message (not to a scheduled one). */
+    while (top < v->row_count && (is_scheduled_row(v->rows[top].kind) || v->rows[top].message < 0 || v->rows[top].message >= count)) top++;
+    if (top >= v->row_count) return;
+    int index = v->rows[top].message, first = top;
+    while (first > 0 && v->rows[first - 1].message == index && !is_scheduled_row(v->rows[first - 1].kind)) first--;
+    snprintf(v->held_top, sizeof(v->held_top), "%s", msgs[index].id);
+    v->held_offset = top - first;
+    if (v->selected >= 0 && v->selected < count) snprintf(v->held_selected, sizeof(v->held_selected), "%s", msgs[v->selected].id);
+    v->held = 1;
+}
+
+void message_view_release(MessageView *v) { v->held = 0; }
 
 void message_view_scroll(MessageView *v, int delta) {
     v->follow_selection = 0;                 /* scrolling leaves the selection where it is */

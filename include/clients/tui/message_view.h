@@ -31,10 +31,17 @@ typedef struct MessageView {
     UiRect      portrait_rect;   /* the title bar portrait, for clicks */
     UiRect      title_rect;      /* the name, for clicks */
     int         placement_count;
+    int         thumb_cols;      /* the width pictures were sized for in the last layout, so drawing asks for the same one */
     StyledText *styled;          /* per message: its text as shown, formatted (text NULL when unformatted) */
     int         styled_count;
     QuotedStatus *quoted;        /* per message: the status it answers (found 0 when none) */
     int         quoted_count;
+    int         held;            /* the place below is put back at the next render */
+    char        held_top[64];    /* id of the message at the top of the screen */
+    int         held_offset;     /* which of its rows is the top row */
+    char        held_selected[64];  /* id of the selected message, or empty */
+    int         has_newer;       /* messages newer than the loaded ones exist */
+    int         drawn;           /* set by a render that drew messages; the owner clears it */
 } MessageView;
 
 void message_view_init(MessageView *view);
@@ -42,6 +49,13 @@ void message_view_dispose(MessageView *view);
 
 void message_view_render(MessageView *view, UiRect rect, const Message *messages, int count,
                          const MessageViewContext *ctx);
+/* The first and last message on screen at the last render. Returns 0 when none is. */
+int  message_view_visible_range(const MessageView *view, int *first, int *last);
+/* Remembers what is on screen and selected by message id, so the place is kept
+ * when the message array is about to change under the view (a page loaded or
+ * let go). The next render puts it back; release drops it unused. */
+void message_view_hold(MessageView *view, const Message *messages, int count);
+void message_view_release(MessageView *view);
 void message_view_scroll(MessageView *view, int delta);
 void message_view_scroll_to_latest(MessageView *view);
 /* Moves the selection by delta messages (selection starts at the newest). */

@@ -100,3 +100,9 @@ int status_feed_dialogs_take_moved(StatusFeedDialogs *d) {
     d->viewer.moved = 0;
     return moved;
 }
+
+int status_feed_dialogs_take_finished(StatusFeedDialogs *d) {
+    int finished = d->list.open && !d->viewer.open && d->viewer.finished;
+    d->viewer.finished = 0;
+    return finished;
+}

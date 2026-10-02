@@ -15,7 +15,7 @@ import urllib.request
 from PIL import Image, ImageDraw, ImageFont
 
 CELL_W, CELL_H = 10, 20
-FONT_DIR = "/usr/share/fonts/truetype/dejavu"
+FONT_DIR = os.environ.get("TAWK_SHOT_FONTS", "/usr/share/fonts/truetype/dejavu")   # where DejaVuSansMono.ttf is
 TWEMOJI = "https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/{}.png"
 
 

@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define CACHED_PAGE_MAX 1000
+
 typedef struct MessagePage {
     Message *items;
     int      count;
@@ -46,6 +48,8 @@ static int cm_save(IMessageStore *self, const Message *msg) {
 
 static int cm_recent(IMessageStore *self, const char *jid, int limit, Message **out, int *count) {
     CachingMessages *c = self->ctx;
+    /* A read of the whole chat (an export) is handed straight on: keeping it would pin the history in memory. */
+    if (limit > CACHED_PAGE_MAX) return c->inner->recent(c->inner, jid, limit, out, count);
     MessagePage *page = lru_cache_get(c->pages, jid);
     if (!page || page->limit != limit) {
         Message *items = NULL;
@@ -60,6 +64,13 @@ static int cm_recent(IMessageStore *self, const char *jid, int limit, Message **
     *out = copy_messages(page->items, page->count);
     *count = *out ? page->count : 0;
     return *out ? 0 : -1;
+}
+
+/* A window further back in the chat moves as the user scrolls, so it is not kept; the newest page is. */
+static int cm_slice(IMessageStore *self, const char *jid, int skip, int limit, Message **out, int *count) {
+    CachingMessages *c = self->ctx;
+    if (skip <= 0) return cm_recent(self, jid, limit, out, count);
+    return c->inner->slice(c->inner, jid, skip, limit, out, count);
 }
 
 /* Older pages are read once while scrolling back, so they are not kept. */
@@ -134,6 +145,7 @@ IMessageStore *caching_message_store_create(IMessageStore *inner, int chats) {
     s->ctx = c;
     s->save = cm_save;
     s->recent = cm_recent;
+    s->slice = cm_slice;
     s->before = cm_before;
     s->get = cm_get;
     s->update_status = cm_update_status;

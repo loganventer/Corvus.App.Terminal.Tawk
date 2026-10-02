@@ -176,6 +176,7 @@ void tui_render_frame(TuiApp *app, int64_t now) {
         if (chat && app->deps.scheduling) scheduling_manager_list(app->deps.scheduling, chat->jid, &scheduled, &n_scheduled);
         ctx.scheduled = scheduled;
         ctx.scheduled_count = n_scheduled;
+        app->message_view.has_newer = messaging_manager_has_newer(mm);
         message_view_render(&app->message_view, l->chat, msgs, n_msgs, &ctx);
         scheduled_message_array_free(scheduled, n_scheduled);
 

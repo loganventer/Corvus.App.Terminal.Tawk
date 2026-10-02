@@ -33,7 +33,7 @@ static const SettingField FIELDS[] = {
     B(SETTING_CATEGORY_CHATS, "link_previews", "Link previews for links you send", "Fetches the page to show its title and picture; the site sees your IP address. Previews others send always show", link_previews),
     B(SETTING_CATEGORY_CHATS, "convert_emoticons", "Emoticons to emoji", "Turn :) <3 :D and (pizza) into emoji as you type", convert_emoticons),
     B(SETTING_CATEGORY_CHATS, "enter_sends", "Enter is send", "When off, Enter adds a new line and Ctrl+S sends", enter_sends),
-    I(SETTING_CATEGORY_CHATS, "message_page_size", "Messages loaded per chat", "How much history the chat view keeps in memory", message_page_size, 50, 2000, 50, 0),
+    I(SETTING_CATEGORY_CHATS, "message_margin", "Messages kept around the screen", "How many messages stay in memory before and after the ones on screen", message_margin, 20, 500, 10, 0),
     B(SETTING_CATEGORY_CHATS, "share_typing", "Share typing", "Show \"typing\u2026\" to the other person while you type", share_typing),
     B(SETTING_CATEGORY_CHATS, "appear_online", "Appear online", "Show as online while tawk is in use (needed to see others typing)", appear_online),
     B(SETTING_CATEGORY_CHATS, "reopen_last_chat", "Reopen last chat", "Open the chat you had open when tawk last quit", reopen_last_chat),

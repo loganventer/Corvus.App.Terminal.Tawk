@@ -166,7 +166,9 @@ int profile_manager_set_blocked(ProfileManager *m, const char *jid, int blocked)
 
 /* ---- events -------------------------------------------------------------- */
 
-static void reload(ProfileManager *m, const char *jid) {
+static void reload(ProfileManager *m, const char *whose) {
+    char jid[128];
+    str_copy(jid, sizeof(jid), whose);                       /* `whose` may be the jid of a slot disposed below */
     for (int i = 0; i < CACHE_SLOTS; i++) {
         Slot *s = &m->slots[i];
         if (!s->loaded || strcmp(s->profile.jid, jid) != 0) continue;

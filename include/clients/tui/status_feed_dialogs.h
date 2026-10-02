@@ -50,5 +50,7 @@ void        status_feed_dialogs_paste(StatusFeedDialogs *dialogs, const char *ut
 StatusFeedRequest status_feed_dialogs_tick(StatusFeedDialogs *dialogs, int64_t now_ms, int64_t show_ms, int hold);
 /* True once after the viewer moved to another status. */
 int  status_feed_dialogs_take_moved(StatusFeedDialogs *dialogs);
+/* True once after the viewer ran past a person's last status, by the timer or by hand. */
+int  status_feed_dialogs_take_finished(StatusFeedDialogs *dialogs);
 
 #endif

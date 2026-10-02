@@ -48,7 +48,8 @@ struct MessagingManager {
     char      open_jid[128];
     Message  *messages;
     int       message_count;
-    int       window;               /* how many of the newest messages to keep loaded */
+    int       window;               /* how many messages to keep loaded */
+    int       skip;                 /* how many of the newest are left out: 0 when the window reaches the newest */
     int64_t   history_until_ms;     /* phone history request in flight until then */
     int       history_count_before;
     int       messages_dirty;
@@ -294,13 +295,33 @@ static void rebuild_chats(MessagingManager *m) {
     m->chats_dirty = 0;
 }
 
+/* How many messages are kept either side of the ones on screen. */
+static int window_margin(const MessagingManager *m) {
+    int margin = m->deps.settings->message_margin;
+    return margin < 10 ? 10 : margin;
+}
+
+/* Whether the message is among those loaded for the open chat. Ticks and
+ * receipts for any other message change nothing on the screen. */
+static int showing(const MessagingManager *m, const char *id) {
+    for (int i = 0; i < m->message_count; i++) {
+        if (strcmp(m->messages[i].id, id) == 0) return 1;
+    }
+    return 0;
+}
+
 static void reload_messages(MessagingManager *m) {
     message_array_free(m->messages, m->message_count);
     m->messages = NULL;
     m->message_count = 0;
     if (m->open_jid[0]) {
-        if (m->window < m->deps.settings->message_page_size) m->window = m->deps.settings->message_page_size;
-        m->deps.messages->recent(m->deps.messages, m->open_jid, m->window, &m->messages, &m->message_count);
+        if (m->window < window_margin(m)) m->window = window_margin(m);
+        m->deps.messages->slice(m->deps.messages, m->open_jid, m->skip, m->window, &m->messages, &m->message_count);
+        if (m->message_count == 0 && m->skip > 0) {          /* the window slid past what the chat holds */
+            message_array_free(m->messages, m->message_count);
+            m->skip = 0;
+            m->deps.messages->slice(m->deps.messages, m->open_jid, 0, m->window, &m->messages, &m->message_count);
+        }
         if (m->history_until_ms && m->message_count > m->history_count_before) m->history_until_ms = 0;
         for (int i = 0; i < m->message_count; i++) {
             m->deps.reactions->summary(m->deps.reactions, m->messages[i].id, m->messages[i].reactions,
@@ -342,7 +363,10 @@ static void on_message(MessagingManager *m, Event *e, ManagerChanges *ch) {
     }
     m->deps.chats->touch(m->deps.chats, msg->chat_jid, msg->timestamp, line);
     m->chats_dirty = 1;
-    if (strcmp(m->open_jid, msg->chat_jid) == 0) m->messages_dirty = 1;
+    if (strcmp(m->open_jid, msg->chat_jid) == 0) {
+        m->messages_dirty = 1;
+        if (!existed && m->skip > 0) m->skip++;              /* scrolled back: the window stays where it is */
+    }
 
     if (!existed && should_auto_download(m, msg)) {
         m->deps.gateway->download_media(m->deps.gateway, msg->id, msg->media_ref, m->deps.settings->auto_download_max_mb);
@@ -600,11 +624,11 @@ static void handle_event(MessagingManager *m, Event *e, ManagerChanges *ch) {
             break;
         case EVENT_MESSAGE_STATUS:
             m->deps.messages->update_status(m->deps.messages, e->id, e->status);
-            m->messages_dirty = 1;
+            if (showing(m, e->id)) m->messages_dirty = 1;
             break;
         case EVENT_MESSAGE_RECEIPT:
             m->deps.receipts->put(m->deps.receipts, e->id, m->deps.aliases->resolve(m->deps.aliases, e->jid), e->receipt, e->at);
-            m->messages_dirty = 1;                       /* an open message info panel shows it */
+            if (showing(m, e->id)) m->messages_dirty = 1;   /* an open message info panel shows it */
             break;
         case EVENT_CHAT_UPDATE:
             m->deps.chats->upsert(m->deps.chats, &e->chat);
@@ -794,7 +818,8 @@ const Chat *messaging_manager_chats(MessagingManager *m, int *count) {
 void messaging_manager_open_chat(MessagingManager *m, const char *jid) {
     messaging_manager_set_typing(m, TYPING_PAUSED);
     if (!jid || strcmp(jid, m->open_jid) != 0) {
-        m->window = m->deps.settings->message_page_size;
+        m->window = window_margin(m) + window_margin(m) / 2;
+        m->skip = 0;
         m->history_until_ms = 0;
     }
     str_copy(m->open_jid, sizeof(m->open_jid), jid ? jid : "");
@@ -1364,7 +1389,7 @@ int messaging_manager_load_older(MessagingManager *m) {
     if (!m->open_jid[0] || m->message_count == 0) return 0;
     int before = m->message_count;
     if (m->message_count >= m->window) {           /* the database may have more */
-        m->window += m->deps.settings->message_page_size;
+        m->window += window_margin(m);
         reload_messages(m);
         if (m->message_count > before) return 1;
     }
@@ -1385,6 +1410,40 @@ int messaging_manager_load_older(MessagingManager *m) {
 }
 
 int messaging_manager_history_pending(MessagingManager *m) { return m->history_until_ms != 0; }
+
+/* Slides the loaded window so that about a margin of messages is kept either
+ * side of the ones on screen: more are loaded where a side runs short, and the
+ * surplus on the other side is let go. Half a margin of slack keeps a scroll of
+ * a few rows from reloading every time. */
+int messaging_manager_focus_window(MessagingManager *m, int first_visible, int last_visible) {
+    if (!m->open_jid[0] || m->message_count == 0 || m->history_until_ms) return 0;
+    if (first_visible < 0 || last_visible < first_visible || last_visible >= m->message_count) return 0;
+    int margin = window_margin(m), slack = margin / 2;
+    int older = first_visible;
+    int newer = m->message_count - 1 - last_visible;
+    int may_have_older = m->message_count >= m->window;
+    int short_of = (newer < margin - slack && m->skip > 0) || (older < margin - slack && may_have_older);
+    int surplus = newer > margin + slack || older > margin + slack;
+    if (!short_of && !surplus) return 0;
+    int skip = m->skip + newer - margin;                    /* counted from the newest message of the chat */
+    if (skip < 0) skip = 0;
+    int window = m->skip + (m->message_count - 1 - first_visible) + margin - skip + 1;
+    if (skip == m->skip && window == m->window) return 0;
+    m->skip = skip;
+    m->window = window;
+    reload_messages(m);
+    return 1;
+}
+
+int messaging_manager_show_latest(MessagingManager *m) {
+    if (m->skip == 0) return 0;
+    m->skip = 0;
+    m->window = window_margin(m) + window_margin(m) / 2;
+    reload_messages(m);
+    return 1;
+}
+
+int messaging_manager_has_newer(MessagingManager *m) { return m->skip > 0; }
 
 #define EDIT_WINDOW_SECONDS (15 * 60)
 

@@ -29,7 +29,7 @@ typedef struct Settings {
 
     /* Chats */
     int  enter_sends;
-    int  message_page_size;
+    int  message_margin;      /* messages kept in memory either side of the ones on screen */
     int  send_read_receipts;
     int  share_typing;          /* tell others when you are typing */
     int  appear_online;         /* show as online while tawk is in use */

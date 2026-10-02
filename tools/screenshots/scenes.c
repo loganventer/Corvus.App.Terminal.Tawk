@@ -506,6 +506,30 @@ static void conversation_scene(void) {
     message_view_render(&view, chat_area(), msgs, n, &ctx);
     save("conversation");
 
+    /* Scrolled back in a long chat: the badge that returns to the newest message. */
+    static const char *const OLDER[] = {
+        "Morning all, standup in ten", "I will be five minutes late", "No rush, we start with the board",
+        "The importer finished overnight", "Any rows rejected?", "Twelve, all with a missing date",
+        "I will send the list to finance", "Thanks. Can we close the ticket then?", "Yes, closing it now",
+        "Lunch at the usual place?", "Count me in", "Me too, 12:30?", "Booked a table for six",
+    };
+    Message older[16];
+    int older_n = 0;
+    for (int i = 0; i < (int)(sizeof(OLDER) / sizeof(OLDER[0])); i++) {
+        char id[8];
+        snprintf(id, sizeof(id), "O%d", i);
+        const char *who = i % 3 == 1 ? "27821234567@s.whatsapp.net" : i % 3 == 0 ? "27820000001@s.whatsapp.net" : "27820000002@s.whatsapp.net";
+        add_message(older, &older_n, id, who, i % 3 == 1, 300 - i * 9, OLDER[i], NULL);
+    }
+    static MessageView back;
+    message_view_init(&back);
+    back.scroll = 6;
+    back.has_newer = 1;
+    draw_chat(INPUT_HINTS);
+    message_view_render(&back, chat_area(), older, older_n, &ctx);
+    save("conversation-older");
+    for (int i = 0; i < older_n; i++) message_dispose(&older[i]);
+
     /* Typing "@Li" in the same group lists the members that fit. */
     draw_app(INPUT_HINTS);
     message_view_render(&view, chat_area(), msgs, n, &ctx);

@@ -153,8 +153,8 @@ static void scroll_older(TuiApp *app, int rows) {
     MessageView *v = &app->message_view;
     int body = app->layout.chat.h - 1;
     int max_scroll = v->row_count - body;
-    if (v->scroll + rows > max_scroll) messaging_manager_load_older(app->deps.messaging);
     message_view_scroll(v, rows);
+    if (v->scroll > max_scroll) tui_app_load_older(app);
 }
 
 static void select_chat_entry(TuiApp *app) {
@@ -484,7 +484,7 @@ static void handle_mouse_event(TuiApp *app, MEVENT ev) {
         }
         return;
     }
-    if (press && message_view_hit_newer(&app->message_view, ev.y, ev.x)) { message_view_scroll_to_latest(&app->message_view); return; }
+    if (press && message_view_hit_newer(&app->message_view, ev.y, ev.x)) { tui_app_show_latest(app); return; }
     if (l->sidebar.w && ui_rect_contains(l->sidebar, ev.y, ev.x)) {
         if (wheel) chat_list_view_move(&app->chat_list, wheel);
         else if (press && chat_list_view_hit(&app->chat_list, l->sidebar, ev.y)) {
@@ -608,10 +608,10 @@ static void handle_messages(TuiApp *app, int is_key, int ch, int alt) {
     /* Focus can arrive without a selection (Tab): act on the newest message. */
     if (v->selected < 0 && count > 0 && (alt || is_key || is_enter(is_key, ch))) message_view_select(v, count, 0);
     if (is_key && ch == KEY_UP) {
-        if (v->selected == 0) messaging_manager_load_older(app->deps.messaging);
+        if (v->selected == 0) tui_app_load_older(app);
         else message_view_select(v, count, -1);
     } else if (is_key && ch == KEY_DOWN) message_view_select(v, count, 1);
-    else if ((is_key && ch == KEY_END) || is_ctrl_end(is_key, ch)) message_view_scroll_to_latest(v);
+    else if ((is_key && ch == KEY_END) || is_ctrl_end(is_key, ch)) tui_app_show_latest(app);
     else if (is_enter(is_key, ch) && v->selected >= 0) tui_app_activate_message(app, v->selected);
     else if (alt && !is_key && ch == 'q' && v->selected >= 0) tui_app_start_reply(app, v->selected);
     else if (alt && !is_key && ch == 'e' && v->selected >= 0) tui_app_open_reactions(app, v->selected);
@@ -762,7 +762,7 @@ static void handle_composer(TuiApp *app, int is_key, int ch, int alt) {
     if (!is_key && ch == CTRL('s')) { tui_app_send_composer(app); return; }
     if (is_ctrl_end(is_key, ch)) {                         /* the end of the input first, then the newest message */
         if (app->composer.cursor < app->composer.length) app->composer.cursor = app->composer.length;
-        else message_view_scroll_to_latest(&app->message_view);
+        else tui_app_show_latest(app);
         return;
     }
     if (!is_key && ch == ' ' && s->convert_emoticons) composer_view_convert_word(&app->composer, emoticon_to_emoji);

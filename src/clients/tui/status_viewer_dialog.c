@@ -47,7 +47,7 @@ static void ask(StatusViewerDialog *d, StatusViewerIntent intent, int emoji) {
 static PopupResult step(StatusViewerDialog *d, int dir) {
     int next = d->index + dir;
     if (next < 0) return POPUP_NONE;
-    if (next >= d->count) { d->open = 0; return POPUP_CLOSED; }   /* past the last: back to the list */
+    if (next >= d->count) { d->open = 0; d->finished = 1; return POPUP_CLOSED; }   /* past the last: the owner decides who is next */
     d->index = next;
     d->moved = 1;
     d->replying = 0;

@@ -106,19 +106,21 @@ static int store_save(IMessageStore *self, const Message *m) {
 }
 
 /* Up to `limit` messages of a chat, newest first in the query and handed
- * back oldest first; only those older than `before` when it is not 0. */
-static int select_page(IMessageStore *self, const char *jid, int64_t before, int limit, Message **out, int *count) {
+ * back oldest first; only those older than `before` when it is not 0, and
+ * without the newest `skip` of them. */
+static int select_page(IMessageStore *self, const char *jid, int64_t before, int skip, int limit, Message **out, int *count) {
     *out = NULL;
     *count = 0;
     sqlite3_stmt *st = NULL;
     const char *sql = before > 0
-        ? "SELECT " COLUMNS " FROM messages WHERE chat_jid = ? AND ts < ? ORDER BY ts DESC, rowid DESC LIMIT ?"
-        : "SELECT " COLUMNS " FROM messages WHERE chat_jid = ? ORDER BY ts DESC, rowid DESC LIMIT ?";
+        ? "SELECT " COLUMNS " FROM messages WHERE chat_jid = ? AND ts < ? ORDER BY ts DESC, rowid DESC LIMIT ? OFFSET ?"
+        : "SELECT " COLUMNS " FROM messages WHERE chat_jid = ? ORDER BY ts DESC, rowid DESC LIMIT ? OFFSET ?";
     if (sqlite3_prepare_v2(db_of(self), sql, -1, &st, NULL) != SQLITE_OK) return -1;
     int arg = 1;
     sqlite3_bind_text(st, arg++, jid, -1, SQLITE_TRANSIENT);
     if (before > 0) sqlite3_bind_int64(st, arg++, before);
-    sqlite3_bind_int(st, arg, limit);
+    sqlite3_bind_int(st, arg++, limit);
+    sqlite3_bind_int(st, arg, skip > 0 ? skip : 0);
     /* Grows as rows arrive, so a large limit (an export) costs only what the chat holds. */
     int cap = limit > 0 && limit < 256 ? limit : 256;
     Message *items = calloc((size_t)cap, sizeof(Message));
@@ -146,11 +148,15 @@ static int select_page(IMessageStore *self, const char *jid, int64_t before, int
 }
 
 static int store_recent(IMessageStore *self, const char *jid, int limit, Message **out, int *count) {
-    return select_page(self, jid, 0, limit, out, count);
+    return select_page(self, jid, 0, 0, limit, out, count);
+}
+
+static int store_slice(IMessageStore *self, const char *jid, int skip, int limit, Message **out, int *count) {
+    return select_page(self, jid, 0, skip, limit, out, count);
 }
 
 static int store_before(IMessageStore *self, const char *jid, int64_t before, int limit, Message **out, int *count) {
-    return select_page(self, jid, before, limit, out, count);
+    return select_page(self, jid, before, 0, limit, out, count);
 }
 
 static int store_get(IMessageStore *self, const char *id, Message *out) {
@@ -352,6 +358,7 @@ IMessageStore *sqlite_message_store_create(sqlite3 *db) {
     s->ctx = db;
     s->save = store_save;
     s->recent = store_recent;
+    s->slice = store_slice;
     s->before = store_before;
     s->get = store_get;
     s->update_status = store_update_status;

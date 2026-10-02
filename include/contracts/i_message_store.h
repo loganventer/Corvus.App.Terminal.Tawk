@@ -8,6 +8,8 @@ typedef struct IMessageStore {
     int  (*save)(struct IMessageStore *self, const Message *msg);
     /* Newest `limit` messages of a chat, returned oldest first. Caller frees with message_array_free. */
     int  (*recent)(struct IMessageStore *self, const char *jid, int limit, Message **out, int *count);
+    /* Up to `limit` messages of a chat after leaving out its newest `skip`, oldest first. Caller frees. */
+    int  (*slice)(struct IMessageStore *self, const char *jid, int skip, int limit, Message **out, int *count);
     /* Up to `limit` messages sent before `before` (epoch seconds), oldest first. Caller frees. */
     int  (*before)(struct IMessageStore *self, const char *jid, int64_t before, int limit, Message **out, int *count);
     int  (*get)(struct IMessageStore *self, const char *id, Message *out);

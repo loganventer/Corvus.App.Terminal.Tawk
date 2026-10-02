@@ -51,7 +51,7 @@ static void test_upgrade(const char *dir) {
     sqlite3 *db = sqlite_database_open(path, NULL);
     CHECK(db != NULL, "a v9 database opens and upgrades");
     if (!db) return;
-    CHECK(scalar(db, "PRAGMA user_version") == 15, "it is now version 15");
+    CHECK(scalar(db, "PRAGMA user_version") == 16, "it is now version 16");
     CHECK(scalar(db, "SELECT count(*) FROM messages") == 2 && scalar(db, "SELECT count(*) FROM chats") == 1, "every row survives");
     CHECK(scalar(db, "SELECT count(*) FROM messages WHERE mentions IS NULL AND mentions_me = 0 AND forwarded = 0 AND link_url IS NULL") == 2,
           "old messages get the new columns with their defaults");

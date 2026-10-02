@@ -120,9 +120,13 @@ static const Migration MIGRATIONS[] = {
       "  id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, origin TEXT NOT NULL, client TEXT NOT NULL DEFAULT '',"
       "  op TEXT NOT NULL, chat_jid TEXT NOT NULL DEFAULT '', summary TEXT NOT NULL DEFAULT '', outcome TEXT NOT NULL);"
       "CREATE INDEX IF NOT EXISTS idx_automation_at ON automation_log(at);" },
+    { 16,
+      /* a contact changing its address rewrites these by who, not by message */
+      "CREATE INDEX IF NOT EXISTS idx_reactions_sender ON reactions(sender_jid);"
+      "CREATE INDEX IF NOT EXISTS idx_receipts_jid ON message_receipts(jid);" },
 };
 
-#define LATEST_VERSION 15
+#define LATEST_VERSION 16
 
 static int user_version(sqlite3 *db) {
     sqlite3_stmt *st = NULL;

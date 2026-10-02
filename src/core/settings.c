@@ -34,7 +34,7 @@ void settings_set_defaults(Settings *s) {
     str_copy(s->image_mode, sizeof(s->image_mode), "auto");
 
     s->enter_sends = 1;
-    s->message_page_size = 200;
+    s->message_margin = 50;
     s->send_read_receipts = 1;
     s->share_typing = 1;
     s->appear_online = 1;

@@ -172,6 +172,7 @@ static void open_chat(TuiApp *app, const char *jid, int unfold) {
         composer_view_set_text(&app->composer, draft);
         free(draft);
     }
+    message_view_release(&app->message_view);
     message_view_scroll_to_latest(&app->message_view);
     if (strcmp(app->deps.blink->jid, jid) == 0) app->deps.blink->until_ms = 0;
     app->conversation_theme_valid = 0;
@@ -577,7 +578,7 @@ void tui_app_send_composer(TuiApp *app) {
     tui_app_forget_mentions(app);
     composer_view_clear(&app->composer);
     if (jid[0]) messaging_manager_save_draft(app->deps.messaging, jid, "");
-    message_view_scroll_to_latest(&app->message_view);
+    tui_app_show_latest(app);
 }
 
 void tui_app_toggle_recording(TuiApp *app) {
@@ -599,7 +600,7 @@ void tui_app_toggle_recording(TuiApp *app) {
     int seconds = 0;
     if (media_manager_finish_recording(media, path, sizeof(path), &seconds) == 0) {
         messaging_manager_send_voice(app->deps.messaging, path, seconds);
-        message_view_scroll_to_latest(&app->message_view);
+        tui_app_show_latest(app);
     } else {
         tui_app_toast(app, "Recording was too short or empty", 1);
     }
@@ -943,10 +944,42 @@ void tui_app_choose_search_result(TuiApp *app) {
     if (!tui_app_show_message(app, id)) tui_app_toast(app, "That message is older than tawk can load", 1);
 }
 
+void tui_app_show_latest(TuiApp *app) {
+    messaging_manager_show_latest(app->deps.messaging);
+    message_view_release(&app->message_view);
+    message_view_scroll_to_latest(&app->message_view);
+    app->dirty = 1;
+}
+
+int tui_app_load_older(TuiApp *app) {
+    int count = 0;
+    const Message *msgs = messaging_manager_messages(app->deps.messaging, &count);
+    message_view_hold(&app->message_view, msgs, count);
+    if (messaging_manager_load_older(app->deps.messaging)) { app->dirty = 1; return 1; }
+    message_view_release(&app->message_view);
+    return 0;
+}
+
+/* Keeps a margin of messages loaded either side of the ones on screen, so
+ * memory stays flat however far the user scrolls. Runs after a frame, when
+ * the view knows what it has just drawn. */
+static void keep_message_window(TuiApp *app) {
+    MessageView *v = &app->message_view;
+    int first = -1, last = -1, count = 0;
+    if (!v->drawn) return;
+    v->drawn = 0;
+    if (!message_view_visible_range(v, &first, &last)) return;
+    const Message *msgs = messaging_manager_messages(app->deps.messaging, &count);
+    message_view_hold(v, msgs, count);
+    if (messaging_manager_focus_window(app->deps.messaging, first, last)) app->dirty = 1;
+    else message_view_release(v);
+}
+
 /* Selects a message of the open chat and scrolls to it, loading older pages
  * until it is in view (within reason). Returns 1 when found. */
 int tui_app_show_message(TuiApp *app, const char *id) {
-    for (int attempt = 0; attempt < 20; attempt++) {
+    message_view_release(&app->message_view);
+    for (int attempt = 0; attempt < 80; attempt++) {
         int count = 0;
         const Message *msgs = messaging_manager_messages(app->deps.messaging, &count);
         for (int i = 0; i < count; i++) {
@@ -1511,7 +1544,7 @@ TuiApp *tui_app_create(const TuiAppDeps *deps) {
     settings_panel_init(&app->settings_panel, host);
     file_picker_init(&app->file_picker);
     search_overlay_init(&app->search);
-    app->thumbs = thumbnail_cache_create(64);
+    app->thumbs = thumbnail_cache_create(512);   /* more than a full window of pictures, so scrolling never decodes one twice */
     app->sixels = sixel_image_cache_create(24);
     app->media_sources = (MediaSources){ app->deps.video_posters, app->deps.document_pages };
     app->portraits = (PortraitSource){ app, portrait_of };
@@ -1623,6 +1656,7 @@ int tui_app_run(TuiApp *app) {
         if (app->dirty) {
             tui_render_frame(app, now);
             app->dirty = 0;
+            keep_message_window(app);
             app->last_frame_ms = now;
             app->last_minute = minute;
         }

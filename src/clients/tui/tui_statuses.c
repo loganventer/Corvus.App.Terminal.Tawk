@@ -52,14 +52,19 @@ static void open_author(TuiApp *app) {
     view_author(app, &authors[chosen]);
 }
 
-/* After the last of one person's statuses played out: on to the next person
- * with something unseen, as on the phone, or back to the list when there is none. */
+/* After the last of one person's statuses, by the timer or by hand: on to the
+ * next person down the list with something unseen, as on the phone, then round
+ * to those above, or back to the list when there is none. */
 static void view_next_unseen(TuiApp *app) {
     StatusAuthor authors[MAX_AUTHORS];
     int n = status_feed_manager_authors(app->deps.feed, app->feed.list.archived, authors, MAX_AUTHORS);
-    for (int i = 0; i < n; i++) {
-        if (authors[i].from_me || authors[i].unviewed <= 0) continue;
-        if (strcmp(authors[i].jid, app->feed.viewer.author_jid) == 0) continue;     /* the one just finished */
+    int done = -1;
+    for (int i = 0; i < n && done < 0; i++) {
+        if (strcmp(authors[i].jid, app->feed.viewer.author_jid) == 0) done = i;      /* the one just finished */
+    }
+    for (int k = 1; k <= n; k++) {
+        int i = (done + k) % n;
+        if (i == done || authors[i].from_me || authors[i].unviewed <= 0) continue;
         view_author(app, &authors[i]);
         return;
     }
@@ -187,7 +192,6 @@ static void advance_by_itself(TuiApp *app) {
     if (!u.viewed) status_feed_manager_mark_viewed(app->deps.feed, u.id);   /* before the list is asked who is unseen */
     status_update_dispose(&u);
     tui_app_statuses_request(app, status_feed_dialogs_tick(&app->feed, clock_now_ms(), show_ms, hold));
-    if (!status_feed_dialogs_viewing(&app->feed) && status_feed_dialogs_is_open(&app->feed)) view_next_unseen(app);
 }
 
 /* The status that just came into view counts as seen, and its photo or
@@ -205,6 +209,10 @@ void tui_app_statuses_tick(TuiApp *app) {
         app->dirty = 1;
     }
     advance_by_itself(app);
+    if (status_feed_dialogs_take_finished(&app->feed)) {
+        view_next_unseen(app);
+        app->dirty = 1;
+    }
     if (!status_feed_dialogs_take_moved(&app->feed)) return;
     StatusUpdate u;
     if (current(app, &u) != 0) return;

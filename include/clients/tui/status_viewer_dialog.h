@@ -22,6 +22,7 @@ typedef struct StatusViewerDialog {
     int    index;
     int    count;           /* statuses in the last render */
     int    moved;           /* index changed since the owner last looked */
+    int    finished;        /* closed by stepping past the last status, not by Esc or a click outside */
     /* Each status stays for a while and then gives way to the next, as on the phone. */
     int64_t elapsed_ms;      /* how long the status in view has been up, not counting holds */
     int64_t show_ms;         /* how long it stays */

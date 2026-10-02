@@ -78,6 +78,22 @@ int main(void) {
     for (int t = 0; t < SHOW * 2; t += 100) { now += 100; StatusFeedRequest r = status_feed_dialogs_tick(&f, now, SHOW, 0); if (r != STATUS_FEED_NONE) held = r; }
     CHECK(held == STATUS_FEED_NONE && status_feed_dialogs_index(&f) == 0, "it waits while the viewers list is open");
 
+    /* Running past the last status is told apart from closing the viewer, so the owner can go on to the next person. */
+    status_feed_dialogs_close(&f);
+    status_feed_dialogs_open(&f);
+    status_feed_dialogs_view(&f, "27820000000@s.whatsapp.net", "Mom", 1, 2);
+    CHECK(!status_feed_dialogs_take_finished(&f), "a viewer still open has not finished");
+    status_feed_dialogs_key(&f, 0, 'n');
+    CHECK(!status_feed_dialogs_viewing(&f) && status_feed_dialogs_take_finished(&f), "stepping past the last by hand finishes that person");
+    CHECK(!status_feed_dialogs_take_finished(&f), "which is told once");
+    status_feed_dialogs_view(&f, "27820000000@s.whatsapp.net", "Mom", 1, 2);
+    status_feed_dialogs_key(&f, 0, 27);
+    CHECK(!status_feed_dialogs_viewing(&f) && !status_feed_dialogs_take_finished(&f), "Esc goes back to the list and stays there");
+    status_feed_dialogs_view(&f, "27820000000@s.whatsapp.net", "Mom", 1, 2);
+    status_feed_dialogs_tick(&f, now, SHOW, 0);
+    for (int t = 0; t < SHOW + 200; t += 100) { now += 100; status_feed_dialogs_tick(&f, now, SHOW, 0); }
+    CHECK(status_feed_dialogs_take_finished(&f), "the timer running out on the last finishes that person too");
+
     if (failures) return 1;
     printf("ok: statuses advance by themselves and wait when they should\n");
     return 0;

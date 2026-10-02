@@ -185,6 +185,10 @@ void tui_app_open_message_menu(TuiApp *app, int index, int y, int x);
 void tui_app_open_delete_menu(TuiApp *app, int index, int y, int x);
 void tui_app_save_message(TuiApp *app, int index);
 int  tui_app_show_message(TuiApp *app, const char *id);
+/* Goes to the newest message of the open chat, loading it again if the view had moved far back. */
+void tui_app_show_latest(TuiApp *app);
+/* Loads an older page of the open chat, keeping the screen and the selection where they are. */
+int  tui_app_load_older(TuiApp *app);
 void tui_app_go_to_quote(TuiApp *app, int index);
 void tui_app_apply_message_action(TuiApp *app);
 void tui_app_open_reactions(TuiApp *app, int index);

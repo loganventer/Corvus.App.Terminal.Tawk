@@ -255,7 +255,7 @@ TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_
          $(BUILD)/tests/database_crypt_test $(BUILD)/tests/backup_test $(BUILD)/tests/forward_test $(BUILD)/tests/schedule_test \
          $(BUILD)/tests/status_answer_test $(BUILD)/tests/message_search_test \
          $(BUILD)/tests/control_transport_test $(BUILD)/tests/control_protocol_test $(BUILD)/tests/status_photo_viewer_test \
-         $(BUILD)/tests/status_auto_advance_test
+         $(BUILD)/tests/status_auto_advance_test $(BUILD)/tests/message_window_test
 
 test: $(TESTS)
 	$(call say,Running tests)
@@ -319,6 +319,10 @@ $(BUILD)/tests/database_crypt_test: $(BUILD)/tests/database_crypt_test.o $(filte
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
 $(BUILD)/tests/schedule_test: $(BUILD)/tests/schedule_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
+	$(call step,LD,$@)
+	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
+
+$(BUILD)/tests/message_window_test: $(BUILD)/tests/message_window_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
 	$(call step,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
