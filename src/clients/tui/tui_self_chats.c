@@ -29,6 +29,20 @@ void tui_app_open_self_chats(TuiApp *app) {
     app->dirty = 1;
 }
 
+void tui_app_self_chats_summary(TuiApp *app, char *out, size_t size) {
+    const char *p = settings(app)->automation_self_chats;
+    int n = 0, all = 0;
+    while (*p) {
+        while (*p == ',' || isspace((unsigned char)*p)) p++;
+        size_t len = strcspn(p, ",");
+        if (len > 0) { if (*p == '*') all = 1; else n++; }
+        p += len;
+    }
+    if (all) str_copy(out, size, "every chat agents may use");
+    else if (n == 0) str_copy(out, size, "no chat");
+    else snprintf(out, size, "%d chat%s", n, n == 1 ? "" : "s");
+}
+
 static void save_self_chats(TuiApp *app) {
     const char *jids[CHAT_TOGGLE_CAPACITY];
     int all = chat_toggle_dialog_all(&app->self_chats);

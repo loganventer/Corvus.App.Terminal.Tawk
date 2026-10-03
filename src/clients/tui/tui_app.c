@@ -1310,6 +1310,7 @@ static void host_info(void *ctx, MenuInfo info, char *out, size_t size) {
             else str_copy(out, size, "starting");
             break;
         }
+        case MENU_INFO_SELF_CHATS:  tui_app_self_chats_summary(app, out, size); break;
         default:                    out[0] = '\0'; break;
     }
 }

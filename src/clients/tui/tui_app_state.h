@@ -251,6 +251,8 @@ void tui_app_forward_request(TuiApp *app, PopupResult result);
 /* The chats an admin agent may answer its own requests in: the dialog, and what it answered. */
 void tui_app_open_self_chats(TuiApp *app);
 void tui_app_self_chats_request(TuiApp *app, PopupResult result);
+/* "no chat", "3 chats" or "every chat agents may use". */
+void tui_app_self_chats_summary(TuiApp *app, char *out, size_t size);
 
 /* tui_scheduling.c: messages to send later */
 /* "/later <when> <text>" for the open chat. */

@@ -13,7 +13,8 @@ typedef enum MenuInfo {
     MENU_INFO_USER_THEMES,
     MENU_INFO_VERSION,
     MENU_INFO_AUTHOR,
-    MENU_INFO_AGENTS                /* whether the control socket listens, and who is connected */
+    MENU_INFO_AGENTS,               /* whether the control socket listens, and who is connected */
+    MENU_INFO_SELF_CHATS            /* how many chats an admin agent may answer its own requests in */
 } MenuInfo;
 
 #endif

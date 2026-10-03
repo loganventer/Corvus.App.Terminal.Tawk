@@ -149,6 +149,25 @@ static const MenuNode AGENT_EVENTS[] = {
     TEXT("Your own tawk tail always shows messages, and none of the others"),
 };
 
+/* Access admin: where an agent holding the admin token may answer its own sends, and how often. */
+static const MenuNode SELF_APPROVAL[] = {
+    INFO("Answered by an agent itself in", MENU_INFO_SELF_CHATS),
+    ACTION("\xE2\x9C\x93", "Choose the chats\xE2\x80\xA6", MENU_ACTION_SELF_APPROVAL_CHATS),
+    FIELD(SETTING_CATEGORY_AUTOMATION, "self_approvals_per_hour"),
+    TEXT("Only with What they may do set to admin, and only for an agent you gave the admin token"),
+    TEXT("Sends, replies, scheduled messages, reactions, read marks and likes; never deletes or settings"),
+    TEXT("Each one is logged as approved by the agent and shown on screen"),
+};
+
+static const MenuNode AUTOMATION_ABOUT[] = {
+    TEXT("The Agentic tab (F3): requests to answer, who is connected, the log"),
+    TEXT("Needs: tawk running with this on, and tawk-mcp in your MCP client"),
+    TEXT("Risk: chat text an agent reads goes to its model's provider"),
+    TEXT("Risk: messages others send you can try to steer an agent"),
+    TEXT("Guard: sends and changes wait for you; deletes need two yeses"),
+    TEXT("Guard: locked chats are never shown, and everything is logged"),
+};
+
 static const MenuNode AUTOMATION[] = {
     FIELD(SETTING_CATEGORY_AUTOMATION, "control_socket"),
     INFO("Now", MENU_INFO_AGENTS),
@@ -156,14 +175,9 @@ static const MenuNode AUTOMATION[] = {
     FIELD(SETTING_CATEGORY_AUTOMATION, "chats"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "confirm_cli"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "writes_per_minute"),
-    ACTION("\xE2\x9C\x93", "Chats an agent may answer in by itself\xE2\x80\xA6", MENU_ACTION_SELF_APPROVAL_CHATS),
-    FIELD(SETTING_CATEGORY_AUTOMATION, "self_approvals_per_hour"),
-    TEXT("The Agentic tab (F3): requests to answer, who is connected, the log"),
-    TEXT("Needs: tawk running with this on, and tawk-mcp in your MCP client"),
-    TEXT("Risk: chat text an agent reads goes to its model's provider"),
-    TEXT("Risk: messages others send you can try to steer an agent"),
-    TEXT("Guard: sends and changes wait for you; deletes need two yeses"),
-    TEXT("Guard: locked chats are never shown, and everything is logged"),
+    SUB("\xF0\x9F\x93\xA1", "Agent events", "What agents hear as it happens", AGENT_EVENTS),
+    SUB("\xE2\x9C\x93", "Answering for itself", "With access admin: which chats, and how many an hour", SELF_APPROVAL),
+    SUB("\xE2\x84\xB9", "Needs, risks and guards", "What agent access means", AUTOMATION_ABOUT),
 };
 
 static const MenuNode ADVANCED[] = {
@@ -214,8 +228,7 @@ static const MenuNode ROOT_CHILDREN[] = {
     SUB("\xF0\x9F\x96\xBC", "Media", "Photos, videos, voice notes", MEDIA),
     SUB("\xF0\x9F\x8C\x99", "Screensaver", "Idle command such as matrix-clock", SCREENSAVER),
     SUB("\xF0\x9F\x94\x8C", "Connection", "Backend, reconnects, circuit breaker", CONNECTION),
-    SUB("\xF0\x9F\xA4\x96", "Automation", "tawk-mcp and shell commands", AUTOMATION),
-    SUB("\xF0\x9F\x93\xA1", "Agent events", "What agents hear as it happens", AGENT_EVENTS),
+    SUB("\xF0\x9F\xA4\x96", "Automation", "Agents: access, events, answering for itself", AUTOMATION),
     SUB("\xE2\x9A\x99", "Advanced", "Paths and logging", ADVANCED),
     SUB("\xE2\x84\xB9", "About", "Version and keyboard shortcuts", ABOUT),
 };
