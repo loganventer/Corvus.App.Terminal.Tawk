@@ -198,7 +198,7 @@ tawk is an independent project and is not affiliated with, endorsed by or connec
 
 ## Contributing
 
-Issues and pull requests are welcome. Keep to the existing structure: one type per file, contracts for dependencies, composition over inheritance. Run `make` with no warnings before opening a pull request.
+Issues and pull requests are welcome. Keep to the existing structure: one type per file, contracts for dependencies, composition over inheritance. Run `make` with no warnings before opening a pull request. [CONTRIBUTING.md](CONTRIBUTING.md) has the rules in full.
 
 ## Author
 
