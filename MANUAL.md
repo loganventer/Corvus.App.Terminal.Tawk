@@ -41,6 +41,7 @@ The screenshots in this manual were taken from tawk running on a demo account wi
 - [Automation and MCP](#automation-and-mcp)
   - [Turning it on](#turning-it-on)
   - [The Agentic tab](#the-agentic-tab)
+  - [Letting an agent answer for itself](#letting-an-agent-answer-for-itself)
   - [Destructive requests](#destructive-requests)
   - [Drafts from agents](#drafts-from-agents)
   - [Shell commands](#shell-commands)
@@ -965,10 +966,11 @@ The same submenu sets how far agents may go:
 | Setting | What it does |
 |---|---|
 | Agent access (MCP) | On or off; the line under it says whether tawk is listening and how many are connected |
-| What they may do | **read** lists, reads and searches; **send** also sends, reacts, schedules and drafts; **manage** also changes chats, statuses, your profile and settings |
+| What they may do | **read** lists, reads and searches; **send** also sends, reacts, schedules and drafts; **manage** also changes chats, statuses, your profile and settings; **admin** also lets an agent you gave the admin token answer its own sends (see [Letting an agent answer for itself](#letting-an-agent-answer-for-itself)) |
 | Chats they may use | Names or numbers separated by commas; empty allows every chat except locked ones |
 | Ask for shell commands too | Your own `tawk send` asks first as well (agents always ask) |
 | Writes per minute | More are refused until a minute has passed |
+| Self-approvals per hour | With **admin**: how many of its own requests an agent may answer in an hour (20 by default); past that they wait for you |
 
 ### The Agentic tab
 
@@ -1009,6 +1011,24 @@ The tab has four views, on keys 1 to 4 (Tab moves between them):
 A request nobody answers is declined by itself: after 5 minutes, or 2 for HIGH ones. Allowing many in a row from one agent brings a suggestion to allow it for the session instead, so the answers stay deliberate.
 
 ![The log of what agents did](docs/images/agents-log.png)
+
+### Letting an agent answer for itself
+
+By default every send waits for you. Set **What they may do** to **admin** and an agent you trust can answer its own requests instead, within limits you set. It is meant for an agent that runs while you are away from tawk.
+
+![The Permissions view with access admin and two chats named](docs/images/agents-admin.png)
+
+What changes with admin:
+
+- tawk writes an **admin token** to `admin.token` beside the control socket (`$XDG_RUNTIME_DIR/tawk/admin.token`, readable by you alone). It is a new token each time tawk starts and each time you switch to admin, and it is removed when you switch away or quit.
+- An agent that shows that token may answer a request it made itself. With tawk-mcp you give it the file with `TAWKMCP_ADMIN_TOKEN_FILE`; an agent without the file, or another agent on the same computer, cannot.
+- Only these can be answered that way: sending a message, replying to a status, forwarding, editing, retrying, scheduling, rescheduling, sending or cancelling a scheduled message, a reaction, a read mark and a like. Changes to chats, your profile, statuses you post, settings, and every delete or block still wait for you.
+- Only in chats named in **Chats they may use**. With that list empty nothing is answered this way, so you always choose the chats.
+- Only so many an hour (**Self-approvals per hour**). Past that, requests wait for you again.
+
+A request the agent may not answer simply stays in the Queue for you. Each one it does answer is written to the Log as **approved by the agent** and shown as a line at the bottom of the screen, so you can see what went out in your name. Pausing an agent in the Agents view stops it answering as well.
+
+Admin is the widest access there is: a message someone sends you can try to steer the agent (prompt injection), and with admin a steered agent can send in the chats you named without you seeing it first. Name few chats, keep the hourly number low, and read the Log.
 
 ### Destructive requests
 

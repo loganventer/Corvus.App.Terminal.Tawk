@@ -47,8 +47,8 @@ A notification, sent without a request:
 | `bad_request` | The line is not JSON, the operation is unknown, or an argument is missing or of the wrong type. |
 | `hello_first` | Any operation before `hello`. |
 | `protocol` | The client asked for a protocol version tawk does not speak. |
-| `not_allowed` | The access setting does not allow it (`access` in `[automation]` is `read`, `send` or `manage`), the setting may not be changed from outside, or the chat is outside `chats`. |
-| `bad_token` | `confirm` was given a token that is unknown, used, expired or from another connection. |
+| `not_allowed` | The access setting does not allow it (`access` in `[automation]` is `read`, `send`, `manage` or `admin`), the setting may not be changed from outside, or the chat is outside `chats`. |
+| `bad_token` | `confirm` was given a token that is unknown, used, expired or from another connection, or `approve` was given the wrong admin token. |
 | `draft_exists` | `draft_message` found a draft already waiting in that chat. |
 | `unsupported` | The backend in use cannot do it (posting a status needs whatsmeow). |
 | `not_found` | No visible chat or message matches. Locked and hidden chats are reported as not found. |
@@ -133,7 +133,7 @@ Result:
 }
 ```
 
-`access` is `read`, `send` or `manage`.
+`access` is `read`, `send`, `manage` or `admin`.
 
 ### Reading
 
@@ -151,7 +151,7 @@ Reading never marks anything as read, never sends read receipts, and never chang
 
 ### Writing
 
-Writes need `access = send` (or `manage`) in `[automation]`. Each is checked against the chat list, counted against `writes_per_minute`, written to the automation log (the Log in tawk's Agentic tab) and, where the origin requires it, shown to you in the Agentic tab to approve, edit or decline. While a write waits, tawk sends `{"evt":"approval","id":"<request id>","state":"waiting"}` once, so a client can tell its user where to look.
+Writes need `access = send` (or `manage` or `admin`) in `[automation]`. Each is checked against the chat list, counted against `writes_per_minute`, written to the automation log (the Log in tawk's Agentic tab) and, where the origin requires it, shown to you in the Agentic tab to approve, edit or decline. While a write waits, tawk sends `{"evt":"approval","id":"<request id>","state":"waiting"}` once, so a client can tell its user where to look.
 
 | Operation | Arguments | Result |
 | --- | --- | --- |
@@ -163,9 +163,29 @@ Writes need `access = send` (or `manage`) in `[automation]`. Each is checked aga
 
 When you edit the text in the approval dialog before allowing it, the result of `send_message` and `schedule_message` also carries `"edited":true` and `"text"` with what was actually sent.
 
+### Answering your own request
+
+With `access = admin` a client may answer a request of its own that is waiting for you, instead of you answering it in tawk. This is for a program you trust to act while you are away, and it is narrow on purpose.
+
+| Operation | Arguments | Result |
+| --- | --- | --- |
+| `approve` | `id` (the id of your waiting request), `admin_token` | `{"approved":true,"id":"…"}`; the waiting request then gets its own answer, as if you had allowed it |
+
+tawk answers `approve` with an error, and leaves the request waiting for you, unless all of these hold:
+
+- `access` is `admin`. Otherwise `not_allowed`.
+- `admin_token` is the token in `admin.token` beside the control socket (0600). tawk writes a new one each time it starts and each time access becomes admin, and removes it when access is anything else and when it quits. Otherwise `bad_token`.
+- The request was made on this connection. Another client's request is `not_found`.
+- The operation is one of `send_message`, `reply_status`, `forward_message`, `edit_message`, `retry_message`, `schedule_message`, `reschedule`, `send_scheduled_now`, `cancel_scheduled`, `react`, `mark_read` or `like_status`. Anything else is `not_allowed`. `cancel_scheduled` still needs its `confirm` first.
+- Its chat is named in `chats`. An empty `chats` allows none here. Otherwise `not_allowed`.
+- Fewer than `self_approvals_per_hour` were answered this way in the last hour. Otherwise `rate_limited` with `retry_after`.
+- You have not paused the client.
+
+Each one is logged with the outcome `approved by the agent` and shown to you in tawk. A client acting for a model should approve only what its user asked for, never what a message says.
+
 ### Managing tawk
 
-With `access = manage`, a client can do nearly everything you can do in tawk. Every one of these operations is a write, so it follows the same checks and asks you first when the origin requires it. Some things stay out of reach whatever the access, so a program cannot widen its own permissions or run programs of its choice:
+With `access = manage` (or `admin`), a client can do nearly everything you can do in tawk. Every one of these operations is a write, so it follows the same checks and asks you first when the origin requires it. Some things stay out of reach whatever the access, so a program cannot widen its own permissions or run programs of its choice:
 
 - the Automation settings themselves;
 - settings that run a program (`screensaver.command`, `media.image_viewer`, `media.video_player`, `advanced.node_binary`, `advanced.sidecar_dir`);

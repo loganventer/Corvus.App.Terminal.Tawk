@@ -664,6 +664,7 @@ static void agents_scenes(void) {
 
     AutomationEntry log[] = {
         log_entry(2, CONTROL_ORIGIN_MCP, "tawk-mcp", "send_message", sarah, "Sounds good, see you at 7 at the usual place", AUTOMATION_OUTCOME_APPROVED),
+        log_entry(3, CONTROL_ORIGIN_MCP, "tawk-mcp", "send_message", mom, "Leaving now, home by six", AUTOMATION_OUTCOME_SELF_APPROVED),
         log_entry(4, CONTROL_ORIGIN_MCP, "tawk-mcp", "react", book, "\xF0\x9F\x91\x8D", AUTOMATION_OUTCOME_ALLOWED),
         log_entry(7, CONTROL_ORIGIN_MCP, "tawk-mcp", "react", dev, "\xF0\x9F\x8E\x89", AUTOMATION_OUTCOME_ALLOWED),
         log_entry(9, CONTROL_ORIGIN_MCP, "tawk-mcp", "read_messages", dev, "last 40 messages", AUTOMATION_OUTCOME_READ),
@@ -708,6 +709,13 @@ static void agents_scenes(void) {
     p.view = AGENTS_VIEW_PERMISSIONS;
     p.selected[AGENTS_VIEW_PERMISSIONS] = 1;
     agents_panel_draw(&p, &m, "agents-permissions");
+
+    /* Access admin: an agent with the admin token answers its own sends in the chats named. */
+    str_copy(settings.automation_access, sizeof(settings.automation_access), "admin");
+    str_copy(settings.automation_chats, sizeof(settings.automation_chats), "Mom, Sarah");
+    agents_panel_draw(&p, &m, "agents-admin");
+    str_copy(settings.automation_access, sizeof(settings.automation_access), "send");
+    settings.automation_chats[0] = '\0';
 
     /* The main screen: the Agentic tab counts what waits. */
     s_agents_tab = 0;

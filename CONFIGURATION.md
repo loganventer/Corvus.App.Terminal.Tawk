@@ -158,10 +158,11 @@ What other programs reaching tawk through its control socket may do: tawk-mcp an
 | Key | Default | Description |
 |---|---|---|
 | `control_socket` | `off` | Listen on the control socket. Turning it on in the settings panel explains the risks first |
-| `access` | `read` | `read`, `send` or `manage`: see the manual. Programs acting for a model are asked about every write |
+| `access` | `read` | `read`, `send`, `manage` or `admin`: see the manual. Programs acting for a model are asked about every write; with `admin`, one holding the admin token may answer its own sends in the chats named in `chats` |
 | `chats` | empty | Chats they may use, by name or number, comma-separated; empty means every chat except locked and soft-locked ones |
 | `confirm_cli` | `off` | Your own shell commands ask before sending too |
 | `writes_per_minute` | `5` | Writes allowed per minute (1 to 60) |
+| `self_approvals_per_hour` | `20` | With `access = admin`: requests a program may answer itself in an hour (1 to 240); past this they wait for you |
 
 None of these can be changed over the socket, nor can settings that run a program, folders, the backend or the log level.
 

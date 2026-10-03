@@ -798,6 +798,37 @@ sequenceDiagram
     C->>AM: record(outcome)
 ```
 
+With access admin a client can give that answer itself. `AutomationManager` keeps an admin token while the access setting says admin: it writes a fresh one through `IAdminTokenStore` when the control client's tick finds access at admin with none issued, and removes it when access is anything else and when tawk quits. The `approve` operation finds the caller's own waiting request, and the manager decides: `automation_policy_self_approval` checks the access, the kind of operation and that the chat is named in the chat list (an empty list allows none), the token is compared without stopping at the first difference, and the `hourly_quota` engine counts it against `self_approvals_per_hour`. When the answer is yes the request is withdrawn from the queue and carried out as if you had allowed it, logged as approved by the agent, and the manager hands the screen a line to show. When it is no the request stays in the queue for you.
+
+```mermaid
+sequenceDiagram
+    participant A as tawk-mcp, holding the admin token
+    participant C as Control client
+    participant AM as AutomationManager
+    participant Q as ApprovalQueue
+    participant T as Screen
+    participant M as MessagingManager
+    A->>C: send_message {chat, text}
+    C->>Q: ask(request)
+    C-->>A: evt approval waiting
+    A->>C: approve {id, admin_token}
+    C->>AM: self_approve(op, chat, token)
+    AM->>AM: access admin? own kind? chat named? token? hourly quota?
+    alt allowed
+        AM-->>C: ALLOW
+        C->>Q: withdraw(request)
+        C->>M: send_text_to(chat, text)
+        C-->>A: ok {id} for the send
+        C-->>A: ok {approved} for approve
+        C->>AM: record(approved by the agent), notice
+        AM-->>T: a line saying what it did
+    else refused
+        AM-->>C: OFF, BAD_TOKEN, NOT_THIS_KIND, CHAT_NOT_LISTED or RATE_LIMITED
+        C-->>A: error not_allowed, bad_token or rate_limited
+        Note over Q: the request still waits for you
+    end
+```
+
 A destructive request (deleting, clearing, blocking, removing your photo, cancelling a message for later) first answers `needs_confirmation` with a token and does nothing. tawk-mcp keeps the token from the model and asks you in your MCP client; only then does it send `confirm`, which puts the request in the queue as HIGH, where Shift+A and Y allow it. Allowances "for this session" are kept per connection and never cover destructive requests.
 
 New messages reach subscribers through a ring of the last 256 messages the messaging manager saw arrive or sent (`live_message_ring`); each frame the control client sends those after the last one it passed on to every client following that chat, and every half second it compares the unread counts it last told each client. Messages in locked or hidden chats are never passed on.
