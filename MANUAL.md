@@ -69,7 +69,7 @@ The layout follows the window: resize it and everything reflows. When the conver
 
 When tawk starts it shows a short splash while it connects: the tawk logo draws itself in WhatsApp greens with what the name stands for, Terminal Access to WhatsApp Konnector, underneath, the tagline types itself out and the connection state shows underneath. It fades after about two seconds, and any key skips it straight away. Turn it off with Settings, Appearance, Layout, Startup splash (`splash`).
 
-![The start-up splash: the tawk logo in WhatsApp greens with a shine across it, the tagline and typing dots](docs/images/splash.png)
+![The start-up splash: the logo's speech bubble of bars over the name, in WhatsApp greens with a shine across them, the tagline and typing dots](docs/images/splash.png)
 
 ## Keyboard
 

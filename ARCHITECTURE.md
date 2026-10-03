@@ -276,7 +276,7 @@ The TUI is split into widgets that each draw one part of the screen and turn key
 | `status_feed_dialogs` | Looking at statuses as one popup: `status_list_dialog` (My status, then recent and viewed updates) and `status_viewer_dialog` over it (a bar per status, who and when, the words on their colour or the photo or video with its caption) |
 | `styled_text_view` | Draws a stretch of formatted message text span by span (bold, italic or underline, dim, the accent colour for code and mentions); used by the conversation and the reader. The formatted text comes through `MessageFormatter`, which the app implements with `messaging_manager_format_message`, so widgets never apply the rules themselves |
 | `text_field` | A box of editable text for dialogs that wraps and scrolls to keep the cursor in view; the status composer's allows line breaks |
-| `splash_view` | The animated start-up screen shown while the backend connects; any key skips it |
+| `splash_view` | The animated start-up screen shown while the backend connects: the logo's symbol over the name, in the middle of the screen; the symbol is left out when the terminal is too short. Any key skips it |
 | `text_reader` | Scrollable reader for long messages and `/help` |
 | `image_viewer` | Full-screen viewer for photos, videos and PDFs, turning the pages of a PDF; in portrait mode it shows one profile picture, square |
 | `media_picture`, `thumbnail_cache` | The best picture for a photo, video or PDF (`MediaSources` supplies video frames and PDF pages), decoded into an LRU and drawn with half blocks through `color_pair_cache` |
