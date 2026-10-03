@@ -19,6 +19,7 @@ typedef struct AgentsPanelModel {
     int64_t                 now_ms;       /* monotonic, as the requests' times */
     void                  (*name_of)(void *ctx, const char *jid, char *out, size_t size);
     void                   *ctx;
+    const char             *self_chats;   /* how many chats an admin agent answers for itself, in words */
 } AgentsPanelModel;
 
 #endif

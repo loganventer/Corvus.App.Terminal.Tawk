@@ -11,6 +11,7 @@ static const Settings *settings(TuiApp *app) { return settings_manager_current(a
 
 void tui_app_open_self_chats(TuiApp *app) {
     settings_panel_close(&app->settings_panel);
+    app->self_chats_from_agents = 0;                         /* the Agents tab says so after this, when it opened it */
     chat_toggle_dialog_open(&app->self_chats, "Chats an agent may answer in by itself", "All chats agents may use");
     const char *p = settings(app)->automation_self_chats;
     while (*p) {                                             /* "*" for all, or JIDs, separated by commas */
@@ -69,4 +70,8 @@ static void save_self_chats(TuiApp *app) {
 void tui_app_self_chats_request(TuiApp *app, PopupResult result) {
     app->dirty = 1;
     if (result == POPUP_CHOSEN) save_self_chats(app);
+    if (!app->self_chats.open && app->self_chats_from_agents) {
+        app->self_chats_from_agents = 0;
+        app->agents.open = 1;
+    }
 }

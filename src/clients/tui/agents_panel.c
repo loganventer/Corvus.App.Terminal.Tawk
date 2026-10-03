@@ -18,7 +18,7 @@
 #define EDIT_MAX  TEXT_FIELD_CAPACITY
 
 static const char *const TAB_NAMES[AGENTS_VIEW_COUNT] = { "Queue", "Agents", "Log", "Permissions" };
-static const char *const PERMISSION_KEYS[] = { "control_socket", "access", "chats", "confirm_cli", "writes_per_minute", "ai_disclaimer", "ai_disclaimer_text", "push_received", "push_sent", "push_read", "push_reactions", "push_edits", "push_scheduled", "self_approvals_per_hour" };
+static const char *const PERMISSION_KEYS[] = { "control_socket", "access", "chats", "confirm_cli", "writes_per_minute", "ai_disclaimer", "ai_disclaimer_text", "push_received", "push_sent", "push_read", "push_reactions", "push_edits", "push_scheduled", "self_approval_chats", "self_approvals_per_hour" };
 #define PERMISSION_COUNT ((int)(sizeof(PERMISSION_KEYS) / sizeof(PERMISSION_KEYS[0])))
 static const char *const FILTER_NAMES[] = { "everything", "allowed", "declined or expired", "refused or failed" };
 
@@ -237,6 +237,7 @@ static AgentsPanelRequest permissions_key(AgentsPanel *p, const AgentsPanelModel
     setting_to_text(m->settings, f, value, sizeof(value));
     str_copy(p->setting_key, sizeof(p->setting_key), f->key);
     int change = (!is_key && ch == ' ') || is_enter(is_key, ch);
+    if (!strcmp(f->key, "self_approval_chats")) return change ? AGENTS_REQUEST_SELF_CHATS : AGENTS_REQUEST_NONE;   /* chosen with a switch per chat */
     if (f->kind == SETTING_KIND_BOOL && change) {
         str_copy(p->setting_value, sizeof(p->setting_value), setting_get_int(m->settings, f) ? "off" : "on");
         return AGENTS_REQUEST_SET_SETTING;
@@ -480,20 +481,23 @@ static void draw_log(AgentsPanel *p, const AgentsPanelModel *m, UiRect list, UiR
 }
 
 static void draw_permissions(AgentsPanel *p, const AgentsPanelModel *m, UiRect list, UiRect detail, int base) {
-    for (int row = 0; row < PERMISSION_COUNT && row < list.h; row++) {
-        const SettingField *f = permission_field(row);
+    keep_in_view(p, list.h);
+    for (int row = 0; row < list.h && p->scroll[3] + row < PERMISSION_COUNT; row++) {
+        int i = p->scroll[3] + row;
+        const SettingField *f = permission_field(i);
         if (!f) continue;
-        int sel = row == p->selected[3];
+        int sel = i == p->selected[3];
         int attr = sel ? tui_palette_attr(THEME_SLOT_SIDEBAR_SELECTED) : base;
         tui_fill((UiRect){ list.y + row, list.x, 1, list.w }, attr);
         char value[600], line[800];
         setting_to_text(m->settings, f, value, sizeof(value));
         if (f->kind == SETTING_KIND_BOOL) str_copy(value, sizeof(value), toggle_switch_text(setting_get_int(m->settings, f)));
         if (!strcmp(f->key, "chats") && !value[0]) str_copy(value, sizeof(value), "(every chat except locked ones)");
-        snprintf(line, sizeof(line), "%-30s %s", f->label, value);
+        if (!strcmp(f->key, "self_approval_chats")) str_copy(value, sizeof(value), m->self_chats ? m->self_chats : "");
+        snprintf(line, sizeof(line), "%-33s %s", f->label, value);
         if (sel && p->editing_setting) {
-            tui_text(list.y + row, list.x, 31, f->label, attr);
-            text_field_render(&p->edit, (UiRect){ list.y + row, list.x + 31, 1, list.w - 31 }, tui_palette_attr(THEME_SLOT_COMPOSER), 1, &p->caret);
+            tui_text(list.y + row, list.x, 34, f->label, attr);
+            text_field_render(&p->edit, (UiRect){ list.y + row, list.x + 34, 1, list.w - 34 }, tui_palette_attr(THEME_SLOT_COMPOSER), 1, &p->caret);
         } else {
             tui_text(list.y + row, list.x, list.w, line, attr);
         }

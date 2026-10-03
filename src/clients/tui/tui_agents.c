@@ -34,10 +34,12 @@ static AutomationEntry *load_log(TuiApp *app, int *count) {
 
 static AgentsPanelModel model_of(TuiApp *app, const AutomationEntry *log, int log_count) {
     static const AutomationStatus none;
+    static char self_chats[64];
+    tui_app_self_chats_summary(app, self_chats, sizeof(self_chats));
     return (AgentsPanelModel){
         app->deps.approvals,
         app->deps.automation ? automation_manager_status(app->deps.automation) : &none,
-        log, log_count, settings(app), clock_now_ms(), chat_name, app
+        log, log_count, settings(app), clock_now_ms(), chat_name, app, self_chats
     };
 }
 
@@ -106,6 +108,11 @@ static void handle(TuiApp *app, AgentsPanelRequest request) {
             break;
         }
         case AGENTS_REQUEST_SET_SETTING: set_permission(app); break;
+        case AGENTS_REQUEST_SELF_CHATS:                   /* the dialog shows over the chats, and brings you back here */
+            app->agents.open = 0;
+            tui_app_open_self_chats(app);
+            app->self_chats_from_agents = 1;
+            break;
         default: break;
     }
     app->dirty = 1;

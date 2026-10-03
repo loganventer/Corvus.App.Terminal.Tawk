@@ -12,7 +12,8 @@ typedef enum AgentsPanelRequest {
     AGENTS_REQUEST_DISCONNECT,       /* the selected agent */
     AGENTS_REQUEST_PAUSE,            /* pause or resume it */
     AGENTS_REQUEST_REVOKE,           /* forget its "for this session" allowances */
-    AGENTS_REQUEST_SET_SETTING       /* a permission changed */
+    AGENTS_REQUEST_SET_SETTING,      /* a permission changed */
+    AGENTS_REQUEST_SELF_CHATS        /* choose the chats an admin agent may answer its own requests in */
 } AgentsPanelRequest;
 
 #endif

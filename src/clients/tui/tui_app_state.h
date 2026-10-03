@@ -91,6 +91,7 @@ struct TuiApp {
     SplashView          splash;               /* the start-up animation */
     ChatPicker          forward_picker;       /* choosing chats to forward a message to */
     ChatToggleDialog    self_chats;           /* the chats an admin agent may answer its own requests in */
+    int                 self_chats_from_agents; /* opened from the Agents tab, so close back to it */
     char                forward_id[64];       /* the message being forwarded */
     ScheduledListDialog scheduled_list;       /* messages waiting to be sent later */
     AgentsPanel         agents;               /* the Agents tab */
