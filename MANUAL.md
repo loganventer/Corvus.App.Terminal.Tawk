@@ -985,10 +985,13 @@ Settings has its own section, **Agent events**, for what agents are told as it h
 | Push received messages | on | Each message other people send, as it arrives |
 | Push messages you send | on | Each message you send, from tawk or your phone |
 | Push read receipts | off | That someone read a message you sent, with who and when |
+| Push reactions | off | That someone reacted to a message you sent, or took the reaction back |
+| Push edits and deletes | off | That someone changed or deleted a message they sent, with the new words for an edit |
+| Push scheduled sends | off | That a message you scheduled went out |
 
-![The Agent events section with its three switches](docs/images/settings-agent-events.png)
+![The Agent events section with a switch for each kind of event](docs/images/settings-agent-events.png)
 
-With a switch off the agent is simply not told; it still sees messages when it reads a chat. Your own `tawk tail` always shows messages and never read receipts. tawk-mcp has matching options (`TAWKMCP_CHANNEL_OWN`, `TAWKMCP_CHANNEL_READ`) for what it passes on to the agent, so a kind reaches the agent only when both sides have it on.
+With a switch off the agent is simply not told; it still sees messages when it reads a chat. Your own `tawk tail` always shows messages and none of the other kinds. tawk-mcp has a matching option for each (`TAWKMCP_CHANNEL_OWN`, `_READ`, `_REACTIONS`, `_EDITS`, `_SCHEDULED`) for what it passes on to the agent, so a kind reaches the agent only when both sides have it on.
 
 ### The Agentic tab
 

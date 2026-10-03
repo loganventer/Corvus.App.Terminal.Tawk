@@ -274,6 +274,9 @@ After `subscribe`, tawk sends:
 
 - `{"evt":"message","chat":{"jid","name"},"message":message}` for every new message, sent or received, in a subscribed chat. For a client whose origin is `mcp`, `push_received` and `push_sent` in `[automation]` decide whether received and sent messages are sent at all; origin `cli` always gets both.
 - `{"evt":"read","chat":{"jid","name"},"message_id":"…","reader":{"jid","name"},"at":ts}` when someone reads a message you sent in a subscribed chat. Only for origin `mcp`, and only with `push_read` on.
+- `{"evt":"reaction","chat":{…},"message_id":"…","who":{"jid","name"},"emoji":"👍","at":ts}` when someone reacts to a message you sent; `emoji` is `""` when the reaction is taken back. Origin `mcp` with `push_reactions` on.
+- `{"evt":"edit","chat":{…},"message_id":"…","who":{…},"message":message,"at":ts}` when someone changes a message they sent, with the message as it now reads, and `{"evt":"delete","chat":{…},"message_id":"…","who":{…},"at":ts}` when they delete one for everyone. Origin `mcp` with `push_edits` on.
+- `{"evt":"scheduled_sent","chat":{…},"message_id":"<the scheduled message's id>","at":ts}` when a message you scheduled goes out. Origin `mcp` with `push_scheduled` on.
 - `{"evt":"chat","chat":chat}` when a subscribed chat's unread count changes.
 - `{"evt":"bye"}` just before tawk quits.
 
