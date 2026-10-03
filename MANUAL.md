@@ -970,6 +970,8 @@ The same submenu sets how far agents may go:
 | Chats they may use | Names or numbers separated by commas; empty allows every chat except locked ones |
 | Ask for shell commands too | Your own `tawk send` asks first as well (agents always ask) |
 | Writes per minute | More are refused until a minute has passed |
+| Push received messages | On: an agent that listens (tawk-mcp's channel, say) hears about each message other people send as it arrives. Off: it sees messages only when it reads a chat |
+| Push messages you send | The same for the messages you send, from tawk or your phone. Your own `tawk tail` always shows both |
 | Self-approvals per hour | With **admin**: how many of its own requests an agent may answer in an hour (20 by default); past that they wait for you |
 
 ### The Agentic tab

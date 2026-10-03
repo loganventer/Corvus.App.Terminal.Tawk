@@ -798,6 +798,24 @@ sequenceDiagram
     C->>AM: record(outcome)
 ```
 
+A client that subscribed hears about new messages as they arrive. `control_ops_live.c` asks the automation manager for each listener, and `automation_policy_pushes` answers from the two push settings:
+
+```mermaid
+flowchart TD
+    NEW["A new message in a chat"] --> VIS{"May agents use this chat?"}
+    VIS -- no --> DROP["Nobody is told"]
+    VIS -- yes --> EACH["For each client that subscribed to it"]
+    EACH --> ORIGIN{"Acting for a model?"}
+    ORIGIN -- "no, your own shell (tawk tail)" --> SEND["Send the message event"]
+    ORIGIN -- yes --> MINE{"Did you send it?"}
+    MINE -- yes --> PS{"Push messages you send on?"}
+    MINE -- no --> PR{"Push received messages on?"}
+    PS -- yes --> SEND
+    PR -- yes --> SEND
+    PS -- no --> SKIP["Not told; it sees the message when it reads the chat"]
+    PR -- no --> SKIP
+```
+
 With access admin a client can give that answer itself. `AutomationManager` keeps an admin token while the access setting says admin: it writes a fresh one through `IAdminTokenStore` when the control client's tick finds access at admin with none issued, and removes it when access is anything else and when tawk quits. The `approve` operation finds the caller's own waiting request, and the manager decides: `automation_policy_self_approval` checks the access, the kind of operation and that the chat is named in the chat list (an empty list allows none), the token is compared without stopping at the first difference, and the `hourly_quota` engine counts it against `self_approvals_per_hour`. When the answer is yes the request is withdrawn from the queue and carried out as if you had allowed it, logged as approved by the agent, and the manager hands the screen a line to show. When it is no the request stays in the queue for you.
 
 ```mermaid
