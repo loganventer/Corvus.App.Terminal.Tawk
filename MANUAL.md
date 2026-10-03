@@ -60,7 +60,7 @@ The screenshots in this manual were taken from tawk running on a demo account wi
 | Header | On the left: ☰ (show or hide the chat list), the app name and `🔕 DND` while do not disturb is on. On the right, from left to right: unread counts per type (they blink when something new arrives), ⭕ with the number of people whose statuses you have not seen (click it for the [status list](#viewing-statuses)), + (click it to [post a status](#posting-a-status)), the time, the connection state as an emoji, your name (click it for [your profile](#your-profile)) and ⚙ (settings). The ⭕ and + are hidden while tawk is being linked. |
 | Chat list | Folder entries for Archived and Locked chats at the top, then chats sorted pinned first, then by latest message, each with its profile picture. The open chat is marked with a bar on the left edge and a highlighted row; unread chats have an accent bar and a bold name. |
 | Conversation | The open chat. A two-row title bar shows the chat's profile picture, its name and, under the name, the about text or the member count. When someone is typing or recording, a small bubble with three moving dots says so on the last row, just above the input. Click the picture to enlarge it and the name for the [contact details](#contact-details). Your messages sit on the right, everyone else's on the left, with day separators between days. |
-| Input | Where you type, with 😀 emoji, ➕ attach and ➤ send buttons on the right. The line above it shows recording state, an attachment, the message you are replying to, or the message you are editing. |
+| Input | Where you type, with 😀 emoji, ➕ attach and ➤ send buttons on the right, and ✕ to clear what you typed while there is something there. The line above it shows recording state, an attachment, the message you are replying to, or the message you are editing. |
 | Footer | Keys for the part of the screen that has focus, or a short message after an action. |
 
 The connection emoji in the header is 🟢 online, 🟡 connecting or reconnecting, 🔴 offline and ⚪ not linked.
@@ -227,6 +227,10 @@ Commands that act on "this chat" need an open chat.
 - Click the `↓ newer` badge at the bottom right of the conversation to jump to the newest message. It appears whenever you have scrolled up.
 - Click the input to type, and use the wheel to scroll a long message in it.
 - Click 😀 to insert an emoji, ➕ to attach a file and ➤ to send.
+- Click ✕, which appears beside them once you have typed something, to clear the input. tawk asks "Clear what you typed?" first, with Cancel selected, so a stray click loses nothing.
+
+![The question asked before the input is cleared](docs/images/clear-input.png)
+
 - Drag the line between the chat list and the conversation to resize the list. The width is saved.
 - Click ☰ to hide or show the chat list and ⚙ to open settings.
 - Click your name in the header to open [your profile](#your-profile), + to [post a status](#posting-a-status) and ⭕ to [see statuses](#viewing-statuses).

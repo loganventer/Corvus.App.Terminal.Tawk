@@ -790,6 +790,21 @@ static void settings_scene(IThemeRepository *themes, const int *path, int depth,
     save(name);
 }
 
+/* Something typed, the clear button beside it, and the question it asks. */
+static void clear_input_scene(void) {
+    draw_app(INPUT_HINTS);
+    static ComposerView composer;
+    composer_view_init(&composer);
+    composer_view_set_text(&composer, "Running late, start without me and I will catch up");
+    composer_view_render(&composer, (UiRect){ ROWS - 3, SIDEBAR, 2, COLS - SIDEBAR }, 1, 1, -1, 1, "");
+    save("clear-input-button");
+    ConfirmDialog confirm;
+    confirm_dialog_open(&confirm, CONFIRM_CLEAR_INPUT, "", " Clear message ", "Clear what you typed?",
+                        "The text in the message box will be removed. It has not been sent.", "Clear", 0);
+    confirm_dialog_render(&confirm, body(), 0);
+    save("clear-input");
+}
+
 static void splash_scene(void) {
     SplashView v;
     splash_view_start(&v, 0);
@@ -821,6 +836,7 @@ int main(int argc, char **argv) {
     status_reply_scene();
     forward_scene();
     self_chats_scene();
+    clear_input_scene();
     settings_scene(themes, (const int[]){ 7 }, 1, "settings-automation");
     settings_scene(themes, (const int[]){ 7, 8 }, 2, "settings-agent-events");
     settings_scene(themes, (const int[]){ 7, 9 }, 2, "settings-self-approval");
