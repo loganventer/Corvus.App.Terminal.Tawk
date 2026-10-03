@@ -5,7 +5,8 @@
 
 #include "clients/tui/ui_rect.h"
 
-/* The start-up screen: the tawk logo wipes in from the left with a bright
+/* The start-up screen, in the middle of the screen: the logo's symbol (a
+ * speech bubble of bars) over the name in block letters. Both wipe in from the left with a bright
  * edge, a shine keeps sweeping across it, the tagline types itself out,
  * typing dots pulse under it, and the whole thing fades out at the end.
  * It is drawn while the backend connects and never delays it. */

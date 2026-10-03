@@ -26,6 +26,17 @@ static const char *const LOGO[] = {
 };
 #define LOGO_ROWS ((int)(sizeof(LOGO) / sizeof(LOGO[0])))
 
+/* The logo's symbol: a speech bubble built from four rows of bars, split like bricks. */
+static const char *const SYMBOL[] = {
+    "\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84  \xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84",
+    "\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84  \xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84",
+    "\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84  \xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84",
+    "\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84\xE2\x96\x84",
+    "        \xE2\x96\x88\xE2\x96\x88\xE2\x96\x88\xE2\x96\x9B\xE2\x96\x80\xE2\x96\x98            ",
+    "        \xE2\x96\x88\xE2\x96\x9B\xE2\x96\x98               ",
+};
+#define SYMBOL_ROWS ((int)(sizeof(SYMBOL) / sizeof(SYMBOL[0])))
+
 static const char TAGLINE[] = "WhatsApp in your terminal";
 static const char ACRONYM[] = "Terminal Access to WhatsApp Konnector";   /* what the name stands for */
 
@@ -81,12 +92,13 @@ static int shade(int col, int width, int64_t t, int fade) {
     return level;
 }
 
-static void draw_logo(int top, int left, int64_t t, int fade) {
-    int width = utf8_columns(LOGO[0]);
+/* Draws `rows` lines of block art, wiping in from the left with a bright edge and a shine sweeping across. */
+static void draw_art(const char *const *art, int rows, int top, int left, int64_t t, int fade) {
+    int width = utf8_columns(art[0]);
     int revealed = t >= WIPE_MS ? width : (int)((t * width) / WIPE_MS);
-    for (int row = 0; row < LOGO_ROWS; row++) {
+    for (int row = 0; row < rows; row++) {
         wchar_t line[128];
-        size_t n = mbstowcs(line, LOGO[row], 127);
+        size_t n = mbstowcs(line, art[row], 127);
         if (n == (size_t)-1) continue;
         for (size_t col = 0; col < n && (int)col < revealed; col++) {
             if (line[col] == L' ') continue;
@@ -118,11 +130,16 @@ void splash_view_render(const SplashView *v, UiRect s, int64_t now, const char *
     tui_fill(s, base);
 
     int width = utf8_columns(LOGO[0]);
-    int block_h = LOGO_ROWS + 7;
+    int symbol_w = utf8_columns(SYMBOL[0]);
+    int with_symbol = s.h >= LOGO_ROWS + SYMBOL_ROWS + 10 && symbol_w + 2 <= s.w;    /* left out on a short screen */
+    int symbol_h = with_symbol ? SYMBOL_ROWS + 1 : 0;
+    int block_h = symbol_h + LOGO_ROWS + 7;
     int top = s.y + (s.h - block_h) / 2;
     if (top < s.y) top = s.y;
+    if (with_symbol) draw_art(SYMBOL, SYMBOL_ROWS, top, s.x + (s.w - symbol_w) / 2, t, fade);
+    top += symbol_h;
     if (width + 2 <= s.w) {
-        draw_logo(top, s.x + (s.w - width) / 2, t, fade);
+        draw_art(LOGO, LOGO_ROWS, top, s.x + (s.w - width) / 2, t, fade);
     } else {
         tui_text_center(top + LOGO_ROWS / 2, s.x, s.w, "tawk", tui_palette_attr(THEME_SLOT_ACCENT) | ATTR_BOLD);
     }
