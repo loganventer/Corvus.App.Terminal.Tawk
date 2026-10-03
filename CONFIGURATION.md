@@ -162,6 +162,8 @@ What other programs reaching tawk through its control socket may do: tawk-mcp an
 | `chats` | empty | Chats they may use, by name or number, comma-separated; empty means every chat except locked and soft-locked ones |
 | `confirm_cli` | `off` | Your own shell commands ask before sending too |
 | `writes_per_minute` | `5` | Writes allowed per minute (1 to 60) |
+| `ai_disclaimer` | `off` | Add a line under messages a program acting for a model sends, schedules or answers a status with, saying an AI wrote them |
+| `ai_disclaimer_text` | `🤖 Sent by my AI assistant` | That line |
 | `push_received` | `on` | Programs acting for a model that subscribed are told about each message other people send, as it arrives. Off, they see messages only when they read a chat |
 | `push_sent` | `on` | The same for the messages you send. Your own shell commands (`tawk tail`) always hear both |
 | `push_read` | `off` | Programs acting for a model that subscribed are told when someone reads a message you sent |

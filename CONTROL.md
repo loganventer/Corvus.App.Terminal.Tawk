@@ -163,6 +163,8 @@ Writes need `access = send` (or `manage` or `admin`) in `[automation]`. Each is 
 
 When you edit the text in the approval dialog before allowing it, the result of `send_message` and `schedule_message` also carries `"edited":true` and `"text"` with what was actually sent.
 
+With `ai_disclaimer` on, tawk adds the line in `ai_disclaimer_text` under the text of `send_message`, `schedule_message` and `reply_status` from a client whose origin is `mcp`, after any edit of yours. The result then carries `"disclaimer":true` and `"text"` with what went out. A client should not add such a line itself.
+
 ### Answering your own request
 
 With `access = admin` a client may answer a request of its own that is waiting for you, instead of you answering it in tawk. This is for a program you trust to act while you are away, and it is narrow on purpose.

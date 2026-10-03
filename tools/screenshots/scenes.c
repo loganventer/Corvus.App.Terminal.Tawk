@@ -822,8 +822,8 @@ int main(int argc, char **argv) {
     forward_scene();
     self_chats_scene();
     settings_scene(themes, (const int[]){ 7 }, 1, "settings-automation");
-    settings_scene(themes, (const int[]){ 7, 6 }, 2, "settings-agent-events");
-    settings_scene(themes, (const int[]){ 7, 7 }, 2, "settings-self-approval");
+    settings_scene(themes, (const int[]){ 7, 8 }, 2, "settings-agent-events");
+    settings_scene(themes, (const int[]){ 7, 9 }, 2, "settings-self-approval");
     scheduled_scene();
     agents_scenes();
     splash_scene();

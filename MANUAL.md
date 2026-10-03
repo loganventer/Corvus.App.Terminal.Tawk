@@ -971,6 +971,8 @@ The same submenu sets how far agents may go:
 | Chats they may use | Names or numbers separated by commas; empty allows every chat except locked ones |
 | Ask for shell commands too | Your own `tawk send` asks first as well (agents always ask) |
 | Writes per minute | More are refused until a minute has passed |
+| Add AI disclaimer | Off by default. On, every message an agent sends, schedules or answers a status with gets a line underneath saying an AI wrote it. It is added after you approve, below any edit you made, and never to messages you send yourself or with `tawk send` |
+| Disclaimer text | The line that is added, "🤖 Sent by my AI assistant" unless you change it |
 | Agent events | A submenu with a switch for each kind of event agents are told about as it happens |
 | Answering for itself | A submenu for **admin**: the chats an agent may answer its own sends in, and how many an hour |
 | Needs, risks and guards | What agent access needs, what can go wrong and what protects you |
