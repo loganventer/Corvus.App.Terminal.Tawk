@@ -972,6 +972,7 @@ The same submenu sets how far agents may go:
 | Writes per minute | More are refused until a minute has passed |
 | Push received messages | On: an agent that listens (tawk-mcp's channel, say) hears about each message other people send as it arrives. Off: it sees messages only when it reads a chat |
 | Push messages you send | The same for the messages you send, from tawk or your phone. Your own `tawk tail` always shows both |
+| Chats an agent may answer in by itself… | With **admin**: opens the list of chats, each with a switch, where an agent holding the admin token may answer its own sends |
 | Self-approvals per hour | With **admin**: how many of its own requests an agent may answer in an hour (20 by default); past that they wait for you |
 
 ### The Agentic tab
@@ -1018,19 +1019,21 @@ A request nobody answers is declined by itself: after 5 minutes, or 2 for HIGH o
 
 By default every send waits for you. Set **What they may do** to **admin** and an agent you trust can answer its own requests instead, within limits you set. It is meant for an agent that runs while you are away from tawk.
 
-![The Permissions view with access admin and two chats named](docs/images/agents-admin.png)
+![The Permissions view with access admin](docs/images/agents-admin.png)
 
 What changes with admin:
 
 - tawk writes an **admin token** to `admin.token` beside the control socket (`$XDG_RUNTIME_DIR/tawk/admin.token`, readable by you alone). It is a new token each time tawk starts and each time you switch to admin, and it is removed when you switch away or quit.
 - An agent that shows that token may answer a request it made itself. With tawk-mcp you give it the file with `TAWKMCP_ADMIN_TOKEN_FILE`; an agent without the file, or another agent on the same computer, cannot.
 - Only these can be answered that way: sending a message, replying to a status, forwarding, editing, retrying, scheduling, rescheduling, sending or cancelling a scheduled message, a reaction, a read mark and a like. Changes to chats, your profile, statuses you post, settings, and every delete or block still wait for you.
-- Only in chats named in **Chats they may use**. With that list empty nothing is answered this way, so you always choose the chats.
+- Only in the chats you switch on for it. Settings, Automation, **Chats an agent may answer in by itself…** opens a list of your chats with a switch beside each and an **All chats agents may use** switch on top. Space or a click flips the highlighted switch, Ctrl+A flips All chats, typing searches, Enter saves and Esc leaves things as they were. Up to 24 chats can be switched on one by one; All chats covers every chat agents may use, including ones that appear later. With nothing switched on, nothing is answered this way. This list is separate from **Chats they may use**, which decides what agents can see at all.
+
+![The list of chats with a switch each, two of them on](docs/images/self-approval-chats.png)
 - Only so many an hour (**Self-approvals per hour**). Past that, requests wait for you again.
 
 A request the agent may not answer simply stays in the Queue for you. Each one it does answer is written to the Log as **approved by the agent** and shown as a line at the bottom of the screen, so you can see what went out in your name. Pausing an agent in the Agents view stops it answering as well.
 
-Admin is the widest access there is: a message someone sends you can try to steer the agent (prompt injection), and with admin a steered agent can send in the chats you named without you seeing it first. Name few chats, keep the hourly number low, and read the Log.
+Admin is the widest access there is: a message someone sends you can try to steer the agent (prompt injection), and with admin a steered agent can send in the chats you switched on without you seeing it first. Switch on few chats, keep the hourly number low, and read the Log.
 
 ### Destructive requests
 

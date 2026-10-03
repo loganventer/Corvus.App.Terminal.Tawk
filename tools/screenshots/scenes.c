@@ -12,6 +12,7 @@
 #include "clients/tui/camera_view.h"
 #include "clients/tui/chat_list_view.h"
 #include "clients/tui/chat_picker.h"
+#include "clients/tui/chat_toggle_dialog.h"
 #include "clients/tui/composer_view.h"
 #include "clients/tui/confirm_dialog.h"
 #include "clients/tui/footer_bar.h"
@@ -712,10 +713,8 @@ static void agents_scenes(void) {
 
     /* Access admin: an agent with the admin token answers its own sends in the chats named. */
     str_copy(settings.automation_access, sizeof(settings.automation_access), "admin");
-    str_copy(settings.automation_chats, sizeof(settings.automation_chats), "Mom, Sarah");
     agents_panel_draw(&p, &m, "agents-admin");
     str_copy(settings.automation_access, sizeof(settings.automation_access), "send");
-    settings.automation_chats[0] = '\0';
 
     /* The main screen: the Agentic tab counts what waits. */
     s_agents_tab = 0;
@@ -737,6 +736,22 @@ static void forward_scene(void) {
     draw_chat(INPUT_HINTS);
     chat_picker_render(&picker, body(), s_chats, s_chat_count);
     save("forward");
+}
+
+/* Settings, Automation: the chats an admin agent may answer in by itself, each with a switch. */
+static void self_chats_scene(void) {
+    ChatToggleDialog dialog;
+    chat_toggle_dialog_open(&dialog, "Chats an agent may answer in by itself", "All chats agents may use");
+    chat_toggle_dialog_render(&dialog, body(), s_chats, s_chat_count);
+    chat_toggle_dialog_key(&dialog, 1, KEY_DOWN);
+    chat_toggle_dialog_key(&dialog, 0, ' ');             /* switch the first and the third on */
+    chat_toggle_dialog_render(&dialog, body(), s_chats, s_chat_count);
+    chat_toggle_dialog_key(&dialog, 1, KEY_DOWN);
+    chat_toggle_dialog_key(&dialog, 1, KEY_DOWN);
+    chat_toggle_dialog_key(&dialog, 0, ' ');
+    draw_app(LIST_HINTS);
+    chat_toggle_dialog_render(&dialog, body(), s_chats, s_chat_count);
+    save("self-approval-chats");
 }
 
 static void splash_scene(void) {
@@ -769,6 +784,7 @@ int main(int argc, char **argv) {
     conversation_scene();
     status_reply_scene();
     forward_scene();
+    self_chats_scene();
     scheduled_scene();
     agents_scenes();
     splash_scene();

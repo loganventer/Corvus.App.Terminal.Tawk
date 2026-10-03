@@ -158,12 +158,13 @@ What other programs reaching tawk through its control socket may do: tawk-mcp an
 | Key | Default | Description |
 |---|---|---|
 | `control_socket` | `off` | Listen on the control socket. Turning it on in the settings panel explains the risks first |
-| `access` | `read` | `read`, `send`, `manage` or `admin`: see the manual. Programs acting for a model are asked about every write; with `admin`, one holding the admin token may answer its own sends in the chats named in `chats` |
+| `access` | `read` | `read`, `send`, `manage` or `admin`: see the manual. Programs acting for a model are asked about every write; with `admin`, one holding the admin token may answer its own sends in the chats in `self_approval_chats` |
 | `chats` | empty | Chats they may use, by name or number, comma-separated; empty means every chat except locked and soft-locked ones |
 | `confirm_cli` | `off` | Your own shell commands ask before sending too |
 | `writes_per_minute` | `5` | Writes allowed per minute (1 to 60) |
 | `push_received` | `on` | Programs acting for a model that subscribed are told about each message other people send, as it arrives. Off, they see messages only when they read a chat |
 | `push_sent` | `on` | The same for the messages you send. Your own shell commands (`tawk tail`) always hear both |
+| `self_approval_chats` | empty | With `access = admin`: the chats a program may answer its own sends in, as JIDs separated by commas, or `*` for every chat it may use. Empty allows none. Set from Settings, Automation, where each chat has a switch |
 | `self_approvals_per_hour` | `20` | With `access = admin`: requests a program may answer itself in an hour (1 to 240); past this they wait for you |
 
 None of these can be changed over the socket, nor can settings that run a program, folders, the backend or the log level.

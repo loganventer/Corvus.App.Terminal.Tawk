@@ -816,7 +816,9 @@ flowchart TD
     PR -- no --> SKIP
 ```
 
-With access admin a client can give that answer itself. `AutomationManager` keeps an admin token while the access setting says admin: it writes a fresh one through `IAdminTokenStore` when the control client's tick finds access at admin with none issued, and removes it when access is anything else and when tawk quits. The `approve` operation finds the caller's own waiting request, and the manager decides: `automation_policy_self_approval` checks the access, the kind of operation and that the chat is named in the chat list (an empty list allows none), the token is compared without stopping at the first difference, and the `hourly_quota` engine counts it against `self_approvals_per_hour`. When the answer is yes the request is withdrawn from the queue and carried out as if you had allowed it, logged as approved by the agent, and the manager hands the screen a line to show. When it is no the request stays in the queue for you.
+With access admin a client can give that answer itself. `AutomationManager` keeps an admin token while the access setting says admin: it writes a fresh one through `IAdminTokenStore` when the control client's tick finds access at admin with none issued, and removes it when access is anything else and when tawk quits. The `approve` operation finds the caller's own waiting request, and the manager decides: `automation_policy_self_approval` checks the access, the kind of operation and that the chat is one agents may use and one you switched on in the self-approval chats (kept in `self_approval_chats`, with `*` for all, and empty for none), the token is compared without stopping at the first difference, and the `hourly_quota` engine counts it against `self_approvals_per_hour`. When the answer is yes the request is withdrawn from the queue and carried out as if you had allowed it, logged as approved by the agent, and the manager hands the screen a line to show. When it is no the request stays in the queue for you.
+
+The chats are chosen in `ChatToggleDialog`, a list with a `toggle_switch` per chat and one for all, opened from the Automation settings by `tui_self_chats.c`. The dialog knows nothing about what the chats are for: the terminal client reads the setting into it, and writes what is switched on back through the settings manager when you save.
 
 ```mermaid
 sequenceDiagram
@@ -831,7 +833,7 @@ sequenceDiagram
     C-->>A: evt approval waiting
     A->>C: approve {id, admin_token}
     C->>AM: self_approve(op, chat, token)
-    AM->>AM: access admin? own kind? chat named? token? hourly quota?
+    AM->>AM: access admin? own kind? chat switched on for this? token? hourly quota?
     alt allowed
         AM-->>C: ALLOW
         C->>Q: withdraw(request)

@@ -177,7 +177,7 @@ tawk answers `approve` with an error, and leaves the request waiting for you, un
 - `admin_token` is the token in `admin.token` beside the control socket (0600). tawk writes a new one each time it starts and each time access becomes admin, and removes it when access is anything else and when it quits. Otherwise `bad_token`.
 - The request was made on this connection. Another client's request is `not_found`.
 - The operation is one of `send_message`, `reply_status`, `forward_message`, `edit_message`, `retry_message`, `schedule_message`, `reschedule`, `send_scheduled_now`, `cancel_scheduled`, `react`, `mark_read` or `like_status`. Anything else is `not_allowed`. `cancel_scheduled` still needs its `confirm` first.
-- Its chat is named in `chats`. An empty `chats` allows none here. Otherwise `not_allowed`.
+- Its chat is one the client may use and is in `self_approval_chats` (or that setting holds `*`). An empty `self_approval_chats` allows none. Otherwise `not_allowed`.
 - Fewer than `self_approvals_per_hour` were answered this way in the last hour. Otherwise `rate_limited` with `retry_after`.
 - You have not paused the client.
 

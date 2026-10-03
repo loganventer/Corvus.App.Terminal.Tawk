@@ -280,6 +280,7 @@ The TUI is split into widgets that each draw one part of the screen and turn key
 | `text_reader` | Scrollable reader for long messages and `/help` |
 | `image_viewer` | Full-screen viewer for photos, videos and PDFs, turning the pages of a PDF; in portrait mode it shows one profile picture, square |
 | `media_picture`, `thumbnail_cache` | The best picture for a photo, video or PDF (`MediaSources` supplies video frames and PDF pages), decoded into an LRU and drawn with half blocks through `color_pair_cache` |
+| `chat_toggle_dialog`, `toggle_switch` | A list of chats with a switch each and one for all, saved as a setting (the chats an admin agent may answer in by itself); the switch is also how on and off values are drawn in the Settings panel and the Permissions view |
 | `sixel_overlay`, `sixel_image_cache` | Real pixels written after curses updates the screen; portraits are cut to a circle with `sixel_encode_masked` |
 | `text_veil` | Soft shaded bands in place of text or pictures, keeping the shape of a soft-locked conversation |
 | `text_caret` | Where the field that takes typing wants the blinking bar cursor |
