@@ -314,7 +314,27 @@ static int showing(const MessagingManager *m, const char *id) {
 static void note_read(MessagingManager *m, const Event *e) {
     Message msg;
     if (m->deps.messages->get(m->deps.messages, e->id, &msg) != 0) return;
-    if (msg.from_me) live_message_ring_push_read(&m->live, msg.id, msg.chat_jid, m->deps.aliases->resolve(m->deps.aliases, e->jid), e->at);
+    if (msg.from_me) live_message_ring_note(&m->live, LIVE_KIND_READ, msg.id, msg.chat_jid, m->deps.aliases->resolve(m->deps.aliases, e->jid), "", e->at);
+    message_dispose(&msg);
+}
+
+/* Someone else reacted to one of your messages, or took the reaction back. */
+static void note_reaction(MessagingManager *m, const Event *e) {
+    if (m->user_jid[0] && strcmp(e->jid, m->user_jid) == 0) return;      /* your own reaction */
+    Message msg;
+    if (m->deps.messages->get(m->deps.messages, e->id, &msg) != 0) return;
+    if (msg.from_me) live_message_ring_note(&m->live, LIVE_KIND_REACTION, msg.id, msg.chat_jid, e->jid, e->emoji, (int64_t)time(NULL));
+    message_dispose(&msg);
+}
+
+/* Someone else changed or deleted a message they sent. Called once the store holds the change. */
+static void note_edit(MessagingManager *m, const Event *e) {
+    Message msg;
+    if (m->deps.messages->get(m->deps.messages, e->message.id, &msg) != 0) return;
+    if (!msg.from_me) {
+        live_message_ring_note(&m->live, e->message.deleted ? LIVE_KIND_DELETE : LIVE_KIND_EDIT, msg.id, msg.chat_jid,
+                               msg.sender_jid[0] ? msg.sender_jid : msg.chat_jid, "", (int64_t)time(NULL));
+    }
     message_dispose(&msg);
 }
 
@@ -618,10 +638,12 @@ static void handle_event(MessagingManager *m, Event *e, ManagerChanges *ch) {
         }
         case EVENT_MESSAGE_EDIT:
             m->deps.messages->edit_text(m->deps.messages, e->message.id, e->message.text, e->message.deleted);
+            if (e->live) note_edit(m, e);
             if (strcmp(m->open_jid, e->message.chat_jid) == 0 || !e->message.chat_jid[0]) m->messages_dirty = 1;
             break;
         case EVENT_REACTION:
             m->deps.reactions->put(m->deps.reactions, e->id, e->jid, e->emoji);
+            if (e->live) note_reaction(m, e);
             if (strcmp(m->open_jid, e->chat.jid) == 0) m->messages_dirty = 1;
             break;
         case EVENT_TYPING:
@@ -876,6 +898,10 @@ int messaging_manager_live_since(MessagingManager *m, uint64_t after, LiveMessag
 }
 
 uint64_t messaging_manager_live_last(MessagingManager *m) { return live_message_ring_last(&m->live); }
+
+void messaging_manager_note_scheduled_sent(MessagingManager *m, const char *scheduled_id, const char *chat_jid) {
+    live_message_ring_note(&m->live, LIVE_KIND_SCHEDULED_SENT, scheduled_id, chat_jid, "", "", (int64_t)time(NULL));
+}
 
 const Message *messaging_manager_messages(MessagingManager *m, int *count) {
     *count = m->message_count;

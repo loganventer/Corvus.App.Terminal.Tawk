@@ -17,11 +17,13 @@ void live_message_ring_push(LiveMessageRing *ring, const char *id, const char *c
     str_copy(slot->chat_jid, sizeof(slot->chat_jid), chat_jid ? chat_jid : "");
 }
 
-void live_message_ring_push_read(LiveMessageRing *ring, const char *id, const char *chat_jid, const char *who, int64_t at) {
+void live_message_ring_note(LiveMessageRing *ring, LiveKind kind, const char *id, const char *chat_jid,
+                            const char *who, const char *detail, int64_t at) {
     live_message_ring_push(ring, id, chat_jid);
     LiveMessageRef *slot = &ring->items[(ring->next_seq - 1) % LIVE_MESSAGE_RING_SIZE];
-    slot->kind = LIVE_KIND_READ;
+    slot->kind = kind;
     str_copy(slot->who, sizeof(slot->who), who ? who : "");
+    str_copy(slot->detail, sizeof(slot->detail), detail ? detail : "");
     slot->at = at;
 }
 

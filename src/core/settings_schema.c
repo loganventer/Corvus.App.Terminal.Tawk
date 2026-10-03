@@ -88,6 +88,9 @@ static const SettingField FIELDS[] = {
     B(SETTING_CATEGORY_AUTOMATION, "push_sent", "Push messages you send", "Agents that listen hear about each message you send too; off, they see yours only when they read a chat", automation_push_sent),
     S(SETTING_CATEGORY_AUTOMATION, "self_approval_chats", "Chats answered by an agent itself", "With access admin: the chats an agent holding the admin token may answer its own sends in; empty allows none. Chosen under Settings, Automation", automation_self_chats, 0),
     B(SETTING_CATEGORY_AUTOMATION, "push_read", "Push read receipts", "Agents that listen hear when someone reads a message you sent; off, they are not told", automation_push_read),
+    B(SETTING_CATEGORY_AUTOMATION, "push_reactions", "Push reactions", "Agents that listen hear when someone reacts to a message you sent, or takes a reaction back", automation_push_reactions),
+    B(SETTING_CATEGORY_AUTOMATION, "push_edits", "Push edits and deletes", "Agents that listen hear when someone changes or deletes a message they sent", automation_push_edits),
+    B(SETTING_CATEGORY_AUTOMATION, "push_scheduled", "Push scheduled sends", "Agents that listen hear when a message you scheduled goes out", automation_push_scheduled),
     I(SETTING_CATEGORY_AUTOMATION, "self_approvals_per_hour", "Self-approvals per hour", "With access admin: how many of its own requests a program may answer in an hour; past this they wait for you", automation_self_per_hour, 1, 240, 1, 0),
 
     { SETTING_CATEGORY_ADVANCED, "backend", "WhatsApp backend", "whatsmeow runs in-process; baileys runs a Node.js sidecar",

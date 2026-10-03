@@ -105,6 +105,7 @@ void tui_app_scheduling_tick(TuiApp *app) {
         OutgoingText out = { due[i].text, NULL, mentions.count ? &mentions : NULL, 0, 0, 0 };
         if (messaging_manager_send_text_to(app->deps.messaging, due[i].chat_jid, &out) == 0) {
             scheduling_manager_mark_sent(app->deps.scheduling, due[i].id);
+            messaging_manager_note_scheduled_sent(app->deps.messaging, due[i].id, due[i].chat_jid);
             sent++;
             if (now - due[i].due_at > LATE_SECONDS) late++;
         } else {

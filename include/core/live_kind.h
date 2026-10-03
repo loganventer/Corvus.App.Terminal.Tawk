@@ -4,7 +4,11 @@
 /* What just happened to a message, for readers that follow along. */
 typedef enum LiveKind {
     LIVE_KIND_MESSAGE = 0,     /* it arrived, or you sent it */
-    LIVE_KIND_READ             /* someone read one you sent */
+    LIVE_KIND_READ,            /* someone read one you sent */
+    LIVE_KIND_REACTION,        /* someone reacted to one you sent, or took a reaction back */
+    LIVE_KIND_EDIT,            /* someone changed the words of one they sent */
+    LIVE_KIND_DELETE,          /* someone deleted one they sent, for everyone */
+    LIVE_KIND_SCHEDULED_SENT   /* one you scheduled went out; the id is the scheduled message's */
 } LiveKind;
 
 #endif

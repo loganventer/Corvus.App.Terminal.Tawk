@@ -85,6 +85,9 @@ typedef struct Settings {
     int  automation_push_received; /* agents that subscribe hear about messages other people send */
     int  automation_push_sent;  /* and about the ones you send */
     int  automation_push_read;  /* and when someone reads one you sent */
+    int  automation_push_reactions; /* and when someone reacts to one you sent */
+    int  automation_push_edits; /* and when someone edits or deletes one they sent */
+    int  automation_push_scheduled; /* and when one you scheduled goes out */
     char automation_self_chats[1024]; /* access admin: the chats (JIDs, comma-separated) a client may answer its own requests in; empty: none */
     int  automation_self_per_hour; /* access admin: requests a client may answer itself in an hour */
 

@@ -17,8 +17,10 @@ typedef struct LiveMessageRing {
 
 void     live_message_ring_init(LiveMessageRing *ring);
 void     live_message_ring_push(LiveMessageRing *ring, const char *id, const char *chat_jid);
-/* `who` read your message `id` in `chat_jid` at `at`. */
-void     live_message_ring_push_read(LiveMessageRing *ring, const char *id, const char *chat_jid, const char *who, int64_t at);
+/* Something other than a new message happened to message `id` in `chat_jid`:
+ * `who` did it at `at`, and `detail` says more where the kind has more to say. */
+void     live_message_ring_note(LiveMessageRing *ring, LiveKind kind, const char *id, const char *chat_jid,
+                                const char *who, const char *detail, int64_t at);
 /* Copies up to `max` entries newer than `after`, oldest first; returns how many. */
 int      live_message_ring_since(const LiveMessageRing *ring, uint64_t after, LiveMessageRef *out, int max);
 /* The sequence number of the newest entry, 0 when there is none. */

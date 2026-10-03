@@ -94,26 +94,52 @@ static void send_message(ControlServer *s, const LiveMessageRef *ref) {
     if (loaded) message_dispose(&msg);
 }
 
-/* Someone read a message you sent: {"evt":"read","chat":{jid,name},"message_id","reader":{jid,name},"at"}. */
-static void send_read(ControlServer *s, const LiveMessageRef *ref) {
+static const char *event_name(LiveKind kind) {
+    switch (kind) {
+        case LIVE_KIND_READ:           return "read";
+        case LIVE_KIND_REACTION:       return "reaction";
+        case LIVE_KIND_EDIT:           return "edit";
+        case LIVE_KIND_DELETE:         return "delete";
+        case LIVE_KIND_SCHEDULED_SENT: return "scheduled_sent";
+        default:                       return NULL;
+    }
+}
+
+/* Something happened to a message: {"evt":name,"chat":{jid,name},"message_id","at"}, with
+ * "who":{jid,name} where someone did it (as "reader" for a read), "emoji" for a reaction
+ * ("" when taken back), and the message as it now reads for an edit. */
+static void send_activity(ControlServer *s, const LiveMessageRef *ref) {
+    const char *evt_name = event_name(ref->kind);
     const Chat *chat = find_chat(s, ref->chat_jid);
-    if (!chat || !automation_manager_chat_allowed(s->deps.automation, chat)) return;
-    char name[128];
-    messaging_manager_display_name(s->deps.messaging, ref->who, name, sizeof(name));
+    if (!evt_name || !chat || !automation_manager_chat_allowed(s->deps.automation, chat)) return;
+    char name[128] = "";
+    if (ref->who[0]) messaging_manager_display_name(s->deps.messaging, ref->who, name, sizeof(name));
     for (int i = 0; i < s->session_count; i++) {
         ControlSession *session = &s->sessions[i];
         if (!session->greeted || !control_session_follows(session, ref->chat_jid)) continue;
-        if (!automation_manager_pushes_read(s->deps.automation, session->origin)) continue;
+        if (!automation_manager_pushes_event(s->deps.automation, session->origin, ref->kind)) continue;
         cJSON *evt = cJSON_CreateObject();
         cJSON *c = cJSON_AddObjectToObject(evt, "chat");
         cJSON_AddStringToObject(c, "jid", chat->jid);
         cJSON_AddStringToObject(c, "name", chat->name);
         cJSON_AddStringToObject(evt, "message_id", ref->id);
-        cJSON *reader = cJSON_AddObjectToObject(evt, "reader");
-        cJSON_AddStringToObject(reader, "jid", ref->who);
-        cJSON_AddStringToObject(reader, "name", name);
+        if (ref->who[0]) {
+            cJSON *who = cJSON_AddObjectToObject(evt, ref->kind == LIVE_KIND_READ ? "reader" : "who");
+            cJSON_AddStringToObject(who, "jid", ref->who);
+            cJSON_AddStringToObject(who, "name", name);
+        }
+        if (ref->kind == LIVE_KIND_REACTION) cJSON_AddStringToObject(evt, "emoji", ref->detail);
+        if (ref->kind == LIVE_KIND_EDIT) {
+            Message msg;
+            if (messaging_manager_get(s->deps.messaging, ref->id, &msg) == 0) {
+                char sender[128];
+                control_sender_name(s, &msg, sender, sizeof(sender));
+                cJSON_AddItemToObject(evt, "message", control_codec_message(&msg, sender));
+                message_dispose(&msg);
+            }
+        }
         cJSON_AddNumberToObject(evt, "at", (double)ref->at);
-        control_reply(s, session->conn, control_codec_event("read", evt));
+        control_reply(s, session->conn, control_codec_event(evt_name, evt));
     }
 }
 
@@ -140,8 +166,8 @@ void control_live_tick(ControlServer *s, int check_unread) {
     LiveMessageRef refs[LIVE_PER_TICK];
     int n = messaging_manager_live_since(s->deps.messaging, s->live_seq, refs, LIVE_PER_TICK);
     for (int i = 0; i < n; i++) {
-        if (refs[i].kind == LIVE_KIND_READ) send_read(s, &refs[i]);
-        else send_message(s, &refs[i]);
+        if (refs[i].kind == LIVE_KIND_MESSAGE) send_message(s, &refs[i]);
+        else send_activity(s, &refs[i]);
         s->live_seq = refs[i].seq;
     }
     if (!check_unread) return;

@@ -67,8 +67,8 @@ int automation_manager_pushes(AutomationManager *m, ControlOrigin origin, int fr
     return automation_policy_pushes(m->deps.settings, origin, from_me);
 }
 
-int automation_manager_pushes_read(AutomationManager *m, ControlOrigin origin) {
-    return automation_policy_pushes_read(m->deps.settings, origin);
+int automation_manager_pushes_event(AutomationManager *m, ControlOrigin origin, LiveKind kind) {
+    return automation_policy_pushes_event(m->deps.settings, origin, kind);
 }
 
 int automation_manager_setting_changeable(AutomationManager *m, const SettingField *field) {

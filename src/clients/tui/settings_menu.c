@@ -141,9 +141,12 @@ static const MenuNode AGENT_EVENTS[] = {
     FIELD(SETTING_CATEGORY_AUTOMATION, "push_received"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "push_sent"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "push_read"),
+    FIELD(SETTING_CATEGORY_AUTOMATION, "push_reactions"),
+    FIELD(SETTING_CATEGORY_AUTOMATION, "push_edits"),
+    FIELD(SETTING_CATEGORY_AUTOMATION, "push_scheduled"),
     TEXT("An agent that listens (tawk-mcp's channel) hears each of these as it happens"),
     TEXT("Off, it still sees messages when it reads a chat"),
-    TEXT("Your own tawk tail always shows messages, and never read receipts"),
+    TEXT("Your own tawk tail always shows messages, and none of the others"),
 };
 
 static const MenuNode AUTOMATION[] = {

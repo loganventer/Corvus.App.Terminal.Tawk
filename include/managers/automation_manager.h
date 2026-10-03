@@ -11,6 +11,7 @@
 #include "core/chat.h"
 #include "core/chat_resolution.h"
 #include "core/control_origin.h"
+#include "core/live_kind.h"
 #include "core/self_approval_verdict.h"
 #include "core/setting_field.h"
 #include "core/write_kind.h"
@@ -38,8 +39,8 @@ AutomationVerdict automation_manager_check_write(AutomationManager *mgr, Control
 const char       *automation_manager_access(AutomationManager *mgr);
 /* Whether a subscribed client of that origin is told about a new message (yours when `from_me`) as it arrives. */
 int               automation_manager_pushes(AutomationManager *mgr, ControlOrigin origin, int from_me);
-/* Whether a subscribed client of that origin is told when someone reads a message you sent. */
-int               automation_manager_pushes_read(AutomationManager *mgr, ControlOrigin origin);
+/* Whether a subscribed client of that origin is told about a read, a reaction, an edit or delete, or a scheduled send. */
+int               automation_manager_pushes_event(AutomationManager *mgr, ControlOrigin origin, LiveKind kind);
 int               automation_manager_setting_changeable(AutomationManager *mgr, const SettingField *field);
 
 /* How risky a write is: destructive ones HIGH, reactions and read marks LOW, the rest MEDIUM. */

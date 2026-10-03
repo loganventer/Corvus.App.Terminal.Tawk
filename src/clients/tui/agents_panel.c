@@ -18,7 +18,7 @@
 #define EDIT_MAX  TEXT_FIELD_CAPACITY
 
 static const char *const TAB_NAMES[AGENTS_VIEW_COUNT] = { "Queue", "Agents", "Log", "Permissions" };
-static const char *const PERMISSION_KEYS[] = { "control_socket", "access", "chats", "confirm_cli", "writes_per_minute", "push_received", "push_sent", "push_read", "self_approvals_per_hour" };
+static const char *const PERMISSION_KEYS[] = { "control_socket", "access", "chats", "confirm_cli", "writes_per_minute", "push_received", "push_sent", "push_read", "push_reactions", "push_edits", "push_scheduled", "self_approvals_per_hour" };
 #define PERMISSION_COUNT ((int)(sizeof(PERMISSION_KEYS) / sizeof(PERMISSION_KEYS[0])))
 static const char *const FILTER_NAMES[] = { "everything", "allowed", "declined or expired", "refused or failed" };
 

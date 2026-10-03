@@ -636,6 +636,50 @@ static void test_live_and_log(void) {
     int reads_pushed = 0;
     for (int i = 0; i < outbox_count; i++) reads_pushed += strstr(outbox[i], "\"evt\":\"read\"") != NULL && strstr(outbox[i], "LIVE4") != NULL;
     CHECK(reads_pushed == 1, "turned on, the agent hears who read which message, once, and your shell does not");
+    /* Reactions to your messages and edits by others: each its own event and its own switch. */
+    clear_outbox();
+    push.automation_push_reactions = 1;
+    push.automation_push_edits = 1;
+    push.automation_push_scheduled = 1;
+    settings_manager_apply(settings_mgr, &push);
+    event_init(&e, EVENT_REACTION);
+    e.live = 1;
+    str_copy(e.id, sizeof(e.id), "LIVE4");
+    str_copy(e.jid, sizeof(e.jid), MOM);
+    str_copy(e.emoji, sizeof(e.emoji), "\xF0\x9F\x91\x8D");
+    str_copy(e.chat.jid, sizeof(e.chat.jid), MOM);
+    event_queue_push(events, &e);
+    event_init(&e, EVENT_MESSAGE_EDIT);
+    e.live = 1;
+    str_copy(e.message.id, sizeof(e.message.id), "LIVE3");
+    str_copy(e.message.chat_jid, sizeof(e.message.chat_jid), MOM);
+    message_set_text(&e.message, "Hello there?");
+    event_queue_push(events, &e);
+    tick();
+    tick();
+    messaging_manager_note_scheduled_sent(mm, "SCHED1", MOM);
+    tick();
+    int reacted = 0, edited = 0, scheduled = 0;
+    for (int i = 0; i < outbox_count; i++) {
+        reacted += strstr(outbox[i], "\"evt\":\"reaction\"") != NULL && strstr(outbox[i], "LIVE4") != NULL;
+        edited += strstr(outbox[i], "\"evt\":\"edit\"") != NULL && strstr(outbox[i], "Hello there?") != NULL;
+        scheduled += strstr(outbox[i], "\"evt\":\"scheduled_sent\"") != NULL && strstr(outbox[i], "SCHED1") != NULL;
+    }
+    CHECK(reacted == 1, "a reaction to your message is pushed to the agent");
+    CHECK(edited == 1, "an edit by someone else is pushed with the message as it now reads");
+    CHECK(scheduled == 1, "a scheduled message going out is pushed by its id");
+    push.automation_push_reactions = push.automation_push_edits = push.automation_push_scheduled = 0;
+    settings_manager_apply(settings_mgr, &push);
+    clear_outbox();
+    event_init(&e, EVENT_REACTION);
+    e.live = 1;
+    str_copy(e.id, sizeof(e.id), "LIVE4");
+    str_copy(e.jid, sizeof(e.jid), MOM);
+    str_copy(e.chat.jid, sizeof(e.chat.jid), MOM);
+    event_queue_push(events, &e);
+    tick();
+    tick();
+    CHECK(!saw_event("reaction"), "and not with its switch off");
     push.automation_push_read = 0;
     settings_manager_apply(settings_mgr, &push);
 

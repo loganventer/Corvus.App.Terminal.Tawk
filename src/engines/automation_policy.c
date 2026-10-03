@@ -89,8 +89,16 @@ int automation_policy_pushes(const Settings *s, ControlOrigin origin, int from_m
     return from_me ? s->automation_push_sent : s->automation_push_received;
 }
 
-int automation_policy_pushes_read(const Settings *s, ControlOrigin origin) {
-    return origin == CONTROL_ORIGIN_MCP && s->automation_push_read;
+int automation_policy_pushes_event(const Settings *s, ControlOrigin origin, LiveKind kind) {
+    if (origin != CONTROL_ORIGIN_MCP) return 0;
+    switch (kind) {
+        case LIVE_KIND_READ:           return s->automation_push_read;
+        case LIVE_KIND_REACTION:       return s->automation_push_reactions;
+        case LIVE_KIND_EDIT:
+        case LIVE_KIND_DELETE:         return s->automation_push_edits;
+        case LIVE_KIND_SCHEDULED_SENT: return s->automation_push_scheduled;
+        default:                       return 0;
+    }
 }
 
 int automation_policy_setting_changeable(const SettingField *f) {

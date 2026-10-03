@@ -50,6 +50,8 @@ void           messaging_manager_mark_read(MessagingManager *mgr, const char *ji
  * first; returns how many were written. */
 int            messaging_manager_live_since(MessagingManager *mgr, uint64_t after, LiveMessageRef *out, int max);
 uint64_t       messaging_manager_live_last(MessagingManager *mgr);
+/* A message you scheduled went out: those who follow along hear of it, by the scheduled message's id. */
+void           messaging_manager_note_scheduled_sent(MessagingManager *mgr, const char *scheduled_id, const char *chat_jid);
 /* quote may be NULL; otherwise the message is a reply to it. */
 int            messaging_manager_send_text(MessagingManager *mgr, const char *text, const QuoteRef *quote);
 /* Sends text with the people picked while typing it mentioned: their
