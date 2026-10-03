@@ -168,7 +168,7 @@ What other programs reaching tawk through its control socket may do: tawk-mcp an
 | `push_reactions` | `off` | The same when someone reacts to a message you sent, or takes a reaction back |
 | `push_edits` | `off` | The same when someone changes or deletes a message they sent |
 | `push_scheduled` | `off` | The same when a message you scheduled goes out |
-| `self_approval_chats` | empty | With `access = admin`: the chats a program may answer its own sends in, as JIDs separated by commas, or `*` for every chat it may use. Empty allows none. Set from Settings, Automation, where each chat has a switch |
+| `self_approval_chats` | empty | With `access = admin`: the chats a program may answer its own sends in, as JIDs separated by commas, or `*` for every chat it may use. Empty allows none. Set from Settings, Automation, Answering for itself, where each chat has a switch |
 | `self_approvals_per_hour` | `20` | With `access = admin`: requests a program may answer itself in an hour (1 to 240); past this they wait for you |
 
 None of these can be changed over the socket, nor can settings that run a program, folders, the backend or the log level.

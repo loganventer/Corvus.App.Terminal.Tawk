@@ -971,14 +971,22 @@ The same submenu sets how far agents may go:
 | Chats they may use | Names or numbers separated by commas; empty allows every chat except locked ones |
 | Ask for shell commands too | Your own `tawk send` asks first as well (agents always ask) |
 | Writes per minute | More are refused until a minute has passed |
-| Chats an agent may answer in by itself… | With **admin**: opens the list of chats, each with a switch, where an agent holding the admin token may answer its own sends |
+| Agent events | A submenu with a switch for each kind of event agents are told about as it happens |
+| Answering for itself | A submenu for **admin**: the chats an agent may answer its own sends in, and how many an hour |
+| Needs, risks and guards | What agent access needs, what can go wrong and what protects you |
+
+Under **Answering for itself**:
+
+| Setting | What it does |
+|---|---|
+| Choose the chats… | Opens the list of chats, each with a switch |
 | Self-approvals per hour | With **admin**: how many of its own requests an agent may answer in an hour (20 by default); past that they wait for you |
 
 ![The Automation settings](docs/images/settings-automation.png)
 
 ### Agent events
 
-Settings has its own section, **Agent events**, for what agents are told as it happens. An agent that listens, such as tawk-mcp's channel in Claude Code, hears each kind only while its switch is on:
+Settings, Automation has a submenu, **Agent events**, for what agents are told as it happens. An agent that listens, such as tawk-mcp's channel in Claude Code, hears each kind only while its switch is on:
 
 | Switch | Default | What an agent hears |
 |---|---|---|
@@ -1044,7 +1052,9 @@ What changes with admin:
 - tawk writes an **admin token** to `admin.token` beside the control socket (`$XDG_RUNTIME_DIR/tawk/admin.token`, readable by you alone). It is a new token each time tawk starts and each time you switch to admin, and it is removed when you switch away or quit.
 - An agent that shows that token may answer a request it made itself. With tawk-mcp you give it the file with `TAWKMCP_ADMIN_TOKEN_FILE`; an agent without the file, or another agent on the same computer, cannot.
 - Only these can be answered that way: sending a message, replying to a status, forwarding, editing, retrying, scheduling, rescheduling, sending or cancelling a scheduled message, a reaction, a read mark and a like. Changes to chats, your profile, statuses you post, settings, and every delete or block still wait for you.
-- Only in the chats you switch on for it. Settings, Automation, **Chats an agent may answer in by itself…** opens a list of your chats with a switch beside each and an **All chats agents may use** switch on top. Space or a click flips the highlighted switch, Ctrl+A flips All chats, typing searches, Enter saves and Esc leaves things as they were. Up to 24 chats can be switched on one by one; All chats covers every chat agents may use, including ones that appear later. With nothing switched on, nothing is answered this way. This list is separate from **Chats they may use**, which decides what agents can see at all.
+- Only in the chats you switch on for it. Settings, Automation, **Answering for itself** shows how many chats are switched on and the hourly number, and **Choose the chats…** there opens a list of your chats with a switch beside each and an **All chats agents may use** switch on top. Space or a click flips the highlighted switch, Ctrl+A flips All chats, typing searches, Enter saves and Esc leaves things as they were. Up to 24 chats can be switched on one by one; All chats covers every chat agents may use, including ones that appear later. With nothing switched on, nothing is answered this way. This list is separate from **Chats they may use**, which decides what agents can see at all.
+
+![The Answering for itself submenu](docs/images/settings-self-approval.png)
 
 ![The list of chats with a switch each, two of them on](docs/images/self-approval-chats.png)
 - Only so many an hour (**Self-approvals per hour**). Past that, requests wait for you again.

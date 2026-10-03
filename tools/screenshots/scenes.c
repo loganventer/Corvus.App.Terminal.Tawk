@@ -765,23 +765,26 @@ static void shown_preview(void *ctx, const Theme *theme) { (void)ctx; (void)them
 static void shown_action(void *ctx, MenuAction action) { (void)ctx; (void)action; }
 static void shown_info(void *ctx, MenuInfo info, char *out, size_t size) {
     (void)ctx;
-    str_copy(out, size, info == MENU_INFO_AGENTS ? "listening \xC2\xB7 1 agent connected" : "");
+    str_copy(out, size, info == MENU_INFO_AGENTS ? "listening \xC2\xB7 1 agent connected" : info == MENU_INFO_SELF_CHATS ? "2 chats" : "");
 }
 
-/* Settings, then the entry `steps` down from the top, opened. */
-static void settings_scene(IThemeRepository *themes, int steps, const char *name) {
+/* Settings, then each entry of `path` in turn: that many steps down, and opened. */
+static void settings_scene(IThemeRepository *themes, const int *path, int depth, const char *name) {
     settings_set_defaults(&s_shown_settings);
     s_shown_settings.control_socket = 1;
     s_shown_settings.automation_push_read = 1;
+    s_shown_settings.automation_push_reactions = 1;
     str_copy(s_shown_settings.automation_access, sizeof(s_shown_settings.automation_access), "admin");
     SettingsPanelHost host = { themes, shown_settings, shown_apply, shown_themes, shown_preview, shown_action, shown_info };
     static SettingsPanel panel;
     settings_panel_init(&panel, host);
     settings_panel_open(&panel);
-    draw_app(LIST_HINTS);
-    settings_panel_render(&panel, body(), 0);
-    for (int i = 0; i < steps; i++) settings_panel_key(&panel, 1, KEY_DOWN, 0);
-    settings_panel_key(&panel, 0, '\n', 0);
+    for (int d = 0; d < depth; d++) {
+        draw_app(LIST_HINTS);
+        settings_panel_render(&panel, body(), 0);
+        for (int i = 0; i < path[d]; i++) settings_panel_key(&panel, 1, KEY_DOWN, 0);
+        settings_panel_key(&panel, 0, '\n', 0);
+    }
     draw_app(LIST_HINTS);
     settings_panel_render(&panel, body(), 0);
     save(name);
@@ -818,8 +821,9 @@ int main(int argc, char **argv) {
     status_reply_scene();
     forward_scene();
     self_chats_scene();
-    settings_scene(themes, 7, "settings-automation");
-    settings_scene(themes, 8, "settings-agent-events");
+    settings_scene(themes, (const int[]){ 7 }, 1, "settings-automation");
+    settings_scene(themes, (const int[]){ 7, 6 }, 2, "settings-agent-events");
+    settings_scene(themes, (const int[]){ 7, 7 }, 2, "settings-self-approval");
     scheduled_scene();
     agents_scenes();
     splash_scene();
