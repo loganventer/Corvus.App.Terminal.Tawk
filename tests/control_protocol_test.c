@@ -416,14 +416,14 @@ static void test_disclaimer(void) {
     Settings s = *settings_manager_current(settings_mgr);
     s.automation_disclaimer = 1;
     s.automation_rate = 60;
-    str_copy(s.automation_disclaimer_text, sizeof(s.automation_disclaimer_text), "Sent by my AI assistant");
+    str_copy(s.automation_disclaimer_text, sizeof(s.automation_disclaimer_text), "Created with my AI assistant");
     settings_manager_apply(settings_mgr, &s);
     say(conn, "{\"id\":\"x1\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"See you at six\"}}");
     const ApprovalRequest *asked = approval_queue_at(queue, 0);
     CHECK(asked && asked->text && !strcmp(asked->text, "See you at six"), "you are asked about the words alone");
     answer_first(1, "See you at seven", 0);
     cJSON *r = reply("x1");
-    CHECK(!strcmp(last_text, "See you at seven\n\nSent by my AI assistant"), "the disclaimer goes under what you approved, after your edit");
+    CHECK(!strcmp(last_text, "See you at seven\n\nCreated with my AI assistant"), "the disclaimer goes under what you approved, after your edit");
     CHECK(r && cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(result(r), "disclaimer")), "and the agent is told it was added");
     cJSON_Delete(r);
     say(shell, "{\"id\":\"x2\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"from me\"}}");
@@ -433,7 +433,7 @@ static void test_disclaimer(void) {
     say(conn, "{\"id\":\"x3\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"plain\"}}");
     answer_first(1, NULL, 0);
     CHECK(!strcmp(last_text, "plain"), "and off, nothing is added");
-    char *twice = ai_disclaimer_append("hello\n\nSent by my AI assistant", "Sent by my AI assistant");
+    char *twice = ai_disclaimer_append("hello\n\nCreated with my AI assistant", "Created with my AI assistant");
     CHECK(!twice, "it is never added twice");
     free(twice);
     clear_outbox();
