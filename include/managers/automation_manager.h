@@ -11,6 +11,7 @@
 #include "core/chat.h"
 #include "core/chat_resolution.h"
 #include "core/control_origin.h"
+#include "core/self_approval_verdict.h"
 #include "core/setting_field.h"
 #include "core/write_kind.h"
 #include "managers/automation_manager_deps.h"
@@ -33,7 +34,7 @@ ChatResolution    automation_manager_resolve(AutomationManager *mgr, const Chat 
  * the rate. *retry_after_s is set when RATE_LIMITED. */
 AutomationVerdict automation_manager_check_write(AutomationManager *mgr, ControlOrigin origin, WriteKind kind,
                                                 int64_t now_ms, int *retry_after_s);
-/* "read", "send" or "manage", as the settings say. */
+/* "read", "send", "manage" or "admin", as the settings say. */
 const char       *automation_manager_access(AutomationManager *mgr);
 int               automation_manager_setting_changeable(AutomationManager *mgr, const SettingField *field);
 
@@ -41,6 +42,20 @@ int               automation_manager_setting_changeable(AutomationManager *mgr, 
 ApprovalRisk automation_manager_risk(AutomationManager *mgr, const char *op, WriteKind kind);
 /* How long a request of that risk waits for you before it is declined. */
 int64_t      automation_manager_answer_window_ms(AutomationManager *mgr, ApprovalRisk risk);
+
+/* Keeps the admin token in step with the settings: a fresh one is written
+ * when access becomes admin (and each time tawk starts), and it is removed
+ * when access is anything else. Call it regularly. */
+void automation_manager_tick(AutomationManager *mgr);
+/* Whether a client may answer its own waiting request for `op` in `chat`
+ * (NULL: about no chat): the settings, the admin token it showed, and this
+ * hour's allowance, which an allowed one counts against. *retry_after_s is
+ * set when RATE_LIMITED. */
+SelfApprovalVerdict automation_manager_self_approve(AutomationManager *mgr, const char *op, const Chat *chat,
+                                                    const char *token, int64_t now_ms, int *retry_after_s);
+/* A line for you about something a client did by itself, and the next one waiting (1 when there was one). */
+void automation_manager_notice(AutomationManager *mgr, const char *text);
+int  automation_manager_take_notice(AutomationManager *mgr, char *out, unsigned long size);
 
 /* Things you ask for in the Agents tab, handed to the control client. */
 void automation_manager_command(AutomationManager *mgr, AutomationCommandKind kind, int conn);

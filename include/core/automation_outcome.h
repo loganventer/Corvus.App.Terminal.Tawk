@@ -13,6 +13,7 @@ typedef enum AutomationOutcome {
     AUTOMATION_OUTCOME_CONNECTED,       /* a client said hello */
     AUTOMATION_OUTCOME_READ,            /* it looked at something */
     AUTOMATION_OUTCOME_ALLOWED,         /* allowed by an earlier "for this session" */
+    AUTOMATION_OUTCOME_SELF_APPROVED,   /* the client answered its own request, as access admin lets it */
     AUTOMATION_OUTCOME_COUNT
 } AutomationOutcome;
 

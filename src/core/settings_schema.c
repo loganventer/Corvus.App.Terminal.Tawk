@@ -79,11 +79,12 @@ static const SettingField FIELDS[] = {
     I(SETTING_CATEGORY_RESILIENCE, "breaker_cooldown_s", "Circuit breaker cooldown (s)", "Pause before a trial reconnect", breaker_cooldown_s, 5, 3600, 5, 0),
 
     B(SETTING_CATEGORY_AUTOMATION, "control_socket", "Agent access (MCP)", "Let tawk-mcp and the tawk send, tail and unread commands reach this tawk; off, nothing can connect", control_socket),
-    { SETTING_CATEGORY_AUTOMATION, "access", "What they may do", "read lists and reads chats; send also sends, reacts, schedules and drafts; manage changes chats, statuses, your profile and settings. You allow each change",
-      SETTING_KIND_CHOICE, offsetof(Settings, automation_access), sizeof(((Settings *)0)->automation_access), 0, 0, 0, "read|send|manage", 0 },
+    { SETTING_CATEGORY_AUTOMATION, "access", "What they may do", "read lists and reads chats; send also sends, reacts, schedules and drafts; manage changes chats, statuses, your profile and settings. You allow each change. admin also lets a program holding the admin token answer its own sends in the chats you list",
+      SETTING_KIND_CHOICE, offsetof(Settings, automation_access), sizeof(((Settings *)0)->automation_access), 0, 0, 0, "read|send|manage|admin", 0 },
     S(SETTING_CATEGORY_AUTOMATION, "chats", "Chats they may use", "Names or numbers, separated by commas; empty allows every chat except locked ones", automation_chats, 0),
     B(SETTING_CATEGORY_AUTOMATION, "confirm_cli", "Ask for shell commands too", "tawk send asks first as well; programs acting for a model always ask", automation_confirm_cli),
     I(SETTING_CATEGORY_AUTOMATION, "writes_per_minute", "Writes per minute", "More than this are refused until a minute has passed", automation_rate, 1, 60, 1, 0),
+    I(SETTING_CATEGORY_AUTOMATION, "self_approvals_per_hour", "Self-approvals per hour", "With access admin: how many of its own requests a program may answer in an hour; past this they wait for you", automation_self_per_hour, 1, 240, 1, 0),
 
     { SETTING_CATEGORY_ADVANCED, "backend", "WhatsApp backend", "whatsmeow runs in-process; baileys runs a Node.js sidecar",
       SETTING_KIND_CHOICE, offsetof(Settings, backend), sizeof(((Settings *)0)->backend), 0, 0, 0, "whatsmeow|baileys", 1 },

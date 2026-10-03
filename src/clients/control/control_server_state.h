@@ -64,6 +64,8 @@ int             control_connected(ControlServer *server);
 void control_write(ControlServer *server, ControlSession *session, ControlPending *pending);
 void control_op_confirm(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_cancel_confirmation(ControlServer *server, ControlSession *session, const ControlRequest *req);
+/* Access admin: a client answers its own waiting request, showing the admin token. */
+void control_op_approve(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_writes_tick(ControlServer *server, int64_t now_ms);
 void control_writes_forget(ControlServer *server, int conn);
 

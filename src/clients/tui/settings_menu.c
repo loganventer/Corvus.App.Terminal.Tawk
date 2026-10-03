@@ -143,6 +143,7 @@ static const MenuNode AUTOMATION[] = {
     FIELD(SETTING_CATEGORY_AUTOMATION, "chats"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "confirm_cli"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "writes_per_minute"),
+    FIELD(SETTING_CATEGORY_AUTOMATION, "self_approvals_per_hour"),
     TEXT("The Agentic tab (F3): requests to answer, who is connected, the log"),
     TEXT("Needs: tawk running with this on, and tawk-mcp in your MCP client"),
     TEXT("Risk: chat text an agent reads goes to its model's provider"),

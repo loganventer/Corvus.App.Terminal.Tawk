@@ -213,6 +213,8 @@ static void notice_requests(TuiApp *app) {
 
 void tui_app_agents_tick(TuiApp *app) {
     if (app->deps.frame_hook && app->deps.frame_hook->tick(app->deps.frame_hook)) app->dirty = 1;
+    char did[256];
+    while (app->deps.automation && automation_manager_take_notice(app->deps.automation, did, sizeof(did))) tui_app_toast(app, did, 0);
     if (app->deps.automation && automation_manager_take_changed(app->deps.automation)) app->dirty = 1;
     if (app->agents.open) app->dirty = 1;                  /* the countdowns */
     tui_app_follow_settings(app);

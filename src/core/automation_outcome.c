@@ -3,7 +3,8 @@
 #include <string.h>
 
 static const char *const NAMES[AUTOMATION_OUTCOME_COUNT] = {
-    "done", "approved", "declined", "timed out", "refused", "rate limited", "failed", "connected", "read", "allowed for the session"
+    "done", "approved", "declined", "timed out", "refused", "rate limited", "failed", "connected", "read", "allowed for the session",
+    "approved by the agent"
 };
 
 const char *automation_outcome_name(AutomationOutcome o) {

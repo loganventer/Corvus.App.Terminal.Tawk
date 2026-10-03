@@ -5,6 +5,7 @@
 #include "core/automation_verdict.h"
 #include "core/chat.h"
 #include "core/control_origin.h"
+#include "core/self_approval_verdict.h"
 #include "core/setting_field.h"
 #include "core/settings.h"
 #include "core/write_kind.h"
@@ -18,6 +19,14 @@ int               automation_policy_chat_allowed(const Settings *settings, const
  * a model always ask you first; your own shell commands ask when
  * confirm_cli is on, and always for destructive writes. */
 AutomationVerdict automation_policy_write(const Settings *settings, ControlOrigin origin, WriteKind kind);
+/* Whether a client may answer its own waiting request, by the settings
+ * alone (the admin token and the hourly allowance are the manager's): access
+ * must be admin, the request a send or a small thing (a message, a reply, a
+ * forward, an edit, a retry, anything scheduled, a reaction, a read mark, a
+ * like), and its chat named in "Chats they may use". An empty list allows
+ * none here: answering for you is only for chats you chose. `chat` may be
+ * NULL for a request about no chat, which is never allowed. */
+SelfApprovalVerdict automation_policy_self_approval(const Settings *settings, const char *op, const Chat *chat);
 /* Whether a setting may be changed over the control socket: never the
  * automation settings, commands, folders, the backend or the log level. */
 int               automation_policy_setting_changeable(const SettingField *field);

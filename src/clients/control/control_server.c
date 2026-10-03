@@ -59,6 +59,7 @@ static const ControlOpEntry OPS[] = {
     { "decline_call",           control_op_decline_call, 0 },
     { "confirm",                control_op_confirm, 0 },
     { "cancel_confirmation",    control_op_cancel_confirmation, 0 },
+    { "approve",                control_op_approve, 0 },
     { "subscribe",              control_op_subscribe, 1 },
     { "unsubscribe",            control_op_unsubscribe, 0 },
 };
@@ -336,6 +337,7 @@ int control_server_tick(ControlServer *s) {
     int64_t now = clock_now_ms();
     s->changed = 0;
     follow_setting(s, now);
+    if (s->listening) automation_manager_tick(s->deps.automation);   /* the admin token follows the access setting */
     obey(s);
     if (s->listening) {
         ControlInbound in[INBOUND_PER_TICK];

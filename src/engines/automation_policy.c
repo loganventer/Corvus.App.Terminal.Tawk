@@ -47,6 +47,7 @@ int automation_policy_chat_allowed(const Settings *s, const Chat *c) {
 }
 
 static int access_level(const char *access) {
+    if (strcmp(access, "admin") == 0) return 3;
     if (strcmp(access, "manage") == 0) return 2;
     if (strcmp(access, "send") == 0) return 1;
     return 0;
@@ -57,6 +58,22 @@ AutomationVerdict automation_policy_write(const Settings *s, ControlOrigin origi
     if (access_level(s->automation_access) < needed) return AUTOMATION_VERDICT_REFUSE;
     if (origin == CONTROL_ORIGIN_MCP || kind == WRITE_KIND_DESTRUCTIVE) return AUTOMATION_VERDICT_ASK;
     return s->automation_confirm_cli ? AUTOMATION_VERDICT_ASK : AUTOMATION_VERDICT_ALLOW;
+}
+
+SelfApprovalVerdict automation_policy_self_approval(const Settings *s, const char *op, const Chat *chat) {
+    static const char *const OWN[] = {
+        "send_message", "reply_status", "forward_message", "edit_message", "retry_message",
+        "schedule_message", "reschedule", "send_scheduled_now", "cancel_scheduled",
+        "react", "mark_read", "like_status", NULL
+    };
+    if (access_level(s->automation_access) < 3) return SELF_APPROVAL_OFF;
+    int own = 0;
+    for (int i = 0; op && OWN[i] && !own; i++) own = strcmp(op, OWN[i]) == 0;
+    if (!own) return SELF_APPROVAL_NOT_THIS_KIND;
+    const char *list = s->automation_chats;
+    while (isspace((unsigned char)*list)) list++;
+    if (!chat || !*list || !automation_policy_chat_allowed(s, chat)) return SELF_APPROVAL_CHAT_NOT_LISTED;
+    return SELF_APPROVAL_ALLOW;
 }
 
 int automation_policy_setting_changeable(const SettingField *f) {

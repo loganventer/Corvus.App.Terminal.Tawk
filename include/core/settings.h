@@ -78,10 +78,11 @@ typedef struct Settings {
 
     /* Automation: the control socket for tawk-mcp and shell commands */
     int  control_socket;        /* listen for other programs of yours (off: nothing can connect) */
-    char automation_access[8];  /* read, send (messages you confirm) or manage (everything else too) */
+    char automation_access[8];  /* read, send (messages you confirm), manage (everything else too) or admin (may answer its own sends) */
     char automation_chats[512]; /* comma-separated chats they may use; empty: all but locked ones */
     int  automation_confirm_cli;/* your own shell commands ask before sending too */
     int  automation_rate;       /* writes allowed per minute */
+    int  automation_self_per_hour; /* access admin: requests a client may answer itself in an hour */
 
     /* Advanced */
     char backend[16];           /* whatsmeow (in-process) or baileys (node sidecar) */

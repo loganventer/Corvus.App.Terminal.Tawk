@@ -52,6 +52,7 @@
 #include "resource_access/ini_settings_store.h"
 #include "resource_access/json_theme_repository.h"
 #include "resource_access/sidecar_gateway.h"
+#include "resource_access/file_admin_token_store.h"
 #include "resource_access/sqlite_automation_log.h"
 #include "resource_access/sqlite_chat_store.h"
 #include "resource_access/sqlite_contact_store.h"
@@ -70,6 +71,7 @@
 #include "resource_access/text_chat_exporter.h"
 #include "resource_access/whatsmeow_gateway.h"
 #include "utilities/app_info.h"
+#include "utilities/admin_token_path.h"
 #include "utilities/control_socket_path.h"
 #include "utilities/event_queue.h"
 #include "utilities/log.h"
@@ -491,7 +493,10 @@ int main(int argc, char **argv) {
     MessagingManager *messaging = messaging_manager_create(&mdeps);
     /* Agents: the control socket, its rules and log, and the requests waiting for you */
     IAutomationLog *automation_log = sqlite_automation_log_create(db);
-    AutomationManagerDeps automation_deps = { automation_log, s };
+    char admin_token_file[600];
+    admin_token_path(admin_token_file, sizeof(admin_token_file));
+    IAdminTokenStore *admin_tokens = file_admin_token_store_create(admin_token_file);
+    AutomationManagerDeps automation_deps = { automation_log, s, admin_tokens };
     AutomationManager *automation = automation_manager_create(&automation_deps);
     ApprovalQueue *approvals = approval_queue_create();
     IControlTransport *control_transport = unix_control_transport_create();
@@ -523,6 +528,7 @@ int main(int argc, char **argv) {
     if (control_transport) control_transport->destroy(control_transport);
     approval_queue_destroy(approvals);
     automation_manager_destroy(automation);
+    if (admin_tokens) admin_tokens->destroy(admin_tokens);
     if (automation_log) automation_log->destroy(automation_log);
     media_manager_destroy(media);
     messaging_manager_destroy(messaging);

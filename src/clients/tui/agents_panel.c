@@ -37,7 +37,7 @@ void agents_panel_open(AgentsPanel *p, AgentsView view) {
 static int log_matches(const AgentsPanel *p, const AutomationEntry *e) {
     if (e->outcome == AUTOMATION_OUTCOME_READ && !p->log_reads) return 0;
     switch (p->log_filter) {
-        case 1: if (e->outcome != AUTOMATION_OUTCOME_DONE && e->outcome != AUTOMATION_OUTCOME_APPROVED && e->outcome != AUTOMATION_OUTCOME_ALLOWED) return 0; break;
+        case 1: if (e->outcome != AUTOMATION_OUTCOME_DONE && e->outcome != AUTOMATION_OUTCOME_APPROVED && e->outcome != AUTOMATION_OUTCOME_ALLOWED && e->outcome != AUTOMATION_OUTCOME_SELF_APPROVED) return 0; break;
         case 2: if (e->outcome != AUTOMATION_OUTCOME_DECLINED && e->outcome != AUTOMATION_OUTCOME_TIMED_OUT) return 0; break;
         case 3: if (e->outcome != AUTOMATION_OUTCOME_REFUSED && e->outcome != AUTOMATION_OUTCOME_FAILED && e->outcome != AUTOMATION_OUTCOME_RATE_LIMITED) return 0; break;
         default: break;

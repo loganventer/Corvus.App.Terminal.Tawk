@@ -8,6 +8,7 @@
 #include "clients/tui/approval_queue.h"
 #include "cJSON.h"
 #include "core/settings.h"
+#include "engines/hourly_quota.h"
 #include "managers/automation_manager.h"
 #include "managers/messaging_manager.h"
 #include "managers/scheduling_manager.h"
@@ -93,6 +94,16 @@ static int gw_typing(IMessageGateway *self, const char *jid, const char *st) { (
 static int gw_presence(IMessageGateway *self, int on) { (void)self; (void)on; return 0; }
 static int gw_read(IMessageGateway *self, const ReadRequest *r) { (void)self; (void)r; return 0; }
 static void fake_notify(INotifier *self, const Notification *n) { (void)self; (void)n; }
+
+/* ---- the admin token, kept in memory ------------------------------------------ */
+
+static char admin_token[128];
+static int admin_token_saves;
+
+static int at_save(IAdminTokenStore *self, const char *token) { (void)self; str_copy(admin_token, sizeof(admin_token), token); admin_token_saves++; return 0; }
+static void at_remove(IAdminTokenStore *self) { (void)self; admin_token[0] = '\0'; }
+static void at_destroy(IAdminTokenStore *self) { (void)self; }
+static IAdminTokenStore admin_tokens = { NULL, at_save, at_remove, at_destroy };
 
 /* ---- the world under test ---------------------------------------------------- */
 
@@ -397,6 +408,111 @@ static void test_destructive_and_manage(void) {
 }
 
 /* Last, since it runs the bucket dry. */
+static void approve(int conn, const char *id, const char *request, const char *token) {
+    char line[400];
+    snprintf(line, sizeof(line), "{\"id\":\"%s\",\"op\":\"approve\",\"args\":{\"id\":\"%s\",\"admin_token\":\"%s\"}}", id, request, token);
+    say(conn, line);
+}
+
+static void set_automation(const char *access, const char *chat_list, int per_hour) {
+    Settings s = *settings_manager_current(settings_mgr);
+    str_copy(s.automation_access, sizeof(s.automation_access), access);
+    str_copy(s.automation_chats, sizeof(s.automation_chats), chat_list);
+    s.automation_self_per_hour = per_hour;
+    s.automation_rate = 60;
+    settings_manager_apply(settings_mgr, &s);
+    tick();
+}
+
+/* Access admin: a client holding the admin token answers its own sends, in the chats you named, so many an hour. */
+static void test_admin_answers_its_own(void) {
+    int conn = open_client("mcp", "manage");
+    set_automation("manage", "Mom", 2);
+    int sent = texts;
+    CHECK(!admin_token[0], "there is no admin token below access admin");
+    say(conn, "{\"id\":\"a1\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"one\"}}");
+    approve(conn, "p1", "a1", "anything");
+    cJSON *r = reply("p1");
+    CHECK(r && !strcmp(error_code(r), "not_allowed") && texts == sent && approval_queue_count(queue) == 1, "below admin nothing answers itself, and the request still waits for you");
+    cJSON_Delete(r);
+
+    set_automation("admin", "Mom", 2);
+    CHECK(strlen(admin_token) >= 64, "access admin writes an admin token");
+    char token[128];
+    str_copy(token, sizeof(token), admin_token);
+    approve(conn, "p2", "a1", "wrong");
+    r = reply("p2");
+    CHECK(r && !strcmp(error_code(r), "bad_token") && texts == sent, "the wrong token answers nothing");
+    cJSON_Delete(r);
+    int other = open_client("mcp", NULL);
+    approve(other, "p3", "a1", token);
+    r = reply("p3");
+    CHECK(r && !strcmp(error_code(r), "not_found") && texts == sent, "another client cannot answer a request that is not its own");
+    cJSON_Delete(r);
+    approve(conn, "p4", "a1", token);
+    r = reply("p4");
+    cJSON *done = reply("a1");
+    CHECK(r && cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(result(r), "approved")) && done && result(done) && texts == sent + 1,
+          "with the token its own send goes, and the waiting request gets its answer");
+    CHECK(approval_queue_count(queue) == 0, "and you are no longer asked");
+    cJSON_Delete(r);
+    cJSON_Delete(done);
+    char notice[256];
+    CHECK(automation_manager_take_notice(automation, notice, sizeof(notice)) && strstr(notice, "Mom"), "you are told what it did");
+    AutomationEntry *log = NULL;
+    int n = 0;
+    automation_manager_recent(automation, 1, &log, &n);
+    CHECK(n == 1 && log[0].outcome == AUTOMATION_OUTCOME_SELF_APPROVED, "and the log says the agent approved it");
+    free(log);
+
+    say(conn, "{\"id\":\"a2\",\"op\":\"send_message\",\"args\":{\"chat\":\"Work\",\"text\":\"two\"}}");
+    r = reply("a2");
+    CHECK(r && !strcmp(error_code(r), "not_found") && texts == sent + 1 && approval_queue_count(queue) == 0, "a chat you did not name is out of reach altogether");
+    cJSON_Delete(r);
+    say(conn, "{\"id\":\"a3\",\"op\":\"set_chat\",\"args\":{\"chat\":\"Mom\",\"pinned\":true}}");
+    approve(conn, "p6", "a3", token);
+    r = reply("p6");
+    CHECK(r && !strcmp(error_code(r), "not_allowed") && approval_queue_count(queue) == 1, "changes that are not sends wait for you");
+    cJSON_Delete(r);
+    answer_first(0, NULL, 0);
+
+    set_automation("admin", "", 2);
+    say(conn, "{\"id\":\"a4\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"three\"}}");
+    approve(conn, "p7", "a4", token);
+    r = reply("p7");
+    CHECK(r && !strcmp(error_code(r), "not_allowed") && texts == sent + 1, "with no chats named, none is answered this way");
+    cJSON_Delete(r);
+    answer_first(0, NULL, 0);
+
+    set_automation("admin", "Mom", 2);
+    say(conn, "{\"id\":\"a5\",\"op\":\"react\",\"args\":{\"message_id\":\"M2\",\"emoji\":\"\xF0\x9F\x91\x8D\"}}");
+    approve(conn, "p8", "a5", token);
+    r = reply("p8");
+    CHECK(r && result(r), "a reaction is answered too, the second this hour");
+    cJSON_Delete(r);
+    say(conn, "{\"id\":\"a6\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"four\"}}");
+    approve(conn, "p9", "a6", token);
+    r = reply("p9");
+    CHECK(r && !strcmp(error_code(r), "rate_limited") && approval_queue_count(queue) == 1, "past the hour's allowance it waits for you again");
+    cJSON_Delete(r);
+    answer_first(0, NULL, 0);
+
+    set_automation("send", "", 2);
+    CHECK(!admin_token[0], "leaving admin removes the token");
+    set_automation("admin", "Mom", 2);
+    CHECK(admin_token[0] && strcmp(admin_token, token) != 0, "and coming back makes a new one");
+    set_automation("send", "", 20);
+    while (automation_manager_take_notice(automation, notice, sizeof(notice))) {}
+
+    HourlyQuota q;
+    hourly_quota_init(&q);
+    int retry = 0;
+    CHECK(hourly_quota_take(&q, 2, 1000, &retry) && hourly_quota_take(&q, 2, 2000, &retry) && !hourly_quota_take(&q, 2, 3000, &retry) && retry == 3598,
+          "the hourly allowance says when the next one is free");
+    CHECK(hourly_quota_take(&q, 2, 1000 + 3600000, &retry), "and frees one as the oldest lapses");
+    clear_outbox();
+}
+
 static void test_rate(void) {
     int shell = open_client("cli", "send");
     cJSON *r;
@@ -521,7 +637,7 @@ int main(void) {
     mm = messaging_manager_create(&deps);
     SchedulingManagerDeps sched_deps = { scheduled };
     SchedulingManager *scheduling = scheduling_manager_create(&sched_deps);
-    AutomationManagerDeps automation_deps = { log, settings_manager_current(settings_mgr) };
+    AutomationManagerDeps automation_deps = { log, settings_manager_current(settings_mgr), &admin_tokens };
     automation = automation_manager_create(&automation_deps);
     queue = approval_queue_create();
     ControlServerDeps control_deps = { &transport, approval_queue_prompt(queue), mm, NULL, scheduling, NULL, automation,
@@ -541,6 +657,7 @@ int main(void) {
     test_writes_wait_for_you();
     test_destructive_and_manage();
     test_live_and_log();
+    test_admin_answers_its_own();
     test_rate();
 
     control_server_destroy(server);

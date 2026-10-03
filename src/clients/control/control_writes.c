@@ -137,7 +137,7 @@ void control_write(ControlServer *s, ControlSession *session, ControlPending *p)
         record(s, p, AUTOMATION_OUTCOME_REFUSED);
         control_fail(s, p->conn, p->request_id, "not_allowed", p->kind == WRITE_KIND_SEND
                      ? "Sending is turned off in tawk (Settings > Automation > What they may do)"
-                     : "This needs access \"manage\" in tawk (Settings > Automation > What they may do)");
+                     : "This needs access \"manage\" or \"admin\" in tawk (Settings > Automation > What they may do)");
     } else if (v == AUTOMATION_VERDICT_RATE_LIMITED) {
         record(s, p, AUTOMATION_OUTCOME_RATE_LIMITED);
         cJSON *extra = cJSON_CreateObject();
@@ -200,6 +200,64 @@ static void remove_pending(ControlServer *s, int index) {
     control_pending_dispose(&s->pending[index]);
     s->pending[index] = s->pending[--s->pending_count];
     s->changed = 1;
+}
+
+/* Your own waiting request, by the id you sent it with. */
+static int find_own(ControlServer *s, int conn, const char *request_id) {
+    for (int i = 0; request_id && i < s->pending_count; i++) {
+        if (s->pending[i].conn == conn && strcmp(s->pending[i].request_id, request_id) == 0) return i;
+    }
+    return -1;
+}
+
+static const char *why_not(SelfApprovalVerdict v) {
+    switch (v) {
+        case SELF_APPROVAL_OFF:             return "Answering your own requests needs access \"admin\" in tawk (Settings > Automation > What they may do)";
+        case SELF_APPROVAL_NOT_THIS_KIND:   return "Only sends, scheduled messages, reactions, read marks and likes can be answered this way; this one waits for the user in tawk";
+        case SELF_APPROVAL_CHAT_NOT_LISTED: return "That chat is not named in tawk's \"Chats they may use\", so this one waits for the user in tawk";
+        default:                            return "The admin token is wrong or out of date";
+    }
+}
+
+/* The request stays waiting for you whenever the answer here is no. */
+void control_op_approve(ControlServer *s, ControlSession *session, const ControlRequest *req) {
+    const char *id = control_required(s, session, req, "id");
+    if (!id) return;
+    int at = find_own(s, session->conn, id);
+    if (at < 0) {
+        control_fail(s, session->conn, req->id, "not_found", "No request of yours with that id is waiting for an answer");
+        return;
+    }
+    ControlPending *p = &s->pending[at];
+    if (session->paused) {
+        control_fail(s, session->conn, req->id, "not_allowed", "You paused this client in tawk's Agents tab");
+        return;
+    }
+    int retry = 0;
+    SelfApprovalVerdict v = automation_manager_self_approve(s->deps.automation, p->op, control_visible_chat(s, p->chat_jid),
+                                                            control_codec_string(req->args, "admin_token"), clock_now_ms(), &retry);
+    if (v == SELF_APPROVAL_RATE_LIMITED) {
+        cJSON *extra = cJSON_CreateObject();
+        cJSON_AddNumberToObject(extra, "retry_after", retry);
+        control_reply(s, session->conn, control_codec_error(req->id, "rate_limited",
+                      "This hour's self-approvals are used up; this one waits for the user in tawk", extra));
+        return;
+    }
+    if (v != SELF_APPROVAL_ALLOW) {
+        control_fail(s, session->conn, req->id, v == SELF_APPROVAL_BAD_TOKEN ? "bad_token" : "not_allowed", why_not(v));
+        return;
+    }
+    if (s->deps.approvals) s->deps.approvals->withdraw(s->deps.approvals, p->approval_id);
+    char name[128], notice[256];
+    chat_name(s, p->chat_jid, name, sizeof(name));
+    snprintf(notice, sizeof(notice), "\xF0\x9F\xA4\x96 %s answered its own request to %s%s%s", p->client, p->action, name[0] ? " in " : "", name);
+    automation_manager_notice(s->deps.automation, notice);
+    finish(s, p, AUTOMATION_OUTCOME_SELF_APPROVED);            /* the waiting request gets its own answer */
+    remove_pending(s, at);
+    cJSON *r = cJSON_CreateObject();
+    cJSON_AddBoolToObject(r, "approved", 1);
+    cJSON_AddStringToObject(r, "id", id);
+    control_reply(s, session->conn, control_codec_ok(req->id, r));
 }
 
 void control_writes_tick(ControlServer *s, int64_t now_ms) {

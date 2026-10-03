@@ -2,15 +2,19 @@
 #include "engines/automation_policy.h"
 #include "engines/chat_reference_resolver.h"
 #include "engines/confirmation_token.h"
+#include "engines/hourly_quota.h"
 #include "engines/rate_limiter.h"
 #include "utilities/log.h"
 #include "utilities/str_util.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 #define MAX_COMMANDS 16
+#define MAX_NOTICES  8
+#define ADMIN_TOKEN_SIZE 72
 
 struct AutomationManager {
     AutomationManagerDeps deps;
@@ -19,6 +23,10 @@ struct AutomationManager {
     int                   changed;
     AutomationCommand     commands[MAX_COMMANDS];
     int                   command_count;
+    HourlyQuota           self_approvals;
+    char                  admin_token[ADMIN_TOKEN_SIZE];   /* "" while access is not admin */
+    char                  notices[MAX_NOTICES][256];
+    int                   notice_count;
 };
 
 AutomationManager *automation_manager_create(const AutomationManagerDeps *deps) {
@@ -26,10 +34,20 @@ AutomationManager *automation_manager_create(const AutomationManagerDeps *deps) 
     if (!m) return NULL;
     m->deps = *deps;
     rate_limiter_init(&m->writes);
+    hourly_quota_init(&m->self_approvals);
     return m;
 }
 
-void automation_manager_destroy(AutomationManager *m) { free(m); }
+static void drop_admin_token(AutomationManager *m) {
+    if (m->deps.admin_tokens) m->deps.admin_tokens->remove(m->deps.admin_tokens);
+    memset(m->admin_token, 0, sizeof(m->admin_token));
+}
+
+void automation_manager_destroy(AutomationManager *m) {
+    if (!m) return;
+    drop_admin_token(m);                                    /* the token is good for one run of tawk only */
+    free(m);
+}
 
 int automation_manager_chat_allowed(AutomationManager *m, const Chat *chat) {
     return automation_policy_chat_allowed(m->deps.settings, chat);
@@ -42,7 +60,7 @@ ChatResolution automation_manager_resolve(AutomationManager *m, const Chat *chat
 
 const char *automation_manager_access(AutomationManager *m) {
     const char *a = m->deps.settings->automation_access;
-    return strcmp(a, "manage") == 0 || strcmp(a, "send") == 0 ? a : "read";
+    return strcmp(a, "admin") == 0 || strcmp(a, "manage") == 0 || strcmp(a, "send") == 0 ? a : "read";
 }
 
 int automation_manager_setting_changeable(AutomationManager *m, const SettingField *field) {
@@ -56,6 +74,57 @@ AutomationVerdict automation_manager_check_write(AutomationManager *m, ControlOr
     if (verdict == AUTOMATION_VERDICT_REFUSE) return verdict;
     if (!rate_limiter_take(&m->writes, m->deps.settings->automation_rate, now_ms, retry_after_s)) return AUTOMATION_VERDICT_RATE_LIMITED;
     return verdict;
+}
+
+void automation_manager_tick(AutomationManager *m) {
+    int admin = strcmp(m->deps.settings->automation_access, "admin") == 0 && m->deps.admin_tokens != NULL;
+    if (!admin) {
+        if (m->admin_token[0]) drop_admin_token(m);
+        return;
+    }
+    if (m->admin_token[0]) return;
+    char a[40], b[40];
+    if (confirmation_token_generate(a, sizeof(a)) != 0 || confirmation_token_generate(b, sizeof(b)) != 0) return;
+    char token[ADMIN_TOKEN_SIZE];
+    snprintf(token, sizeof(token), "%s%s", a, b);
+    if (m->deps.admin_tokens->save(m->deps.admin_tokens, token) != 0) return;   /* tried again on the next tick */
+    str_copy(m->admin_token, sizeof(m->admin_token), token);
+    LOG_INFO("automation: access is admin; a new admin token was written");
+}
+
+/* Compares every byte whatever they are, so the time taken says nothing about where they differ. */
+static int same_token(const char *have, const char *shown) {
+    size_t n = strlen(have), k = shown ? strlen(shown) : 0;
+    unsigned char diff = (unsigned char)(n != k);
+    for (size_t i = 0; i < n; i++) diff |= (unsigned char)(have[i] ^ (i < k ? shown[i] : 0));
+    return n > 0 && diff == 0;
+}
+
+SelfApprovalVerdict automation_manager_self_approve(AutomationManager *m, const char *op, const Chat *chat,
+                                                    const char *token, int64_t now_ms, int *retry_after_s) {
+    SelfApprovalVerdict verdict = automation_policy_self_approval(m->deps.settings, op, chat);
+    if (verdict == SELF_APPROVAL_OFF) return verdict;
+    if (!same_token(m->admin_token, token)) return SELF_APPROVAL_BAD_TOKEN;
+    if (verdict != SELF_APPROVAL_ALLOW) return verdict;
+    if (!hourly_quota_take(&m->self_approvals, m->deps.settings->automation_self_per_hour, now_ms, retry_after_s)) return SELF_APPROVAL_RATE_LIMITED;
+    return SELF_APPROVAL_ALLOW;
+}
+
+void automation_manager_notice(AutomationManager *m, const char *text) {
+    if (m->notice_count >= MAX_NOTICES) {                    /* the oldest gives way */
+        memmove(m->notices[0], m->notices[1], sizeof(m->notices[0]) * (MAX_NOTICES - 1));
+        m->notice_count--;
+    }
+    str_copy(m->notices[m->notice_count], sizeof(m->notices[0]), text);
+    str_strip_controls(m->notices[m->notice_count++]);
+    m->changed = 1;
+}
+
+int automation_manager_take_notice(AutomationManager *m, char *out, unsigned long size) {
+    if (m->notice_count == 0) return 0;
+    str_copy(out, size, m->notices[0]);
+    memmove(m->notices[0], m->notices[1], sizeof(m->notices[0]) * (size_t)(--m->notice_count));
+    return 1;
 }
 
 ApprovalRisk automation_manager_risk(AutomationManager *m, const char *op, WriteKind kind) {
