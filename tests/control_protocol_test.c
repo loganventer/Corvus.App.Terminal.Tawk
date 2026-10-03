@@ -606,6 +606,39 @@ static void test_live_and_log(void) {
     push.automation_push_received = 1;
     settings_manager_apply(settings_mgr, &push);
 
+    /* Someone reading a message of yours is its own event, with its own setting, off until you turn it on. */
+    clear_outbox();
+    event_init(&e, EVENT_MESSAGE_RECEIPT);
+    str_copy(e.id, sizeof(e.id), "LIVE4");
+    str_copy(e.jid, sizeof(e.jid), MOM);
+    e.receipt = RECEIPT_READ;
+    e.at = 1790000300;
+    event_queue_push(events, &e);
+    tick();
+    tick();
+    CHECK(!saw_event("read"), "a read is not pushed until you turn it on");
+    push.automation_push_read = 1;
+    settings_manager_apply(settings_mgr, &push);
+    event_init(&e, EVENT_MESSAGE_RECEIPT);
+    str_copy(e.id, sizeof(e.id), "LIVE4");
+    str_copy(e.jid, sizeof(e.jid), MOM);
+    e.receipt = RECEIPT_READ;
+    e.at = 1790000301;
+    event_queue_push(events, &e);
+    event_init(&e, EVENT_MESSAGE_RECEIPT);
+    str_copy(e.id, sizeof(e.id), "LIVE4");
+    str_copy(e.jid, sizeof(e.jid), MOM);
+    e.receipt = RECEIPT_DELIVERED;
+    e.at = 1790000302;
+    event_queue_push(events, &e);
+    tick();
+    tick();
+    int reads_pushed = 0;
+    for (int i = 0; i < outbox_count; i++) reads_pushed += strstr(outbox[i], "\"evt\":\"read\"") != NULL && strstr(outbox[i], "LIVE4") != NULL;
+    CHECK(reads_pushed == 1, "turned on, the agent hears who read which message, once, and your shell does not");
+    push.automation_push_read = 0;
+    settings_manager_apply(settings_mgr, &push);
+
     AutomationEntry *log = NULL;
     int n = 0;
     automation_manager_recent(automation, 200, &log, &n);

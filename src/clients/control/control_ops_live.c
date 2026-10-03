@@ -94,6 +94,29 @@ static void send_message(ControlServer *s, const LiveMessageRef *ref) {
     if (loaded) message_dispose(&msg);
 }
 
+/* Someone read a message you sent: {"evt":"read","chat":{jid,name},"message_id","reader":{jid,name},"at"}. */
+static void send_read(ControlServer *s, const LiveMessageRef *ref) {
+    const Chat *chat = find_chat(s, ref->chat_jid);
+    if (!chat || !automation_manager_chat_allowed(s->deps.automation, chat)) return;
+    char name[128];
+    messaging_manager_display_name(s->deps.messaging, ref->who, name, sizeof(name));
+    for (int i = 0; i < s->session_count; i++) {
+        ControlSession *session = &s->sessions[i];
+        if (!session->greeted || !control_session_follows(session, ref->chat_jid)) continue;
+        if (!automation_manager_pushes_read(s->deps.automation, session->origin)) continue;
+        cJSON *evt = cJSON_CreateObject();
+        cJSON *c = cJSON_AddObjectToObject(evt, "chat");
+        cJSON_AddStringToObject(c, "jid", chat->jid);
+        cJSON_AddStringToObject(c, "name", chat->name);
+        cJSON_AddStringToObject(evt, "message_id", ref->id);
+        cJSON *reader = cJSON_AddObjectToObject(evt, "reader");
+        cJSON_AddStringToObject(reader, "jid", ref->who);
+        cJSON_AddStringToObject(reader, "name", name);
+        cJSON_AddNumberToObject(evt, "at", (double)ref->at);
+        control_reply(s, session->conn, control_codec_event("read", evt));
+    }
+}
+
 static void send_unread_changes(ControlServer *s, ControlSession *session) {
     int n = 0;
     const Chat *all = messaging_manager_chats(s->deps.messaging, &n);
@@ -117,7 +140,8 @@ void control_live_tick(ControlServer *s, int check_unread) {
     LiveMessageRef refs[LIVE_PER_TICK];
     int n = messaging_manager_live_since(s->deps.messaging, s->live_seq, refs, LIVE_PER_TICK);
     for (int i = 0; i < n; i++) {
-        send_message(s, &refs[i]);
+        if (refs[i].kind == LIVE_KIND_READ) send_read(s, &refs[i]);
+        else send_message(s, &refs[i]);
         s->live_seq = refs[i].seq;
     }
     if (!check_unread) return;

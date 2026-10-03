@@ -33,6 +33,9 @@ SelfApprovalVerdict automation_policy_self_approval(const Settings *settings, co
  * for what other people send, one for what you send); your own shell
  * commands, such as tawk tail, always are. */
 int               automation_policy_pushes(const Settings *settings, ControlOrigin origin, int from_me);
+/* Whether a client that subscribed is told when someone reads a message you
+ * sent: only programs acting for a model, and only with the setting on. */
+int               automation_policy_pushes_read(const Settings *settings, ControlOrigin origin);
 /* Whether a setting may be changed over the control socket: never the
  * automation settings, commands, folders, the backend or the log level. */
 int               automation_policy_setting_changeable(const SettingField *field);

@@ -38,6 +38,8 @@ AutomationVerdict automation_manager_check_write(AutomationManager *mgr, Control
 const char       *automation_manager_access(AutomationManager *mgr);
 /* Whether a subscribed client of that origin is told about a new message (yours when `from_me`) as it arrives. */
 int               automation_manager_pushes(AutomationManager *mgr, ControlOrigin origin, int from_me);
+/* Whether a subscribed client of that origin is told when someone reads a message you sent. */
+int               automation_manager_pushes_read(AutomationManager *mgr, ControlOrigin origin);
 int               automation_manager_setting_changeable(AutomationManager *mgr, const SettingField *field);
 
 /* How risky a write is: destructive ones HIGH, reactions and read marks LOW, the rest MEDIUM. */

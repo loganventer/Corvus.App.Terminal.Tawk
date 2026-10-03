@@ -310,6 +310,14 @@ static int showing(const MessagingManager *m, const char *id) {
     return 0;
 }
 
+/* One of your messages was read: those who follow along hear of it. */
+static void note_read(MessagingManager *m, const Event *e) {
+    Message msg;
+    if (m->deps.messages->get(m->deps.messages, e->id, &msg) != 0) return;
+    if (msg.from_me) live_message_ring_push_read(&m->live, msg.id, msg.chat_jid, m->deps.aliases->resolve(m->deps.aliases, e->jid), e->at);
+    message_dispose(&msg);
+}
+
 static void reload_messages(MessagingManager *m) {
     message_array_free(m->messages, m->message_count);
     m->messages = NULL;
@@ -628,6 +636,7 @@ static void handle_event(MessagingManager *m, Event *e, ManagerChanges *ch) {
             break;
         case EVENT_MESSAGE_RECEIPT:
             m->deps.receipts->put(m->deps.receipts, e->id, m->deps.aliases->resolve(m->deps.aliases, e->jid), e->receipt, e->at);
+            if (e->receipt == RECEIPT_READ) note_read(m, e);
             if (showing(m, e->id)) m->messages_dirty = 1;   /* an open message info panel shows it */
             break;
         case EVENT_CHAT_UPDATE:

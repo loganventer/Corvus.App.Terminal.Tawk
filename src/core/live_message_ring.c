@@ -10,9 +10,19 @@ void live_message_ring_init(LiveMessageRing *ring) {
 
 void live_message_ring_push(LiveMessageRing *ring, const char *id, const char *chat_jid) {
     LiveMessageRef *slot = &ring->items[ring->next_seq % LIVE_MESSAGE_RING_SIZE];
+    memset(slot, 0, sizeof(*slot));
     slot->seq = ring->next_seq++;
+    slot->kind = LIVE_KIND_MESSAGE;
     str_copy(slot->id, sizeof(slot->id), id ? id : "");
     str_copy(slot->chat_jid, sizeof(slot->chat_jid), chat_jid ? chat_jid : "");
+}
+
+void live_message_ring_push_read(LiveMessageRing *ring, const char *id, const char *chat_jid, const char *who, int64_t at) {
+    live_message_ring_push(ring, id, chat_jid);
+    LiveMessageRef *slot = &ring->items[(ring->next_seq - 1) % LIVE_MESSAGE_RING_SIZE];
+    slot->kind = LIVE_KIND_READ;
+    str_copy(slot->who, sizeof(slot->who), who ? who : "");
+    slot->at = at;
 }
 
 uint64_t live_message_ring_last(const LiveMessageRing *ring) {
