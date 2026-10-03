@@ -297,11 +297,29 @@ if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/Makefile" ] && [ -f "$SCRIPT_DIR/sr
     say "building from $SRC"
 else
     have git || die "git is required to download tawk"
-    SRC="$(mktemp -d "${TMPDIR:-/tmp}/tawk-build.XXXXXX")"
+    # The download and the build need room. /tmp is small on some systems (a memory disk, or a full one),
+    # so the first folder with enough free space is used: TMPDIR or /tmp, then your cache folder.
+    NEED_MB=600
+    free_mb() { df -Pk "$1" 2>/dev/null | awk 'NR==2 { print int($4 / 1024) }'; }
+    BUILD_PARENT=""
+    for dir in "${TMPDIR:-/tmp}" "${XDG_CACHE_HOME:-$HOME/.cache}"; do
+        mkdir -p "$dir" 2>/dev/null || continue
+        [ -w "$dir" ] || continue
+        if [ "$(free_mb "$dir" || echo 0)" -ge "$NEED_MB" ] 2>/dev/null; then BUILD_PARENT="$dir"; break; fi
+        warn "$dir has only $(free_mb "$dir") MB free; tawk needs about $NEED_MB MB to build"
+    done
+    [ -n "$BUILD_PARENT" ] || die "not enough free disk space to download and build tawk (about $NEED_MB MB is needed).
+Free some space, or name a folder on a disk that has room and run the installer again:
+    TMPDIR=/path/with/space bash install.sh
+Free space now:
+$(df -h "${TMPDIR:-/tmp}" "$HOME" 2>/dev/null)"
+    SRC="$(mktemp -d "$BUILD_PARENT/tawk-build.XXXXXX")"
     CLEANUP="$SRC"
     trap '[ -n "$CLEANUP" ] && rm -rf "$CLEANUP"' EXIT
-    say "downloading tawk ($REF) from $REPO_URL"
-    git clone --quiet --depth 1 --branch "$REF" "$REPO_URL" "$SRC"
+    say "downloading tawk ($REF) from $REPO_URL into $SRC"
+    git clone --quiet --depth 1 --branch "$REF" "$REPO_URL" "$SRC" || die "the download failed. If it says it was unable to write a file, the disk is full or the folder cannot be written to.
+Free space now:
+$(df -h "$BUILD_PARENT" "$HOME" 2>/dev/null)"
     say "building commit $(git -C "$SRC" log -1 --format='%h %s (%cd)' --date=short)"
 fi
 
