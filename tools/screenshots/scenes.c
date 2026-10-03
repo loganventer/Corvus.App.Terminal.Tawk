@@ -21,6 +21,7 @@
 #include "clients/tui/message_view.h"
 #include "clients/tui/profile_dialogs.h"
 #include "clients/tui/scheduled_list_dialog.h"
+#include "clients/tui/settings_panel.h"
 #include "clients/tui/splash_view.h"
 #include "clients/tui/status_composer_dialog.h"
 #include "clients/tui/status_feed_dialogs.h"
@@ -754,6 +755,38 @@ static void self_chats_scene(void) {
     save("self-approval-chats");
 }
 
+/* ---- the settings panel, on made-up settings ------------------------------ */
+
+static Settings s_shown_settings;
+static const Settings *shown_settings(void *ctx) { (void)ctx; return &s_shown_settings; }
+static int shown_apply(void *ctx, const Settings *updated) { (void)ctx; s_shown_settings = *updated; return 0; }
+static IThemeRepository *shown_themes(void *ctx) { return ctx; }
+static void shown_preview(void *ctx, const Theme *theme) { (void)ctx; (void)theme; }
+static void shown_action(void *ctx, MenuAction action) { (void)ctx; (void)action; }
+static void shown_info(void *ctx, MenuInfo info, char *out, size_t size) {
+    (void)ctx;
+    str_copy(out, size, info == MENU_INFO_AGENTS ? "listening \xC2\xB7 1 agent connected" : "");
+}
+
+/* Settings, then the entry `steps` down from the top, opened. */
+static void settings_scene(IThemeRepository *themes, int steps, const char *name) {
+    settings_set_defaults(&s_shown_settings);
+    s_shown_settings.control_socket = 1;
+    s_shown_settings.automation_push_read = 1;
+    str_copy(s_shown_settings.automation_access, sizeof(s_shown_settings.automation_access), "admin");
+    SettingsPanelHost host = { themes, shown_settings, shown_apply, shown_themes, shown_preview, shown_action, shown_info };
+    static SettingsPanel panel;
+    settings_panel_init(&panel, host);
+    settings_panel_open(&panel);
+    draw_app(LIST_HINTS);
+    settings_panel_render(&panel, body(), 0);
+    for (int i = 0; i < steps; i++) settings_panel_key(&panel, 1, KEY_DOWN, 0);
+    settings_panel_key(&panel, 0, '\n', 0);
+    draw_app(LIST_HINTS);
+    settings_panel_render(&panel, body(), 0);
+    save(name);
+}
+
 static void splash_scene(void) {
     SplashView v;
     splash_view_start(&v, 0);
@@ -785,6 +818,8 @@ int main(int argc, char **argv) {
     status_reply_scene();
     forward_scene();
     self_chats_scene();
+    settings_scene(themes, 7, "settings-automation");
+    settings_scene(themes, 8, "settings-agent-events");
     scheduled_scene();
     agents_scenes();
     splash_scene();

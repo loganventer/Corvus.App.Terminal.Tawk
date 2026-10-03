@@ -273,6 +273,7 @@ Your profile and the app:
 After `subscribe`, tawk sends:
 
 - `{"evt":"message","chat":{"jid","name"},"message":message}` for every new message, sent or received, in a subscribed chat. For a client whose origin is `mcp`, `push_received` and `push_sent` in `[automation]` decide whether received and sent messages are sent at all; origin `cli` always gets both.
+- `{"evt":"read","chat":{"jid","name"},"message_id":"…","reader":{"jid","name"},"at":ts}` when someone reads a message you sent in a subscribed chat. Only for origin `mcp`, and only with `push_read` on.
 - `{"evt":"chat","chat":chat}` when a subscribed chat's unread count changes.
 - `{"evt":"bye"}` just before tawk quits.
 

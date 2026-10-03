@@ -40,6 +40,7 @@ The screenshots in this manual were taken from tawk running on a demo account wi
 - [Backups](#backups)
 - [Automation and MCP](#automation-and-mcp)
   - [Turning it on](#turning-it-on)
+  - [Agent events](#agent-events)
   - [The Agentic tab](#the-agentic-tab)
   - [Letting an agent answer for itself](#letting-an-agent-answer-for-itself)
   - [Destructive requests](#destructive-requests)
@@ -970,10 +971,24 @@ The same submenu sets how far agents may go:
 | Chats they may use | Names or numbers separated by commas; empty allows every chat except locked ones |
 | Ask for shell commands too | Your own `tawk send` asks first as well (agents always ask) |
 | Writes per minute | More are refused until a minute has passed |
-| Push received messages | On: an agent that listens (tawk-mcp's channel, say) hears about each message other people send as it arrives. Off: it sees messages only when it reads a chat |
-| Push messages you send | The same for the messages you send, from tawk or your phone. Your own `tawk tail` always shows both |
 | Chats an agent may answer in by itself… | With **admin**: opens the list of chats, each with a switch, where an agent holding the admin token may answer its own sends |
 | Self-approvals per hour | With **admin**: how many of its own requests an agent may answer in an hour (20 by default); past that they wait for you |
+
+![The Automation settings](docs/images/settings-automation.png)
+
+### Agent events
+
+Settings has its own section, **Agent events**, for what agents are told as it happens. An agent that listens, such as tawk-mcp's channel in Claude Code, hears each kind only while its switch is on:
+
+| Switch | Default | What an agent hears |
+|---|---|---|
+| Push received messages | on | Each message other people send, as it arrives |
+| Push messages you send | on | Each message you send, from tawk or your phone |
+| Push read receipts | off | That someone read a message you sent, with who and when |
+
+![The Agent events section with its three switches](docs/images/settings-agent-events.png)
+
+With a switch off the agent is simply not told; it still sees messages when it reads a chat. Your own `tawk tail` always shows messages and never read receipts. tawk-mcp has matching options (`TAWKMCP_CHANNEL_OWN`, `TAWKMCP_CHANNEL_READ`) for what it passes on to the agent, so a kind reaches the agent only when both sides have it on.
 
 ### The Agentic tab
 

@@ -164,6 +164,7 @@ What other programs reaching tawk through its control socket may do: tawk-mcp an
 | `writes_per_minute` | `5` | Writes allowed per minute (1 to 60) |
 | `push_received` | `on` | Programs acting for a model that subscribed are told about each message other people send, as it arrives. Off, they see messages only when they read a chat |
 | `push_sent` | `on` | The same for the messages you send. Your own shell commands (`tawk tail`) always hear both |
+| `push_read` | `off` | Programs acting for a model that subscribed are told when someone reads a message you sent |
 | `self_approval_chats` | empty | With `access = admin`: the chats a program may answer its own sends in, as JIDs separated by commas, or `*` for every chat it may use. Empty allows none. Set from Settings, Automation, where each chat has a switch |
 | `self_approvals_per_hour` | `20` | With `access = admin`: requests a program may answer itself in an hour (1 to 240); past this they wait for you |
 
