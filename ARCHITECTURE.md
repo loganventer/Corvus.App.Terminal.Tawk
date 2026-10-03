@@ -292,7 +292,7 @@ The TUI is split into widgets that each draw one part of the screen and turn key
 
 Slash commands live in `tui_commands.c` as a table of name, argument hint, help text and handler. Handlers only call the app's public operations, so a command, a key and a menu entry share one behaviour.
 
-`tools/screenshots/scenes.c` links these widgets without `main.c` and draws the manual's pictures of newer screens (profile, statuses, camera, splash) with made-up data, writing each screen as cells; `tools/screenshots/render.py` paints the cells as PNG files in `docs/images`. `make screenshots` runs both.
+`tools/screenshots/scenes.c` links these widgets without `main.c` and draws the manual's pictures of newer screens (profile, statuses, camera, splash) with made-up data, writing each screen as cells; `tools/screenshots/render.py` paints the cells as PNG files in `docs/images`. `make screenshots` runs both. `tools/branding/make_logos.py` draws the logo files (`docs/images/logo-*.png`), each with a transparent background; `make logos` runs it.
 
 ## Composition root
 

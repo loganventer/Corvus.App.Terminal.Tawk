@@ -124,7 +124,7 @@ else
   SIDECAR_TEXT := ready, will be installed
 endif
 
-.PHONY: screenshots all config bridge sidecar install uninstall clean distclean check test help
+.PHONY: logos screenshots all config bridge sidecar install uninstall clean distclean check test help
 
 # ---- build ------------------------------------------------------------------
 
@@ -376,6 +376,11 @@ $(BUILD)/tools/screenshots/scenes: $(BUILD)/tools/screenshots/scenes.o $(filter-
 	$(call step,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
+# The logo files, drawn as PNGs with a transparent background. Needs Python with Pillow and the DejaVu fonts.
+logos:
+	$(call say,Drawing the logo PNGs into docs/images)
+	$(Q)python3 tools/branding/make_logos.py docs/images
+
 screenshots: $(BUILD)/tools/screenshots/scenes
 	$(call say,Drawing screenshots into docs/images)
 	$(Q)mkdir -p $(SHOTS)
@@ -404,6 +409,7 @@ help:
 	  "  make check           build and run ./$(APP) --version" \
 	  "  make test            build and run the tests" \
 	  "  make screenshots     draw the manual's pictures of newer screens into docs/images" \
+	  "  make logos           draw the logo PNGs into docs/images" \
 	  "  make clean           remove build output" \
 	  "  make distclean       also remove sidecar/node_modules" \
 	  "  make help            this text" \

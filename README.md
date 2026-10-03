@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo-lockup-dark.png">
+    <img src="docs/images/logo-lockup.png" alt="tawk" height="96">
+  </picture>
+</p>
+
 # tawk
 
 **T**erminal **A**ccess to **W**hatsApp **K**onnector: WhatsApp in your terminal. tawk is a fast, native terminal client written in C with ncurses. It links to your phone the same way WhatsApp Web does, keeps your chats in a local SQLite database, and gives you notifications, voice notes, media, statuses, themes and a screensaver without leaving the terminal.
@@ -132,6 +139,7 @@ tawk/
 ├── docs/                 man page (tawk.1) and screenshots (images/)
 ├── completions/          bash completion
 ├── tools/screenshots/    draws the manual's newer screenshots (make screenshots)
+├── tools/branding/       draws the logo PNGs in docs/images (make logos)
 ├── Makefile
 └── install.sh
 ```
@@ -169,6 +177,20 @@ Requirements: a C11 compiler, make, pkg-config, ncurses (wide-character), SQLite
 ## Platforms
 
 Linux and macOS natively; Windows through WSL (recommended) or MSYS2. tawk is tested on Ubuntu under WSL2 with Windows Terminal.
+
+## Logo
+
+The logo files are PNGs with a transparent background, in `docs/images`. `make logos` draws them again.
+
+| File | What it is | Use it on |
+|---|---|---|
+| `logo-lockup.png` | The app icon with the name beside it | Light pages |
+| `logo-lockup-dark.png` | The green symbol with the name in white | Dark pages and terminals |
+| `logo-icon.png` | The app icon: the symbol on a dark rounded square | App icons, avatars |
+| `logo-symbol.png` | The symbol alone, in green | Anywhere the name is already shown |
+| `logo-glyph-black.png`, `logo-glyph-white.png` | The symbol in one colour | Print, stamps, single-colour places |
+| `logo-icon-small.png`, `logo-icon-32.png`, `logo-icon-16.png` | The small icon with three plain bars | Favicons and other tiny sizes |
+| `logo-symbol-32.png` | The symbol at 32 pixels | Small places on a plain background |
 
 ## Disclaimer
 
