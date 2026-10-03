@@ -175,6 +175,8 @@ static const MenuNode AUTOMATION[] = {
     FIELD(SETTING_CATEGORY_AUTOMATION, "chats"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "confirm_cli"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "writes_per_minute"),
+    FIELD(SETTING_CATEGORY_AUTOMATION, "ai_disclaimer"),
+    FIELD(SETTING_CATEGORY_AUTOMATION, "ai_disclaimer_text"),
     SUB("\xF0\x9F\x93\xA1", "Agent events", "What agents hear as it happens", AGENT_EVENTS),
     SUB("\xE2\x9C\x93", "Answering for itself", "With access admin: which chats, and how many an hour", SELF_APPROVAL),
     SUB("\xE2\x84\xB9", "Needs, risks and guards", "What agent access means", AUTOMATION_ABOUT),

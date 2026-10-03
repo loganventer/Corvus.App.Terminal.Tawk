@@ -71,6 +71,10 @@ int automation_manager_pushes_event(AutomationManager *m, ControlOrigin origin, 
     return automation_policy_pushes_event(m->deps.settings, origin, kind);
 }
 
+const char *automation_manager_disclaimer(AutomationManager *m, ControlOrigin origin, const char *op) {
+    return automation_policy_disclaimer(m->deps.settings, origin, op);
+}
+
 int automation_manager_setting_changeable(AutomationManager *m, const SettingField *field) {
     (void)m;
     return automation_policy_setting_changeable(field);

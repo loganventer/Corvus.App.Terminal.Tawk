@@ -3,6 +3,7 @@
  * client to confirm them, and those that need you wait for your answer in
  * tawk. Every outcome goes to the automation log. */
 #include "control_server_state.h"
+#include "engines/ai_disclaimer.h"
 #include "utilities/clock_util.h"
 #include "utilities/str_util.h"
 
@@ -35,12 +36,25 @@ static void finish(ControlServer *s, const ControlPending *p, AutomationOutcome 
         control_fail(s, p->conn, p->request_id, failure.code ? failure.code : "failed", failure.why[0] ? failure.why : "It could not be done");
         return;
     }
-    if (p->edited) {
-        cJSON_AddBoolToObject(r, "edited", 1);
+    if (p->edited || p->disclaimed) {
+        if (p->edited) cJSON_AddBoolToObject(r, "edited", 1);
+        if (p->disclaimed) cJSON_AddBoolToObject(r, "disclaimer", 1);
         cJSON_AddStringToObject(r, "text", p->text ? p->text : "");
     }
     record(s, p, done);
     control_reply(s, p->conn, control_codec_ok(p->request_id, r));
+}
+
+/* Carries a write out, first adding the AI disclaimer under its words where the settings ask for one.
+ * It is added last, after any edit of yours, so what you approved is what goes above it. */
+static void carry_out(ControlServer *s, ControlPending *p, AutomationOutcome done) {
+    char *with = ai_disclaimer_append(p->text, automation_manager_disclaimer(s->deps.automation, p->origin, p->op));
+    if (with) {
+        free(p->text);
+        p->text = with;
+        p->disclaimed = 1;
+    }
+    finish(s, p, done);
 }
 
 static void chat_name(ControlServer *s, const char *jid, char *out, size_t size) {
@@ -150,9 +164,9 @@ void control_write(ControlServer *s, ControlSession *session, ControlPending *p)
         ask(s, p);
         return;
     } else if (v == AUTOMATION_VERDICT_ASK) {
-        finish(s, p, AUTOMATION_OUTCOME_ALLOWED);
+        carry_out(s, p, AUTOMATION_OUTCOME_ALLOWED);
     } else {
-        finish(s, p, AUTOMATION_OUTCOME_DONE);
+        carry_out(s, p, AUTOMATION_OUTCOME_DONE);
     }
     control_pending_dispose(p);
 }
@@ -252,7 +266,7 @@ void control_op_approve(ControlServer *s, ControlSession *session, const Control
     chat_name(s, p->chat_jid, name, sizeof(name));
     snprintf(notice, sizeof(notice), "\xF0\x9F\xA4\x96 %s answered its own request to %s%s%s", p->client, p->action, name[0] ? " in " : "", name);
     automation_manager_notice(s->deps.automation, notice);
-    finish(s, p, AUTOMATION_OUTCOME_SELF_APPROVED);            /* the waiting request gets its own answer */
+    carry_out(s, p, AUTOMATION_OUTCOME_SELF_APPROVED);            /* the waiting request gets its own answer */
     remove_pending(s, at);
     cJSON *r = cJSON_CreateObject();
     cJSON_AddBoolToObject(r, "approved", 1);
@@ -275,7 +289,7 @@ void control_writes_tick(ControlServer *s, int64_t now_ms) {
                 }
                 ControlSession *session = control_session_of(s, p->conn);
                 if (answer.remember && session && p->kind != WRITE_KIND_DESTRUCTIVE) control_session_allow(session, p->op, p->chat_jid);
-                finish(s, p, AUTOMATION_OUTCOME_APPROVED);
+                carry_out(s, p, AUTOMATION_OUTCOME_APPROVED);
             } else {
                 record(s, p, AUTOMATION_OUTCOME_DECLINED);
                 control_fail(s, p->conn, p->request_id, "declined", "Declined in tawk");

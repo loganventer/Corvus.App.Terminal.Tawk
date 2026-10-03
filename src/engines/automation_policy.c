@@ -101,6 +101,12 @@ int automation_policy_pushes_event(const Settings *s, ControlOrigin origin, Live
     }
 }
 
+const char *automation_policy_disclaimer(const Settings *s, ControlOrigin origin, const char *op) {
+    if (origin != CONTROL_ORIGIN_MCP || !s->automation_disclaimer || !op) return NULL;
+    if (strcmp(op, "send_message") != 0 && strcmp(op, "schedule_message") != 0 && strcmp(op, "reply_status") != 0) return NULL;
+    return s->automation_disclaimer_text;
+}
+
 int automation_policy_setting_changeable(const SettingField *f) {
     static const char *const FIXED[] = {
         "command", "image_viewer", "video_player", "node_binary", "sidecar_dir",       /* run programs */

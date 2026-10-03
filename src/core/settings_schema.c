@@ -84,6 +84,8 @@ static const SettingField FIELDS[] = {
     S(SETTING_CATEGORY_AUTOMATION, "chats", "Chats they may use", "Names or numbers, separated by commas; empty allows every chat except locked ones", automation_chats, 0),
     B(SETTING_CATEGORY_AUTOMATION, "confirm_cli", "Ask for shell commands too", "tawk send asks first as well; programs acting for a model always ask", automation_confirm_cli),
     I(SETTING_CATEGORY_AUTOMATION, "writes_per_minute", "Writes per minute", "More than this are refused until a minute has passed", automation_rate, 1, 60, 1, 0),
+    B(SETTING_CATEGORY_AUTOMATION, "ai_disclaimer", "Add AI disclaimer", "Messages an agent sends, schedules or replies to a status with get a line underneath saying an AI wrote them", automation_disclaimer),
+    S(SETTING_CATEGORY_AUTOMATION, "ai_disclaimer_text", "Disclaimer text", "The line added under those messages", automation_disclaimer_text, 0),
     B(SETTING_CATEGORY_AUTOMATION, "push_received", "Push received messages", "Agents that listen hear about each message other people send, as it arrives; off, they see messages only when they read a chat", automation_push_received),
     B(SETTING_CATEGORY_AUTOMATION, "push_sent", "Push messages you send", "Agents that listen hear about each message you send too; off, they see yours only when they read a chat", automation_push_sent),
     S(SETTING_CATEGORY_AUTOMATION, "self_approval_chats", "Chats answered by an agent itself", "With access admin: the chats an agent holding the admin token may answer its own sends in; empty allows none. Chosen under Settings, Automation", automation_self_chats, 0),

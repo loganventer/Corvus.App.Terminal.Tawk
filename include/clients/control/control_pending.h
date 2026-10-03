@@ -16,6 +16,7 @@ typedef struct ControlPending {
     int            needs_connection;  /* only while connected to WhatsApp */
     int            editable;          /* you may change `text` before allowing it */
     int            edited;            /* you did */
+    int            disclaimed;        /* the AI disclaimer was added under `text` */
     int            approval_id;       /* 0 until you are asked */
     int            conn;
     char           request_id[64];

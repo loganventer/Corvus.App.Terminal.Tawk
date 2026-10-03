@@ -38,6 +38,10 @@ int               automation_policy_pushes(const Settings *settings, ControlOrig
  * message (a read, a reaction, an edit or delete, a scheduled send): only
  * programs acting for a model, and only with that kind's setting on. */
 int               automation_policy_pushes_event(const Settings *settings, ControlOrigin origin, LiveKind kind);
+/* The line to add under a message of this operation from this origin, or
+ * NULL for none: only what a program acting for a model sends, schedules or
+ * answers a status with, and only with the disclaimer turned on. */
+const char       *automation_policy_disclaimer(const Settings *settings, ControlOrigin origin, const char *op);
 /* Whether a setting may be changed over the control socket: never the
  * automation settings, commands, folders, the backend or the log level. */
 int               automation_policy_setting_changeable(const SettingField *field);

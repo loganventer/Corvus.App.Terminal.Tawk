@@ -8,6 +8,7 @@
 #include "clients/tui/approval_queue.h"
 #include "cJSON.h"
 #include "core/settings.h"
+#include "engines/ai_disclaimer.h"
 #include "engines/hourly_quota.h"
 #include "managers/automation_manager.h"
 #include "managers/messaging_manager.h"
@@ -408,6 +409,36 @@ static void test_destructive_and_manage(void) {
 }
 
 /* Last, since it runs the bucket dry. */
+/* With the disclaimer on, what an agent sends says an AI wrote it; your own shell commands are left alone. */
+static void test_disclaimer(void) {
+    int conn = open_client("mcp", "send");
+    int shell = open_client("cli", NULL);
+    Settings s = *settings_manager_current(settings_mgr);
+    s.automation_disclaimer = 1;
+    s.automation_rate = 60;
+    str_copy(s.automation_disclaimer_text, sizeof(s.automation_disclaimer_text), "Sent by my AI assistant");
+    settings_manager_apply(settings_mgr, &s);
+    say(conn, "{\"id\":\"x1\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"See you at six\"}}");
+    const ApprovalRequest *asked = approval_queue_at(queue, 0);
+    CHECK(asked && asked->text && !strcmp(asked->text, "See you at six"), "you are asked about the words alone");
+    answer_first(1, "See you at seven", 0);
+    cJSON *r = reply("x1");
+    CHECK(!strcmp(last_text, "See you at seven\n\nSent by my AI assistant"), "the disclaimer goes under what you approved, after your edit");
+    CHECK(r && cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(result(r), "disclaimer")), "and the agent is told it was added");
+    cJSON_Delete(r);
+    say(shell, "{\"id\":\"x2\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"from me\"}}");
+    CHECK(!strcmp(last_text, "from me"), "your own shell command gets none");
+    s.automation_disclaimer = 0;
+    settings_manager_apply(settings_mgr, &s);
+    say(conn, "{\"id\":\"x3\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"plain\"}}");
+    answer_first(1, NULL, 0);
+    CHECK(!strcmp(last_text, "plain"), "and off, nothing is added");
+    char *twice = ai_disclaimer_append("hello\n\nSent by my AI assistant", "Sent by my AI assistant");
+    CHECK(!twice, "it is never added twice");
+    free(twice);
+    clear_outbox();
+}
+
 static void approve(int conn, const char *id, const char *request, const char *token) {
     char line[400];
     snprintf(line, sizeof(line), "{\"id\":\"%s\",\"op\":\"approve\",\"args\":{\"id\":\"%s\",\"admin_token\":\"%s\"}}", id, request, token);
@@ -776,6 +807,7 @@ int main(void) {
     test_writes_wait_for_you();
     test_destructive_and_manage();
     test_live_and_log();
+    test_disclaimer();
     test_admin_answers_its_own();
     test_rate();
 

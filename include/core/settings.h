@@ -82,6 +82,8 @@ typedef struct Settings {
     char automation_chats[512]; /* comma-separated chats they may use; empty: all but locked ones */
     int  automation_confirm_cli;/* your own shell commands ask before sending too */
     int  automation_rate;       /* writes allowed per minute */
+    int  automation_disclaimer; /* add a line under messages a program acting for a model sends, saying an AI wrote them */
+    char automation_disclaimer_text[160]; /* that line */
     int  automation_push_received; /* agents that subscribe hear about messages other people send */
     int  automation_push_sent;  /* and about the ones you send */
     int  automation_push_read;  /* and when someone reads one you sent */
