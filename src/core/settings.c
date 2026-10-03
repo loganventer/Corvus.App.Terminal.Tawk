@@ -72,6 +72,8 @@ void settings_set_defaults(Settings *s) {
     str_copy(s->automation_access, sizeof(s->automation_access), "read");
     s->automation_rate = 5;
     s->automation_self_per_hour = 20;
+    s->automation_push_received = 1;
+    s->automation_push_sent = 1;
 
     str_copy(s->backend, sizeof(s->backend), "whatsmeow");
     /* Per-user files (XDG): chats and login in data, downloads in cache. */

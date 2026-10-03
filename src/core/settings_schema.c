@@ -84,6 +84,8 @@ static const SettingField FIELDS[] = {
     S(SETTING_CATEGORY_AUTOMATION, "chats", "Chats they may use", "Names or numbers, separated by commas; empty allows every chat except locked ones", automation_chats, 0),
     B(SETTING_CATEGORY_AUTOMATION, "confirm_cli", "Ask for shell commands too", "tawk send asks first as well; programs acting for a model always ask", automation_confirm_cli),
     I(SETTING_CATEGORY_AUTOMATION, "writes_per_minute", "Writes per minute", "More than this are refused until a minute has passed", automation_rate, 1, 60, 1, 0),
+    B(SETTING_CATEGORY_AUTOMATION, "push_received", "Tell agents about new messages", "Agents that listen hear about each message other people send, as it arrives; off, they see messages only when they read a chat", automation_push_received),
+    B(SETTING_CATEGORY_AUTOMATION, "push_sent", "Tell agents about messages you send", "Agents that listen hear about each message you send too; off, they see yours only when they read a chat", automation_push_sent),
     I(SETTING_CATEGORY_AUTOMATION, "self_approvals_per_hour", "Self-approvals per hour", "With access admin: how many of its own requests a program may answer in an hour; past this they wait for you", automation_self_per_hour, 1, 240, 1, 0),
 
     { SETTING_CATEGORY_ADVANCED, "backend", "WhatsApp backend", "whatsmeow runs in-process; baileys runs a Node.js sidecar",

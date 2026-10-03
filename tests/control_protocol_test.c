@@ -564,6 +564,46 @@ static void test_live_and_log(void) {
     CHECK(mom && saw_event("message"), "a new message reaches subscribers");
     CHECK(!secret, "one in a locked chat does not");
 
+    /* The two push settings decide what an agent hears as it happens; your own shell always hears. */
+    int shell = open_client("cli", NULL);
+    say(shell, "{\"id\":\"l2\",\"op\":\"subscribe\",\"args\":{\"chats\":\"all\"}}");
+    Settings push = *settings_manager_current(settings_mgr);
+    push.automation_push_received = 0;
+    push.automation_push_sent = 0;
+    settings_manager_apply(settings_mgr, &push);
+    clear_outbox();
+    event_init(&e, EVENT_MESSAGE_UPSERT);
+    e.live = 1;
+    str_copy(e.message.id, sizeof(e.message.id), "LIVE3");
+    str_copy(e.message.chat_jid, sizeof(e.message.chat_jid), MOM);
+    str_copy(e.message.sender_jid, sizeof(e.message.sender_jid), MOM);
+    e.message.timestamp = 1790000202;
+    message_set_text(&e.message, "Hello?");
+    event_queue_push(events, &e);
+    tick();
+    tick();
+    int heard = 0;
+    for (int i = 0; i < outbox_count; i++) heard += strstr(outbox[i], "Hello?") != NULL;
+    CHECK(heard == 1, "with pushing off the agent hears nothing new, and your shell still does");
+    push.automation_push_sent = 1;
+    settings_manager_apply(settings_mgr, &push);
+    clear_outbox();
+    event_init(&e, EVENT_MESSAGE_UPSERT);
+    e.live = 1;
+    e.message.from_me = 1;
+    str_copy(e.message.id, sizeof(e.message.id), "LIVE4");
+    str_copy(e.message.chat_jid, sizeof(e.message.chat_jid), MOM);
+    e.message.timestamp = 1790000203;
+    message_set_text(&e.message, "Coming now");
+    event_queue_push(events, &e);
+    tick();
+    tick();
+    heard = 0;
+    for (int i = 0; i < outbox_count; i++) heard += strstr(outbox[i], "Coming now") != NULL;
+    CHECK(heard == 2, "what you send is pushed by its own setting");
+    push.automation_push_received = 1;
+    settings_manager_apply(settings_mgr, &push);
+
     AutomationEntry *log = NULL;
     int n = 0;
     automation_manager_recent(automation, 200, &log, &n);

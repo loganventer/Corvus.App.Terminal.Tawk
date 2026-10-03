@@ -63,6 +63,10 @@ const char *automation_manager_access(AutomationManager *m) {
     return strcmp(a, "admin") == 0 || strcmp(a, "manage") == 0 || strcmp(a, "send") == 0 ? a : "read";
 }
 
+int automation_manager_pushes(AutomationManager *m, ControlOrigin origin, int from_me) {
+    return automation_policy_pushes(m->deps.settings, origin, from_me);
+}
+
 int automation_manager_setting_changeable(AutomationManager *m, const SettingField *field) {
     (void)m;
     return automation_policy_setting_changeable(field);

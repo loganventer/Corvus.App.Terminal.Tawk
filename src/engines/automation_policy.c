@@ -76,6 +76,11 @@ SelfApprovalVerdict automation_policy_self_approval(const Settings *s, const cha
     return SELF_APPROVAL_ALLOW;
 }
 
+int automation_policy_pushes(const Settings *s, ControlOrigin origin, int from_me) {
+    if (origin != CONTROL_ORIGIN_MCP) return 1;
+    return from_me ? s->automation_push_sent : s->automation_push_received;
+}
+
 int automation_policy_setting_changeable(const SettingField *f) {
     static const char *const FIXED[] = {
         "command", "image_viewer", "video_player", "node_binary", "sidecar_dir",       /* run programs */

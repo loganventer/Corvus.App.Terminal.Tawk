@@ -81,6 +81,7 @@ static void send_message(ControlServer *s, const LiveMessageRef *ref) {
             if (messaging_manager_get(s->deps.messaging, ref->id, &msg) != 0) return;
             loaded = 1;
         }
+        if (!automation_manager_pushes(s->deps.automation, session->origin, msg.from_me)) continue;
         char name[128];
         control_sender_name(s, &msg, name, sizeof(name));
         cJSON *evt = cJSON_CreateObject();

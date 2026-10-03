@@ -27,6 +27,11 @@ AutomationVerdict automation_policy_write(const Settings *settings, ControlOrigi
  * none here: answering for you is only for chats you chose. `chat` may be
  * NULL for a request about no chat, which is never allowed. */
 SelfApprovalVerdict automation_policy_self_approval(const Settings *settings, const char *op, const Chat *chat);
+/* Whether a client that subscribed is told about a new message as it
+ * arrives: programs acting for a model follow the two push settings (one
+ * for what other people send, one for what you send); your own shell
+ * commands, such as tawk tail, always are. */
+int               automation_policy_pushes(const Settings *settings, ControlOrigin origin, int from_me);
 /* Whether a setting may be changed over the control socket: never the
  * automation settings, commands, folders, the backend or the log level. */
 int               automation_policy_setting_changeable(const SettingField *field);
