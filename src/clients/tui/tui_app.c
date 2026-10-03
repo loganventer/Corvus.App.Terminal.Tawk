@@ -1226,6 +1226,14 @@ static void ring(TuiApp *app, int64_t now) {
     }
 }
 
+/* ✕ on the message input: asks before throwing away what is typed. */
+void tui_app_ask_clear_input(TuiApp *app) {
+    if (composer_view_is_empty(&app->composer)) return;
+    confirm_dialog_open(&app->confirm, CONFIRM_CLEAR_INPUT, "", " Clear message ", "Clear what you typed?",
+                        "The text in the message box will be removed. It has not been sent.", "Clear", 0);
+    app->dirty = 1;
+}
+
 /* The user said yes to the open confirmation. */
 void tui_app_confirmed(TuiApp *app) {
     switch (app->confirm.purpose) {
@@ -1253,6 +1261,10 @@ void tui_app_confirmed(TuiApp *app) {
         }
         case CONFIRM_REMOVE_PHOTO:
             tui_app_remove_profile_photo(app);
+            break;
+        case CONFIRM_CLEAR_INPUT:
+            composer_view_clear(&app->composer);
+            emoji_suggestions_close(&app->emoji_suggestions);
             break;
         case CONFIRM_USE_WHATSMEOW:
             tui_app_switch_to_whatsmeow(app);

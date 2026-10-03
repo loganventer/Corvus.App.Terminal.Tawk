@@ -479,6 +479,7 @@ static void handle_mouse_event(TuiApp *app, MEVENT ev) {
         if (hit >= 0) { pick_emoji_suggestion(app, hit); return; }
         emoji_suggestions_close(&app->emoji_suggestions);
     }
+    if (press && composer_view_hit_clear(&app->composer, ev.y, ev.x)) { tui_app_ask_clear_input(app); return; }
     if (press && composer_view_hit_emoji(&app->composer, ev.y, ev.x)) { tui_app_open_emoji(app, EMOJI_PICKER_FOR_INPUT, NULL, ""); return; }
     if (press && composer_view_hit_attach(&app->composer, ev.y, ev.x)) { tui_app_open_attach_menu(app); return; }
     if (press && composer_view_hit_send(&app->composer, ev.y, ev.x)) { tui_app_send_composer(app); return; }

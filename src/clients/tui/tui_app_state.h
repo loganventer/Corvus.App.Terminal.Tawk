@@ -246,6 +246,7 @@ int  tui_app_mention_key(TuiApp *app, int is_key, int ch);
 void tui_app_pick_mention(TuiApp *app, int index);
 void tui_app_forget_mentions(TuiApp *app);
 /* tui_forward.c: sending a message on to other chats */
+void tui_app_ask_clear_input(TuiApp *app);
 void tui_app_open_forward(TuiApp *app, int index);
 void tui_app_forward_request(TuiApp *app, PopupResult result);
 /* The chats an admin agent may answer its own requests in: the dialog, and what it answered. */

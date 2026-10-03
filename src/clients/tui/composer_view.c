@@ -169,6 +169,7 @@ void composer_view_scroll(ComposerView *v, int delta) {
     if (v->scroll_top < 0) v->scroll_top = 0;
 }
 
+int composer_view_hit_clear(const ComposerView *v, int y, int x)  { return ui_rect_contains(v->clear_button, y, x); }
 int composer_view_hit_emoji(const ComposerView *v, int y, int x)  { return ui_rect_contains(v->emoji_button, y, x); }
 int composer_view_hit_attach(const ComposerView *v, int y, int x) { return ui_rect_contains(v->attach_button, y, x); }
 int composer_view_hit_send(const ComposerView *v, int y, int x)   { return ui_rect_contains(v->send_button, y, x); }
@@ -199,7 +200,7 @@ void composer_view_render(ComposerView *v, UiRect r, int focused, int has_chat,
                           int recording_seconds, int enter_sends, const char *chip) {
     int attr = tui_palette_attr(THEME_SLOT_COMPOSER);
     v->caret_y = v->caret_x = -1;
-    v->emoji_button = v->attach_button = v->send_button = (UiRect){ 0, 0, 0, 0 };
+    v->clear_button = v->emoji_button = v->attach_button = v->send_button = (UiRect){ 0, 0, 0, 0 };
     tui_fill(r, attr);
     if (r.h < 2) return;
     render_status(r, has_chat, recording_seconds, enter_sends, chip);
@@ -241,17 +242,21 @@ void composer_view_render(ComposerView *v, UiRect r, int focused, int has_chat,
     if (v->scroll_top > 0) tui_text(r.y + 1, marker_x, 1, "\xE2\x96\xB2", attr | ATTR_DIM);
     if (v->scroll_top + rows < count) tui_text(r.y + rows, marker_x, 1, "\xE2\x96\xBC", attr | ATTR_DIM);
 
-    /* 😀, ➕ and ➤ at the bottom right of the input, like the app's send button. */
+    /* ✕, 😀, ➕ and ➤ at the bottom right of the input, like the app's send button. */
     if (buttons) {
         int by = r.y + rows;
         int bx = r.x + r.w - COMPOSER_BUTTONS_COLS;
         int can_send = !composer_view_is_empty(v) || (chip && chip[0]);
-        tui_text(by, bx + 1, 2, "\xF0\x9F\x98\x80", attr);
-        tui_text(by, bx + 4, 2, ICON_ATTACH, attr);
-        tui_text(by, bx + 7, 2, ICON_SEND " ", can_send ? tui_palette_attr(THEME_SLOT_ACCENT) | ATTR_BOLD : attr | ATTR_DIM);
-        v->emoji_button = (UiRect){ by, bx, 1, 3 };
-        v->attach_button = (UiRect){ by, bx + 3, 1, 3 };
-        v->send_button = (UiRect){ by, bx + 6, 1, 4 };
+        if (!composer_view_is_empty(v)) {                 /* ✕ clears what is typed, after asking */
+            tui_text(by, bx + 1, 1, "\xE2\x9C\x95", attr | ATTR_DIM);
+            v->clear_button = (UiRect){ by, bx, 1, 3 };
+        }
+        tui_text(by, bx + 4, 2, "\xF0\x9F\x98\x80", attr);
+        tui_text(by, bx + 7, 2, ICON_ATTACH, attr);
+        tui_text(by, bx + 10, 2, ICON_SEND " ", can_send ? tui_palette_attr(THEME_SLOT_ACCENT) | ATTR_BOLD : attr | ATTR_DIM);
+        v->emoji_button = (UiRect){ by, bx + 3, 1, 3 };
+        v->attach_button = (UiRect){ by, bx + 6, 1, 3 };
+        v->send_button = (UiRect){ by, bx + 9, 1, 4 };
     }
     if (focused && caret_row >= v->scroll_top && caret_row < v->scroll_top + rows) {
         v->caret_y = r.y + 1 + (caret_row - v->scroll_top);

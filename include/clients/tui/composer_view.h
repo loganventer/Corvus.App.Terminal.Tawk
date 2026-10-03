@@ -8,7 +8,7 @@
 
 #define COMPOSER_MAX_CHARS     4096
 #define COMPOSER_MAX_ROWS      5     /* the input grows to this many lines, then scrolls */
-#define COMPOSER_BUTTONS_COLS  10    /* " 😀 ➕ ➤ " at the right of the input */
+#define COMPOSER_BUTTONS_COLS  13    /* " ✕ 😀 ➕ ➤ " at the right of the input; ✕ only while there is text */
 
 /* The message input: a wide-character editor that word-wraps, grows up to
  * COMPOSER_MAX_ROWS lines and then scrolls, keeping the caret in view. */
@@ -20,6 +20,7 @@ typedef struct ComposerView {
     int     last_width;      /* text columns used by the last render, for ↑/↓ */
     int     caret_y;         /* where the caret belongs after rendering, or -1 */
     int     caret_x;
+    UiRect  clear_button;    /* ✕, drawn while there is something typed */
     UiRect  emoji_button;    /* last drawn positions of 😀, ➕ and ➤, for clicks */
     UiRect  attach_button;
     UiRect  send_button;
@@ -54,6 +55,8 @@ int   composer_view_shortcode(const ComposerView *view, char *out, size_t size, 
 int   composer_view_replace(ComposerView *view, int start, int end, const char *utf8);
 /* Scrolls the visible lines without moving the caret (mouse wheel). */
 void  composer_view_scroll(ComposerView *view, int delta);
+/* True when (y, x) is on ✕, which asks to clear what is typed. */
+int   composer_view_hit_clear(const ComposerView *view, int y, int x);
 int   composer_view_hit_emoji(const ComposerView *view, int y, int x);
 int   composer_view_hit_attach(const ComposerView *view, int y, int x);
 int   composer_view_hit_send(const ComposerView *view, int y, int x);

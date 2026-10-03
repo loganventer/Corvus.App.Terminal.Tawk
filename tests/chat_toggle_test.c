@@ -1,5 +1,6 @@
 /* The list of chats with a switch each: one by one, all at once, and what is kept. */
 #include "clients/tui/chat_toggle_dialog.h"
+#include "clients/tui/composer_view.h"
 #include "clients/tui/toggle_switch.h"
 #include "engines/automation_policy.h"
 #include "utilities/str_util.h"
@@ -74,6 +75,16 @@ int main(void) {
     CHECK(automation_policy_self_approval(&s, "send_message", &work) == SELF_APPROVAL_ALLOW, "All chats answers in every chat");
     str_copy(s.automation_chats, sizeof(s.automation_chats), "Mom");
     CHECK(automation_policy_self_approval(&s, "send_message", &work) == SELF_APPROVAL_CHAT_NOT_LISTED, "but never one agents may not use at all");
+
+    /* The message input's clear button is there only while something is typed. */
+    static ComposerView composer;
+    composer_view_init(&composer);
+    composer.clear_button = (UiRect){ 5, 40, 1, 3 };                /* as drawn with text in the input */
+    CHECK(composer_view_hit_clear(&composer, 5, 41) && !composer_view_hit_clear(&composer, 5, 44), "the clear button is where it was drawn");
+    composer_view_set_text(&composer, "half a thought");
+    CHECK(!composer_view_is_empty(&composer), "typing leaves something to clear");
+    composer_view_clear(&composer);
+    CHECK(composer_view_is_empty(&composer), "and clearing empties the input");
 
     if (failures) return 1;
     printf("ok: chats are switched on one by one or all at once, and only those are answered by an agent itself\n");

@@ -11,7 +11,8 @@ typedef enum ConfirmPurpose {
     CONFIRM_CLEAR_CHAT,
     CONFIRM_REMOVE_PHOTO,        /* your own profile photo */
     CONFIRM_USE_WHATSMEOW,       /* switch backends to post a status */
-    CONFIRM_ENABLE_AGENTS        /* turn on the control socket */
+    CONFIRM_ENABLE_AGENTS,       /* turn on the control socket */
+    CONFIRM_CLEAR_INPUT          /* throw away what is typed in the message input */
 } ConfirmPurpose;
 
 #endif
