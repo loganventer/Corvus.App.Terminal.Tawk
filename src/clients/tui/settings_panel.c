@@ -1,4 +1,5 @@
 #include "clients/tui/settings_panel.h"
+#include "clients/tui/toggle_switch.h"
 #include "clients/tui/settings_menu.h"
 #include "clients/tui/tui_draw.h"
 #include "clients/tui/tui_palette.h"
@@ -291,7 +292,7 @@ static void value_text(SettingsPanel *p, const MenuNode *n, char *out, size_t si
     if (!f) return;
     const Settings *s = p->host.settings(p->host.ctx);
     switch (f->kind) {
-        case SETTING_KIND_BOOL:   snprintf(out, size, "%s", setting_get_int(s, f) ? "\xE2\x97\x8F On " : "\xE2\x97\x8B Off"); break;
+        case SETTING_KIND_BOOL:   snprintf(out, size, "%s", toggle_switch_text(setting_get_int(s, f))); break;
         case SETTING_KIND_INT:    snprintf(out, size, "\xE2\x80\xB9 %d \xE2\x80\xBA", setting_get_int(s, f)); break;
         case SETTING_KIND_CHOICE: snprintf(out, size, "\xE2\x80\xB9 %s \xE2\x80\xBA", setting_get_string(s, f)); break;
         default: {

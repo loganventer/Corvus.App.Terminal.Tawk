@@ -145,6 +145,7 @@ static const MenuNode AUTOMATION[] = {
     FIELD(SETTING_CATEGORY_AUTOMATION, "writes_per_minute"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "push_received"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "push_sent"),
+    ACTION("\xE2\x9C\x93", "Chats an agent may answer in by itself\xE2\x80\xA6", MENU_ACTION_SELF_APPROVAL_CHATS),
     FIELD(SETTING_CATEGORY_AUTOMATION, "self_approvals_per_hour"),
     TEXT("The Agentic tab (F3): requests to answer, who is connected, the log"),
     TEXT("Needs: tawk running with this on, and tawk-mcp in your MCP client"),

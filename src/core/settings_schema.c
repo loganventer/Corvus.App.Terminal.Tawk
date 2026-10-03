@@ -79,13 +79,14 @@ static const SettingField FIELDS[] = {
     I(SETTING_CATEGORY_RESILIENCE, "breaker_cooldown_s", "Circuit breaker cooldown (s)", "Pause before a trial reconnect", breaker_cooldown_s, 5, 3600, 5, 0),
 
     B(SETTING_CATEGORY_AUTOMATION, "control_socket", "Agent access (MCP)", "Let tawk-mcp and the tawk send, tail and unread commands reach this tawk; off, nothing can connect", control_socket),
-    { SETTING_CATEGORY_AUTOMATION, "access", "What they may do", "read lists and reads chats; send also sends, reacts, schedules and drafts; manage changes chats, statuses, your profile and settings. You allow each change. admin also lets a program holding the admin token answer its own sends in the chats you list",
+    { SETTING_CATEGORY_AUTOMATION, "access", "What they may do", "read lists and reads chats; send also sends, reacts, schedules and drafts; manage changes chats, statuses, your profile and settings. You allow each change. admin also lets a program holding the admin token answer its own sends in the chats you choose for that",
       SETTING_KIND_CHOICE, offsetof(Settings, automation_access), sizeof(((Settings *)0)->automation_access), 0, 0, 0, "read|send|manage|admin", 0 },
     S(SETTING_CATEGORY_AUTOMATION, "chats", "Chats they may use", "Names or numbers, separated by commas; empty allows every chat except locked ones", automation_chats, 0),
     B(SETTING_CATEGORY_AUTOMATION, "confirm_cli", "Ask for shell commands too", "tawk send asks first as well; programs acting for a model always ask", automation_confirm_cli),
     I(SETTING_CATEGORY_AUTOMATION, "writes_per_minute", "Writes per minute", "More than this are refused until a minute has passed", automation_rate, 1, 60, 1, 0),
     B(SETTING_CATEGORY_AUTOMATION, "push_received", "Push received messages", "Agents that listen hear about each message other people send, as it arrives; off, they see messages only when they read a chat", automation_push_received),
     B(SETTING_CATEGORY_AUTOMATION, "push_sent", "Push messages you send", "Agents that listen hear about each message you send too; off, they see yours only when they read a chat", automation_push_sent),
+    S(SETTING_CATEGORY_AUTOMATION, "self_approval_chats", "Chats answered by an agent itself", "With access admin: the chats an agent holding the admin token may answer its own sends in; empty allows none. Chosen under Settings, Automation", automation_self_chats, 0),
     I(SETTING_CATEGORY_AUTOMATION, "self_approvals_per_hour", "Self-approvals per hour", "With access admin: how many of its own requests a program may answer in an hour; past this they wait for you", automation_self_per_hour, 1, 240, 1, 0),
 
     { SETTING_CATEGORY_ADVANCED, "backend", "WhatsApp backend", "whatsmeow runs in-process; baileys runs a Node.js sidecar",

@@ -1,4 +1,5 @@
 #include "clients/tui/agents_panel.h"
+#include "clients/tui/toggle_switch.h"
 #include "clients/tui/tui_draw.h"
 #include "clients/tui/tui_palette.h"
 #include "core/settings_schema.h"
@@ -487,7 +488,7 @@ static void draw_permissions(AgentsPanel *p, const AgentsPanelModel *m, UiRect l
         tui_fill((UiRect){ list.y + row, list.x, 1, list.w }, attr);
         char value[600], line[800];
         setting_to_text(m->settings, f, value, sizeof(value));
-        if (f->kind == SETTING_KIND_BOOL) str_copy(value, sizeof(value), setting_get_int(m->settings, f) ? "on" : "off");
+        if (f->kind == SETTING_KIND_BOOL) str_copy(value, sizeof(value), toggle_switch_text(setting_get_int(m->settings, f)));
         if (!strcmp(f->key, "chats") && !value[0]) str_copy(value, sizeof(value), "(every chat except locked ones)");
         snprintf(line, sizeof(line), "%-30s %s", f->label, value);
         if (sel && p->editing_setting) {

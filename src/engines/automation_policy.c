@@ -60,6 +60,14 @@ AutomationVerdict automation_policy_write(const Settings *s, ControlOrigin origi
     return s->automation_confirm_cli ? AUTOMATION_VERDICT_ASK : AUTOMATION_VERDICT_ALLOW;
 }
 
+/* The self-approval chats name this one, or hold "*" for every chat. */
+static int self_chat(const char *list, const Chat *c) {
+    for (const char *p = list; *p; p++) {
+        if (*p == '*' && (p == list || p[-1] == ',' || isspace((unsigned char)p[-1]))) return 1;
+    }
+    return listed(list, c);
+}
+
 SelfApprovalVerdict automation_policy_self_approval(const Settings *s, const char *op, const Chat *chat) {
     static const char *const OWN[] = {
         "send_message", "reply_status", "forward_message", "edit_message", "retry_message",
@@ -70,9 +78,9 @@ SelfApprovalVerdict automation_policy_self_approval(const Settings *s, const cha
     int own = 0;
     for (int i = 0; op && OWN[i] && !own; i++) own = strcmp(op, OWN[i]) == 0;
     if (!own) return SELF_APPROVAL_NOT_THIS_KIND;
-    const char *list = s->automation_chats;
-    while (isspace((unsigned char)*list)) list++;
-    if (!chat || !*list || !automation_policy_chat_allowed(s, chat)) return SELF_APPROVAL_CHAT_NOT_LISTED;
+    const char *own_chats = s->automation_self_chats;
+    while (isspace((unsigned char)*own_chats)) own_chats++;
+    if (!chat || !*own_chats || !automation_policy_chat_allowed(s, chat) || !self_chat(own_chats, chat)) return SELF_APPROVAL_CHAT_NOT_LISTED;
     return SELF_APPROVAL_ALLOW;
 }
 

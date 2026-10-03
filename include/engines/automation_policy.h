@@ -23,9 +23,10 @@ AutomationVerdict automation_policy_write(const Settings *settings, ControlOrigi
  * alone (the admin token and the hourly allowance are the manager's): access
  * must be admin, the request a send or a small thing (a message, a reply, a
  * forward, an edit, a retry, anything scheduled, a reaction, a read mark, a
- * like), and its chat named in "Chats they may use". An empty list allows
- * none here: answering for you is only for chats you chose. `chat` may be
- * NULL for a request about no chat, which is never allowed. */
+ * like), and its chat one the client may use at all and one you chose for
+ * this (the self-approval chats). With none chosen nothing is allowed:
+ * answering for you is only for chats you picked. `chat` may be NULL for a
+ * request about no chat, which is never allowed. */
 SelfApprovalVerdict automation_policy_self_approval(const Settings *settings, const char *op, const Chat *chat);
 /* Whether a client that subscribed is told about a new message as it
  * arrives: programs acting for a model follow the two push settings (one

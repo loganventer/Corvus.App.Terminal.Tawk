@@ -214,7 +214,7 @@ static const char *why_not(SelfApprovalVerdict v) {
     switch (v) {
         case SELF_APPROVAL_OFF:             return "Answering your own requests needs access \"admin\" in tawk (Settings > Automation > What they may do)";
         case SELF_APPROVAL_NOT_THIS_KIND:   return "Only sends, scheduled messages, reactions, read marks and likes can be answered this way; this one waits for the user in tawk";
-        case SELF_APPROVAL_CHAT_NOT_LISTED: return "That chat is not named in tawk's \"Chats they may use\", so this one waits for the user in tawk";
+        case SELF_APPROVAL_CHAT_NOT_LISTED: return "That chat is not among the chats the user chose for self-approval in tawk, so this one waits for the user in tawk";
         default:                            return "The admin token is wrong or out of date";
     }
 }

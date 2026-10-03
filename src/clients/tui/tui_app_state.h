@@ -8,6 +8,7 @@
 
 #include "clients/tui/chat_list_view.h"
 #include "clients/tui/chat_picker.h"
+#include "clients/tui/chat_toggle_dialog.h"
 #include "clients/tui/agents_panel.h"
 #include "clients/tui/attach_menu.h"
 #include "clients/tui/camera_purpose.h"
@@ -89,6 +90,7 @@ struct TuiApp {
     HeaderHits          header_hits;          /* where the header drew + and your name */
     SplashView          splash;               /* the start-up animation */
     ChatPicker          forward_picker;       /* choosing chats to forward a message to */
+    ChatToggleDialog    self_chats;           /* the chats an admin agent may answer its own requests in */
     char                forward_id[64];       /* the message being forwarded */
     ScheduledListDialog scheduled_list;       /* messages waiting to be sent later */
     AgentsPanel         agents;               /* the Agents tab */
@@ -246,6 +248,9 @@ void tui_app_forget_mentions(TuiApp *app);
 /* tui_forward.c: sending a message on to other chats */
 void tui_app_open_forward(TuiApp *app, int index);
 void tui_app_forward_request(TuiApp *app, PopupResult result);
+/* The chats an admin agent may answer its own requests in: the dialog, and what it answered. */
+void tui_app_open_self_chats(TuiApp *app);
+void tui_app_self_chats_request(TuiApp *app, PopupResult result);
 
 /* tui_scheduling.c: messages to send later */
 /* "/later <when> <text>" for the open chat. */

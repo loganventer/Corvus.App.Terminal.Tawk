@@ -417,7 +417,7 @@ static void approve(int conn, const char *id, const char *request, const char *t
 static void set_automation(const char *access, const char *chat_list, int per_hour) {
     Settings s = *settings_manager_current(settings_mgr);
     str_copy(s.automation_access, sizeof(s.automation_access), access);
-    str_copy(s.automation_chats, sizeof(s.automation_chats), chat_list);
+    str_copy(s.automation_self_chats, sizeof(s.automation_self_chats), chat_list);
     s.automation_self_per_hour = per_hour;
     s.automation_rate = 60;
     settings_manager_apply(settings_mgr, &s);
@@ -466,9 +466,11 @@ static void test_admin_answers_its_own(void) {
     free(log);
 
     say(conn, "{\"id\":\"a2\",\"op\":\"send_message\",\"args\":{\"chat\":\"Work\",\"text\":\"two\"}}");
-    r = reply("a2");
-    CHECK(r && !strcmp(error_code(r), "not_found") && texts == sent + 1 && approval_queue_count(queue) == 0, "a chat you did not name is out of reach altogether");
+    approve(conn, "p5", "a2", token);
+    r = reply("p5");
+    CHECK(r && !strcmp(error_code(r), "not_allowed") && texts == sent + 1 && approval_queue_count(queue) == 1, "a chat you did not choose for this waits for you");
     cJSON_Delete(r);
+    answer_first(0, NULL, 0);
     say(conn, "{\"id\":\"a3\",\"op\":\"set_chat\",\"args\":{\"chat\":\"Mom\",\"pinned\":true}}");
     approve(conn, "p6", "a3", token);
     r = reply("p6");
@@ -480,15 +482,15 @@ static void test_admin_answers_its_own(void) {
     say(conn, "{\"id\":\"a4\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"three\"}}");
     approve(conn, "p7", "a4", token);
     r = reply("p7");
-    CHECK(r && !strcmp(error_code(r), "not_allowed") && texts == sent + 1, "with no chats named, none is answered this way");
+    CHECK(r && !strcmp(error_code(r), "not_allowed") && texts == sent + 1, "with no chats chosen, none is answered this way");
     cJSON_Delete(r);
     answer_first(0, NULL, 0);
 
-    set_automation("admin", "Mom", 2);
+    set_automation("admin", "*", 2);
     say(conn, "{\"id\":\"a5\",\"op\":\"react\",\"args\":{\"message_id\":\"M2\",\"emoji\":\"\xF0\x9F\x91\x8D\"}}");
     approve(conn, "p8", "a5", token);
     r = reply("p8");
-    CHECK(r && result(r), "a reaction is answered too, the second this hour");
+    CHECK(r && result(r), "with every chat chosen a reaction is answered too, the second this hour");
     cJSON_Delete(r);
     say(conn, "{\"id\":\"a6\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"four\"}}");
     approve(conn, "p9", "a6", token);

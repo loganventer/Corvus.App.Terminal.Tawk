@@ -1064,6 +1064,9 @@ static void host_preview(void *ctx, const Theme *theme) {
 static void host_action(void *ctx, MenuAction action) {
     TuiApp *app = ctx;
     switch (action) {
+        case MENU_ACTION_SELF_APPROVAL_CHATS:
+            tui_app_open_self_chats(app);
+            break;
         case MENU_ACTION_LOGOUT:
             messaging_manager_logout(app->deps.messaging);
             settings_panel_close(&app->settings_panel);
