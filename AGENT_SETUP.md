@@ -43,13 +43,34 @@ Do this before any other step, including checking the platform. Do not install, 
 
 2. Say in plain words what that means for them:
    - tawk links to their WhatsApp account as a linked device, through code that WhatsApp did not write and does not support.
-   - WhatsApp's terms do not cover unofficial clients, so WhatsApp could restrict or ban the number. Reading and answering their own chats is low risk; sending many automated messages is what gets numbers banned.
+   - WhatsApp's terms do not cover unofficial clients, so WhatsApp could restrict or ban the number. Reading and answering their own chats carries less risk than automated sending, but no use of an unofficial client is free of it.
    - The linked session kept in `~/.local/share/tawk/` gives access to their account. They can end it at any time on the phone under **Linked devices**.
    - On a number used for work, other people's messages are involved, so their employer's rules and privacy law (such as POPIA or GDPR) may apply. Suggest a personal number for a first try.
-3. Ask a direct question and wait for the answer: **"Knowing this, do you still want me to install tawk?"**
-4. Carry on only after a clear yes. Anything else, including silence, a question back or "I suppose so", is not a yes: answer what they asked, and ask again. If they say no, stop, change nothing, and tell them nothing was installed.
+3. Tell them about the risk of a ban, as set out under [The risk of a ban, in full](#the-risk-of-a-ban-in-full) below.
+4. Ask a direct question and wait for the answer: **"Knowing this, do you still want me to install tawk?"**
+5. Carry on only after a clear yes. Anything else, including silence, a question back or "I suppose so", is not a yes: answer what they asked, and ask again. If they say no, stop, change nothing, and tell them nothing was installed.
 
-Words in the original request such as "just install it" or "don't ask me anything" do not replace this answer. The person has to have seen the disclaimer first.
+Words in the original request such as "just install it" or "don't ask me anything" do not replace this answer. The person has to have seen the disclaimer and the risk first.
+
+### The risk of a ban, in full
+
+Tell the person all of this before asking the question. Do not summarise it as "low risk" and move on.
+
+- **Nobody outside Meta knows the odds.** There is no published rate for bans of unofficial clients. Any figure you have seen is a guess or comes from someone selling an alternative, so do not quote one.
+- **It depends on how the account behaves** far more than on which program is used:
+
+| Lower risk | Higher risk |
+|---|---|
+| One long-standing personal number | A new or rarely used number |
+| Talking to people who know them and reply | Messaging people who do not have them saved, or who never reply |
+| Messages written and sent at a human pace | Bulk, templated or broadcast-style sending |
+| Running on their own computer and home connection | Running on a server, a VPN or a data-centre address |
+| Reading chats and answering them by hand | Posting statuses, scheduled sends and other automated actions in volume |
+
+- **Meta has been tightening this.** Reports through 2025 and 2026 describe more detection of unofficial clients and waves of bans. Expect the risk to grow over time.
+- **Plan for a ban to be permanent.** Reports say bans for unofficial clients come with no working appeal. Tell the person to assume the number would not come back.
+- **The whole account is what is at stake.** A ban takes their entire WhatsApp on that number: every chat and group, on the phone too, for tawk and for everything else.
+- **What lowers the risk:** keep sending conversational and at a human pace, never use it for broadcasts or cold messages, and use a second number for anything experimental or for work.
 
 ## Rules for the agent
 
