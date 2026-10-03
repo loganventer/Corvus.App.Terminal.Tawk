@@ -176,7 +176,10 @@ runtime_deps() {
 install_deps() {
     local pkgs=()
     if have apt-get; then
-        have cc || pkgs+=(build-essential)
+        # Named one by one: build-essential can be installed already while make or the compiler was removed,
+        # and apt then installs nothing for it.
+        have cc || have gcc || pkgs+=(gcc libc6-dev)
+        have make || pkgs+=(make)
         have pkg-config || pkgs+=(pkg-config)
         have git || pkgs+=(git)
         dpkg -s libncurses-dev >/dev/null 2>&1 || pkgs+=(libncurses-dev)
@@ -188,7 +191,8 @@ install_deps() {
         [ "$WHATSMEOW" -eq 1 ] && ! go_ok && pkgs+=(golang-go)
         [ "$WITH_SIDECAR" -eq 1 ] && ! have npm && pkgs+=(nodejs npm)
     elif have dnf; then
-        have cc || pkgs+=(gcc make)
+        have cc || pkgs+=(gcc)
+        have make || pkgs+=(make)
         pkgs+=(pkgconf-pkg-config ncurses-devel sqlite-devel sqlcipher-devel openssl git)
         have ffmpeg || pkgs+=(ffmpeg-free)
         runtime_deps pulseaudio-utils xdg-utils poppler-utils
@@ -243,8 +247,20 @@ for tool in cc make pkg-config git ncursesw sqlite3 go node ffmpeg pdftoppm pare
     if [ -n "$v" ]; then printf '    %-11s %s\n' "$tool" "$v"; else printf '    %-11s %s\n' "$tool" "not found"; fi
 done
 
-have make || die "make is required"
-have cc || have gcc || have clang || die "a C compiler is required"
+# What to type for a tool the package manager did not bring.
+install_hint() {
+    if   have apt-get; then printf 'sudo apt-get install %s' "$1"
+    elif have dnf;     then printf 'sudo dnf install %s' "$1"
+    elif have pacman;  then printf 'sudo pacman -S %s' "$1"
+    elif have zypper;  then printf 'sudo zypper install %s' "$1"
+    elif have brew;    then printf 'xcode-select --install'
+    else printf 'install %s with your package manager' "$1"
+    fi
+}
+have make || die "make is required and is still missing. Run this, then run the installer again:
+    $(install_hint make)"
+have cc || have gcc || have clang || die "a C compiler is required and is still missing. Run this, then run the installer again:
+    $(install_hint gcc)"
 if [ "$WHATSMEOW" -eq 1 ] && ! go_ok; then
     warn "Go 1.$MIN_GO_MINOR+ not found; building with the Node.js backend only"
     WHATSMEOW=0
