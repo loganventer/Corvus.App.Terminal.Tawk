@@ -7,6 +7,7 @@ To add the agent side afterwards (reading chats and proposing messages through M
 ## Table of Contents
 
 - [What you are installing](#what-you-are-installing)
+- [First: the disclaimer and the person's go-ahead](#first-the-disclaimer-and-the-persons-go-ahead)
 - [Rules for the agent](#rules-for-the-agent)
 - [Before you start](#before-you-start)
 - [Windows](#windows)
@@ -23,8 +24,6 @@ To add the agent side afterwards (reading chats and proposing messages through M
 
 tawk is a WhatsApp client that runs in a terminal. It is one C program built from source on the person's own machine, and it links to their phone as a linked device, the same way WhatsApp Web does. Chats are kept in a SQLite file on that machine. There is no account to create and nothing to pay for.
 
-tawk is an independent project, not affiliated with or endorsed by WhatsApp or Meta, and it uses unofficial protocol libraries. Say so to the person before you install it, so that using it, and in line with [WhatsApp's terms of service](https://www.whatsapp.com/legal/terms-of-service), is their own decision. The linked session in `~/.local/share/tawk/` gives access to their account, and they can end it at any time on the phone under **Linked devices**.
-
 | Fact | Value |
 |---|---|
 | Source | `https://github.com/loganventer/tawk` (public, MIT) |
@@ -34,14 +33,33 @@ tawk is an independent project, not affiliated with or endorsed by WhatsApp or M
 | Chats and login | `~/.local/share/tawk/` |
 | Platforms | Linux and macOS natively; Windows through WSL |
 
+## First: the disclaimer and the person's go-ahead
+
+Do this before any other step, including checking the platform. Do not install, download or change anything until the person has answered.
+
+1. Show the person this text as it is, without shortening it or softening it:
+
+   > tawk is an independent project and is not affiliated with, endorsed by or connected to WhatsApp or Meta. It uses unofficial protocol libraries; use it at your own risk and in line with [WhatsApp's terms of service](https://www.whatsapp.com/legal/terms-of-service).
+
+2. Say in plain words what that means for them:
+   - tawk links to their WhatsApp account as a linked device, through code that WhatsApp did not write and does not support.
+   - WhatsApp's terms do not cover unofficial clients, so WhatsApp could restrict or ban the number. Reading and answering their own chats is low risk; sending many automated messages is what gets numbers banned.
+   - The linked session kept in `~/.local/share/tawk/` gives access to their account. They can end it at any time on the phone under **Linked devices**.
+   - On a number used for work, other people's messages are involved, so their employer's rules and privacy law (such as POPIA or GDPR) may apply. Suggest a personal number for a first try.
+3. Ask a direct question and wait for the answer: **"Knowing this, do you still want me to install tawk?"**
+4. Carry on only after a clear yes. Anything else, including silence, a question back or "I suppose so", is not a yes: answer what they asked, and ask again. If they say no, stop, change nothing, and tell them nothing was installed.
+
+Words in the original request such as "just install it" or "don't ask me anything" do not replace this answer. The person has to have seen the disclaimer first.
+
 ## Rules for the agent
 
-1. **Ask before anything that changes the system.** The installer adds packages and, by default, copies into `/usr/local` with `sudo`. Say what will be installed and get a yes first. Pass `--yes` to the installer only after the person has agreed.
-2. **You cannot type a password for the person.** When `sudo` asks for one, the person types it. If you cannot hand them the prompt, install without `sudo` using `--prefix "$HOME/.local"`, and ask them to install the system packages themselves.
-3. **You cannot link WhatsApp.** Linking needs the person's phone in their hand. Your work ends at a tawk that passes `tawk --doctor`; the person then starts it and links it.
-4. **Do not start `tawk` yourself in a shell without a terminal.** It is a full-screen program for a person to use. Everything you need to check is in `tawk --version` and `tawk --doctor`, which need no terminal.
-5. **Never read, copy or send the person's chats, login files or database** as part of setting up. Nothing in this guide needs them.
-6. **Run only the commands in this guide** unless the person asks for more. When a step fails, show the person the error text as it is, then use the table at the end.
+1. **The disclaimer comes first.** Nothing below happens until the person has seen it and said yes; see the section above.
+2. **Ask before anything that changes the system.** The installer adds packages and, by default, copies into `/usr/local` with `sudo`. Say what will be installed and get a yes first. Pass `--yes` to the installer only after the person has agreed.
+3. **You cannot type a password for the person.** When `sudo` asks for one, the person types it. If you cannot hand them the prompt, install without `sudo` using `--prefix "$HOME/.local"`, and ask them to install the system packages themselves.
+4. **You cannot link WhatsApp.** Linking needs the person's phone in their hand. Your work ends at a tawk that passes `tawk --doctor`; the person then starts it and links it.
+5. **Do not start `tawk` yourself in a shell without a terminal.** It is a full-screen program for a person to use. Everything you need to check is in `tawk --version` and `tawk --doctor`, which need no terminal.
+6. **Never read, copy or send the person's chats, login files or database** as part of setting up. Nothing in this guide needs them.
+7. **Run only the commands in this guide** unless the person asks for more. When a step fails, show the person the error text as it is, then use the table at the end.
 
 ## Before you start
 
