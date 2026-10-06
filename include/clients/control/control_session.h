@@ -16,6 +16,8 @@ typedef struct ControlSession {
     int           greeted;                 /* hello done */
     ControlOrigin origin;
     char          client[64];
+    char          doing[160];      /* what the agent says it is working on; "" until it says */
+    char          label[64];       /* what it says tells it apart from others of the same name */
     int           subscribed;
     int           all_chats;               /* subscribed to every chat it may see */
     char          chats[CONTROL_SESSION_CHATS][128];

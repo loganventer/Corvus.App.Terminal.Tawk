@@ -12,14 +12,23 @@ ControlCommandKind control_command_kind_of(const char *word) {
     return CONTROL_COMMAND_NONE;
 }
 
+/* An option written with one dash or two: -json or --json. Without a dash it would be a word of
+ * the message or the name of a chat, so here a bare word is never an option. */
+static int dashed(const char *arg, const char *name) {
+    if (arg[0] != '-') return 0;
+    arg++;
+    if (arg[0] == '-') arg++;
+    return strcmp(arg, name) == 0;
+}
+
 int control_options_parse(ControlCommandKind kind, int argc, char **argv, ControlOptions *o) {
     memset(o, 0, sizeof(*o));
     o->kind = kind;
     for (int i = 0; i < argc; i++) {
         const char *a = argv[i];
-        if (!strcmp(a, "--json")) { o->json = 1; continue; }
-        if (!strcmp(a, "--format") && i + 1 < argc) { o->format = argv[++i]; continue; }
-        if (!strcmp(a, "--account") && i + 1 < argc) { o->account = argv[++i]; continue; }
+        if (dashed(a, "json")) { o->json = 1; continue; }
+        if (dashed(a, "format") && i + 1 < argc) { o->format = argv[++i]; continue; }
+        if (dashed(a, "account") && i + 1 < argc) { o->account = argv[++i]; continue; }
         if (kind == CONTROL_COMMAND_SEND) {
             if (o->chat_count == 0) { o->chats[o->chat_count++] = a; continue; }
             if (!strcmp(a, "-") && o->word_count == 0) { o->from_stdin = 1; continue; }

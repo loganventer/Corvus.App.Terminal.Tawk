@@ -116,7 +116,7 @@ A message:
 Must be the first request on a connection.
 
 ```json
-{"id":"1","op":"hello","args":{"client":"tawk-mcp","version":"0.1.0","protocol":1,"origin":"mcp"}}
+{"id":"1","op":"hello","args":{"client":"tawk-mcp","version":"0.1.0","protocol":1,"origin":"mcp","label":"wats (stdio, pid 3002)"}}
 ```
 
 `origin` is `mcp` for a program acting for a language model, or `cli` for a person's own command. Writes from `mcp` always ask you first; writes from `cli` ask only when `confirm_cli` is on. The origin is the client's own statement: it lets tawk treat a model more carefully than your own shell, and is no defence against other programs of your user, which can read tawk's files anyway.
@@ -126,7 +126,7 @@ Result:
 ```json
 {
   "protocol": 1,
-  "tawk": "0.8.1",
+  "tawk": "0.9.0",
   "access": "read",
   "account": {"jid": "27830000000@s.whatsapp.net", "name": "Logan"},
   "connected": true
@@ -219,7 +219,7 @@ Messages:
 | `delete_message` | `message_id`, `for_everyone` (bool, default false) | `{}` |
 | `forward_message` | `message_id`, `chats` (a list of up to 5) | `{"forwarded":n}` |
 | `retry_message` | `message_id` | `{}`; a failed message of yours |
-| `download_media` | `message_id` | `{}`; the file is fetched in the background |
+| `download_media` | `message_id` | `{"path":"…","type":"image","chat":{"jid","name"}}` when the file is already on this computer; `{}` when it is being fetched in the background, and a `media_ready` notification follows for a client that subscribed |
 
 Chats:
 
@@ -262,6 +262,7 @@ Your profile and the app:
 | `set_setting` | `section`, `key`, `value` (as text: `on`/`off`, a number, a choice) | `{"value":"…"}`, the value stored after its bounds were applied |
 | `list_themes` | none | `{"themes":[{"id","name"}]}`; a read |
 | `app_status` | none | `{"tawk","backend","connected","state","detail","ringing"}`; a read |
+| `describe` | `text` | `{}`; a line in the agent's own words about what it is working on (tawk-mcp keeps it to ten words), shown beside it in the Agents list so its sessions can be told apart. `""` takes it away. A read |
 | `reconnect` | none | `{}` |
 | `decline_call` | none | `{}`; declines the call ringing now |
 
@@ -279,6 +280,7 @@ After `subscribe`, tawk sends:
 - `{"evt":"reaction","chat":{…},"message_id":"…","who":{"jid","name"},"emoji":"👍","at":ts}` when someone reacts to a message you sent; `emoji` is `""` when the reaction is taken back. Origin `mcp` with `push_reactions` on.
 - `{"evt":"edit","chat":{…},"message_id":"…","who":{…},"message":message,"at":ts}` when someone changes a message they sent, with the message as it now reads, and `{"evt":"delete","chat":{…},"message_id":"…","who":{…},"at":ts}` when they delete one for everyone. Origin `mcp` with `push_edits` on.
 - `{"evt":"scheduled_sent","chat":{…},"message_id":"<the scheduled message's id>","at":ts}` when a message you scheduled goes out. Origin `mcp` with `push_scheduled` on.
+- `{"evt":"media_ready","chat":{…},"message_id":"…","path":"…","type":"audio","at":ts}` when a message's photo, voice note or file has finished downloading, whoever asked for it. `path` is the file in tawk's media folder and `type` the message's type. Origin `mcp`.
 - `{"evt":"chat","chat":chat}` when a subscribed chat's unread count changes.
 - `{"evt":"bye"}` just before tawk quits.
 
@@ -287,8 +289,8 @@ Chats that are locked, hidden or outside `chats` never produce notifications.
 ## Example
 
 ```text
-→ {"id":"1","op":"hello","args":{"client":"tawk","version":"0.8.1","protocol":1,"origin":"cli"}}
-← {"id":"1","ok":true,"result":{"protocol":1,"tawk":"0.8.1","access":"send","account":{"jid":"27830000000@s.whatsapp.net","name":"Logan"},"connected":true}}
+→ {"id":"1","op":"hello","args":{"client":"tawk","version":"0.9.0","protocol":1,"origin":"cli"}}
+← {"id":"1","ok":true,"result":{"protocol":1,"tawk":"0.9.0","access":"send","account":{"jid":"27830000000@s.whatsapp.net","name":"Logan"},"connected":true}}
 → {"id":"2","op":"unread_summary"}
 ← {"id":"2","ok":true,"result":{"total":2,"mentions":0,"chats":[{"jid":"27820000000@s.whatsapp.net","name":"Mom","is_group":false,"unread":2,"unread_mention":false,"muted":false,"pinned":true,"archived":false,"last_ts":1790000000,"preview":"See you at 6"}]}}
 → {"id":"3","op":"send_message","args":{"chat":"Mom","text":"On my way"}}

@@ -1367,6 +1367,13 @@ static const char *connection_text(AuthState auth) {
     }
 }
 
+/* Whether a program acting for a model is on the control socket now. */
+static int host_agent_connected(void *ctx) {
+    TuiApp *app = ctx;
+    const AutomationStatus *st = app->deps.automation ? automation_manager_status(app->deps.automation) : NULL;
+    return st && st->mcp_sessions > 0;
+}
+
 static void host_info(void *ctx, MenuInfo info, char *out, size_t size) {
     TuiApp *app = ctx;
     MessagingManager *mm = app->deps.messaging;
@@ -1626,7 +1633,7 @@ TuiApp *tui_app_create(const TuiAppDeps *deps) {
     message_view_init(&app->message_view);
     composer_view_init(&app->composer);
     login_view_init(&app->login);
-    SettingsPanelHost host = { app, host_settings, host_apply, host_themes, host_preview, host_action, host_info };
+    SettingsPanelHost host = { app, host_settings, host_apply, host_themes, host_preview, host_action, host_info, host_agent_connected };
     settings_panel_init(&app->settings_panel, host);
     file_picker_init(&app->file_picker);
     search_overlay_init(&app->search);

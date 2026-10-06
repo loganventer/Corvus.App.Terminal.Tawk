@@ -93,6 +93,9 @@ typedef struct Settings {
     int  automation_push_scheduled; /* and when one you scheduled goes out */
     char automation_self_chats[1024]; /* access admin: the chats (JIDs, comma-separated) a client may answer its own requests in; empty: none */
     int  automation_self_per_hour; /* access admin: requests a client may answer itself in an hour */
+    char transcribe_model[24];     /* the Whisper model an agent's transcriber uses for voice notes */
+    char transcribe_languages[64]; /* the languages it writes them in: codes separated by commas, or auto */
+    int  transcribe_auto;          /* voice notes other people send are transcribed as they arrive */
 
     /* Advanced */
     char backend[16];           /* whatsmeow (in-process) or baileys (node sidecar) */

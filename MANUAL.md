@@ -1062,6 +1062,7 @@ The same submenu sets how far agents may go:
 | Add AI disclaimer | Off by default. On, every message an agent sends, schedules or answers a status with gets a line underneath saying an AI wrote it. It is added after you approve, below any edit you made, and never to messages you send yourself or with `tawk send` |
 | Disclaimer text | The line that is added, "🤖 Created with my AI assistant" unless you change it |
 | Agent events | A submenu with a switch for each kind of event agents are told about as it happens |
+| Voice note transcription | A submenu for how an agent's transcriber writes out voice notes: the model, the languages, and whether every voice note is transcribed |
 | Answering for itself | A submenu for **admin**: the chats an agent may answer its own sends in, and how many an hour |
 | Needs, risks and guards | What agent access needs, what can go wrong and what protects you |
 
@@ -1073,6 +1074,20 @@ Under **Answering for itself**:
 | Self-approvals per hour | With **admin**: how many of its own requests an agent may answer in an hour (20 by default); past that they wait for you |
 
 ![The Automation settings](docs/images/settings-automation.png)
+
+### Voice note transcription
+
+Settings, Automation has a submenu, **Voice note transcription**. tawk does not transcribe anything itself: these are your choices for an agent's transcriber, tawk-mcp started with `--transcribe`, which reads them and does the work on your computer.
+
+| Setting | What it does |
+|---|---|
+| Transcription model | A list of Whisper models to choose from. `tiny` is the default: the quickest and lightest. Larger ones are more accurate and slower |
+| Transcription languages | Language codes separated by commas, such as `af,en`, or `auto` to let the model detect one. Each language gets its own transcription, which helps with voice notes that mix languages |
+| Transcribe voice notes as they arrive | On, every voice note other people send is written out without being asked. Off, only the ones an agent asks for |
+
+An agent can read these and cannot change them.
+
+The three settings show only while an agent is connected. With none connected, the submenu says **No agent connected**; your choices are kept and come back when one connects.
 
 ### Agent events
 

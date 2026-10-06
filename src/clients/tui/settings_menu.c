@@ -161,6 +161,23 @@ static const MenuNode SELF_APPROVAL[] = {
     TEXT("Each one is logged as approved by the agent and shown on screen"),
 };
 
+/* How an agent's transcriber (tawk-mcp) writes out voice notes. tawk only holds the choices. */
+static const MenuNode TRANSCRIPTION[] = {
+    FIELD(SETTING_CATEGORY_AUTOMATION, "transcribe_model"),
+    FIELD(SETTING_CATEGORY_AUTOMATION, "transcribe_languages"),
+    FIELD(SETTING_CATEGORY_AUTOMATION, "transcribe_auto"),
+    TEXT("tawk-mcp does the transcribing, on this computer, when it is started with --transcribe"),
+    TEXT("Several languages give one transcription each, for voice notes that mix them"),
+    TEXT("An agent can read these choices and cannot change them"),
+};
+
+/* The same submenu while no agent is connected: there is nobody to use those choices. */
+static const MenuNode TRANSCRIPTION_IDLE_LINES[] = {
+    TEXT("No agent connected"),
+};
+static const MenuNode TRANSCRIPTION_IDLE =
+    SUB("\xF0\x9F\x8E\x99", "Voice note transcription", NULL, TRANSCRIPTION_IDLE_LINES);
+
 static const MenuNode AUTOMATION_ABOUT[] = {
     TEXT("The Agentic tab (F3): requests to answer, who is connected, the log"),
     TEXT("Needs: tawk running with this on, and tawk-mcp in your MCP client"),
@@ -181,6 +198,7 @@ static const MenuNode AUTOMATION[] = {
     FIELD(SETTING_CATEGORY_AUTOMATION, "ai_disclaimer_text"),
     SUB("\xF0\x9F\x93\xA1", "Agent events", "What agents hear as it happens", AGENT_EVENTS),
     SUB("\xE2\x9C\x93", "Answering for itself", "With access admin: which chats, and how many an hour", SELF_APPROVAL),
+    SUB("\xF0\x9F\x8E\x99", "Voice note transcription", "Model, languages, and whether every voice note is written out", TRANSCRIPTION),
     SUB("\xE2\x84\xB9", "Needs, risks and guards", "What agent access means", AUTOMATION_ABOUT),
 };
 
@@ -240,3 +258,8 @@ static const MenuNode ROOT_CHILDREN[] = {
 static const MenuNode ROOT = SUB("\xE2\x9A\x99", "Settings", NULL, ROOT_CHILDREN);
 
 const MenuNode *settings_menu_root(void) { return &ROOT; }
+
+const MenuNode *settings_menu_shown(const MenuNode *menu, int agent_connected) {
+    if (menu && menu->children == TRANSCRIPTION && !agent_connected) return &TRANSCRIPTION_IDLE;
+    return menu;
+}

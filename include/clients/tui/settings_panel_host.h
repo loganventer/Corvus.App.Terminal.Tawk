@@ -18,6 +18,7 @@ typedef struct SettingsPanelHost {
     void              (*preview_theme)(void *ctx, const Theme *theme);
     void              (*run_action)(void *ctx, MenuAction action);
     void              (*info)(void *ctx, MenuInfo info, char *out, size_t size);
+    int               (*agent_connected)(void *ctx);   /* a program acting for a model is on the control socket now */
 } SettingsPanelHost;
 
 #endif

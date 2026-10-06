@@ -65,3 +65,7 @@ A change that alters behaviour comes with a test in `tests/`, added to `TESTS` i
 - No em dashes, and no dashes used as separators or asides. Use commas, colons, full stops or brackets.
 - Comments only where the reason is not obvious from the code.
 - Commit messages say what the change does, in the project's own voice, with no co-author or "generated with" lines.
+
+## Release notes
+
+Every version gets a section at the top of [RELEASE_NOTES.md](RELEASE_NOTES.md), headed `## <version> (<date>)`, with one plain line for each change a user would notice. `tawk --update` prints every section above the installed version, so a change that is not written there is a change nobody is told about. The commit that raises the version also adds its section.

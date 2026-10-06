@@ -9,6 +9,8 @@
 typedef struct AutomationSession {
     int           conn;
     char          client[64];
+    char          doing[160];      /* what the agent says it is working on, in its own words */
+    char          label[64];       /* what the program says tells it apart: its folder, how it is run */
     ControlOrigin origin;
     int64_t       since;           /* epoch seconds */
     int           requests;

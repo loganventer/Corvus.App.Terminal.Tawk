@@ -55,6 +55,7 @@ static const ControlOpEntry OPS[] = {
     { "set_setting",            control_op_set_setting, 0 },
     { "list_themes",            control_op_list_themes, 1 },
     { "app_status",             control_op_app_status, 1 },
+    { "describe",               control_op_describe, 1 },
     { "list_accounts",          control_op_list_accounts, 1 },
     { "reconnect",              control_op_reconnect, 0 },
     { "decline_call",           control_op_decline_call, 0 },
@@ -176,6 +177,10 @@ static void hello(ControlServer *s, ControlSession *session, const ControlReques
     session->origin = parsed;
     str_copy(session->client, sizeof(session->client), client && *client ? client : control_origin_name(parsed));
     str_strip_controls(session->client);
+    /* Several copies of one program may connect, one for each session of an agent: a label tells them apart. */
+    const char *label = control_codec_string(req->args, "label");
+    str_copy(session->label, sizeof(session->label), label ? label : "");
+    str_strip_controls(session->label);
     session->greeted = 1;
     s->changed = 1;
     if (parsed == CONTROL_ORIGIN_MCP) {
@@ -313,6 +318,8 @@ static void report_status(ControlServer *s) {
         AutomationSession *out = &st.sessions[st.session_count++];
         out->conn = c->conn;
         str_copy(out->client, sizeof(out->client), c->client);
+        str_copy(out->label, sizeof(out->label), c->label);
+        str_copy(out->doing, sizeof(out->doing), c->doing);
         out->origin = c->origin;
         out->since = c->since;
         out->requests = c->requests;

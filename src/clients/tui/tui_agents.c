@@ -54,8 +54,7 @@ static AgentsPanelModel model_of(TuiApp *app, const AutomationEntry *log, int lo
 }
 
 void tui_app_open_agents(TuiApp *app) {
-    agents_panel_open(&app->agents, approval_queue_count(app->deps.approvals) ? AGENTS_VIEW_QUEUE
-                                  : settings(app)->control_socket ? AGENTS_VIEW_AGENTS : AGENTS_VIEW_PERMISSIONS);
+    agents_panel_open(&app->agents, AGENTS_VIEW_QUEUE);          /* always the queue first: what needs you */
     app->agents_notice = 0;
     app->dirty = 1;
 }

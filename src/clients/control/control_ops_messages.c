@@ -1,6 +1,7 @@
 /* Managing messages over the control socket: edits, deletes, forwards,
  * retries and downloads. */
 #include "control_server_state.h"
+#include "utilities/path_util.h"
 #include "utilities/str_util.h"
 
 #include <stdio.h>
@@ -157,9 +158,27 @@ void control_op_retry_message(ControlServer *s, ControlSession *session, const C
 void control_op_download_media(ControlServer *s, ControlSession *session, const ControlRequest *req) {
     Message msg;
     if (control_load_message(s, session, req, "message_id", &msg) != 0) return;
+    /* A file that is already here is named in the answer: {"path","type","chat":{jid,name}}.
+     * One still to fetch answers {} and a media_ready event follows. */
+    if (msg.media_path[0] && path_is_regular_file(msg.media_path)) {
+        cJSON *r = cJSON_CreateObject();
+        cJSON_AddStringToObject(r, "path", msg.media_path);
+        cJSON_AddStringToObject(r, "type", message_type_name(msg.type));
+        int n = 0;
+        const Chat *all = messaging_manager_chats(s->deps.messaging, &n);
+        for (int i = 0; i < n; i++) {
+            if (strcmp(all[i].jid, msg.chat_jid) != 0) continue;
+            cJSON *c = cJSON_AddObjectToObject(r, "chat");
+            cJSON_AddStringToObject(c, "jid", all[i].jid);
+            cJSON_AddStringToObject(c, "name", all[i].name);
+            break;
+        }
+        message_dispose(&msg);
+        control_reply(s, session->conn, control_codec_ok(req->id, r));
+        return;
+    }
     int rc = msg.media_ref ? messaging_manager_fetch_media(s->deps.messaging, msg.id) : -1;
-    int have = msg.media_path[0] != '\0';
     message_dispose(&msg);
-    if (rc != 0 && !have) { control_fail(s, session->conn, req->id, "failed", "That message has nothing to download"); return; }
+    if (rc != 0) { control_fail(s, session->conn, req->id, "failed", "That message has nothing to download"); return; }
     control_reply(s, session->conn, control_codec_ok(req->id, NULL));
 }

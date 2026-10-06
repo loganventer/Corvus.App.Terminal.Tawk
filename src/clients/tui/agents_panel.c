@@ -386,6 +386,9 @@ static void draw_queue(AgentsPanel *p, const AgentsPanelModel *m, UiRect list, U
     int n = approval_queue_count(m->queue);
     if (n == 0) {
         tui_text(list.y, list.x, list.w, "Nothing is waiting. Reads never need you; sends and changes wait here for your answer.", base | ATTR_DIM);
+        if (m->status && !m->status->listening && list.h > 1) {
+            tui_text(list.y + 1, list.x, list.w, "Agent access is off, so nothing can connect: 4 Permissions turns it on.", base | ATTR_DIM);
+        }
         return;
     }
     keep_in_view(p, list.h);
@@ -440,17 +443,25 @@ static void draw_agents(AgentsPanel *p, const AgentsPanelModel *m, UiRect list, 
         const AutomationSession *a = &st->sessions[i];
         int attr = i == p->selected[1] ? tui_palette_attr(THEME_SLOT_SIDEBAR_SELECTED) : base;
         tui_fill((UiRect){ list.y + row, list.x, 1, list.w }, attr);
-        char since[32], line[300];
+        char since[32], line[640];
         clock_format_short(a->since, m->settings->use_24h_clock, since, sizeof(since));
-        snprintf(line, sizeof(line), "%s %-16.16s %-18s since %-10s %4d requests  %d allowed for the session%s",
-                 a->origin == CONTROL_ORIGIN_MCP ? "\xF0\x9F\xA4\x96" : "\xE2\x8C\xA8", a->client,
-                 a->origin == CONTROL_ORIGIN_MCP ? "acting for a model" : "your shell", since, a->requests, a->allowances,
-                 a->paused ? "  PAUSED" : "");
+        char who[64], label[128], doing[320];
+        const char *says = a->doing[0] ? a->doing : a->origin == CONTROL_ORIGIN_MCP ? "has not said what it is doing" : "your shell";
+        snprintf(line, sizeof(line), "%s %s %s %s since %-8s %4d requests%s",
+                 a->origin == CONTROL_ORIGIN_MCP ? "\xF0\x9F\xA4\x96" : "\xE2\x8C\xA8",
+                 column(who, sizeof(who), a->client, 9), column(label, sizeof(label), a->label, 26),
+                 column(doing, sizeof(doing), says, 44), since, a->requests, a->paused ? "  PAUSED" : "");
         tui_text(list.y + row, list.x, list.w, line, attr);
     }
     if (detail.h > 0) {
         char where[600];
-        snprintf(where, sizeof(where), "Listening on %s. Every request acts as you, on this computer's WhatsApp.", st->socket_path);
+        const AutomationSession *sel = p->selected[1] >= 0 && p->selected[1] < st->session_count ? &st->sessions[p->selected[1]] : NULL;
+        if (sel && sel->doing[0]) {
+            /* The agent's own words, in full: what it says it is doing is a claim, not a fact. */
+            snprintf(where, sizeof(where), "%s %s says it is: %s  (%d allowed for the session)", sel->client, sel->label, sel->doing, sel->allowances);
+        } else {
+            snprintf(where, sizeof(where), "Listening on %s. Every request acts as you, on this computer's WhatsApp.", st->socket_path);
+        }
         draw_wrapped(detail, where, base | ATTR_DIM);
     }
 }

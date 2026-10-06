@@ -472,6 +472,12 @@ static void on_media_ready(MessagingManager *m, const Event *e, ManagerChanges *
     }
     m->deps.messages->set_media_path(m->deps.messages, e->id, e->path);
     m->messages_dirty = 1;
+    Message ready;
+    if (m->deps.messages->get(m->deps.messages, e->id, &ready) == 0) {
+        /* Readers that follow along hear that the file is there now. */
+        live_message_ring_note(&m->live, LIVE_KIND_MEDIA_READY, e->id, ready.chat_jid, "", "", (int64_t)time(NULL));
+        message_dispose(&ready);
+    }
     if (strcmp(m->pending_media_id, e->id) == 0) {
         Message msg;
         MessageType type = MESSAGE_TYPE_OTHER;

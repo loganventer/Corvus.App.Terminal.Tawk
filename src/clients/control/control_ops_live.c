@@ -115,19 +115,31 @@ static const char *event_name(LiveKind kind) {
         case LIVE_KIND_EDIT:           return "edit";
         case LIVE_KIND_DELETE:         return "delete";
         case LIVE_KIND_SCHEDULED_SENT: return "scheduled_sent";
+        case LIVE_KIND_MEDIA_READY:    return "media_ready";
         default:                       return NULL;
     }
 }
 
 /* Something happened to a message: {"evt":name,"chat":{jid,name},"message_id","at"}, with
  * "who":{jid,name} where someone did it (as "reader" for a read), "emoji" for a reaction
- * ("" when taken back), and the message as it now reads for an edit. */
+ * ("" when taken back), the message as it now reads for an edit, and "path" and "type"
+ * for a download that finished. */
 static void send_activity(ControlServer *s, const LiveMessageRef *ref) {
     const char *evt_name = event_name(ref->kind);
     const Chat *chat = find_chat(s, ref->chat_jid);
     if (!evt_name || !chat || !automation_manager_chat_allowed(s->deps.automation, chat)) return;
     char name[128] = "";
     if (ref->who[0]) messaging_manager_display_name(s->deps.messaging, ref->who, name, sizeof(name));
+    char media_path[512] = "";
+    const char *media_type = "";
+    if (ref->kind == LIVE_KIND_MEDIA_READY) {
+        Message msg;
+        if (messaging_manager_get(s->deps.messaging, ref->id, &msg) != 0) return;
+        str_copy(media_path, sizeof(media_path), msg.media_path);
+        media_type = message_type_name(msg.type);
+        message_dispose(&msg);
+        if (!media_path[0]) return;
+    }
     for (int i = 0; i < s->session_count; i++) {
         ControlSession *session = &s->sessions[i];
         if (!session->greeted || !control_session_follows(session, ref->chat_jid)) continue;
@@ -143,6 +155,10 @@ static void send_activity(ControlServer *s, const LiveMessageRef *ref) {
             cJSON_AddStringToObject(who, "name", name);
         }
         if (ref->kind == LIVE_KIND_REACTION) cJSON_AddStringToObject(evt, "emoji", ref->detail);
+        if (ref->kind == LIVE_KIND_MEDIA_READY) {
+            cJSON_AddStringToObject(evt, "path", media_path);
+            cJSON_AddStringToObject(evt, "type", media_type);
+        }
         if (ref->kind == LIVE_KIND_EDIT) {
             Message msg;
             if (messaging_manager_get(s->deps.messaging, ref->id, &msg) == 0) {

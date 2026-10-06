@@ -146,34 +146,42 @@ static void usage(void) {
            "                    write an encrypted backup of your chats, settings and themes\n"
            "  --restore FILE [--yes]  restore a backup (what it replaces is kept aside)\n"
            "  --version         print the version\n"
-           "  --help            show this help\n\n"
+           "  --help            show this help\n"
+           "Each option may be written with two dashes, one or none: --update, -update, update\n\n"
            "%s by %s <%s>, %s\n",
            APP_NAME, APP_VERSION, APP_NAME, APP_NAME, APP_NAME, APP_NAME, APP_NAME, APP_NAME, APP_NAME, APP_AUTHOR, APP_AUTHOR_EMAIL, APP_HOMEPAGE);
+}
+
+/* An option by its name, written with two dashes, one or none: --update, -update or update. */
+static int is_option(const char *arg, const char *name) {
+    if (arg[0] == '-') arg++;
+    if (arg[0] == '-') arg++;
+    return strcmp(arg, name) == 0;
 }
 
 static int parse_args(int argc, char **argv, Options *o) {
     memset(o, 0, sizeof(*o));
     for (int i = 1; i < argc; i++) {
-        if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) { usage(); return 1; }
-        if (!strcmp(argv[i], "--version") || !strcmp(argv[i], "-v")) {
+        if (is_option(argv[i], "help") || !strcmp(argv[i], "-h")) { usage(); return 1; }
+        if (is_option(argv[i], "version") || !strcmp(argv[i], "-v")) {
             printf("%s %s%s%.7s%s\nby %s <%s>\n%s\n", APP_NAME, APP_VERSION, APP_COMMIT[0] ? " (" : "", APP_COMMIT,
                    APP_COMMIT[0] ? ")" : "", APP_AUTHOR, APP_AUTHOR_EMAIL, APP_HOMEPAGE);
             return 1;
         }
-        if (!strcmp(argv[i], "--debug")) { o->debug = 1; continue; }
-        if (!strcmp(argv[i], "--doctor")) { o->doctor = 1; continue; }
-        if (!strcmp(argv[i], "--update")) { o->update = 1; continue; }
-        if (!strcmp(argv[i], "--reinstall")) { o->update = o->reinstall = 1; continue; }
-        if (!strcmp(argv[i], "--yes") || !strcmp(argv[i], "-y")) { o->yes = 1; continue; }
-        if (!strcmp(argv[i], "--encrypt")) { o->crypt = DATABASE_CRYPT_ENCRYPT; continue; }
-        if (!strcmp(argv[i], "--decrypt")) { o->crypt = DATABASE_CRYPT_DECRYPT; continue; }
-        if (!strcmp(argv[i], "--change-passphrase")) { o->crypt = DATABASE_CRYPT_CHANGE; continue; }
-        if (!strcmp(argv[i], "--backup") && i + 1 < argc) { o->backup_path = argv[++i]; continue; }
-        if (!strcmp(argv[i], "--restore") && i + 1 < argc) { o->restore_path = argv[++i]; continue; }
-        if (!strcmp(argv[i], "--with-media")) { o->with_media = 1; continue; }
-        if (!strcmp(argv[i], "--with-login")) { o->with_login = 1; continue; }
-        if (!strcmp(argv[i], "--config") && i + 1 < argc) { o->config_path = argv[++i]; continue; }
-        if (!strcmp(argv[i], "--backend") && i + 1 < argc) { o->backend = argv[++i]; continue; }
+        if (is_option(argv[i], "debug")) { o->debug = 1; continue; }
+        if (is_option(argv[i], "doctor")) { o->doctor = 1; continue; }
+        if (is_option(argv[i], "update")) { o->update = 1; continue; }
+        if (is_option(argv[i], "reinstall")) { o->update = o->reinstall = 1; continue; }
+        if (is_option(argv[i], "yes") || !strcmp(argv[i], "-y")) { o->yes = 1; continue; }
+        if (is_option(argv[i], "encrypt")) { o->crypt = DATABASE_CRYPT_ENCRYPT; continue; }
+        if (is_option(argv[i], "decrypt")) { o->crypt = DATABASE_CRYPT_DECRYPT; continue; }
+        if (is_option(argv[i], "change-passphrase")) { o->crypt = DATABASE_CRYPT_CHANGE; continue; }
+        if (is_option(argv[i], "backup") && i + 1 < argc) { o->backup_path = argv[++i]; continue; }
+        if (is_option(argv[i], "restore") && i + 1 < argc) { o->restore_path = argv[++i]; continue; }
+        if (is_option(argv[i], "with-media")) { o->with_media = 1; continue; }
+        if (is_option(argv[i], "with-login")) { o->with_login = 1; continue; }
+        if (is_option(argv[i], "config") && i + 1 < argc) { o->config_path = argv[++i]; continue; }
+        if (is_option(argv[i], "backend") && i + 1 < argc) { o->backend = argv[++i]; continue; }
         fprintf(stderr, "%s: unknown option %s (see --help)\n", APP_NAME, argv[i]);
         return 2;
     }
@@ -220,7 +228,7 @@ static void restart_self(int argc, char **argv) {
     if (!args) return;
     int n = 0;
     for (int i = 0; i < argc; i++) {
-        if (i > 0 && !strcmp(argv[i], "--backend")) { i++; continue; }
+        if (i > 0 && is_option(argv[i], "backend")) { i++; continue; }
         args[n++] = argv[i];
     }
     args[n] = NULL;

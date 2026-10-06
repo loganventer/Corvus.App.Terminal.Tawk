@@ -107,6 +107,16 @@ void control_op_list_themes(ControlServer *s, ControlSession *session, const Con
     control_reply(s, session->conn, control_codec_ok(req->id, r));
 }
 
+/* An agent says what it is working on, so you can tell its sessions apart in the Agents list.
+ * It changes nothing but that line, so it is a read. "" takes the line away. */
+void control_op_describe(ControlServer *s, ControlSession *session, const ControlRequest *req) {
+    const char *text = control_codec_string(req->args, "text");
+    str_copy(session->doing, sizeof(session->doing), text ? text : "");
+    str_strip_controls(session->doing);
+    s->changed = 1;
+    control_reply(s, session->conn, control_codec_ok(req->id, NULL));
+}
+
 void control_op_app_status(ControlServer *s, ControlSession *session, const ControlRequest *req) {
     ConnectionHealth h;
     messaging_manager_health(s->deps.messaging, &h);

@@ -76,6 +76,8 @@ void settings_set_defaults(Settings *s) {
     str_copy(s->automation_disclaimer_text, sizeof(s->automation_disclaimer_text), "\xF0\x9F\xA4\x96 Created with my AI assistant");
     s->automation_push_received = 1;
     s->automation_push_sent = 1;
+    str_copy(s->transcribe_model, sizeof(s->transcribe_model), "tiny");
+    str_copy(s->transcribe_languages, sizeof(s->transcribe_languages), "auto");
 
     str_copy(s->backend, sizeof(s->backend), "whatsmeow");
     /* Per-user files (XDG): chats and login in data, downloads in cache. */

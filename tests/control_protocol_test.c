@@ -27,6 +27,7 @@
 #include "resource_access/sqlite_scheduled_message_store.h"
 #include "resource_access/text_chat_exporter.h"
 #include "utilities/event_queue.h"
+#include "utilities/path_util.h"
 #include "utilities/str_util.h"
 
 #include <stdio.h>
@@ -403,6 +404,16 @@ static void test_destructive_and_manage(void) {
     r = reply("x4");
     char *all = cJSON_PrintUnformatted(result(r));
     CHECK(all && strstr(all, "\"key\":\"access\"") && strstr(all, "\"changeable\":false"), "settings list what may be changed");
+    CHECK(all && strstr(all, "\"key\":\"transcribe_model\"") && strstr(all, "\"choices\":\"tiny|base|small|medium|large-v3-turbo|large-v3\"") &&
+          strstr(all, "\"key\":\"transcribe_languages\"") && strstr(all, "\"key\":\"transcribe_auto\""),
+          "an agent's transcriber can read the model, the languages and the automatic switch");
+    CHECK(!strcmp(settings_manager_current(settings_mgr)->transcribe_model, "tiny") && !settings_manager_current(settings_mgr)->transcribe_auto &&
+          !strcmp(settings_manager_current(settings_mgr)->transcribe_languages, "auto"),
+          "the smallest model, a detected language and nothing automatic until you say so");
+    say(conn, "{\"id\":\"x5\",\"op\":\"set_setting\",\"args\":{\"section\":\"automation\",\"key\":\"transcribe_auto\",\"value\":\"on\"}}");
+    r = reply("x5");
+    CHECK(r && !strcmp(error_code(r), "not_allowed") && !settings_manager_current(settings_mgr)->transcribe_auto,
+          "and cannot turn automatic transcription on for itself");
     free(all);
     cJSON_Delete(r);
     clear_outbox();
@@ -714,6 +725,40 @@ static void test_live_and_log(void) {
     push.automation_push_read = 0;
     settings_manager_apply(settings_mgr, &push);
 
+    /* A download: the answer is empty while the file is on its way, an event names it when it is
+     * there, and asking again names it in the answer. */
+    clear_outbox();
+    say(conn, "{\"id\":\"m1\",\"op\":\"download_media\",\"args\":{\"message_id\":\"LIVE1\"}}");
+    r = reply("m1");
+    CHECK(r && !strcmp(error_code(r), "failed"), "a message with no file has nothing to download");
+    cJSON_Delete(r);
+    char voice[600];
+    path_mkdir_p(settings_manager_current(settings_mgr)->media_dir, 0700);
+    snprintf(voice, sizeof(voice), "%s/control-test-voice.ogg", settings_manager_current(settings_mgr)->media_dir);
+    FILE *vf = fopen(voice, "wb");
+    if (vf) { fputs("OggS", vf); fclose(vf); }
+    event_init(&e, EVENT_MEDIA_READY);
+    str_copy(e.id, sizeof(e.id), "LIVE1");
+    str_copy(e.path, sizeof(e.path), voice);
+    event_queue_push(events, &e);
+    tick();
+    tick();
+    int ready = 0;
+    for (int i = 0; i < outbox_count; i++) {
+        ready += strstr(outbox[i], "\"evt\":\"media_ready\"") != NULL && strstr(outbox[i], "\"message_id\":\"LIVE1\"") != NULL &&
+                 strstr(outbox[i], "control-test-voice.ogg") != NULL && strstr(outbox[i], "\"type\":") != NULL;
+    }
+    CHECK(ready == 1, "a download that ends is told once, with where the file is and what it is");
+    say(conn, "{\"id\":\"m2\",\"op\":\"download_media\",\"args\":{\"message_id\":\"LIVE1\"}}");
+    r = reply("m2");
+    const cJSON *mpath = cJSON_GetObjectItemCaseSensitive(result(r), "path");
+    const cJSON *mchat = cJSON_GetObjectItemCaseSensitive(cJSON_GetObjectItemCaseSensitive(result(r), "chat"), "name");
+    CHECK(r && cJSON_IsString(mpath) && !strcmp(mpath->valuestring, voice) && cJSON_IsString(mchat) && !strcmp(mchat->valuestring, "Mom"),
+          "a file that is already here is named in the answer, with its chat");
+    cJSON_Delete(r);
+    remove(voice);
+    clear_outbox();
+
     AutomationEntry *log = NULL;
     int n = 0;
     automation_manager_recent(automation, 200, &log, &n);
@@ -728,6 +773,21 @@ static void test_live_and_log(void) {
     CHECK(approved >= 4 && declined >= 1 && reads >= 3 && refused >= 2, "everything is in the automation log");
     const AutomationStatus *st = automation_manager_status(automation);
     CHECK(st->listening && st->session_count >= 4, "the status says who is connected");
+    int labelled = next_conn++;
+    inbox[inbox_count++] = (ControlInbound){ CONTROL_INBOUND_OPENED, labelled, NULL };
+    say(labelled, "{\"id\":\"h9\",\"op\":\"hello\",\"args\":{\"client\":\"tawk-mcp\",\"origin\":\"mcp\",\"protocol\":1,\"label\":\"wats (stdio, pid 7)\"}}");
+    tick();
+    st = automation_manager_status(automation);
+    int told_apart = 0;
+    for (int i = 0; i < st->session_count; i++) told_apart += !strcmp(st->sessions[i].client, "tawk-mcp") && !strcmp(st->sessions[i].label, "wats (stdio, pid 7)");
+    CHECK(told_apart == 1, "a program that says what tells it apart is listed with that label");
+    say(labelled, "{\"id\":\"h10\",\"op\":\"describe\",\"args\":{\"text\":\"Catching up on the family chat\\nfor Logan\"}}");
+    r = reply("h10");
+    st = automation_manager_status(automation);
+    int described = 0;
+    for (int i = 0; i < st->session_count; i++) described += strstr(st->sessions[i].doing, "Catching up on the family chat") != NULL && !strchr(st->sessions[i].doing, '\n');
+    CHECK(r && result(r) && described == 1, "and what it says it is doing is listed beside it, on one line");
+    cJSON_Delete(r);
     clear_outbox();
 }
 

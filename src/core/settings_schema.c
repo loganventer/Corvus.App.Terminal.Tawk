@@ -95,6 +95,10 @@ static const SettingField FIELDS[] = {
     B(SETTING_CATEGORY_AUTOMATION, "push_edits", "Push edits and deletes", "Agents that listen hear when someone changes or deletes a message they sent", automation_push_edits),
     B(SETTING_CATEGORY_AUTOMATION, "push_scheduled", "Push scheduled sends", "Agents that listen hear when a message you scheduled goes out", automation_push_scheduled),
     I(SETTING_CATEGORY_AUTOMATION, "self_approvals_per_hour", "Self-approvals per hour", "With access admin: how many of its own requests a program may answer in an hour; past this they wait for you", automation_self_per_hour, 1, 240, 1, 0),
+    { SETTING_CATEGORY_AUTOMATION, "transcribe_model", "Transcription model", "The Whisper model an agent's transcriber uses for voice notes: tiny is the quickest and lightest, larger ones are more accurate and slower",
+      SETTING_KIND_CHOICE, offsetof(Settings, transcribe_model), sizeof(((Settings *)0)->transcribe_model), 0, 0, 0, "tiny|base|small|medium|large-v3-turbo|large-v3", 0 },
+    S(SETTING_CATEGORY_AUTOMATION, "transcribe_languages", "Transcription languages", "Language codes separated by commas, such as af,en, or auto; each one gets its own transcription of a voice note", transcribe_languages, 0),
+    B(SETTING_CATEGORY_AUTOMATION, "transcribe_auto", "Transcribe voice notes as they arrive", "An agent's transcriber writes out every voice note other people send, without being asked; off, only the ones an agent asks for", transcribe_auto),
 
     { SETTING_CATEGORY_ADVANCED, "backend", "WhatsApp backend", "whatsmeow runs in-process; baileys runs a Node.js sidecar",
       SETTING_KIND_CHOICE, offsetof(Settings, backend), sizeof(((Settings *)0)->backend), 0, 0, 0, "whatsmeow|baileys", 1 },

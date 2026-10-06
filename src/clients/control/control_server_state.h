@@ -150,6 +150,7 @@ void control_op_get_settings(ControlServer *server, ControlSession *session, con
 void control_op_set_setting(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_list_themes(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_app_status(ControlServer *server, ControlSession *session, const ControlRequest *req);
+void control_op_describe(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_reconnect(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_decline_call(ControlServer *server, ControlSession *session, const ControlRequest *req);
 /* control_ops_live.c */

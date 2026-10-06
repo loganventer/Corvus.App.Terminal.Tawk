@@ -44,7 +44,10 @@ void settings_panel_close(SettingsPanel *p) {
     p->open = 0;
 }
 
-static const MenuNode *current(SettingsPanel *p) { return p->stack[p->depth - 1]; }
+static const MenuNode *current(SettingsPanel *p) {
+    int agent = p->host.agent_connected ? p->host.agent_connected(p->host.ctx) : 0;
+    return settings_menu_shown(p->stack[p->depth - 1], agent);
+}
 
 static const SettingField *field_of(const MenuNode *n) {
     return n->kind == MENU_NODE_FIELD ? settings_schema_find(n->category, n->key) : NULL;
