@@ -1081,7 +1081,7 @@ Settings, Automation has a submenu, **Voice note transcription**. tawk does not 
 
 | Setting | What it does |
 |---|---|
-| Transcription model | A list of Whisper models to choose from. `tiny` is the default: the quickest and lightest. Larger ones are more accurate and slower |
+| Transcription model | A list of Whisper models to choose from. `large-v3-turbo` is the default: close to the largest in accuracy and several times quicker. `tiny` is the quickest and lightest, for a slow computer |
 | Transcription languages | Language codes separated by commas, such as `af,en`, or `auto` to let the model detect one. Each language gets its own transcription, which helps with voice notes that mix languages |
 | Transcribe voice notes as they arrive | On, every voice note other people send is written out without being asked. Off, only the ones an agent asks for |
 

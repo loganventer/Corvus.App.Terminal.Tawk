@@ -407,9 +407,9 @@ static void test_destructive_and_manage(void) {
     CHECK(all && strstr(all, "\"key\":\"transcribe_model\"") && strstr(all, "\"choices\":\"tiny|base|small|medium|large-v3-turbo|large-v3\"") &&
           strstr(all, "\"key\":\"transcribe_languages\"") && strstr(all, "\"key\":\"transcribe_auto\""),
           "an agent's transcriber can read the model, the languages and the automatic switch");
-    CHECK(!strcmp(settings_manager_current(settings_mgr)->transcribe_model, "tiny") && !settings_manager_current(settings_mgr)->transcribe_auto &&
+    CHECK(!strcmp(settings_manager_current(settings_mgr)->transcribe_model, "large-v3-turbo") && !settings_manager_current(settings_mgr)->transcribe_auto &&
           !strcmp(settings_manager_current(settings_mgr)->transcribe_languages, "auto"),
-          "the smallest model, a detected language and nothing automatic until you say so");
+          "the default model, a detected language and nothing automatic until you say so");
     say(conn, "{\"id\":\"x5\",\"op\":\"set_setting\",\"args\":{\"section\":\"automation\",\"key\":\"transcribe_auto\",\"value\":\"on\"}}");
     r = reply("x5");
     CHECK(r && !strcmp(error_code(r), "not_allowed") && !settings_manager_current(settings_mgr)->transcribe_auto,

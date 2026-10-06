@@ -172,7 +172,7 @@ What other programs reaching tawk through its control socket may do: tawk-mcp an
 | `push_edits` | `off` | The same when someone changes or deletes a message they sent |
 | `push_scheduled` | `off` | The same when a message you scheduled goes out |
 | `self_approval_chats` | empty | With `access = admin`: the chats a program may answer its own sends in, as JIDs separated by commas, or `*` for every chat it may use. Empty allows none. Set from Settings, Automation, Answering for itself, where each chat has a switch |
-| `transcribe_model` | `tiny` | The Whisper model an agent's transcriber (tawk-mcp) uses for voice notes: `tiny`, `base`, `small`, `medium`, `large-v3-turbo` or `large-v3`. A list to choose from in the settings panel |
+| `transcribe_model` | `large-v3-turbo` | The Whisper model an agent's transcriber (tawk-mcp) uses for voice notes: `tiny`, `base`, `small`, `medium`, `large-v3-turbo` or `large-v3`. A list to choose from in the settings panel |
 | `transcribe_languages` | `auto` | The languages voice notes are written out in, as codes separated by commas (`af,en`), or `auto`. Each one gets its own transcription |
 | `transcribe_auto` | `off` | Every voice note other people send is transcribed as it arrives. Off, only the ones an agent asks for |
 | `self_approvals_per_hour` | `20` | With `access = admin`: requests a program may answer itself in an hour (1 to 240); past this they wait for you |
