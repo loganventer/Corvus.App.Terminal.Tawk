@@ -27,6 +27,7 @@ static void request_place(const ApprovalRequest *r, char *out, size_t size) {
 
 static const char *const TAB_NAMES[AGENTS_VIEW_COUNT] = { "Queue", "Agents", "Log", "Permissions" };
 static const char *const PERMISSION_KEYS[] = { "control_socket", "access", "chats", "confirm_cli", "writes_per_minute", "ai_disclaimer", "ai_disclaimer_text", "push_received", "push_sent", "push_read", "push_reactions", "push_edits", "push_scheduled", "self_approval_chats", "self_approvals_per_hour" };
+#define AGENT_ROWS 2   /* lines an agent takes in the Agents list */
 #define PERMISSION_COUNT ((int)(sizeof(PERMISSION_KEYS) / sizeof(PERMISSION_KEYS[0])))
 static const char *const FILTER_NAMES[] = { "everything", "allowed", "declined or expired", "refused or failed" };
 
@@ -307,7 +308,8 @@ AgentsPanelRequest agents_panel_click(AgentsPanel *p, const AgentsPanelModel *m,
         if (ui_rect_contains(p->tab_rects[i], y, x)) { p->view = (AgentsView)i; clamp(p, m); return AGENTS_REQUEST_REDRAW; }
     }
     if (ui_rect_contains(p->list_rect, y, x)) {
-        p->selected[p->view] = p->scroll[p->view] + (y - p->list_rect.y);
+        /* An agent takes two lines of the list; a click on either chooses it. */
+        p->selected[p->view] = p->scroll[p->view] + (y - p->list_rect.y) / (p->view == AGENTS_VIEW_AGENTS ? AGENT_ROWS : 1);
         clamp(p, m);
         return AGENTS_REQUEST_REDRAW;
     }
@@ -437,31 +439,33 @@ static void draw_agents(AgentsPanel *p, const AgentsPanelModel *m, UiRect list, 
                  "The control socket is off. Turn it on in 4 Permissions or Settings > Automation.", base | ATTR_DIM);
         return;
     }
-    keep_in_view(p, list.h);
-    for (int row = 0; row < list.h && p->scroll[1] + row < st->session_count; row++) {
-        int i = p->scroll[1] + row;
+    /* Each agent takes two lines: who it is, and under that what it says it is doing. */
+    int slots = list.h / AGENT_ROWS > 0 ? list.h / AGENT_ROWS : 1;
+    keep_in_view(p, slots);
+    for (int slot = 0; slot < slots && p->scroll[1] + slot < st->session_count; slot++) {
+        int i = p->scroll[1] + slot, y = list.y + slot * AGENT_ROWS;
         const AutomationSession *a = &st->sessions[i];
         int attr = i == p->selected[1] ? tui_palette_attr(THEME_SLOT_SIDEBAR_SELECTED) : base;
-        tui_fill((UiRect){ list.y + row, list.x, 1, list.w }, attr);
-        char since[32], line[640];
+        tui_fill((UiRect){ y, list.x, AGENT_ROWS <= list.h ? AGENT_ROWS : 1, list.w }, attr);
+        char since[32], line[640], who[64], label[128];
         clock_format_short(a->since, m->settings->use_24h_clock, since, sizeof(since));
-        char who[64], label[128], doing[320];
-        const char *says = a->doing[0] ? a->doing : a->origin == CONTROL_ORIGIN_MCP ? "has not said what it is doing" : "your shell";
-        snprintf(line, sizeof(line), "%s %s %s %s since %-8s %4d requests%s",
+        snprintf(line, sizeof(line), "%s %s %s %-18s since %-8s %4d requests  %d allowed for the session%s",
                  a->origin == CONTROL_ORIGIN_MCP ? "\xF0\x9F\xA4\x96" : "\xE2\x8C\xA8",
-                 column(who, sizeof(who), a->client, 9), column(label, sizeof(label), a->label, 26),
-                 column(doing, sizeof(doing), says, 44), since, a->requests, a->paused ? "  PAUSED" : "");
-        tui_text(list.y + row, list.x, list.w, line, attr);
+                 column(who, sizeof(who), a->client, 9), column(label, sizeof(label), a->label, 30),
+                 a->origin == CONTROL_ORIGIN_MCP ? "acting for a model" : "your shell", since, a->requests, a->allowances,
+                 a->paused ? "  PAUSED" : "");
+        tui_text(y, list.x, list.w, line, attr);
+        if (y + 1 < list.y + list.h) {
+            /* The agent's own words: a claim about what it is doing, not a fact. */
+            char doing[200];
+            snprintf(doing, sizeof(doing), "   %s", a->doing[0] ? a->doing :
+                     a->origin == CONTROL_ORIGIN_MCP ? "has not said what it is doing" : "a command you ran");
+            tui_text(y + 1, list.x, list.w, doing, i == p->selected[1] ? attr : base | ATTR_DIM);
+        }
     }
     if (detail.h > 0) {
         char where[600];
-        const AutomationSession *sel = p->selected[1] >= 0 && p->selected[1] < st->session_count ? &st->sessions[p->selected[1]] : NULL;
-        if (sel && sel->doing[0]) {
-            /* The agent's own words, in full: what it says it is doing is a claim, not a fact. */
-            snprintf(where, sizeof(where), "%s %s says it is: %s  (%d allowed for the session)", sel->client, sel->label, sel->doing, sel->allowances);
-        } else {
-            snprintf(where, sizeof(where), "Listening on %s. Every request acts as you, on this computer's WhatsApp.", st->socket_path);
-        }
+        snprintf(where, sizeof(where), "Listening on %s. Every request acts as you, on this computer's WhatsApp.", st->socket_path);
         draw_wrapped(detail, where, base | ATTR_DIM);
     }
 }

@@ -4,6 +4,11 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.9.1 (2026-10-06)
+
+- The Agents list gives each connected agent two lines: who it is on the first, and under it what the agent says it is working on.
+- tawk-mcp 0.4.0 transcribes voice notes inside itself, with the model you choose under Settings, Automation, Voice note transcription. Nothing else needs installing, and a model that is not on this computer yet is downloaded the first time it is needed.
+
 ## 0.9.0 (2026-10-06)
 
 - Updating shows what is new. `tawk --update` now lists every change since the version you have, from these notes, before it asks.
