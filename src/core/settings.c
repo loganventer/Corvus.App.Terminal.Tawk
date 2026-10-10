@@ -41,7 +41,6 @@ void settings_set_defaults(Settings *s) {
     s->appear_online = 1;
     s->show_online = 1;
     s->show_transcripts = 1;
-    s->transcript_lines = 6;
     s->tldr_min_chars = 0;
     s->tldr_back_days = 30;
     str_copy(s->recent_emoji, sizeof(s->recent_emoji), "\xF0\x9F\x91\x8D \xE2\x9D\xA4\xEF\xB8\x8F \xF0\x9F\x98\x82 \xF0\x9F\x98\xAE \xF0\x9F\x98\xA2 \xF0\x9F\x99\x8F");
@@ -82,7 +81,7 @@ void settings_set_defaults(Settings *s) {
     s->automation_push_received = 1;
     s->automation_push_sent = 1;
     str_copy(s->transcribe_model, sizeof(s->transcribe_model), "large-v3-turbo");
-    str_copy(s->transcribe_languages, sizeof(s->transcribe_languages), "auto");
+    str_copy(s->transcribe_languages, sizeof(s->transcribe_languages), "af,en");
 
     str_copy(s->backend, sizeof(s->backend), "whatsmeow");
     /* Per-user files (XDG): chats and login in data, downloads in cache. */
