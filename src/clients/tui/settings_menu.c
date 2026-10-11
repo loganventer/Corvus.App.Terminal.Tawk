@@ -33,6 +33,7 @@ static const MenuNode CHATS[] = {
     INFO("Voice note languages", MENU_INFO_VOICE_LANGUAGES),
     ACTION("\xF0\x9F\x97\xA3", "Choose the languages\xE2\x80\xA6", MENU_ACTION_VOICE_LANGUAGES),
     FIELD(SETTING_CATEGORY_CHATS, "tldr_from_chars"),
+    FIELD(SETTING_CATEGORY_CHATS, "tldr_floor_chars"),
     FIELD(SETTING_CATEGORY_CHATS, "tldr_back_days"),
     FIELD(SETTING_CATEGORY_CHATS, "message_margin"),
     FIELD(SETTING_CATEGORY_CHATS, "status_keep_days"),

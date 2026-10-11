@@ -97,7 +97,8 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `appear_online` | `true` | Show as online while tawk is in use; needed to see others typing and online |
 | `show_online` | `true` | Show "online" or "last seen" under the name of the open chat, for people who share it with you. Needs `appear_online` |
 | `show_transcripts` | `true` | Show the words of a voice note under it when it has been transcribed. A chat can say otherwise on its contact card (always or never) |
-| `tldr_from_chars` | `0` | In a chat with TL;DR switched on (on its contact card), a message at least this many characters long is summarised. 0, the default, summarises every message; up to 5000. A summary shows only when it is shorter than its message |
+| `tldr_from_chars` | `0` | In a chat with TL;DR switched on (on its contact card), a message at least this many characters long is summarised. 0, the default, summarises every message that reaches `tldr_floor_chars`; up to 5000. A summary shows only when it is shorter than its message |
+| `tldr_floor_chars` | `40` | A message shorter than this is never sent to an agent for a summary, whatever `tldr_from_chars` says: a summary of so few words could not be shorter than the message. 0 to 500; 0 turns the floor off |
 | `awaiting_days` | `3` | Days a message of yours goes unanswered before its chat shows under `/filter awaiting` (1 to 60) |
 | `tldr_back_days` | `30` | How many days back a TL;DR chat's older long messages are summarised by themselves, newest first. 0 to 365; 0 summarises only what you look at |
 | `reopen_last_chat` | `true` | When tawk starts, open the chat that was open when it last quit. Skipped when that chat was deleted or is in Locked chats |

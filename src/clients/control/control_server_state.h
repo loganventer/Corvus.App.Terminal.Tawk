@@ -192,6 +192,7 @@ void control_transcripts_tick(ControlServer *server);
 void control_tag_transcribe(ControlServer *server, cJSON *object, const Chat *chat);
 /* control_ops_summaries.c */
 void control_op_set_summary(ControlServer *server, ControlSession *session, const ControlRequest *req);
+void control_op_decline_summary(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_get_summary(ControlServer *server, ControlSession *session, const ControlRequest *req);
 /* Adds "tldr":true to an answer about `chat` when it is in TL;DR mode. */
 void control_tag_tldr(ControlServer *server, cJSON *object, const Chat *chat);

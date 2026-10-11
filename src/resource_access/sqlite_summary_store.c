@@ -56,6 +56,32 @@ static int summary_remove(ISummaryStore *self, const char *message_id) {
     return finish(self, st);
 }
 
+static int summary_decline(ISummaryStore *self, const char *message_id, const char *reason, const char *source, int64_t at) {
+    if (!message_id || !message_id[0]) return -1;
+    static const char *const SQL =
+        "INSERT INTO summary_declines (message_id, reason, source, created_at, account_id) VALUES (?, ?, ?, ?, {acct}) "
+        "ON CONFLICT(account_id, message_id) DO UPDATE SET "
+        "reason = excluded.reason, source = excluded.source, created_at = excluded.created_at";
+    sqlite3_stmt *st = NULL;
+    if (sqlite_account_scope_prepare(scope_of(self), SQL, &st) != SQLITE_OK) return -1;
+    sqlite3_bind_text(st, 1, message_id, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(st, 2, reason ? reason : "", -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(st, 3, source ? source : "", -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int64(st, 4, at);
+    return finish(self, st);
+}
+
+static int summary_declined(ISummaryStore *self, const char *message_id) {
+    if (!message_id || !message_id[0]) return 0;
+    sqlite3_stmt *st = NULL;
+    const char *sql = "SELECT 1 FROM summary_declines WHERE account_id = {acct} AND message_id = ?";
+    if (sqlite_account_scope_prepare(scope_of(self), sql, &st) != SQLITE_OK) return 0;
+    sqlite3_bind_text(st, 1, message_id, -1, SQLITE_TRANSIENT);
+    int found = sqlite3_step(st) == SQLITE_ROW;
+    sqlite3_finalize(st);
+    return found;
+}
+
 static void summary_destroy(ISummaryStore *self) {
     if (!self) return;
     sqlite_account_scope_destroy(scope_of(self));
@@ -70,6 +96,8 @@ ISummaryStore *sqlite_summary_store_create(sqlite3 *db, AccountId account) {
     s->save = summary_save;
     s->find = summary_find;
     s->remove = summary_remove;
+    s->decline = summary_decline;
+    s->declined = summary_declined;
     s->destroy = summary_destroy;
     return s;
 }

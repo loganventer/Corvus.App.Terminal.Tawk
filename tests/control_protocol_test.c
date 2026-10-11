@@ -1284,7 +1284,8 @@ static void test_tldr(void) {
     inbox[inbox_count++] = (ControlInbound){ CONTROL_INBOUND_OPENED, first, NULL };
     say(first, "{\"id\":\"h\",\"op\":\"hello\",\"args\":{\"client\":\"tawk-mcp\",\"protocol\":1,\"origin\":\"mcp\",\"label\":\"dev (stdio, pid 11)\",\"features\":[\"transcripts\",\"summaries\"]}}");
     cJSON *r = reply("h");
-    CHECK(r && has_feature(result(r), "summaries"), "hello names summaries among what this tawk can do");
+    CHECK(r && has_feature(result(r), "summaries") && has_feature(result(r), "summary_decline"),
+          "hello names summaries, and answering that none is needed, among what this tawk can do");
     cJSON_Delete(r);
 
     arrives("L0", MOM, LONG_TEXT, 0);
@@ -1292,6 +1293,10 @@ static void test_tldr(void) {
     say(first, "{\"id\":\"s0\",\"op\":\"set_summary\",\"args\":{\"message_id\":\"L0\",\"text\":\"School evening moved.\"}}");
     r = reply("s0");
     CHECK(r && !strcmp(error_code(r), "tldr_off"), "and takes no summary");
+    cJSON_Delete(r);
+    say(first, "{\"id\":\"dn0\",\"op\":\"decline_summary\",\"args\":{\"message_id\":\"L0\",\"reason\":\"too_short\"}}");
+    r = reply("dn0");
+    CHECK(r && !strcmp(error_code(r), "tldr_off"), "nor an answer that one needs none");
     cJSON_Delete(r);
 
     summary_manager_set_tldr(summaries, MOM, 1);
@@ -1305,9 +1310,14 @@ static void test_tldr(void) {
     CHECK(asked_for("L1") && !asked_for("N1"), "the only agent that can is asked to summarise a long message, not a short one");
     length.tldr_min_chars = 0;
     settings_manager_apply(settings_mgr, &length);
+    arrives("N3", MOM, "Running late", 1);
+    CHECK(!asked_for("N3"), "with the length at 0, a message under the floor is still not asked for");
+    length.tldr_floor_chars = 0;
+    settings_manager_apply(settings_mgr, &length);
     arrives("N2", MOM, "Running late, there in ten", 1);
-    CHECK(asked_for("N2"), "with the length at 0, every message is asked for, what you send as well as what you are sent");
+    CHECK(asked_for("N2"), "with the floor off too, every message is asked for, what you send as well as what you are sent");
     length.tldr_min_chars = 300;
+    length.tldr_floor_chars = 40;
     settings_manager_apply(settings_mgr, &length);
     CHECK(writes_tldr(first) == 0, "without having been chosen");
     say(first, "{\"id\":\"s1\",\"op\":\"set_summary\",\"args\":{\"message_id\":\"L1\",\"text\":\"School evening moved to Thursday.\",\"model\":\"sonnet\"}}");
@@ -1322,6 +1332,23 @@ static void test_tldr(void) {
     say(first, "{\"id\":\"s2\",\"op\":\"set_summary\",\"args\":{\"message_id\":\"V1\",\"text\":\"a voice note\"}}");
     r = reply("s2");
     CHECK(r && !strcmp(error_code(r), "bad_request"), "a voice note takes no summary");
+    cJSON_Delete(r);
+    say(first, "{\"id\":\"dn1\",\"op\":\"decline_summary\",\"args\":{\"message_id\":\"L1\",\"reason\":\"boring\"}}");
+    r = reply("dn1");
+    CHECK(r && !strcmp(error_code(r), "bad_request"), "an answer that a message needs none must give a reason tawk knows");
+    cJSON_Delete(r);
+    say(first, "{\"id\":\"dn2\",\"op\":\"decline_summary\",\"args\":{\"message_id\":\"V1\",\"reason\":\"too_short\"}}");
+    r = reply("dn2");
+    CHECK(r && !strcmp(error_code(r), "bad_request"), "and cannot be given for a voice note");
+    cJSON_Delete(r);
+    say(first, "{\"id\":\"dn3\",\"op\":\"decline_summary\",\"args\":{\"message_id\":\"N2\",\"reason\":\"too_short\"}}");
+    r = reply("dn3");
+    CHECK(r && cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(r, "ok")), "the agent may answer that a message needs none");
+    cJSON_Delete(r);
+    say(first, "{\"id\":\"g2\",\"op\":\"get_summary\",\"args\":{\"message_id\":\"N2\"}}");
+    r = reply("g2");
+    CHECK(r && cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(r, "ok")) &&
+          !cJSON_GetObjectItemCaseSensitive(result(r), "summary"), "which leaves it with no summary");
     cJSON_Delete(r);
 
     /* A second agent connects: with none chosen, tawk asks you which one. */

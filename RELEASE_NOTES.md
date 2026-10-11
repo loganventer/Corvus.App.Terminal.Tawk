@@ -4,6 +4,14 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.21.0 (2026-10-11)
+
+TL;DR stops asking for what it cannot use.
+
+- **A floor under TL;DR.** A message under 40 characters is no longer sent to an agent for a summary, since a summary could not be shorter. Settings, Chats, "TL;DR never below" (`tldr_floor_chars`) changes it; 0 turns it off. "TL;DR from" still applies on top of it.
+- **An agent can say a message needs none.** New control operation `decline_summary` (reasons `too_short`, `nothing_to_say`, `other`), advertised as `summary_decline` in `hello`. tawk remembers the answer, also after a restart, and does not ask for that message again; it is forgotten when the message is edited. An agent that answers this way no longer counts as one that let a request go unanswered.
+- Fixed: a short message an agent left unanswered was asked for again every 90 seconds, and again each time tawk was restarted or the chat reopened.
+
 ## 0.20.1 (2026-10-10)
 
 - Fixed: tawk 0.19.0 and 0.20.0 did not build on Linux, WSL included. `src/engines/reminder_rule.c` used `NULL` without including `<stddef.h>`; macOS headers happen to supply it and glibc's do not.

@@ -78,6 +78,13 @@ static void test_engines(void) {
     CHECK(!summary_policy_allows(&chat, &prefs) && !summary_policy_allows(NULL, &prefs), "never a locked one, or none");
 
     CHECK(summary_validator_refusal(&longer, "School moved the evening to Thursday.") == NULL, "a text message takes a summary");
+    CHECK(summary_policy_min_chars(0, 40) == 40 && summary_policy_min_chars(20, 40) == 40 && summary_policy_min_chars(300, 40) == 300 &&
+          summary_policy_min_chars(0, 0) == 0 && summary_policy_min_chars(-5, -1) == 0,
+          "the length asked for is the larger of what you chose and the floor, and never below 0");
+    CHECK(summary_validator_decline_refusal(&longer, "too_short") == NULL && summary_validator_decline_refusal(&longer, "nothing_to_say") == NULL &&
+          summary_validator_decline_refusal(&longer, "other") == NULL, "an agent may say a message needs no summary, for one of three reasons");
+    CHECK(summary_validator_decline_refusal(&longer, "boring") != NULL && summary_validator_decline_refusal(&longer, NULL) != NULL &&
+          summary_validator_decline_refusal(&voice, "too_short") != NULL, "not for another reason, none, or a voice note");
     CHECK(summary_validator_refusal(&voice, "x") != NULL && summary_validator_refusal(&longer, " \n") != NULL &&
           summary_validator_refusal(&longer, NULL) != NULL, "a voice note does not, and words are required");
     char *big = malloc(SUMMARY_MAX_BYTES + 2);
@@ -142,7 +149,8 @@ static void test_store_and_manager(sqlite3 *db) {
     IChatPrefsStore *prefs = sqlite_chat_prefs_store_create(db);
     Settings settings;
     settings_set_defaults(&settings);
-    CHECK(settings.tldr_min_chars == 0, "out of the box, every message of a TL;DR chat is summarised");
+    CHECK(settings.tldr_min_chars == 0 && settings.tldr_floor_chars == 40,
+          "out of the box, a TL;DR chat's messages are summarised from 40 characters, so no very short one is asked for");
     settings.tldr_min_chars = 300;                          /* the checks below are about a length you set */
     SummaryManagerDeps deps = { store, prefs, sqlite_chat_prefs_store_summaries(prefs), &settings, NULL };
     SummaryManager *mgr = summary_manager_create(&deps);
@@ -198,8 +206,36 @@ static void test_store_and_manager(sqlite3 *db) {
     summary_manager_save(mgr, &b, &mom, "Evening moved.", "", "tawk-mcp");
     CHECK(messages->edit_text(messages, "L2", NULL, 1) == 0 && !has_summary(store, "L2"), "so does one deleted for everyone");
     CHECK(has_summary(store, "L3") && messages->remove(messages, "L3") == 0 && !has_summary(store, "L3"), "and one deleted here");
+    /* the floor keeps very short messages out, whatever length you chose */
+    settings.tldr_min_chars = 0;
+    CHECK(!summary_manager_wants(mgr, &shorter, &mom) && summary_manager_wants(mgr, &a, &mom),
+          "with TL;DR from at 0, a message under the floor is still not asked for");
+    settings.tldr_floor_chars = 0;
+    CHECK(summary_manager_wants(mgr, &shorter, &mom), "and a floor of 0 turns that off");
+    settings.tldr_floor_chars = 40;
+    settings.tldr_min_chars = 300;
+
+    /* an agent that says a message needs no summary is believed, and not asked again */
+    Message d;
+    text_message(&d, "X1", MOM, LONG_TEXT);
+    messages->save(messages, &d);
+    CHECK(summary_manager_decline(mgr, &d, &mom, "boring", "tawk-mcp") == SUMMARY_DECLINE_REFUSED && !store->declined(store, "X1"),
+          "a reason tawk does not know is refused");
+    CHECK(summary_manager_decline(mgr, &d, &mom, "nothing_to_say", "tawk-mcp") == SUMMARY_DECLINED && store->declined(store, "X1"),
+          "a message an agent says needs no summary is remembered");
+    summary_manager_want(mgr, &d, &mom);
+    int waiting_for_x1 = 0;                                 /* what else waits is of no interest here */
+    while (summary_manager_next_wanted(mgr, id, sizeof(id))) {
+        if (strcmp(id, "X1") == 0) waiting_for_x1 = 1;
+        summary_manager_drop_wanted(mgr);
+    }
+    CHECK(!waiting_for_x1, "and is not put on the waiting list");
+    CHECK(!other->declined(other, "X1"), "another account does not see it");
+    CHECK(messages->edit_text(messages, "X1", "Changed my mind about it", 0) == 0 && !store->declined(store, "X1"),
+          "an edited message is forgotten as declined, since its new words are worth asking about");
     mom.soft_locked = 1;
     CHECK(summary_manager_save(mgr, &a, &mom, "x", "", "") == SUMMARY_OFF, "a soft-locked chat takes none");
+    CHECK(summary_manager_decline(mgr, &d, &mom, "other", "") == SUMMARY_DECLINE_OFF, "and no answer that one needs none");
     mom.soft_locked = 0;
 
     /* the older messages of a TL;DR chat: the last month, newest first, once */
@@ -258,6 +294,7 @@ static void test_store_and_manager(sqlite3 *db) {
     message_dispose(&b);
     message_dispose(&c);
     message_dispose(&shorter);
+    message_dispose(&d);
     summary_manager_destroy(mgr);
     prefs->destroy(prefs);
     other->destroy(other);

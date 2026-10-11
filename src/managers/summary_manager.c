@@ -91,6 +91,31 @@ SummarySaveResult summary_manager_save(SummaryManager *m, const Message *message
     return SUMMARY_SAVED;
 }
 
+SummaryDeclineResult summary_manager_decline(SummaryManager *m, const Message *message, const Chat *chat,
+                                             const char *reason, const char *source) {
+    m->error[0] = '\0';
+    ChatPrefs prefs;
+    prefs_of(m, chat ? chat->jid : "", &prefs);
+    if (!summary_policy_allows(chat, &prefs)) {
+        str_copy(m->error, sizeof(m->error), "This chat is not in TL;DR mode");
+        return SUMMARY_DECLINE_OFF;
+    }
+    const char *why = summary_validator_decline_refusal(message, reason);
+    if (why) {
+        str_copy(m->error, sizeof(m->error), why);
+        return SUMMARY_DECLINE_REFUSED;
+    }
+    char from[64];
+    str_copy(from, sizeof(from), source ? source : "");
+    str_strip_controls(from);
+    if (m->deps.store->decline(m->deps.store, message->id, reason, from, (int64_t)time(NULL)) != 0) {
+        str_copy(m->error, sizeof(m->error), "That could not be kept");
+        return SUMMARY_DECLINE_FAILED;
+    }
+    m->changed = 1;
+    return SUMMARY_DECLINED;
+}
+
 int summary_manager_find(SummaryManager *m, const char *message_id, Summary *out) {
     return m->deps.store->find(m->deps.store, message_id, out);
 }
@@ -98,7 +123,8 @@ int summary_manager_find(SummaryManager *m, const char *message_id, Summary *out
 int summary_manager_wants(SummaryManager *m, const Message *message, const Chat *chat) {
     ChatPrefs prefs;
     prefs_of(m, chat ? chat->jid : "", &prefs);
-    return summary_policy_wants(chat, &prefs, message, m->deps.settings->tldr_min_chars);
+    int min_chars = summary_policy_min_chars(m->deps.settings->tldr_min_chars, m->deps.settings->tldr_floor_chars);
+    return summary_policy_wants(chat, &prefs, message, min_chars);
 }
 
 static int listed(char list[][64], int count, const char *id) {
@@ -111,6 +137,7 @@ void summary_manager_want(SummaryManager *m, const Message *message, const Chat 
     if (!summary_manager_wants(m, message, chat)) return;
     Summary have;
     if (m->deps.store->find(m->deps.store, message->id, &have) == 0) { summary_dispose(&have); return; }
+    if (m->deps.store->declined(m->deps.store, message->id)) return;     /* an agent said it needs none */
     str_copy(m->asked[m->asked_next], sizeof(m->asked[0]), message->id);
     m->asked_next = (m->asked_next + 1) % ASKED_MAX;
     if (m->waiting_count == WAITING_MAX) {                  /* full: the one that waited longest gives up its place */

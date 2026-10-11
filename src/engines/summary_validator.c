@@ -16,6 +16,14 @@ const char *summary_validator_refusal(const Message *message, const char *text) 
     return NULL;
 }
 
+const char *summary_validator_decline_refusal(const Message *message, const char *reason) {
+    if (!message || message->type != MESSAGE_TYPE_TEXT || !message->text || !message->text[0]) return "Only a text message is asked for a summary";
+    if (message->deleted) return "That message was deleted";
+    if (!reason || (strcmp(reason, "too_short") != 0 && strcmp(reason, "nothing_to_say") != 0 && strcmp(reason, "other") != 0))
+        return "\"reason\" must be too_short, nothing_to_say or other";
+    return NULL;
+}
+
 void summary_validator_clean(char *text) {
     if (!text) return;
     char *out = text;

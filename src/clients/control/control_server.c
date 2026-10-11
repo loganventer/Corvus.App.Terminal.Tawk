@@ -39,6 +39,7 @@ static const ControlOpEntry OPS[] = {
     { "set_transcript",         control_op_set_transcript, 0 },
     { "get_summary",            control_op_get_summary, 1 },
     { "set_summary",            control_op_set_summary, 0 },
+    { "decline_summary",        control_op_decline_summary, 0 },
     { "list_labels",            control_op_list_labels, 1 },
     { "set_label",              control_op_set_label, 0 },
     { "list_reminders",         control_op_list_reminders, 1 },
@@ -259,6 +260,7 @@ static void hello(ControlServer *s, ControlSession *session, const ControlReques
     cJSON *features = cJSON_AddArrayToObject(r, "features");
     if (s->deps.transcripts) cJSON_AddItemToArray(features, cJSON_CreateString("transcripts"));
     if (s->deps.summaries) cJSON_AddItemToArray(features, cJSON_CreateString("summaries"));
+    if (s->deps.summaries) cJSON_AddItemToArray(features, cJSON_CreateString("summary_decline"));
     if (s->deps.owner) cJSON_AddItemToArray(features, cJSON_CreateString("owner_chat"));
     if (s->deps.labels) cJSON_AddItemToArray(features, cJSON_CreateString("labels"));
     if (s->deps.reminders) cJSON_AddItemToArray(features, cJSON_CreateString("reminders"));

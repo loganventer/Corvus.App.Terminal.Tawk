@@ -6,6 +6,7 @@
 #include "core/chat.h"
 #include "core/message.h"
 #include "core/summary.h"
+#include "core/summary_decline_result.h"
 #include "core/summary_save_result.h"
 #include "managers/summary_manager_deps.h"
 
@@ -27,13 +28,17 @@ int  summary_manager_set_tldr(SummaryManager *mgr, const char *chat_jid, int on)
 /* Keeps the summary of `message`, a text message in `chat`. `source` names the program that hands it over. */
 SummarySaveResult summary_manager_save(SummaryManager *mgr, const Message *message, const Chat *chat,
                                        const char *text, const char *model, const char *source);
+/* Remembers that the agent answered for `message`, a text message in `chat`, that it needs no summary
+ * (`reason`: too_short, nothing_to_say or other), so it is not asked for again. */
+SummaryDeclineResult summary_manager_decline(SummaryManager *mgr, const Message *message, const Chat *chat,
+                                             const char *reason, const char *source);
 /* Fills `out` (the caller disposes it) and returns 0, or -1 when the message has none. */
 int  summary_manager_find(SummaryManager *mgr, const char *message_id, Summary *out);
 
 /* Whether `message` in `chat` is one to summarise: the chat is in TL;DR mode and the message is long enough. */
 int  summary_manager_wants(SummaryManager *mgr, const Message *message, const Chat *chat);
 /* Puts a message on the list of those waiting for a summary, once: one that
- * has a summary, is already waiting or was asked for a while ago is left out. */
+ * has a summary, was declined, is already waiting or was asked for a while ago is left out. */
 void summary_manager_want(SummaryManager *mgr, const Message *message, const Chat *chat);
 /* Puts the older long messages of a TL;DR chat on the waiting list, newest
  * first: those of the last `tldr_back_days` days, yours and other

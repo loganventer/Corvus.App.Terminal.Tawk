@@ -51,7 +51,7 @@ A notification, sent without a request:
 | `bad_token` | `confirm` was given a token that is unknown, used, expired or from another connection, or `approve` was given the wrong admin token. |
 | `draft_exists` | `draft_message` found a draft already waiting in that chat. |
 | `unsupported` | The backend in use cannot do it (posting a status needs whatsmeow). |
-| `tldr_off` | `set_summary` named a message in a chat that is not in TL;DR mode: you did not switch it on on its contact card, or the chat is soft-locked. |
+| `tldr_off` | `set_summary` or `decline_summary` named a message in a chat that is not in TL;DR mode: you did not switch it on on its contact card, or the chat is soft-locked. |
 | `transcripts_off` | `set_transcript` named a voice note in a chat whose voice notes are not transcribed: you switched that off on its contact card, or the chat is soft-locked. |
 | `not_found` | No visible chat or message matches. Locked and hidden chats are reported as not found. |
 | `ambiguous` | A chat name matches more than one chat. `error.candidates` lists them as `{"jid","name"}`. |
@@ -134,15 +134,15 @@ Result:
 ```json
 {
   "protocol": 1,
-  "tawk": "0.20.1",
+  "tawk": "0.21.0",
   "access": "read",
   "account": {"jid": "27830000000@s.whatsapp.net", "name": "Logan"},
   "connected": true,
-  "features": ["transcripts", "summaries", "owner_chat", "labels", "reminders", "awaiting_replies"]
+  "features": ["transcripts", "summaries", "summary_decline", "owner_chat", "labels", "reminders", "awaiting_replies"]
 }
 ```
 
-`access` is `read`, `send`, `manage` or `admin`. `features` names what this tawk can do beyond the first shape of the protocol, so a client offers only what will work; a tawk from before 0.13.0 sends no such list. `transcripts` means `set_transcript` and `get_transcript` are there (0.13.0), and `summaries` means `set_summary`, `get_summary` and the `summary_wanted` event are (0.14.0).
+`access` is `read`, `send`, `manage` or `admin`. `features` names what this tawk can do beyond the first shape of the protocol, so a client offers only what will work; a tawk from before 0.13.0 sends no such list. `transcripts` means `set_transcript` and `get_transcript` are there (0.13.0), and `summaries` means `set_summary`, `get_summary` and the `summary_wanted` event are (0.14.0). `summary_decline` means `decline_summary` is there too (0.21.0).
 
 ### Reading
 
@@ -180,14 +180,15 @@ In a chat you put in TL;DR mode, tawk shows a long message as a short summary. t
 | Operation | Arguments | Result |
 | --- | --- | --- |
 | `set_summary` | `message_id` (required), `text` (required, at most 2000 bytes), `model` | `{}`. Replaces the summary the message already has |
+| `decline_summary` | `message_id` (required), `reason` (required: `too_short`, `nothing_to_say` or `other`) | `{}`. Says the message needs no summary; tawk remembers it and does not ask again |
 
-`set_summary` changes only this computer and sends nothing to WhatsApp, so it is not asked about, needs no more than `read`, and does not count against `writes_per_minute`; each one is written to the automation log. It is answered `bad_request` for anything that is not a text message, `not_found` for a message in a chat the client may not see, and `tldr_off` for a chat that is not in TL;DR mode. The text is made one plain paragraph, with control characters and line breaks replaced. A client cannot switch a chat's TL;DR mode: that is set on its contact card.
+`set_summary` and `decline_summary` change only this computer and send nothing to WhatsApp, so they are not asked about, need no more than `read`, and do not count against `writes_per_minute`; each one is written to the automation log. Both are answered `bad_request` for anything that is not a text message (and, for `decline_summary`, for a `reason` tawk does not know), `not_found` for a message in a chat the client may not see, and `tldr_off` for a chat that is not in TL;DR mode. The text is made one plain paragraph, with control characters and line breaks replaced. A declined message is kept apart from summaries: `get_summary` still finds none for it, and it is forgotten, so asked about afresh, when its text is edited, and gone with the message. A client cannot switch a chat's TL;DR mode: that is set on its contact card.
 
 tawk asks with an event, sent to one client only whether or not it subscribed:
 
-- `{"evt":"summary_wanted","chat":{"jid","name"},"message":message,"max_chars":400}` for a text message in the chat, yours or someone else's (every one while `tldr_from_chars` is 0, else those at least that many characters long), in a chat in TL;DR mode that the client may see. It is sent when the message arrives, for the chat's long messages of the last `tldr_back_days` days when its TL;DR is switched on or it is first shown, and for an older one when you look at it in tawk; once for each message while tawk runs, four at once and then one every second and a half.
+- `{"evt":"summary_wanted","chat":{"jid","name"},"message":message,"max_chars":400}` for a text message in the chat, yours or someone else's (those at least `tldr_from_chars` long and at least `tldr_floor_chars` long, 40 unless you changed it: below that no summary could be shorter than the message, so none is asked for; a message an agent declined with `decline_summary` is not asked for again), in a chat in TL;DR mode that the client may see. It is sent when the message arrives, for the chat's long messages of the last `tldr_back_days` days when its TL;DR is switched on or it is first shown, and for an older one when you look at it in tawk; once for each message while tawk runs, four at once and then one every second and a half.
 
-Which client that is: the one you made your default agent in the Agents list while it is connected; else the only client connected with origin `mcp` that named `summaries` and is not paused; else, with several such and none chosen, nobody until you choose. A client that did not name the feature is never asked and does not count. A `summary_wanted` that is not answered with `set_summary` within 90 seconds goes to be asked for again. A client that lets two in a row go unanswered is not asked for five minutes, in case it was only busy, and is then tried again; any answer clears that. tawk then asks you in the "message yourself" chat of the account the chat is in, and the number you answer with chooses. The choice is kept in `default_agent` under `[automation]`, as the client's `label` with any ", pid N" taken out, so a client that wants to be recognised again keeps its label the same.
+Which client that is: the one you made your default agent in the Agents list while it is connected; else the only client connected with origin `mcp` that named `summaries` and is not paused; else, with several such and none chosen, nobody until you choose. A client that did not name the feature is never asked and does not count. A `summary_wanted` that is not answered with `set_summary` or `decline_summary` within 90 seconds goes to be asked for again. A client that lets two in a row go unanswered is not asked for five minutes, in case it was only busy, and is then tried again; any answer clears that. tawk then asks you in the "message yourself" chat of the account the chat is in, and the number you answer with chooses. The choice is kept in `default_agent` under `[automation]`, as the client's `label` with any ", pid N" taken out, so a client that wants to be recognised again keeps its label the same.
 
 ### Rules for one chat, and hidden text
 
@@ -366,8 +367,8 @@ Chats that are locked, hidden or outside `chats` never produce notifications.
 ## Example
 
 ```text
-→ {"id":"1","op":"hello","args":{"client":"tawk","version":"0.20.1","protocol":1,"origin":"cli"}}
-← {"id":"1","ok":true,"result":{"protocol":1,"tawk":"0.20.1","access":"send","account":{"jid":"27830000000@s.whatsapp.net","name":"Logan"},"connected":true}}
+→ {"id":"1","op":"hello","args":{"client":"tawk","version":"0.21.0","protocol":1,"origin":"cli"}}
+← {"id":"1","ok":true,"result":{"protocol":1,"tawk":"0.21.0","access":"send","account":{"jid":"27830000000@s.whatsapp.net","name":"Logan"},"connected":true}}
 → {"id":"2","op":"unread_summary"}
 ← {"id":"2","ok":true,"result":{"total":2,"mentions":0,"chats":[{"jid":"27820000000@s.whatsapp.net","name":"Mom","is_group":false,"unread":2,"unread_mention":false,"muted":false,"pinned":true,"archived":false,"last_ts":1790000000,"preview":"See you at 6"}]}}
 → {"id":"3","op":"send_message","args":{"chat":"Mom","text":"On my way"}}

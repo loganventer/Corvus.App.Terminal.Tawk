@@ -14,6 +14,12 @@ int summary_policy_allows(const Chat *chat, const ChatPrefs *prefs) {
     return prefs && prefs->tldr;
 }
 
+int summary_policy_min_chars(int from_chars, int floor_chars) {
+    if (from_chars < 0) from_chars = 0;
+    if (floor_chars < 0) floor_chars = 0;
+    return from_chars > floor_chars ? from_chars : floor_chars;
+}
+
 int summary_policy_wants(const Chat *chat, const ChatPrefs *prefs, const Message *message, int min_chars) {
     if (!summary_policy_allows(chat, prefs)) return 0;
     if (!message || message->type != MESSAGE_TYPE_TEXT || message->deleted || !message->text) return 0;

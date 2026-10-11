@@ -49,6 +49,36 @@ void control_op_set_summary(ControlServer *s, ControlSession *session, const Con
     }
 }
 
+/* An agent saying a message needs no summary (too short, nothing to say) is answered like a summary:
+ * it changes only this computer, sends nothing and is not asked about. tawk remembers it, so the message
+ * is not asked for again, and the agent is no longer counted as one that let a request go. */
+void control_op_decline_summary(ControlServer *s, ControlSession *session, const ControlRequest *req) {
+    if (!available(s, session, req)) return;
+    const char *reason = control_required(s, session, req, "reason");
+    if (!reason) return;
+    Message msg;
+    if (control_load_message(s, session, req, "message_id", &msg) != 0) return;
+    const Chat *chat = control_visible_chat(s, msg.chat_jid);
+    SummaryDeclineResult result = summary_manager_decline(s->deps.summaries, &msg, chat, reason, session->client);
+    char chat_jid[128];
+    str_copy(chat_jid, sizeof(chat_jid), msg.chat_jid);
+    message_dispose(&msg);
+    const char *why = summary_manager_error(s->deps.summaries);
+    AutomationOutcome outcome = result == SUMMARY_DECLINED ? AUTOMATION_OUTCOME_DONE
+                              : result == SUMMARY_DECLINE_FAILED ? AUTOMATION_OUTCOME_FAILED : AUTOMATION_OUTCOME_REFUSED;
+    automation_manager_record(s->deps.automation, session->origin, session->client, req->op, chat_jid,
+                              result == SUMMARY_DECLINED ? "a message needs no TL;DR" : why, outcome);
+    switch (result) {
+        case SUMMARY_DECLINED:
+            control_summary_answered(session, control_codec_string(req->args, "message_id"));
+            control_reply(s, session->conn, control_codec_ok(req->id, NULL));
+            break;
+        case SUMMARY_DECLINE_OFF:     control_fail(s, session->conn, req->id, "tldr_off", why); break;
+        case SUMMARY_DECLINE_REFUSED: control_fail(s, session->conn, req->id, "bad_request", why); break;
+        default:                      control_fail(s, session->conn, req->id, "failed", why); break;
+    }
+}
+
 /* What is kept for a message: {"summary":{"text","model","at"}}, or {} when it has none. */
 void control_op_get_summary(ControlServer *s, ControlSession *session, const ControlRequest *req) {
     if (!available(s, session, req)) return;
