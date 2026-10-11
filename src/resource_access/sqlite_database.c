@@ -346,9 +346,13 @@ static const Migration MIGRATIONS[] = {
       "  WHEN new.deleted <> 0 OR coalesce(new.text, '') <> coalesce(old.text, '') BEGIN"
       "  DELETE FROM summary_declines WHERE account_id = new.account_id AND message_id = new.id;"
       "END;" },
+    { 27,
+      /* An account moved here from another computer waits for the number it came from: whoever links
+       * to it later must be that number, or its chats would end up on another person's WhatsApp. */
+      "ALTER TABLE accounts ADD COLUMN expected_jid TEXT NOT NULL DEFAULT '';" },
 };
 
-#define LATEST_VERSION 26
+#define LATEST_VERSION 27
 
 static int user_version(sqlite3 *db) {
     sqlite3_stmt *st = NULL;

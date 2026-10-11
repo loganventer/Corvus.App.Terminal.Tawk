@@ -3,7 +3,7 @@
 # Run `make help` for every target and option.
 
 APP        ?= tawk
-VERSION    ?= 0.22.0
+VERSION    ?= 0.23.0
 # The commit this build comes from, so `tawk --update` can tell whether it is current.
 COMMIT     ?= $(shell git rev-parse HEAD 2>/dev/null)
 
@@ -269,7 +269,8 @@ TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_
          $(BUILD)/tests/whatsmeow_sessions_test $(BUILD)/tests/unified_chat_list_test \
          $(BUILD)/tests/accounts_dialog_test $(BUILD)/tests/merged_message_window_test \
          $(BUILD)/tests/control_accounts_test $(BUILD)/tests/two_accounts_test \
-         $(BUILD)/tests/tab_title_test $(BUILD)/tests/attachment_policy_test
+         $(BUILD)/tests/tab_title_test $(BUILD)/tests/attachment_policy_test \
+         $(BUILD)/tests/account_migration_rules_test $(BUILD)/tests/account_migration_test
 
 test: $(TESTS)
 	$(call say,Running tests)
@@ -285,6 +286,14 @@ $(BUILD)/tests/ncurses_mouse_queue_test: $(BUILD)/tests/ncurses_mouse_queue_test
 
 # Links everything but main, so it can test any part of the TUI.
 $(BUILD)/tests/chat_list_drag_test: $(BUILD)/tests/chat_list_drag_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
+	$(call step,LD,$@)
+	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
+
+$(BUILD)/tests/account_migration_rules_test: $(BUILD)/tests/account_migration_rules_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
+	$(call step,LD,$@)
+	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
+
+$(BUILD)/tests/account_migration_test: $(BUILD)/tests/account_migration_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
 	$(call step,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 

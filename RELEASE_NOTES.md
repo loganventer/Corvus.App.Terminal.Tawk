@@ -4,6 +4,17 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.23.0 (2026-10-11)
+
+One account can move to another computer.
+
+- **`tawk --migrate-out ACCOUNT FILE [--with-media]`** packs one account (by its label) into a passphrase-encrypted, tamper-checked file: its chats, messages, contacts, statuses, receipts, transcripts and summaries, and the labels, reminders and per-chat choices of its chats. Media is left out unless you ask for it. Nothing on this computer changes.
+- **`tawk --migrate-in FILE [--label NAME] [--yes]`** adds it to another tawk as a new account, beside the ones that tawk already has, in one transaction: if anything fails nothing was changed. A copy of the database as it was is kept beside it first. Messages stay searchable, a chat that sent through the account keeps doing so, and downloaded files are put under the new media folder.
+- **The WhatsApp login is never carried.** The new computer shows a QR code, and you link it with your phone. Agents get no access to the moved account until you give it. Messages waiting for a time stay where they were, so they are not sent twice, and the package says how many.
+- **The number is checked.** A moved account waits for the number it came from. Linking another number unlinks it again at once and tells you, so the moved chats are never attached to someone else's WhatsApp.
+- No control operation and no tawk-mcp tool: it is a command for you, and it refuses to run beside a running tawk, like `--backup`.
+- The database is now version 27 (`accounts.expected_jid`).
+
 ## 0.22.0 (2026-10-11)
 
 Agents can send a file, and you decide every one.

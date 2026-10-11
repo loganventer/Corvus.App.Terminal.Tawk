@@ -3,6 +3,7 @@
  * reverse order. No other file knows which implementations are in use. */
 
 #include "clients/cli/backup_command.h"
+#include "clients/cli/migrate_command.h"
 #include "clients/cli/control_command.h"
 #include "clients/control/control_server.h"
 #include "clients/cli/database_crypt_command.h"
@@ -51,7 +52,13 @@
 #include "managers/automation_manager.h"
 #include "managers/media_manager.h"
 #include "managers/messaging_manager.h"
+#include "managers/account_export_manager.h"
+#include "managers/account_import_manager.h"
 #include "managers/backup_manager.h"
+#include "resource_access/sqlite_account_extractor.h"
+#include "resource_access/sqlite_account_link_expectation.h"
+#include "resource_access/sqlite_account_merger.h"
+#include "resource_access/sqlite_schema_inspector.h"
 #include "managers/call_manager.h"
 #include "managers/database_crypt_manager.h"
 #include "managers/composite_event_observer.h"
@@ -131,6 +138,10 @@ typedef struct Options {
     const char *restore_path;       /* --restore FILE */
     int         with_media;
     int         with_login;
+    const char *migrate_account;    /* --migrate-out ACCOUNT FILE */
+    const char *migrate_output;
+    const char *migrate_in_path;    /* --migrate-in FILE */
+    const char *migrate_label;      /* --label NAME */
 } Options;
 
 static void usage(void) {
@@ -154,6 +165,10 @@ static void usage(void) {
            "  --backup FILE [--with-media] [--with-login]\n"
            "                    write an encrypted backup of your chats, settings and themes\n"
            "  --restore FILE [--yes]  restore a backup (what it replaces is kept aside)\n"
+           "  --migrate-out ACCOUNT FILE [--with-media]\n"
+           "                    pack one account's chats for another computer (never its login)\n"
+           "  --migrate-in FILE [--label NAME] [--yes]\n"
+           "                    bring an account packed on another computer in as a new account\n"
            "  --version         print the version\n"
            "  --help            show this help\n"
            "Each option may be written with two dashes, one or none: --update, -update, update\n\n"
@@ -187,6 +202,9 @@ static int parse_args(int argc, char **argv, Options *o) {
         if (is_option(argv[i], "change-passphrase")) { o->crypt = DATABASE_CRYPT_CHANGE; continue; }
         if (is_option(argv[i], "backup") && i + 1 < argc) { o->backup_path = argv[++i]; continue; }
         if (is_option(argv[i], "restore") && i + 1 < argc) { o->restore_path = argv[++i]; continue; }
+        if (is_option(argv[i], "migrate-out") && i + 2 < argc) { o->migrate_account = argv[i + 1]; o->migrate_output = argv[i + 2]; i += 2; continue; }
+        if (is_option(argv[i], "migrate-in") && i + 1 < argc) { o->migrate_in_path = argv[++i]; continue; }
+        if (is_option(argv[i], "label") && i + 1 < argc) { o->migrate_label = argv[++i]; continue; }
         if (is_option(argv[i], "with-media")) { o->with_media = 1; continue; }
         if (is_option(argv[i], "with-login")) { o->with_login = 1; continue; }
         if (is_option(argv[i], "config") && i + 1 < argc) { o->config_path = argv[++i]; continue; }
@@ -317,6 +335,41 @@ static int run_backup_or_restore(const Options *opt, const Settings *s, const ch
     return rc;
 }
 
+/* `tawk --migrate-out` and `tawk --migrate-in`, with the database open and the instance lock held. */
+static int run_migrate(const Options *opt, const Settings *s, sqlite3 *db, IAccountStore *accounts, const char *config_path,
+                       const char *themes_dir, const char *db_path, const char *auth_dir, IPassphrasePrompt *prompt) {
+    ISchemaInspector *schema = sqlite_schema_inspector_create(db);
+    IArchive *archive = tar_archive_create();
+    IFileCipher *file_cipher = authenticated_file_cipher_create(openssl_file_cipher_create());
+    IAccountExtractor *extractor = sqlite_account_extractor_create(db);
+    char accounts_dir[600];
+    path_join(accounts_dir, sizeof(accounts_dir), s->data_dir, "accounts");
+    BackupPaths paths = { s->data_dir, db_path, config_path, themes_dir, s->media_dir, auth_dir, accounts_dir };
+    int rc = 1;
+    if (opt->migrate_account) {
+        AccountExportManagerDeps deps = { accounts, extractor, schema, archive, file_cipher };
+        AccountExportManager *mgr = account_export_manager_create(&deps);
+        AccountExportRequest request = { paths, opt->migrate_account, opt->migrate_output, opt->with_media };
+        if (mgr) rc = migrate_out_command_run(mgr, prompt, &request);
+        account_export_manager_destroy(mgr);
+    } else {
+        IAccountMerger *merger = sqlite_account_merger_create(db);
+        IAccountLinkExpectation *expectation = sqlite_account_link_expectation_create(db);
+        AccountImportManagerDeps deps = { accounts, merger, extractor, expectation, schema, archive, file_cipher };
+        AccountImportManager *mgr = merger && expectation ? account_import_manager_create(&deps) : NULL;
+        AccountImportRequest request = { paths, opt->migrate_in_path, opt->migrate_label };
+        if (mgr) rc = migrate_in_command_run(mgr, prompt, &request, opt->yes);
+        account_import_manager_destroy(mgr);
+        if (merger) merger->destroy(merger);
+        if (expectation) expectation->destroy(expectation);
+    }
+    extractor->destroy(extractor);
+    file_cipher->destroy(file_cipher);
+    archive->destroy(archive);
+    schema->destroy(schema);
+    return rc;
+}
+
 /* tawk send, tail, unread and status-line talk to the tawk already
  * running, so they need no terminal, lock or database of their own. */
 static int run_control_command(ControlCommandKind kind, int argc, char **argv) {
@@ -419,6 +472,19 @@ int main(int argc, char **argv) {
     int unlocked = database_unlock(crypt, prompt, &key);
     if (unlocked < 0) return 1;
 
+    /* Bringing an account in changes the database: keep it as it is first, before it is opened and upgraded. */
+    char kept_copy[1300] = "";
+    if (opt.migrate_in_path) {
+        IDatabaseSnapshot *snapshot = sqlite_file_snapshot_create();
+        int kept_rc = snapshot ? migrate_keep_database_copy(snapshot, s->data_dir, db_path, kept_copy, sizeof(kept_copy)) : -1;
+        if (snapshot) snapshot->destroy(snapshot);
+        if (kept_rc != 0) {
+            fprintf(stderr, "%s: could not keep a copy of the database first; nothing was changed\n", APP_NAME);
+            passphrase_wipe(&key);
+            return 1;
+        }
+    }
+
     /* Storage: SQLite behind caching decorators */
     sqlite3 *db = sqlite_database_open(db_path, unlocked ? &key : NULL);
     passphrase_wipe(&key);
@@ -427,6 +493,18 @@ int main(int argc, char **argv) {
         return 1;
     }
     IAccountStore *account_store = sqlite_account_store_create(db);
+    if (opt.migrate_account || opt.migrate_in_path) {
+        int migrate_rc = run_migrate(&opt, s, db, account_store, config_path, user_themes, db_path, auth_dir, prompt);
+        if (migrate_rc != 0 && kept_copy[0]) unlink(kept_copy);            /* nothing changed, so nothing to keep */
+        else if (kept_copy[0]) printf("A copy of your database as it was is kept in %s\n", kept_copy);
+        account_store->destroy(account_store);
+        sqlite3_close(db);
+        instance_lock_release(&lock);
+        prompt->destroy(prompt);
+        database_crypt_manager_destroy(crypt);
+        cipher->destroy(cipher);
+        return migrate_rc;
+    }
     IChatPrefsStore *chat_prefs = sqlite_chat_prefs_store_create(db);
     AccountRosterManagerDeps roster_deps = { account_store, chat_prefs };
     AccountRosterManager *roster = account_roster_manager_create(&roster_deps);

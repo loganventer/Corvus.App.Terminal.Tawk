@@ -1,5 +1,6 @@
 #include "composition/account_runtime.h"
 #include "infrastructure/ifaddrs_network_monitor.h"
+#include "managers/account_link_guard.h"
 #include "managers/composite_event_observer.h"
 #include "resource_access/caching_contact_store.h"
 #include "resource_access/caching_message_store.h"
@@ -12,6 +13,7 @@
 #include "resource_access/sqlite_receipt_store.h"
 #include "resource_access/sqlite_scheduled_message_store.h"
 #include "resource_access/sqlite_status_store.h"
+#include "resource_access/sqlite_account_link_expectation.h"
 #include "resource_access/sqlite_chat_prefs_store.h"
 #include "resource_access/sqlite_awaiting_replies.h"
 #include "resource_access/sqlite_summary_store.h"
@@ -52,6 +54,10 @@ struct AccountRuntime {
     IMessageGateway *gateway;
     INetworkMonitor *network;
     IEventObserver  *observers;
+
+    /* A moved account waits for the number it came from */
+    IAccountLinkExpectation *expectation;
+    AccountLinkGuard        *link_guard;
 };
 
 void account_runtime_auth_dir(const Settings *settings, AccountId id, char *out, size_t size) {
@@ -127,6 +133,12 @@ AccountRuntime *account_runtime_create(const AccountRuntimeParams *p, const Acco
     composite_event_observer_add(rt->observers, status_manager_observer(rt->services.statuses));
     composite_event_observer_add(rt->observers, status_feed_manager_observer(rt->services.feed));
     composite_event_observer_add(rt->observers, scheduling_manager_observer(rt->services.scheduling));
+    rt->expectation = sqlite_account_link_expectation_create(p->db);
+    if (rt->expectation) {
+        AccountLinkGuardDeps guard_deps = { rt->expectation, rt->gateway, p->notifier, id, rt->label };
+        rt->link_guard = account_link_guard_create(&guard_deps);
+        if (rt->link_guard) composite_event_observer_add(rt->observers, account_link_guard_observer(rt->link_guard));
+    }
 
     /* Each account watches the network for itself: noticing a change uses it up. */
     rt->network = ifaddrs_network_monitor_create();
@@ -148,6 +160,8 @@ void account_runtime_destroy(AccountRuntime *rt) {
     if (rt->services.profiles) profile_manager_destroy(rt->services.profiles);
     if (rt->services.calls) call_manager_destroy(rt->services.calls);
     if (rt->observers) rt->observers->destroy(rt->observers);
+    if (rt->link_guard) account_link_guard_destroy(rt->link_guard);
+    if (rt->expectation) rt->expectation->destroy(rt->expectation);
     if (rt->services.feed) status_feed_manager_destroy(rt->services.feed);
     if (rt->services.scheduling) scheduling_manager_destroy(rt->services.scheduling);
     if (rt->services.transcripts) transcript_manager_destroy(rt->services.transcripts);
