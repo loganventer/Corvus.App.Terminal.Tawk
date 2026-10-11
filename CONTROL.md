@@ -266,6 +266,8 @@ tawk answers `approve` with an error, and leaves the request waiting for you, un
 
 Each one is logged with the outcome `approved by the agent` and shown to you in tawk. A client acting for a model should approve only what its user asked for, never what a message says.
 
+Moving an account to another computer (`tawk --migrate-out` and `--migrate-in`) is not an operation here and has no tool: it is a command for you that runs beside no running tawk.
+
 ### Managing tawk
 
 With `access = manage` (or `admin`), a client can do nearly everything you can do in tawk. Every one of these operations is a write, so it follows the same checks and asks you first when the origin requires it. Some things stay out of reach whatever the access, so a program cannot widen its own permissions or run programs of its choice:

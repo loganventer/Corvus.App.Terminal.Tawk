@@ -822,6 +822,47 @@ flowchart TD
 
 The media and login folders are copied into the working folder with hard links where the filesystem allows, so a large media folder costs no extra space while it is packed.
 
+## Moving an account
+
+`--migrate-out` and `--migrate-in` also run under the instance lock, but with the database open, because the rows are read and written through it. Export attaches a new plain file beside the database and copies only the account's rows into it (`table_catalog` says which tables, and by which column); import attaches the package and inserts its rows into the live tables in one transaction, translating the account id, a chat's sending account and the media paths on the way.
+
+```mermaid
+flowchart TD
+    subgraph Pack["--migrate-out ACCOUNT FILE"]
+        P1["claim FILE (O_EXCL, 0600)"] --> P2["data/.migrate-XXXXXX: ATTACH package.db,<br/>CREATE TABLE AS SELECT per catalog rule"]
+        P2 --> P3["media files the rows name (--with-media),<br/>account-manifest.txt"] --> P4["tar -czf, openssl enc into FILE"]
+    end
+    subgraph Bring["--migrate-in FILE"]
+        I0["keep tawk.db.before-migrate-DATE"] --> I1["openssl enc -d: whole file checked first"]
+        I1 --> I2["members allowed? manifest known?<br/>schema not newer? room for one more?"]
+        I2 -->|no| I3["refuse; nothing changed"]
+        I2 -->|yes| I4["add the account (label, colour, access off)"] --> I5["BEGIN; INSERT OR IGNORE per table with<br/>account_id, media path and send account translated; COMMIT"]
+        I5 -->|fails| I6["remove the account; nothing changed"]
+        I5 -->|ok| I7["place media; expect the number it came from"]
+    end
+```
+
+The moved account then starts like a new one and shows its QR code. `AccountLinkGuard` watches its link event:
+
+```mermaid
+sequenceDiagram
+    participant P as Your phone
+    participant G as Gateway
+    participant O as AccountLinkGuard
+    participant E as IAccountLinkExpectation
+    P->>G: scans the QR code
+    G-->>O: auth connected (jid)
+    O->>E: expected(account)
+    alt nothing expected
+        O-->>G: nothing to do
+    else same person (device part ignored)
+        O->>E: clear
+    else a different number
+        O->>G: logout
+        O-->>P: notice: wrong number, unlinked again
+    end
+```
+
 ## Several accounts
 
 **Start-up.** `main.c` opens the database, reads the roster of accounts and asks the `AccountHost` to start each one. Starting an account creates its gateway, its event queue, its stores bound to its id, and its managers. The first account logs in from `auth/`, every other from `accounts/<id>/auth/`. All of them connect at once.

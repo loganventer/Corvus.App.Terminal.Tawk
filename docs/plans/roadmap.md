@@ -30,7 +30,7 @@ Status: section 1 (transcripts in the conversation) and TL;DR mode are built and
 
 ## Where it stands
 
-As of 2026-10-11, with tawk 0.22.0 and tawk-mcp 0.15.0. Work stopped here for the week with the two programs in step: every tawk feature below that an agent should reach has its control operation and its tool.
+As of 2026-10-11, with tawk 0.23.0 and tawk-mcp 0.15.0. Work stopped here for the week with the two programs in step: every tawk feature below that an agent should reach has its control operation and its tool.
 
 | Built | In |
 |---|---|
@@ -42,6 +42,7 @@ As of 2026-10-11, with tawk 0.22.0 and tawk-mcp 0.15.0. Work stopped here for th
 | Backups that detect tampering, and the passphrase lock | tawk 0.18.0 |
 | Labels, reminders, narrowing the chat list, awaiting a reply | tawk 0.19.0 and 0.20.0, tawk-mcp 0.12.0 |
 | An agent sends a file: control operation `send_file` and the tool of the same name, with a policy for what may never be sent and no self-approval | tawk 0.22.0, tawk-mcp 0.15.0 |
+| Moving one account to another computer: `--migrate-out` and `--migrate-in`, login never carried, the number checked when it links | tawk 0.23.0 |
 
 Not built, in the order they would be taken:
 

@@ -49,6 +49,7 @@ The screenshots in this manual were taken from tawk running on a demo account wi
 - [Locking tawk](#locking-tawk)
 - [Encrypting your chats](#encrypting-your-chats)
 - [Backups](#backups)
+- [Moving an account to another computer](#moving-an-account-to-another-computer)
 - [Automation and MCP](#automation-and-mcp)
   - [Turning it on](#turning-it-on)
   - [Agent events](#agent-events)
@@ -1194,6 +1195,32 @@ A backup made by tawk 0.18.0 or later also carries a check over every byte. If t
 
 Backups need `openssl` and `tar`, which `tawk --doctor` checks. Like the encryption commands, they refuse to run while tawk is running. There is no way to open a backup without its passphrase.
 
+## Moving an account to another computer
+
+A backup moves the whole installation and replaces what is on the other computer. To move **one** account, and keep what the other computer already has, pack it and bring it in there. tawk 0.23.0 or later, on both computers.
+
+```
+tawk --migrate-out Personal ~/personal.tawk
+tawk --migrate-out Personal ~/personal.tawk --with-media
+tawk --migrate-in ~/personal.tawk
+tawk --migrate-in ~/personal.tawk --label "Phone 2"
+```
+
+**Packing** (`--migrate-out ACCOUNT FILE`). `ACCOUNT` is the label the accounts dialog shows (or its number). tawk asks for a passphrase twice and writes one encrypted, tamper-checked file that never replaces an existing one. It holds that account's chats, messages, contacts, statuses, receipts, transcripts and summaries, and the labels, reminders and choices you made for its chats. It does **not** hold the WhatsApp login. Media is left out unless you add `--with-media`; without it a file is fetched again from WhatsApp when you open its message. Nothing on this computer changes, and it can be run again.
+
+**Bringing it in** (`--migrate-in FILE`). tawk asks before it adds anything (`--yes` skips the question), keeps a copy of your database as `tawk.db.before-migrate-DATE` beside it, asks for the package's passphrase and checks the whole file before anything is unpacked. The account then arrives as a new one next to yours, in one step: if anything fails, nothing was changed. It gets a label of its own (the one it had, or `--label`, with a number added when yours is taken), no access for agents until you give it in the accounts dialog, and it is never the primary account.
+
+**Then start tawk.** The moved account has no login, so tawk shows its QR code: scan it with the phone that has that WhatsApp number. Until you do, it waits for **that number** and no other: if a different number links, tawk unlinks it again and tells you, so the moved chats are never attached to someone else's WhatsApp. WhatsApp's own history sync that follows adds no duplicates. The computer you packed it on stays linked as a device of its own; remove the account there when you no longer want it, and unlink the old device on your phone.
+
+| Left behind on purpose | Why |
+|---|---|
+| The WhatsApp login | Nothing that can act as you is in the file, so a lost package is only your chats, and the passphrase still guards them |
+| Messages waiting for a time | They would be sent twice while both computers run; the package says how many there were |
+| Settings, themes and the Automation settings | They belong to the computer; use `--backup` to move those. What you chose per chat (labels, reminders, the rule for agents in that chat) does come |
+| The log of what agents did | It is the history of that computer |
+
+Packing and bringing in refuse to run while tawk is running, like backups, and they need `openssl` and `tar`. They are commands for you: there is no way for an agent to start, see or influence one. tawk-mcp keeps its own memory (voices, contact profiles, templates) per computer; see its manual for moving that.
+
 ## Automation and MCP
 
 Other programs on your computer can reach a running tawk: [tawk-mcp](https://github.com/loganventer/tawk-mcp), which lets an AI assistant such as Claude Code read your chats and, when you allow it, act for you, and tawk's own shell commands for scripts and status bars. They talk to tawk over a private socket described in [CONTROL.md](CONTROL.md). Nothing can connect until you turn it on.
@@ -1380,6 +1407,8 @@ tawk --decrypt
 tawk --change-passphrase
 tawk --backup FILE [--with-media] [--with-login]
 tawk --restore FILE [--yes]
+tawk --migrate-out ACCOUNT FILE [--with-media]
+tawk --migrate-in FILE [--label NAME] [--yes]
 tawk --version
 tawk --help
 tawk send CHAT TEXT... | tawk tail [CHAT...] | tawk unread | tawk status-line
