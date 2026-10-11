@@ -56,6 +56,7 @@ The screenshots in this manual were taken from tawk running on a demo account wi
   - [Letting an agent answer for itself](#letting-an-agent-answer-for-itself)
   - [Destructive requests](#destructive-requests)
   - [Drafts from agents](#drafts-from-agents)
+  - [Files from agents](#files-from-agents)
   - [Writing to someone new](#writing-to-someone-new)
   - [Shell commands](#shell-commands)
   - [tawk-mcp](#tawk-mcp)
@@ -1333,6 +1334,12 @@ Deleting a message or a chat, clearing a chat, blocking someone, removing your p
 ### Drafts from agents
 
 The safest way for an agent to help you write is a draft: it puts the text in that chat's input box and sends nothing. When the chat is open the draft appears in the input (below anything you had typed); otherwise it waits with the chat and a line says so. Edit it and send it as usual. A draft already waiting is never overwritten.
+
+### Files from agents
+
+An agent can send a photo, video, audio file or document from this computer, with a caption (tawk 0.22.0 or later, with tawk-mcp 0.15.0 or later). You are asked about every one, and no agent can answer for you: the question is HIGH risk, it shows the file's name, what kind of file it is and how big, and you may edit the caption before you allow it. The file is copied into tawk's media folder and goes out as any file you send.
+
+Some files are refused before you are asked, because they are tawk's own or hold secrets: tawk's login, accounts, database and settings file; anything inside `.ssh`, `.gnupg`, `.aws`, `.azure`, `.kube`, `.docker`, `.config/gcloud`, `.config/gh` or `.password-store` in your home folder; and files named `.env`, `.netrc`, `.npmrc`, `.pgpass`, `id_rsa`, `id_dsa`, `id_ecdsa` or `id_ed25519`. Folders, empty files and files over 100 MB are refused as well. tawk looks at the file again after your answer, in case it changed while you decided. If you have the AI disclaimer on, it is added as the caption of a file that has none.
 
 ### Writing to someone new
 

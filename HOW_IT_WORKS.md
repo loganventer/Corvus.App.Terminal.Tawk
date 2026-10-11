@@ -924,6 +924,32 @@ sequenceDiagram
     end
 ```
 
+Sending a file takes the same road with one more step either side of your answer. The file is looked at when the request arrives, so a key or a folder is refused before you are asked, and again just before it is sent, in case it changed while you decided:
+
+```mermaid
+sequenceDiagram
+    participant A as tawk-mcp
+    participant C as Control client
+    participant I as attachment_inspection
+    participant Q as ApprovalQueue
+    participant M as MessagingManager
+    A->>C: send_file {chat, file, caption}
+    C->>I: run(file)
+    alt refused (missing, folder, empty, too big, secret)
+        I-->>C: verdict
+        C-->>A: error not_found or bad_request, nobody asked
+    else allowed
+        I-->>C: name, kind, size
+        C->>Q: ask(request, risk HIGH, name kind size, caption)
+        C-->>A: evt approval waiting
+        Note over Q: no admin token answers this one
+        Q-->>C: allowed, declined or expired
+        C->>I: run(file) again
+        C->>M: send_file_to(chat, file, caption)
+        C-->>A: ok {id, file, type, bytes}
+    end
+```
+
 A destructive request (deleting, clearing, blocking, removing your photo, cancelling a message for later) first answers `needs_confirmation` with a token and does nothing. tawk-mcp keeps the token from the model and asks you in your MCP client; only then does it send `confirm`, which puts the request in the queue as HIGH, where Shift+A and Y allow it. Allowances "for this session" are kept per connection and never cover destructive requests.
 
 New messages reach subscribers through a ring of the last 256 messages the messaging manager saw arrive or sent (`live_message_ring`); each frame the control client sends those after the last one it passed on to every client following that chat, and every half second it compares the unread counts it last told each client. Messages in locked or hidden chats are never passed on.

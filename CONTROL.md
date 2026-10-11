@@ -142,7 +142,7 @@ Result:
 }
 ```
 
-`access` is `read`, `send`, `manage` or `admin`. `features` names what this tawk can do beyond the first shape of the protocol, so a client offers only what will work; a tawk from before 0.13.0 sends no such list. `transcripts` means `set_transcript` and `get_transcript` are there (0.13.0), and `summaries` means `set_summary`, `get_summary` and the `summary_wanted` event are (0.14.0). `summary_decline` means `decline_summary` is there too (0.21.0).
+`access` is `read`, `send`, `manage` or `admin`. `features` names what this tawk can do beyond the first shape of the protocol, so a client offers only what will work; a tawk from before 0.13.0 sends no such list. `transcripts` means `set_transcript` and `get_transcript` are there (0.13.0), and `summaries` means `set_summary`, `get_summary` and the `summary_wanted` event are (0.14.0). `summary_decline` means `decline_summary` is there too (0.21.0), and `send_file` means `send_file` is (0.22.0).
 
 ### Reading
 
@@ -230,6 +230,7 @@ Writes need `access = send` (or `manage` or `admin`) in `[automation]`. Each is 
 | Operation | Arguments | Result |
 | --- | --- | --- |
 | `send_message` | `chat` (required; a chat, or someone with no chat yet), `text` (required, up to 65536 bytes), `reply_to` (a message id in that chat) | `{"id":"3EB0…"}`, the new message's id; it is queued and goes out as any message you send |
+| `send_file` | `chat` (required; a chat, or someone with no chat yet), `file` (required; the absolute path of a file on this computer), `caption` (up to 1024 bytes) | `{"id":"3EB0…","file":"report.pdf","type":"document","bytes":1153434}`; the file is copied into tawk's media folder, queued and goes out as any file you send |
 | `react` | `message_id` (required), `emoji` (required; an empty string removes your reaction) | `{}` |
 | `schedule_message` | `chat` (required; a chat, or someone with no chat yet), `when` (as `/later` takes it: `18:00`, `+30m`, `tomorrow 9:00`, `fri 17:30`, optionally followed by an adjustment in seconds such as `+37s` or `-12s`, which never moves it into the past), `text` (required) | `{"id":"…","due_at":ts}` |
 | `mark_read` | `chat` (required) | `{}`; sends read receipts when `send_read_receipts` is on |
@@ -237,7 +238,13 @@ Writes need `access = send` (or `manage` or `admin`) in `[automation]`. Each is 
 
 When you edit the text in the approval dialog before allowing it, the result of `send_message` and `schedule_message` also carries `"edited":true` and `"text"` with what was actually sent.
 
-With `ai_disclaimer` on, tawk adds the line in `ai_disclaimer_text` under the text of `send_message`, `schedule_message` and `reply_status` from a client whose origin is `mcp`, after any edit of yours. The result then carries `"disclaimer":true` and `"text"` with what went out. A client should not add such a line itself.
+With `ai_disclaimer` on, tawk adds the line in `ai_disclaimer_text` under the text of `send_message`, `schedule_message`, `reply_status` and `send_file` (as its caption) from a client whose origin is `mcp`, after any edit of yours. The result then carries `"disclaimer":true` and `"text"` with what went out. A client should not add such a line itself.
+
+**Files.** `send_file` takes a photo, video, audio file or document from this computer, and its type is read from its extension (anything unknown is a document). It is checked twice, when it is asked for and again after your answer, because the file may have changed while you decided:
+
+- No such file is `not_found`. A folder, an empty file, a file over 100 MB, and a file that tawk or you keep secret are `bad_request`, and nobody is asked. What is never sent: tawk's own login, accounts, database and settings file; anything inside `.ssh`, `.gnupg`, `.aws`, `.azure`, `.kube`, `.docker`, `.config/gcloud`, `.config/gh` or `.password-store` under your home folder; and files named `.env`, `.netrc`, `.npmrc`, `.pgpass`, `id_rsa`, `id_dsa`, `id_ecdsa` or `id_ed25519`. Links are resolved first, so a link cannot point past these rules.
+- A file leaves this computer and cannot be taken back, so the question is always HIGH risk, and it names the file, its kind and its size. The caption is what you may edit. `send_file` is not among the operations a client may answer itself (see below), in any chat and whatever you trust it with.
+- The AI disclaimer, when set, is added as the caption of a file sent without one, and under a caption that is there, as for `send_message`.
 
 ### Answering your own request
 
@@ -252,7 +259,7 @@ tawk answers `approve` with an error, and leaves the request waiting for you, un
 - `access` is `admin`. Otherwise `not_allowed`.
 - `admin_token` is the token in `admin.token` beside the control socket (0600). tawk writes a new one each time it starts and each time access becomes admin, and removes it when access is anything else and when it quits. Otherwise `bad_token`.
 - The request was made on this connection. Another client's request is `not_found`.
-- The operation is one of `send_message`, `reply_status`, `forward_message`, `edit_message`, `retry_message`, `schedule_message`, `reschedule`, `send_scheduled_now`, `cancel_scheduled`, `react`, `mark_read` or `like_status`. Anything else is `not_allowed`. `cancel_scheduled` still needs its `confirm` first.
+- The operation is one of `send_message`, `reply_status`, `forward_message`, `edit_message`, `retry_message`, `schedule_message`, `reschedule`, `send_scheduled_now`, `cancel_scheduled`, `react`, `mark_read` or `like_status`. Anything else is `not_allowed`, `send_file` included: a file is always yours to answer. `cancel_scheduled` still needs its `confirm` first.
 - Its chat is one the client may use and is in `self_approval_chats` (or that setting holds `*`). An empty `self_approval_chats` allows none. Otherwise `not_allowed`.
 - Fewer than `self_approvals_per_hour` were answered this way in the last hour. Otherwise `rate_limited` with `retry_after`.
 - You have not paused the client.
