@@ -1099,8 +1099,8 @@ int messaging_manager_send_voice(MessagingManager *m, const char *path, int seco
     return rc;
 }
 
-int messaging_manager_send_file(MessagingManager *m, const char *path, const char *caption) {
-    if (!m->open_jid[0] || !path_is_regular_file(path)) return -1;
+int messaging_manager_send_file_to(MessagingManager *m, const char *jid, const char *path, const char *caption) {
+    if (!jid || !jid[0] || !path_is_regular_file(path)) return -1;
     Message msg;
     message_init(&msg);
     msg.type = media_type_detect(path);
@@ -1119,7 +1119,7 @@ int messaging_manager_send_file(MessagingManager *m, const char *path, const cha
 
     char id[64];
     str_copy(id, sizeof(id), msg.id);
-    int rc = queue_outgoing(m, &msg, m->open_jid);
+    int rc = queue_outgoing(m, &msg, jid);
     str_copy(msg.id, sizeof(msg.id), id);
     OutgoingMedia media = { file, message_type_name(msg.type), media_type_mime(path), name, caption, 0, 0 };
     if (rc == 0 && m->deps.gateway->send_media(m->deps.gateway, msg.chat_jid, &media, msg.id) != 0) {
@@ -1127,6 +1127,10 @@ int messaging_manager_send_file(MessagingManager *m, const char *path, const cha
     }
     message_dispose(&msg);
     return rc;
+}
+
+int messaging_manager_send_file(MessagingManager *m, const char *path, const char *caption) {
+    return messaging_manager_send_file_to(m, m->open_jid, path, caption);
 }
 
 /* One copy of a photo, video, audio file or document to `jid`, marked as

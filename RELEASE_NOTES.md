@@ -4,6 +4,16 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.22.0 (2026-10-11)
+
+Agents can send a file, and you decide every one.
+
+- **A new control operation, `send_file`** (advertised as `send_file` in `hello`): a photo, video, audio file or document from this computer to a chat, with an optional caption of up to 1024 bytes. A client with origin `mcp` always asks you first. The question is HIGH risk and shows the file's name, kind and size, and the caption, which you may edit. With tawk-mcp 0.15.0 this is the tool `send_file`.
+- **No agent approves its own file.** `send_file` is not among the operations an admin client may answer itself, in any chat, however many chats you chose for self-approval.
+- **Some files are never sent by an agent**: tawk's own login, accounts and database, its settings file, anything inside `.ssh`, `.gnupg`, `.aws`, `.azure`, `.kube`, `.docker`, `.config/gcloud`, `.config/gh` or `.password-store` under your home folder, and files named `.env`, `.netrc`, `.npmrc`, `.pgpass`, `id_rsa`, `id_dsa`, `id_ecdsa` or `id_ed25519`. Links are followed first, so a link cannot point past a rule. Folders, empty files and files over 100 MB are refused as well. The file is looked at again after your answer, in case it changed while you decided.
+- **The AI disclaimer** you set for messages is also added to a file an agent sends, as its caption when there is none.
+- Inside tawk, `messaging_manager_send_file_to` sends a file into any chat; the file picker in the open chat uses it too, so nothing changes there.
+
 ## 0.21.0 (2026-10-11)
 
 TL;DR stops asking for what it cannot use.

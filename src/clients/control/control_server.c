@@ -26,6 +26,7 @@ static const ControlOpEntry OPS[] = {
     { "list_statuses",          control_op_list_statuses, 1 },
     { "list_scheduled",         control_op_list_scheduled, 1 },
     { "send_message",           control_op_send_message, 0 },
+    { "send_file",              control_op_send_file, 0 },
     { "react",                  control_op_react, 0 },
     { "schedule_message",       control_op_schedule_message, 0 },
     { "mark_read",              control_op_mark_read, 0 },
@@ -265,6 +266,7 @@ static void hello(ControlServer *s, ControlSession *session, const ControlReques
     if (s->deps.labels) cJSON_AddItemToArray(features, cJSON_CreateString("labels"));
     if (s->deps.reminders) cJSON_AddItemToArray(features, cJSON_CreateString("reminders"));
     cJSON_AddItemToArray(features, cJSON_CreateString("awaiting_replies"));
+    cJSON_AddItemToArray(features, cJSON_CreateString("send_file"));
     if (s->deps.directory && s->deps.roster) {              /* this tawk serves each request from the account it names */
         cJSON_AddBoolToObject(r, "multi_account", 1);
         cJSON_AddItemToObject(r, "accounts", control_accounts_json(s));

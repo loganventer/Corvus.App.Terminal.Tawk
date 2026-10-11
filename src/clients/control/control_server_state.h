@@ -145,6 +145,8 @@ void control_op_react(ControlServer *server, ControlSession *session, const Cont
 void control_op_schedule_message(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_mark_read(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_draft_message(ControlServer *server, ControlSession *session, const ControlRequest *req);
+/* control_ops_files.c */
+void control_op_send_file(ControlServer *server, ControlSession *session, const ControlRequest *req);
 /* control_ops_messages.c */
 void control_op_edit_message(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_delete_message(ControlServer *server, ControlSession *session, const ControlRequest *req);

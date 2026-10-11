@@ -112,6 +112,16 @@ static int gw_typing(IMessageGateway *self, const char *jid, const char *st) { (
 static int gw_presence(IMessageGateway *self, int on) { (void)self; (void)on; return 0; }
 static int gw_read(IMessageGateway *self, const ReadRequest *r) { (void)self; (void)r; return 0; }
 static void fake_notify(INotifier *self, const Notification *n) { (void)self; (void)n; }
+static int media_sent;
+static char last_media_name[256], last_media_kind[32], last_media_caption[1200];
+static int gw_media(IMessageGateway *self, const char *jid, const OutgoingMedia *m, const char *id) {
+    (void)self; (void)jid; (void)id;
+    media_sent++;
+    str_copy(last_media_name, sizeof(last_media_name), m->file_name ? m->file_name : "");
+    str_copy(last_media_kind, sizeof(last_media_kind), m->kind ? m->kind : "");
+    str_copy(last_media_caption, sizeof(last_media_caption), m->caption ? m->caption : "");
+    return 0;
+}
 
 /* ---- the admin token, kept in memory ------------------------------------------ */
 
@@ -485,6 +495,107 @@ static void set_automation(const char *access, const char *chat_list, int per_ho
     s.automation_rate = 60;
     settings_manager_apply(settings_mgr, &s);
     tick();
+}
+
+static void write_test_file(const char *path, const char *body) {
+    FILE *f = fopen(path, "wb");
+    if (f) { fputs(body, f); fclose(f); }
+}
+
+/* Files: what an agent may send, what you are told, and that it is always you who decides. */
+static void test_send_file(void) {
+    char dir[] = "/tmp/tawk-files-XXXXXX";
+    if (!mkdtemp(dir)) { CHECK(0, "a folder for the test files"); return; }
+    char report[600], key[600], empty[600], missing[600], line[1500];
+    snprintf(report, sizeof(report), "%s/report.pdf", dir);
+    snprintf(key, sizeof(key), "%s/id_rsa", dir);
+    snprintf(empty, sizeof(empty), "%s/empty.txt", dir);
+    snprintf(missing, sizeof(missing), "%s/nope.pdf", dir);
+    write_test_file(report, "%PDF-1.4 hello");
+    write_test_file(key, "secret");
+    write_test_file(empty, "");
+
+    int conn = open_client("mcp", "send");
+    int before = media_sent;
+    cJSON *r;
+
+    snprintf(line, sizeof(line), "{\"id\":\"f1\",\"op\":\"send_file\",\"args\":{\"chat\":\"Mom\",\"file\":\"%s\"}}", missing);
+    say(conn, line);
+    r = reply("f1");
+    CHECK(r && !strcmp(error_code(r), "not_found") && approval_queue_count(queue) == 0, "a file that is not there is not found, and nobody is asked");
+    cJSON_Delete(r);
+    snprintf(line, sizeof(line), "{\"id\":\"f2\",\"op\":\"send_file\",\"args\":{\"chat\":\"Mom\",\"file\":\"%s\"}}", dir);
+    say(conn, line);
+    r = reply("f2");
+    CHECK(r && !strcmp(error_code(r), "bad_request") && approval_queue_count(queue) == 0, "a folder is refused");
+    cJSON_Delete(r);
+    snprintf(line, sizeof(line), "{\"id\":\"f3\",\"op\":\"send_file\",\"args\":{\"chat\":\"Mom\",\"file\":\"%s\"}}", key);
+    say(conn, line);
+    r = reply("f3");
+    CHECK(r && !strcmp(error_code(r), "bad_request") && approval_queue_count(queue) == 0 && media_sent == before,
+          "a key is refused before anyone is asked");
+    cJSON_Delete(r);
+    snprintf(line, sizeof(line), "{\"id\":\"f4\",\"op\":\"send_file\",\"args\":{\"chat\":\"Mom\",\"file\":\"%s\"}}", empty);
+    say(conn, line);
+    r = reply("f4");
+    CHECK(r && !strcmp(error_code(r), "bad_request"), "an empty file is refused");
+    cJSON_Delete(r);
+
+    snprintf(line, sizeof(line),
+             "{\"id\":\"f5\",\"op\":\"send_file\",\"args\":{\"chat\":\"Mom\",\"file\":\"%s\",\"caption\":\"The report\"}}", report);
+    say(conn, line);
+    const ApprovalRequest *asked = approval_queue_at(queue, 0);
+    CHECK(asked && !reply("f5") && media_sent == before, "a file waits for you");
+    CHECK(asked && asked->risk == APPROVAL_RISK_HIGH && !strcmp(asked->chat_name, "Mom"), "and is HIGH risk, naming the chat");
+    CHECK(asked && strstr(asked->action, "report.pdf") && strstr(asked->action, "document") && strstr(asked->action, "14 B"),
+          "you are told its name, kind and size");
+    CHECK(asked && asked->text && !strcmp(asked->text, "The report") && asked->editable, "the caption is what you may edit");
+    answer_first(1, NULL, 0);
+    r = reply("f5");
+    CHECK(r && result(r) && media_sent == before + 1 && !strcmp(last_media_name, "report.pdf") && !strcmp(last_media_kind, "document") &&
+              !strcmp(last_media_caption, "The report"),
+          "allowed, it goes with its caption");
+    const cJSON *res = r ? result(r) : NULL;
+    CHECK(res && cJSON_GetObjectItemCaseSensitive(res, "id") && !strcmp(cJSON_GetObjectItemCaseSensitive(res, "file")->valuestring, "report.pdf") &&
+              cJSON_GetObjectItemCaseSensitive(res, "bytes")->valuedouble == 14,
+          "and the client hears the id, the name and the size");
+    cJSON_Delete(r);
+
+    /* The same file with no caption, and the AI disclaimer on: it stands alone as the caption. */
+    Settings s = *settings_manager_current(settings_mgr);
+    s.automation_disclaimer = 1;
+    str_copy(s.automation_disclaimer_text, sizeof(s.automation_disclaimer_text), "Sent by my AI assistant");
+    settings_manager_apply(settings_mgr, &s);
+    snprintf(line, sizeof(line), "{\"id\":\"f6\",\"op\":\"send_file\",\"args\":{\"chat\":\"Mom\",\"file\":\"%s\"}}", report);
+    say(conn, line);
+    answer_first(1, NULL, 0);
+    r = reply("f6");
+    CHECK(r && result(r) && !strcmp(last_media_caption, "Sent by my AI assistant"), "with the disclaimer on, it is the caption of a file sent without one");
+    cJSON_Delete(r);
+    s.automation_disclaimer = 0;
+    settings_manager_apply(settings_mgr, &s);
+
+    /* An agent that may answer its own sends still cannot answer this one. */
+    set_automation("admin", "*", 5);
+    char token[128];
+    str_copy(token, sizeof(token), admin_token);
+    snprintf(line, sizeof(line), "{\"id\":\"f7\",\"op\":\"send_file\",\"args\":{\"chat\":\"Mom\",\"file\":\"%s\"}}", report);
+    say(conn, line);
+    approve(conn, "pf", "f7", token);
+    r = reply("pf");
+    CHECK(r && !strcmp(error_code(r), "not_allowed") && approval_queue_count(queue) == 1 && media_sent == before + 2,
+          "no agent approves its own file, whatever it is trusted with");
+    cJSON_Delete(r);
+    answer_first(0, NULL, 0);
+    r = reply("f7");
+    CHECK(r && !strcmp(error_code(r), "declined") && media_sent == before + 2, "declined, nothing goes");
+    cJSON_Delete(r);
+    set_automation("send", "", 2);
+
+    char command[700];
+    snprintf(command, sizeof(command), "rm -rf %s", dir);
+    if (system(command) != 0) fprintf(stderr, "note: could not remove %s\n", dir);
+    clear_outbox();
 }
 
 /* Access admin: a client holding the admin token answers its own sends, in the chats you named, so many an hour. */
@@ -1115,7 +1226,8 @@ static void test_transcripts(void) {
     inbox[inbox_count++] = (ControlInbound){ CONTROL_INBOUND_OPENED, conn, NULL };
     say(conn, "{\"id\":\"h\",\"op\":\"hello\",\"args\":{\"client\":\"tawk-mcp\",\"protocol\":1,\"origin\":\"mcp\",\"features\":[\"transcripts\"]}}");
     cJSON *r = reply("h");
-    CHECK(r && has_feature(result(r), "transcripts"), "hello names transcripts among what this tawk can do");
+    CHECK(r && has_feature(result(r), "transcripts") && has_feature(result(r), "send_file"),
+          "hello names transcripts and send_file among what this tawk can do");
     cJSON_Delete(r);
     int waiting = approval_queue_count(queue);
 
@@ -1677,6 +1789,7 @@ int main(void) {
     gw.start = gw_ok;
     gw.connect = gw_ok;
     gw.send_text = gw_text;
+    gw.send_media = gw_media;
     gw.delete_message = gw_delete;
     gw.react = gw_react;
     gw.subscribe = gw_subscribe;
@@ -1753,6 +1866,7 @@ int main(void) {
     test_online_status();
     test_online_lookup();
     test_disclaimer();
+    test_send_file();
     test_admin_answers_its_own();
     test_someone_with_no_chat_yet();
     test_agent_rules();

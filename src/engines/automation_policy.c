@@ -109,7 +109,8 @@ int automation_policy_presence_lookup(const Settings *s, ControlOrigin origin) {
 
 const char *automation_policy_disclaimer(const Settings *s, ControlOrigin origin, const char *op) {
     if (origin != CONTROL_ORIGIN_MCP || !s->automation_disclaimer || !op) return NULL;
-    if (strcmp(op, "send_message") != 0 && strcmp(op, "schedule_message") != 0 && strcmp(op, "reply_status") != 0) return NULL;
+    if (strcmp(op, "send_message") != 0 && strcmp(op, "schedule_message") != 0 && strcmp(op, "reply_status") != 0 &&
+        strcmp(op, "send_file") != 0) return NULL;
     return s->automation_disclaimer_text;
 }
 
@@ -128,6 +129,7 @@ int automation_policy_setting_changeable(const SettingField *f) {
 
 ApprovalRisk automation_policy_risk(const char *op, WriteKind kind) {
     if (kind == WRITE_KIND_DESTRUCTIVE) return APPROVAL_RISK_HIGH;
+    if (op && strcmp(op, "send_file") == 0) return APPROVAL_RISK_HIGH;     /* a file leaves this computer and cannot be taken back */
     if (op && (strcmp(op, "react") == 0 || strcmp(op, "mark_read") == 0 || strcmp(op, "like_status") == 0)) return APPROVAL_RISK_LOW;
     return APPROVAL_RISK_MEDIUM;
 }

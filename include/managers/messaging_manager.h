@@ -141,6 +141,8 @@ const Chat    *messaging_manager_open_chat_info(MessagingManager *mgr);
 int            messaging_manager_send_voice(MessagingManager *mgr, const char *path, int seconds);
 /* Copies a local file into the media folder and sends it with an optional caption. */
 int            messaging_manager_send_file(MessagingManager *mgr, const char *path, const char *caption);
+/* The same into any chat, open or not. */
+int            messaging_manager_send_file_to(MessagingManager *mgr, const char *jid, const char *path, const char *caption);
 int            messaging_manager_retry_message(MessagingManager *mgr, const char *message_id);
 /* Sends a copy of a message to each chat in `jids`, marked as forwarded.
  * Returns how many copies were queued (-1 when the message is unknown). */
