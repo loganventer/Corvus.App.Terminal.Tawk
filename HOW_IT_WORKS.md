@@ -712,6 +712,8 @@ sequenceDiagram
     Note over A: its model writes one paragraph
     A->>T: set_summary (message_id, text, model)
     Note over T: summary_validator, then the summaries table
+    A-->>T: or decline_summary (message_id, reason) when none is needed
+    Note over T: remembered in summary_declines, so it is not asked again
     Note over T: the bubble shows ▸ TL;DR and the summary
     U->>T: Enter on the message
     Note over T: ▾ TL;DR · original, the full text; Enter folds it back

@@ -428,6 +428,8 @@ The asking is a first, small piece of [the owner's chat](#the-owners-chat): tawk
 
 Changed in 0.14.1, the same day, after the first try on real chats: every message is summarised by default (`tldr_min_chars` 0), a summary shows only when it is shorter than its message, and tawk asks only an agent that says it can do the work (`features` in the client's hello), since a session still running an older tawk-mcp had been handed the requests and ignored them. The question goes to the "message yourself" chat of the account the chat is in.
 
+Changed in 0.21.0, after a day of watching it on real chats: with `tldr_min_chars` at 0 tawk asked for a summary of every message, including ones that could never have a shorter one ("lol"), and an agent that left those unanswered was asked again after 90 seconds and on every restart, then passed over. Two changes. A floor (`tldr_floor_chars`, 40, configurable) keeps such messages from being asked for at all, composed with the length you chose in one pure function in the summary policy. And an agent can answer with `decline_summary` (`too_short`, `nothing_to_say`, `other`): tawk keeps that in its own table, so it survives a restart and is forgotten when the message is edited, and it counts as an answer so the agent is not passed over for it. Advertised as `summary_decline` in `hello`; tawk-mcp 0.14.0 has the tool.
+
 ### Parts by layer
 
 | Layer | Type | Job |
