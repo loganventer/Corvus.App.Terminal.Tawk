@@ -1156,6 +1156,17 @@ Passphrase for your chats:
 
 You get three tries; after that tawk stops without opening anything. Restarting tawk to switch backends asks again.
 
+### Opening without typing
+
+If you would rather not type the passphrase at every start, keep it in a file beside your settings:
+
+```
+printf '%s\n' 'your passphrase' > ~/.config/tawk/db.key
+chmod 600 ~/.config/tawk/db.key
+```
+
+From 0.24.0, when your chats are encrypted tawk looks for `db.key` in the folder of its settings file first and, if it holds a usable passphrase, starts with it and does not ask. The file is used only when it is a plain file you own that nobody else can read (mode 0600), and never through a link; a file others can read is ignored with a line saying how to fix it. It is tried once per start, so if it is out of date you are asked at the terminal as usual, and choosing or changing a passphrase (`--encrypt`, `--change-passphrase`) always asks you to type it. If you change the passphrase, change the file too. Without the file nothing changes. The trade-off is plain: anyone who can read your files can open your chats, so this protects a copied or backed-up database, not a compromised account.
+
 | Command | What it does |
 |---|---|
 | `tawk --encrypt` | Encrypts the database with a new passphrase, asked twice |
