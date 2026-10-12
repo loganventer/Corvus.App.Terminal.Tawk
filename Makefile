@@ -3,7 +3,7 @@
 # Run `make help` for every target and option.
 
 APP        ?= tawk
-VERSION    ?= 0.23.0
+VERSION    ?= 0.24.0
 # The commit this build comes from, so `tawk --update` can tell whether it is current.
 COMMIT     ?= $(shell git rev-parse HEAD 2>/dev/null)
 
@@ -252,7 +252,7 @@ TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_
          $(BUILD)/tests/chat_list_fold_test $(BUILD)/tests/message_receipts_test $(BUILD)/tests/connection_recovery_test \
          $(BUILD)/tests/profile_status_test $(BUILD)/tests/account_dialogs_test $(BUILD)/tests/status_feed_test $(BUILD)/tests/migration_test \
          $(BUILD)/tests/markup_test $(BUILD)/tests/mentions_test $(BUILD)/tests/link_preview_test \
-         $(BUILD)/tests/database_crypt_test $(BUILD)/tests/backup_test $(BUILD)/tests/forward_test $(BUILD)/tests/schedule_test \
+         $(BUILD)/tests/database_crypt_test $(BUILD)/tests/stored_passphrase_test $(BUILD)/tests/backup_test $(BUILD)/tests/forward_test $(BUILD)/tests/schedule_test \
          $(BUILD)/tests/recipient_test $(BUILD)/tests/presence_tracker_test $(BUILD)/tests/presence_text_test \
          $(BUILD)/tests/presence_event_test \
          $(BUILD)/tests/transcript_test \
@@ -342,6 +342,10 @@ $(BUILD)/tests/backup_test: $(BUILD)/tests/backup_test.o $(filter-out $(BUILD)/s
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
 $(BUILD)/tests/database_crypt_test: $(BUILD)/tests/database_crypt_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
+	$(call step,LD,$@)
+	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
+
+$(BUILD)/tests/stored_passphrase_test: $(BUILD)/tests/stored_passphrase_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
 	$(call step,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 

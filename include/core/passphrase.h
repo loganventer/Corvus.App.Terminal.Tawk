@@ -7,7 +7,9 @@
 
 /* A passphrase typed by the user, for the database or a backup. It lives
  * only in memory for as long as it is needed and is wiped after use; it is
- * never a setting, an argument or an environment variable. */
+ * never a setting, an argument or an environment variable. A user may keep it
+ * in a file only they can read, which tawk tries first at start
+ * (stored_passphrase_prompt). */
 typedef struct Passphrase {
     char   text[PASSPHRASE_MAX + 1];
     size_t length;

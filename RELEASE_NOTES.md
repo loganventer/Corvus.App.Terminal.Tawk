@@ -4,6 +4,15 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.24.0 (2026-10-12)
+
+Encrypted chats can open without typing the passphrase, if you choose.
+
+- **A key file beside your settings.** When your chats are encrypted, tawk first looks for `db.key` in the folder of its settings file (`~/.config/tawk/db.key`), holding the passphrase as one line of text. If it is there, tawk uses it and starts without asking. If it is missing, empty or wrong, tawk asks at the terminal as before.
+- **Only a safe file is used.** It must be a plain file you own that nobody else can read (mode 0600); a file others can read is ignored with a line saying how to fix it, and a link is never followed.
+- **One try, then you type.** The file is used once per start, so a stale one costs one try and never locks you out. Choosing or changing a passphrase (`--encrypt`, `--change-passphrase`) still asks you to type it.
+- **It is your choice.** Without the file nothing changes. With it, anyone who can read your files can open your chats, so it protects a copied or backed-up database, not a compromised account.
+
 ## 0.23.0 (2026-10-11)
 
 One account can move to another computer.

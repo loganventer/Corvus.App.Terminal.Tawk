@@ -45,6 +45,7 @@
 #include "infrastructure/tar_archive.h"
 #include "infrastructure/unix_control_client.h"
 #include "infrastructure/unix_control_transport.h"
+#include "infrastructure/stored_passphrase_prompt.h"
 #include "infrastructure/terminal_passphrase_prompt.h"
 #include "infrastructure/terminal_graphics.h"
 #include "managers/account_manager.h"
@@ -469,7 +470,10 @@ int main(int argc, char **argv) {
         return cli_rc;
     }
     Passphrase key;
-    int unlocked = database_unlock(crypt, prompt, &key);
+    /* Starting reads db.key beside the settings first, if the user keeps the passphrase there; the terminal asks otherwise. */
+    IPassphrasePrompt *unlock_prompt = stored_passphrase_prompt_create_default(prompt, config_path);
+    int unlocked = database_unlock(crypt, unlock_prompt ? unlock_prompt : prompt, &key);
+    if (unlock_prompt) unlock_prompt->destroy(unlock_prompt);
     if (unlocked < 0) return 1;
 
     /* Bringing an account in changes the database: keep it as it is first, before it is opened and upgraded. */
