@@ -10,6 +10,7 @@
 #define WAITING_MAX  512
 #define ASKED_MAX    1024
 #define FILLED_MAX   64
+#define TRIES_MAX    256        /* messages whose unanswered requests are being counted */
 #define BACK_LOOK    600        /* how many of a chat's newest messages are looked through */
 
 struct SummaryManager {
@@ -22,6 +23,8 @@ struct SummaryManager {
     int                asked_next;
     char               filled[FILLED_MAX][128];      /* chats whose older messages were already looked through */
     int                filled_next;
+    struct { char id[64]; int unanswered; } tries[TRIES_MAX];   /* requests that went unanswered, per message */
+    int                tries_next;
 };
 
 SummaryManager *summary_manager_create(const SummaryManagerDeps *deps) {
@@ -170,12 +173,40 @@ int summary_manager_backfill(SummaryManager *m, const Chat *chat, int64_t now) {
     return added;
 }
 
-void summary_manager_requeue(SummaryManager *m, const char *message_id) {
-    if (!message_id || !message_id[0] || listed(m->waiting, m->waiting_count, message_id)) return;
+/* Counts one more request for `message_id` that nobody answered, and returns how many that makes. */
+static int count_unanswered(SummaryManager *m, const char *message_id) {
+    for (int i = 0; i < TRIES_MAX; i++) {
+        if (strcmp(m->tries[i].id, message_id) == 0) return ++m->tries[i].unanswered;
+    }
+    int at = m->tries_next;
+    m->tries_next = (m->tries_next + 1) % TRIES_MAX;
+    str_copy(m->tries[at].id, sizeof(m->tries[at].id), message_id);
+    m->tries[at].unanswered = 1;
+    return 1;
+}
+
+static void forget_tries(SummaryManager *m, const char *message_id) {
+    for (int i = 0; i < TRIES_MAX; i++) {
+        if (strcmp(m->tries[i].id, message_id) != 0) continue;
+        m->tries[i].id[0] = '\0';
+        m->tries[i].unanswered = 0;
+    }
+}
+
+int summary_manager_requeue(SummaryManager *m, const char *message_id) {
+    if (!message_id || !message_id[0] || listed(m->waiting, m->waiting_count, message_id)) return 1;
+    if (count_unanswered(m, message_id) >= SUMMARY_TRIES_MAX) {
+        /* Asked for, and nothing came back, that many times: it is not asked for again. A kept summary or a
+         * decline that arrives later still stands, and an edit of the text starts afresh. */
+        forget_tries(m, message_id);
+        if (m->deps.store->decline(m->deps.store, message_id, "other", "tawk", (int64_t)time(NULL)) == 0) m->changed = 1;
+        return 0;
+    }
     if (m->waiting_count == WAITING_MAX) m->waiting_count--;                 /* the newest gives up its place */
     memmove(m->waiting[1], m->waiting[0], (size_t)m->waiting_count * sizeof(m->waiting[0]));
     str_copy(m->waiting[0], sizeof(m->waiting[0]), message_id);
     m->waiting_count++;
+    return 1;
 }
 
 int summary_manager_next_wanted(SummaryManager *m, char *message_id, size_t size) {

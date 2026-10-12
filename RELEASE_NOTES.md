@@ -4,6 +4,15 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.25.0 (2026-10-12)
+
+A TL;DR request that nobody answers is no longer repeated for ever.
+
+- **Five tries, then it stops.** When an agent is asked for the summary of a message and does not answer within 90 seconds, tawk asks again. After the fifth request that went unanswered, tawk stops asking for that message and says so in a notice.
+- **Remembered like a decline.** The message is kept as one that needs no summary (reason `other`, source `tawk`), so it is not asked for again, also after a restart. If its text is edited, it is worth asking about afresh and the count starts again.
+- **An answer still wins.** A summary or a decline that arrives, from any try, is kept as usual.
+- The database is unchanged (still version 27).
+
 ## 0.24.0 (2026-10-12)
 
 Encrypted chats can open without typing the passphrase, if you choose.

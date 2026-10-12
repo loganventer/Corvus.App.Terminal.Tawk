@@ -174,7 +174,12 @@ static void review_waits(ControlServer *s, int64_t now) {
             if (now - wait->asked_ms < ANSWER_WAIT_MS) { session->waits[kept++] = *wait; continue; }
             session->summaries_missed++;
             AccountId back = s->account;
-            if (control_serve_account(s, wait->account) == 0 && s->deps.summaries) summary_manager_requeue(s->deps.summaries, wait->message_id);
+            if (control_serve_account(s, wait->account) == 0 && s->deps.summaries &&
+                !summary_manager_requeue(s->deps.summaries, wait->message_id)) {
+                automation_manager_notice(s->deps.automation, "tawk asked for one TL;DR summary five times without an answer, so it "
+                                          "stopped asking for that message");
+                s->changed = 1;
+            }
             control_serve_account(s, back);
         }
         session->wait_count = kept;

@@ -233,6 +233,24 @@ static void test_store_and_manager(sqlite3 *db) {
     CHECK(!other->declined(other, "X1"), "another account does not see it");
     CHECK(messages->edit_text(messages, "X1", "Changed my mind about it", 0) == 0 && !store->declined(store, "X1"),
           "an edited message is forgotten as declined, since its new words are worth asking about");
+    /* a message nobody answers is asked for five times, and then no more, also after a restart */
+    Message u;
+    text_message(&u, "U1", MOM, LONG_TEXT);
+    messages->save(messages, &u);
+    int put_back = 0;
+    for (int i = 0; i < SUMMARY_TRIES_MAX - 1; i++) {
+        put_back += summary_manager_requeue(mgr, "U1");
+        while (summary_manager_next_wanted(mgr, id, sizeof(id))) summary_manager_drop_wanted(mgr);   /* asked again, unanswered */
+    }
+    CHECK(put_back == SUMMARY_TRIES_MAX - 1 && !store->declined(store, "U1"), "the first four unanswered requests put it back");
+    CHECK(summary_manager_requeue(mgr, "U1") == 0 && store->declined(store, "U1"),
+          "the fifth ends it, and it is remembered as needing no summary");
+    CHECK(!summary_manager_next_wanted(mgr, id, sizeof(id)), "and it is not put back on the list");
+    CHECK(!other->declined(other, "U1"), "another account is not affected");
+    CHECK(messages->edit_text(messages, "U1", "Now it says something else entirely", 0) == 0 && !store->declined(store, "U1"),
+          "an edit makes it worth asking about afresh");
+    CHECK(summary_manager_requeue(mgr, "U1") == 1, "and its count starts again");
+    while (summary_manager_next_wanted(mgr, id, sizeof(id))) summary_manager_drop_wanted(mgr);
     mom.soft_locked = 1;
     CHECK(summary_manager_save(mgr, &a, &mom, "x", "", "") == SUMMARY_OFF, "a soft-locked chat takes none");
     CHECK(summary_manager_decline(mgr, &d, &mom, "other", "") == SUMMARY_DECLINE_OFF, "and no answer that one needs none");
