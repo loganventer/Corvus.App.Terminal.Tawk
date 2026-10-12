@@ -721,6 +721,8 @@ sequenceDiagram
 
 Which agent is asked is `summariser_choice`: the one you made your default agent (the Agents list, `d`) while it is connected; else the only agent connected; else nobody yet. In that last case the control client sends a numbered list of the connected agents to your own "message yourself" chat through the messaging manager, and reads your answer from the live messages it already follows: a bare number, from you, in that chat, while the question is out. It then remembers the agent by its label without the process id (`default_agent`), and confirms in the same chat. Requests are paced, four at once and then one every second and a half, so a month of a busy chat does not flood the agent.
 
+A request that is not answered in 90 seconds is asked for again, at most five times in all: `summary_manager_requeue` counts each unanswered request per message, and the fifth records a decline (reason `other`, source `tawk`) in `summary_declines` instead of putting the message back, so a message an agent cannot or will not summarise stops being asked for, and an edit of its text clears that like any decline.
+
 The summary never replaces the message. `message_view` swaps the message's text rows for the summary rows while it is folded and keeps a small set of unfolded message ids; copy, reply, forward and search read the original. A trigger removes a summary when its message is deleted or its text is edited.
 
 ## Reconnecting
