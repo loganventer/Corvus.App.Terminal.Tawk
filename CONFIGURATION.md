@@ -178,6 +178,7 @@ What other programs reaching tawk through its control socket may do: tawk-mcp an
 | `push_received` | `on` | Programs acting for a model that subscribed are told about each message other people send, as it arrives. Off, they see messages only when they read a chat |
 | `push_sent` | `on` | The same for the messages you send. Your own shell commands (`tawk tail`) always hear both |
 | `push_read` | `off` | Programs acting for a model that subscribed are told when someone reads a message you sent |
+| `push_played` | `off` | The same when someone plays a voice note or video you sent (0.27.0). Separate from `push_read`: a play is not also told as a read |
 | `push_reactions` | `off` | The same when someone reacts to a message you sent, or takes a reaction back |
 | `push_edits` | `off` | The same when someone changes or deletes a message they sent |
 | `push_scheduled` | `off` | The same when a message you scheduled goes out |

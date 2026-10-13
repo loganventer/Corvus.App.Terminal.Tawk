@@ -1294,6 +1294,7 @@ Settings, Automation has a submenu, **Agent events**, for what agents are told a
 | Push received messages | on | Each message other people send, as it arrives |
 | Push messages you send | on | Each message you send, from tawk or your phone |
 | Push read receipts | off | That someone read a message you sent, with who and when |
+| Push played voice notes | off | That someone played a voice note or video you sent, with who and when (0.27.0) |
 | Push reactions | off | That someone reacted to a message you sent, or took the reaction back |
 | Push edits and deletes | off | That someone changed or deleted a message they sent, with the new words for an edit |
 | Push scheduled sends | off | That a message you scheduled went out |

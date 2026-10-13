@@ -362,6 +362,7 @@ After `subscribe`, tawk sends:
 
 - `{"evt":"message","chat":{"jid","name"},"message":message}` for every new message, sent or received, in a subscribed chat. For a client whose origin is `mcp`, `push_received` and `push_sent` in `[automation]` decide whether received and sent messages are sent at all; origin `cli` always gets both.
 - `{"evt":"read","chat":{"jid","name"},"message_id":"…","reader":{"jid","name"},"at":ts}` when someone reads a message you sent in a subscribed chat. Only for origin `mcp`, and only with `push_read` on.
+- `{"evt":"played","chat":{"jid","name"},"message_id":"…","player":{"jid","name"},"at":ts}` (0.27.0) when someone plays a voice note or video you sent in a subscribed chat. Only for origin `mcp`, and only with `push_played` on. It is not also sent as a `read`, and it tells when playback began, not how much was heard. In a group it comes once for each person who plays it.
 - `{"evt":"reaction","chat":{…},"message_id":"…","who":{"jid","name"},"emoji":"👍","at":ts}` when someone reacts to a message you sent; `emoji` is `""` when the reaction is taken back. Origin `mcp` with `push_reactions` on.
 - `{"evt":"edit","chat":{…},"message_id":"…","who":{…},"message":message,"at":ts}` when someone changes a message they sent, with the message as it now reads, and `{"evt":"delete","chat":{…},"message_id":"…","who":{…},"at":ts}` when they delete one for everyone. Origin `mcp` with `push_edits` on.
 - `{"evt":"scheduled_sent","chat":{…},"message_id":"<the scheduled message's id>","at":ts}` when a message you scheduled goes out. Origin `mcp` with `push_scheduled` on.
@@ -412,7 +413,7 @@ An account whose level is *off* is not listed and cannot be named. Naming it ans
 
 **`list_accounts`** is a read operation with no arguments. It answers `{"accounts":[...],"default":id}` with the same objects as `hello`, read afresh, since you can open or close an account while a client stays connected.
 
-**Notifications** `message`, `read`, `reaction`, `edit`, `delete`, `scheduled_sent` and `chat` carry `"account":{"id":2,"label":"work"}`. A message that reaches an account closed to agents is not pushed. A subscription follows a chat by its JID in every account the client may use, and unread counts are watched in each of them. An account that is opened to agents while a client is connected starts from that moment: nothing from before is replayed.
+**Notifications** `message`, `read`, `played`, `reaction`, `edit`, `delete`, `scheduled_sent` and `chat` carry `"account":{"id":2,"label":"work"}`. A message that reaches an account closed to agents is not pushed. A subscription follows a chat by its JID in every account the client may use, and unread counts are watched in each of them. An account that is opened to agents while a client is connected starts from that moment: nothing from before is replayed.
 
 **`ambiguous`** candidates carry the same `account` object, beside `jid` and `name`.
 
