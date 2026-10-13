@@ -4,6 +4,15 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.26.0 (2026-10-13)
+
+Agents are told how long a voice note is and when it was played.
+
+- **Played time.** A voice note or video you sent now carries `played_at` in what agents read, once someone has played it. In a group it is the first time anyone did. It is the time playback began: WhatsApp does not say how much of it was heard.
+- **Length.** A voice note or video carries `duration_s` when tawk knows how long it is.
+- Nothing changes on screen: the message info panel already showed when a voice note was played.
+- The database is unchanged (still version 27).
+
 ## 0.25.0 (2026-10-12)
 
 A TL;DR request that nobody answers is no longer repeated for ever.

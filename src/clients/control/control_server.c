@@ -1,5 +1,6 @@
 #include "control_server_state.h"
 #include "engines/text_redactor.h"
+#include "engines/played_time.h"
 #include "clients/control/control_op_entry.h"
 #include "engines/client_version.h"
 #include "utilities/app_info.h"
@@ -15,6 +16,7 @@
 #define INBOUND_PER_TICK 64
 #define RETRY_LISTEN_MS  5000
 #define CHECK_MS         500
+#define PLAYED_AT_RECEIPTS 256
 
 static const ControlOpEntry OPS[] = {
     { "list_chats",             control_op_list_chats, 1 },
@@ -141,8 +143,18 @@ static void mask_field(cJSON *object, const char *name) {
     free(masked);
 }
 
+/* Adds `played_at` to a voice note or video you sent, once someone has played it. */
+static void add_played_at(ControlServer *s, cJSON *object, const Message *msg) {
+    if (!msg->from_me || !played_time_applies(msg->type)) return;
+    Receipt receipts[PLAYED_AT_RECEIPTS];
+    int count = messaging_manager_message_receipts(s->deps.messaging, msg->id, receipts, PLAYED_AT_RECEIPTS);
+    int64_t at = played_time_first(receipts, count);
+    if (at > 0) cJSON_AddNumberToObject(object, "played_at", (double)at);
+}
+
 cJSON *control_message_json(ControlServer *s, ControlOrigin origin, const Message *msg, const char *sender_name) {
     cJSON *o = control_codec_message(msg, sender_name);
+    add_played_at(s, o, msg);
     if (!automation_manager_masks(s->deps.automation, origin)) return o;
     mask_field(o, "text");
     mask_field(cJSON_GetObjectItemCaseSensitive(o, "reply_to"), "text");

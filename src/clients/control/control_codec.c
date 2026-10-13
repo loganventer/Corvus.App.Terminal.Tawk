@@ -1,4 +1,5 @@
 #include "clients/control/control_codec.h"
+#include "engines/played_time.h"
 #include "utilities/str_util.h"
 
 #include <stdlib.h>
@@ -53,6 +54,7 @@ cJSON *control_codec_message(const Message *m, const char *sender_name) {
     cJSON_AddBoolToObject(o, "deleted", m->deleted);
     cJSON_AddBoolToObject(o, "forwarded", m->forwarded);
     cJSON_AddBoolToObject(o, "mentions_me", m->mentions_me);
+    if (m->duration_s > 0 && played_time_applies(m->type)) cJSON_AddNumberToObject(o, "duration_s", m->duration_s);
     if (m->quoted_id[0]) {
         cJSON *r = cJSON_AddObjectToObject(o, "reply_to");
         cJSON_AddStringToObject(r, "id", m->quoted_id);
