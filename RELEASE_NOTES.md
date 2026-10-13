@@ -4,6 +4,14 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.27.0 (2026-10-13)
+
+Agents can be told the moment someone plays a voice note you sent.
+
+- **A `played` event.** When someone plays a voice note or video you sent, an agent that listens hears who and when, as it happens, instead of having to read the chat again to find `played_at`.
+- **Its own setting.** Settings, Automation, Push played voice notes (`push_played`), off until you turn it on. It is separate from Push read receipts, and a play is not also told as a read.
+- The database is unchanged (still version 27).
+
 ## 0.26.0 (2026-10-13)
 
 Agents are told how long a voice note is and when it was played.

@@ -93,6 +93,7 @@ int automation_policy_pushes_event(const Settings *s, ControlOrigin origin, Live
     if (origin != CONTROL_ORIGIN_MCP) return 0;
     switch (kind) {
         case LIVE_KIND_READ:           return s->automation_push_read;
+        case LIVE_KIND_PLAYED:         return s->automation_push_played;
         case LIVE_KIND_REACTION:       return s->automation_push_reactions;
         case LIVE_KIND_EDIT:
         case LIVE_KIND_DELETE:         return s->automation_push_edits;

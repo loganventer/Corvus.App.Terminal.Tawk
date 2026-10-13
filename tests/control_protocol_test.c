@@ -927,6 +927,37 @@ static void test_live_and_log(void) {
     int reads_pushed = 0;
     for (int i = 0; i < outbox_count; i++) reads_pushed += strstr(outbox[i], "\"evt\":\"read\"") != NULL && strstr(outbox[i], "LIVE4") != NULL;
     CHECK(reads_pushed == 1, "turned on, the agent hears who read which message, once, and your shell does not");
+
+    /* Someone playing a voice note of yours is told the same way, on its own switch, and is not a read. */
+    clear_outbox();
+    event_init(&e, EVENT_MESSAGE_RECEIPT);
+    str_copy(e.id, sizeof(e.id), "LIVE4");
+    str_copy(e.jid, sizeof(e.jid), MOM);
+    e.receipt = RECEIPT_PLAYED;
+    e.at = 1790000400;
+    event_queue_push(events, &e);
+    tick();
+    tick();
+    CHECK(!saw_event("played"), "a play is not pushed until you turn it on");
+    push.automation_push_played = 1;
+    settings_manager_apply(settings_mgr, &push);
+    event_init(&e, EVENT_MESSAGE_RECEIPT);
+    str_copy(e.id, sizeof(e.id), "LIVE4");
+    str_copy(e.jid, sizeof(e.jid), MOM);
+    e.receipt = RECEIPT_PLAYED;
+    e.at = 1790000401;
+    event_queue_push(events, &e);
+    tick();
+    tick();
+    int plays_pushed = 0, reads_from_play = 0;
+    for (int i = 0; i < outbox_count; i++) {
+        plays_pushed += strstr(outbox[i], "\"evt\":\"played\"") != NULL && strstr(outbox[i], "LIVE4") != NULL && strstr(outbox[i], "\"player\"") != NULL;
+        reads_from_play += strstr(outbox[i], "\"evt\":\"read\"") != NULL;
+    }
+    CHECK(plays_pushed == 1, "turned on, the agent hears who played which message, once, as the player");
+    CHECK(reads_from_play == 0, "and a play is not also told as a read");
+    push.automation_push_played = 0;
+    settings_manager_apply(settings_mgr, &push);
     /* Reactions to your messages and edits by others: each its own event and its own switch. */
     clear_outbox();
     push.automation_push_reactions = 1;

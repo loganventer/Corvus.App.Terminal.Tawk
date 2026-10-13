@@ -334,11 +334,11 @@ static int showing(const MessagingManager *m, const char *id) {
     return 0;
 }
 
-/* One of your messages was read: those who follow along hear of it. */
-static void note_read(MessagingManager *m, const Event *e) {
+/* One of your messages was read or, for a voice note or video, played: those who follow along hear of it. */
+static void note_receipt(MessagingManager *m, const Event *e, LiveKind kind) {
     Message msg;
     if (m->deps.messages->get(m->deps.messages, e->id, &msg) != 0) return;
-    if (msg.from_me) live_message_ring_note(&m->live, LIVE_KIND_READ, msg.id, msg.chat_jid, m->deps.aliases->resolve(m->deps.aliases, e->jid), "", e->at);
+    if (msg.from_me) live_message_ring_note(&m->live, kind, msg.id, msg.chat_jid, m->deps.aliases->resolve(m->deps.aliases, e->jid), "", e->at);
     message_dispose(&msg);
 }
 
@@ -719,7 +719,8 @@ static void handle_event(MessagingManager *m, Event *e, ManagerChanges *ch) {
             break;
         case EVENT_MESSAGE_RECEIPT:
             m->deps.receipts->put(m->deps.receipts, e->id, m->deps.aliases->resolve(m->deps.aliases, e->jid), e->receipt, e->at);
-            if (e->receipt == RECEIPT_READ) note_read(m, e);
+            if (e->receipt == RECEIPT_READ) note_receipt(m, e, LIVE_KIND_READ);
+            else if (e->receipt == RECEIPT_PLAYED) note_receipt(m, e, LIVE_KIND_PLAYED);
             if (showing(m, e->id)) m->messages_dirty = 1;   /* an open message info panel shows it */
             break;
         case EVENT_CHAT_UPDATE:

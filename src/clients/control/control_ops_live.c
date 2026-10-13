@@ -112,6 +112,7 @@ static void send_message(ControlServer *s, const LiveMessageRef *ref) {
 static const char *event_name(LiveKind kind) {
     switch (kind) {
         case LIVE_KIND_READ:           return "read";
+        case LIVE_KIND_PLAYED:         return "played";
         case LIVE_KIND_REACTION:       return "reaction";
         case LIVE_KIND_EDIT:           return "edit";
         case LIVE_KIND_DELETE:         return "delete";
@@ -122,7 +123,7 @@ static const char *event_name(LiveKind kind) {
 }
 
 /* Something happened to a message: {"evt":name,"chat":{jid,name},"message_id","at"}, with
- * "who":{jid,name} where someone did it (as "reader" for a read), "emoji" for a reaction
+ * "who":{jid,name} where someone did it (as "reader" for a read, "player" for a play), "emoji" for a reaction
  * ("" when taken back), the message as it now reads for an edit, and "path" and "type"
  * for a download that finished. */
 static void send_activity(ControlServer *s, const LiveMessageRef *ref) {
@@ -151,7 +152,7 @@ static void send_activity(ControlServer *s, const LiveMessageRef *ref) {
         cJSON_AddStringToObject(c, "name", chat->name);
         cJSON_AddStringToObject(evt, "message_id", ref->id);
         if (ref->who[0]) {
-            cJSON *who = cJSON_AddObjectToObject(evt, ref->kind == LIVE_KIND_READ ? "reader" : "who");
+            cJSON *who = cJSON_AddObjectToObject(evt, ref->kind == LIVE_KIND_READ ? "reader" : ref->kind == LIVE_KIND_PLAYED ? "player" : "who");
             cJSON_AddStringToObject(who, "jid", ref->who);
             cJSON_AddStringToObject(who, "name", name);
         }
