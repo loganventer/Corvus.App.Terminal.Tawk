@@ -505,7 +505,7 @@ Right-click a message, or select it and press Alt+M. The menu lists the actions 
 | ℹ Message info | Your own messages: who received and read it, and when |
 | 🗑 Delete… | Any message: for me, or for everyone when still allowed |
 
-Message info shows when your message was delivered, read and (for voice notes) played. In a group it lists who has read it and who it has only been delivered to, each with the time, and it updates while open. tawk records receipts from the version that added this panel onwards, so older messages show none; people who turned off read receipts only ever show as delivered.
+Message info shows when your message was delivered, read and (for voice notes) played. In a group it lists who has read it and who it has only been delivered to, each with the time, and it updates while open. Each line with a time (Sent, Delivered, Read, Played, and each person of a group) has an arrow (0.29.0): press Enter, Space or Right on it, or click it, and it opens to the exact date and time to the second and how long after the message it came. Left closes it again, Up and Down move between the lines, and Esc or q closes the dialog. For a voice note or video you sent, Played always shows, as "not yet" until someone plays it. tawk records receipts from the version that added this panel onwards, so older messages show none; people who turned off read receipts only ever show as delivered.
 
 Copy text puts the message on your system clipboard with the OSC 52 terminal sequence, so it works over SSH as well. Windows Terminal, iTerm2, kitty, WezTerm, Alacritty and foot support it; some terminals (and tmux, unless `set-clipboard` is on) need it enabled first. Up to 64 KB is copied.
 
