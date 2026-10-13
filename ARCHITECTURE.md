@@ -428,6 +428,7 @@ tawk holds several WhatsApp accounts in one process. The rule that keeps this si
 | `AccountHost` | `composition` | Owns the runtimes and starts and stops them. It implements `IAccountDirectory` |
 | `IAccountDirectory`, `AccountServices` | `clients` | What a client is given: the accounts that are running, and the managers of each |
 | `AccountLabelValidator`, `ChatMergePolicy`, `ReplyAccountPolicy`, `AccountAgentPolicy` | `engines` | The rules: which labels are allowed, when two chats show as one, which number a message goes out from, and what agents may do with an account |
+| `PlayedTime` | `engines` | The rule for when a voice note or video you sent was first played: the earliest played time among its receipts. The control server adds it to the message an agent reads as `played_at` |
 
 ```mermaid
 flowchart TD

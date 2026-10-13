@@ -111,6 +111,8 @@ A message:
 
 - `type` is one of `text`, `image`, `video`, `audio`, `document`, `sticker`, `other`. For media, `text` holds the caption, or is left out.
 - `status` (your own messages only) is one of `pending`, `sent`, `delivered`, `read`, `failed`.
+- `duration_s` (0.26.0, `audio` and `video` only) is the length in seconds. It is left out when tawk does not know it.
+- `played_at` (0.26.0, your own `audio` and `video` only) is when a recipient first played it, in Unix seconds, and is left out until someone has. In a group it is the earliest time anyone did. It is when playback began: WhatsApp does not say how much of it was heard.
 - `reply_to`, `reactions` and `link` are left out when empty. `reply_to.status` is true when the message answers a status.
 - Times are Unix seconds.
 - Message text is what the other person wrote. Clients that pass it to a language model must treat it as data and never as instructions.
