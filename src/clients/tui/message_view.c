@@ -138,58 +138,6 @@ void message_view_toggle_summary(MessageView *v, const char *id) {
     snprintf(v->unfolded[v->unfolded_count++], sizeof(v->unfolded[0]), "%s", id);
 }
 
-static void forget_receipts(MessageView *v) {
-    for (int i = 0; i < v->receipt_count; i++) receipt_view_dispose(&v->receipts[i]);
-    free(v->receipts);
-    v->receipts = NULL;
-    v->receipt_count = 0;
-}
-
-/* How each voice note or video you sent was received, looked up once per layout. */
-static void load_receipts(MessageView *v, const Message *msgs, int count, const MessageViewContext *ctx) {
-    forget_receipts(v);
-    if (!ctx->receipts || ctx->veiled || count <= 0) return;
-    int any = 0;
-    for (int i = 0; i < count && !any; i++) {
-        any = msgs[i].from_me && !msgs[i].deleted && (msgs[i].type == MESSAGE_TYPE_AUDIO || msgs[i].type == MESSAGE_TYPE_VIDEO);
-    }
-    if (!any) return;
-    v->receipts = calloc((size_t)count, sizeof(ReceiptView));
-    if (!v->receipts) return;
-    v->receipt_count = count;
-    for (int i = 0; i < count; i++) {
-        if (!msgs[i].from_me || msgs[i].deleted) continue;
-        if (msgs[i].type != MESSAGE_TYPE_AUDIO && msgs[i].type != MESSAGE_TYPE_VIDEO) continue;
-        receipt_view_load(&v->receipts[i], ctx->receipts, &msgs[i], ctx->is_group, ctx->owners ? ctx->owners[i] : ACCOUNT_ID_NONE);
-    }
-}
-
-static const ReceiptView *receipts_of(const MessageView *v, int index) {
-    return index >= 0 && index < v->receipt_count && v->receipts[index].found ? &v->receipts[index] : NULL;
-}
-
-int message_view_has_details(const MessageView *v, int index) { return receipts_of(v, index) != NULL; }
-
-int message_view_details_open(const MessageView *v, const char *id) {
-    for (int i = 0; i < v->opened_count; i++) if (strcmp(v->opened[i], id) == 0) return 1;
-    return 0;
-}
-
-void message_view_toggle_details(MessageView *v, const char *id) {
-    if (!id || !id[0]) return;
-    for (int i = 0; i < v->opened_count; i++) {
-        if (strcmp(v->opened[i], id) != 0) continue;
-        memmove(v->opened[i], v->opened[i + 1], (size_t)(v->opened_count - i - 1) * sizeof(v->opened[0]));
-        v->opened_count--;
-        return;
-    }
-    if (v->opened_count == MESSAGE_VIEW_MAX_OPENED) {            /* full: the one opened longest ago closes again */
-        memmove(v->opened[0], v->opened[1], (size_t)(MESSAGE_VIEW_MAX_OPENED - 1) * sizeof(v->opened[0]));
-        v->opened_count--;
-    }
-    snprintf(v->opened[v->opened_count++], sizeof(v->opened[0]), "%s", id);
-}
-
 static const TranscriptView *transcript_of(const MessageView *v, int index) {
     return index >= 0 && index < v->transcript_count && v->transcripts[index].found ? &v->transcripts[index] : NULL;
 }
@@ -198,7 +146,6 @@ void message_view_dispose(MessageView *v) {
     forget_quoted(v);
     forget_transcripts(v);
     forget_summaries(v);
-    forget_receipts(v);
     forget_styled(v);
     free(v->rows);
     v->rows = NULL;
@@ -441,7 +388,6 @@ static void layout(MessageView *v, UiRect r, const Message *msgs, int count, con
     load_quoted(v, msgs, count, ctx);
     load_transcripts(v, msgs, count, ctx);
     load_summaries(v, msgs, count, ctx);
-    load_receipts(v, msgs, count, ctx);
     v->styled = count > 0 ? calloc((size_t)count, sizeof(StyledText)) : NULL;
     if (v->styled) {
         v->styled_count = count;
@@ -530,19 +476,6 @@ static void layout(MessageView *v, UiRect r, const Message *msgs, int count, con
         TextLine *spoken_lines = NULL;
         int n_spoken = spoken ? transcript_view_wrap(spoken, max_inner, &spoken_lines) : 0;
         for (int k = 0; k < n_spoken; k++) if (spoken_lines[k].columns > inner) inner = spoken_lines[k].columns;
-        /* How a voice note you sent was received: a head line, and under it, when opened, a line each. */
-        const ReceiptView *received = receipts_of(v, i);
-        int details_open = received && message_view_details_open(v, m->id);
-        int n_details = details_open ? receipt_view_line_count(received) : 0;
-        if (received) {
-            char head[RECEIPT_DETAILS_LINE_BYTES + 8];
-            receipt_view_head(received, details_open, head, sizeof(head));
-            if (utf8_columns(head) > inner) inner = utf8_columns(head);
-            for (int k = 0; k < n_details; k++) {
-                int cols = utf8_columns(receipt_view_line(received, k)) + 2;
-                if (cols > inner) inner = cols;
-            }
-        }
         if (show_sender && utf8_columns(m->sender_name) > inner) inner = utf8_columns(m->sender_name);
         int forwarded = m->forwarded && !m->deleted;
         if (forwarded && utf8_columns(FORWARDED_LABEL) > inner) inner = utf8_columns(FORWARDED_LABEL);
@@ -569,10 +502,6 @@ static void layout(MessageView *v, UiRect r, const Message *msgs, int count, con
             push_row(v, (MessageRow){ i, MESSAGE_ROW_TRANSCRIPT, x, width, spoken_lines[k].offset, spoken_lines[k].length, 0, 0 });
         }
         free(spoken_lines);
-        if (received) {
-            push_row(v, (MessageRow){ i, MESSAGE_ROW_DETAILS_HEAD, x, width, 0, 0, 0, details_open });
-            for (int k = 0; k < n_details; k++) push_row(v, (MessageRow){ i, MESSAGE_ROW_DETAILS, x, width, (size_t)k, 0, 0, 0 });
-        }
         if (has_link) {
             if (m->link->title[0]) push_row(v, (MessageRow){ i, MESSAGE_ROW_LINK_TITLE, x, width, 0, 0, 0, 0 });
             for (int k = 0; k < n_desc; k++) {
@@ -754,16 +683,6 @@ static void draw_row(const MessageView *v, const MessageRow *row, int y, UiRect 
                 if (spoken) transcript_view_draw_veiled(spoken, y, x + 1, room, row->offset, row->length, veil);
                 break;
             }
-            case MESSAGE_ROW_DETAILS_HEAD: {
-                const ReceiptView *received = receipts_of(v, row->message);
-                if (received) receipt_view_draw_veiled(received, -1, y, x + 1, room, veil);
-                break;
-            }
-            case MESSAGE_ROW_DETAILS: {
-                const ReceiptView *received = receipts_of(v, row->message);
-                if (received) receipt_view_draw_veiled(received, (int)row->offset, y, x + 1, room, veil);
-                break;
-            }
             default:                 text_veil_draw(y, x + 1, room * 2 / 3, veil); break;
         }
         return;
@@ -830,16 +749,6 @@ static void draw_row(const MessageView *v, const MessageRow *row, int y, UiRect 
             if (spoken) transcript_view_draw_line(spoken, y, x + 1, room, row->offset, row->length, bubble);
             break;
         }
-        case MESSAGE_ROW_DETAILS_HEAD: {
-            const ReceiptView *received = receipts_of(v, row->message);
-            if (received) receipt_view_draw_head(received, row->sub, y, x + 1, room, bubble);
-            break;
-        }
-        case MESSAGE_ROW_DETAILS: {
-            const ReceiptView *received = receipts_of(v, row->message);
-            if (received) receipt_view_draw_line(received, (int)row->offset, y, x + 1, room, bubble);
-            break;
-        }
         case MESSAGE_ROW_LINK_TITLE:
             if (m->link) tui_text(y, x + 1, room, m->link->title, bubble | ATTR_BOLD);
             break;
@@ -898,7 +807,7 @@ static void restore_held(MessageView *v, int body_h, const Message *msgs, int co
 void message_view_render(MessageView *v, UiRect r, const Message *msgs, int count, const MessageViewContext *ctx) {
     v->last_rect = r;
     tui_fill(r, conv(THEME_SLOT_CHAT));
-    for (int i = 0; i < MESSAGE_VIEW_MAX_SCREEN_ROWS; i++) { v->screen_rows[i] = -1; v->screen_quote[i] = 0; v->screen_details[i] = 0; }
+    for (int i = 0; i < MESSAGE_VIEW_MAX_SCREEN_ROWS; i++) { v->screen_rows[i] = -1; v->screen_quote[i] = 0; }
     v->placement_count = 0;
     if (r.h < 2 || r.w < 8) return;
 
@@ -975,7 +884,6 @@ void message_view_render(MessageView *v, UiRect r, const Message *msgs, int coun
         if (k < MESSAGE_VIEW_MAX_SCREEN_ROWS && is_body_row(row->kind)) {
             v->screen_rows[k] = row->message;
             v->screen_quote[k] = row->kind == MESSAGE_ROW_QUOTE;
-            v->screen_details[k] = row->kind == MESSAGE_ROW_DETAILS_HEAD;
             v->screen_x0[k] = (short)(body.x + row->x);
             v->screen_x1[k] = (short)(body.x + row->x + row->width);
         }
@@ -1043,12 +951,6 @@ int message_view_hit_quote(MessageView *v, int y, int x) {
     int index = message_view_hit(v, y, x);
     int k = y - v->last_rect.y - v->header_rows;
     return index >= 0 && k >= 0 && k < MESSAGE_VIEW_MAX_SCREEN_ROWS && v->screen_quote[k] ? index : -1;
-}
-
-int message_view_hit_details(MessageView *v, int y, int x) {
-    int index = message_view_hit(v, y, x);
-    int k = y - v->last_rect.y - v->header_rows;
-    return index >= 0 && k >= 0 && k < MESSAGE_VIEW_MAX_SCREEN_ROWS && v->screen_details[k] ? index : -1;
 }
 
 int message_view_hit_portrait(const MessageView *v, int y, int x) { return ui_rect_contains(v->portrait_rect, y, x); }

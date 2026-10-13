@@ -1,11 +1,16 @@
 /* Message info: receipt events from the backends, the receipt store and the panel. */
 #include "clients/tui/message_info_panel.h"
+#include "clients/tui/tui_palette.h"
 #include "core/event.h"
+#include "engines/receipt_elapsed_text.h"
 #include "resource_access/json_protocol.h"
 #include "resource_access/sqlite_database.h"
 #include "resource_access/sqlite_receipt_store.h"
+#include "utilities/clock_util.h"
 #include "utilities/log.h"
+#include "utilities/str_util.h"
 
+#include <locale.h>
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -99,10 +104,159 @@ static void test_panel(void) {
     CHECK(message_info_panel_key(&p, 0, 27) == POPUP_CLOSED && !p.open, "Esc closes");
 }
 
+/* ---- the openable lines ---------------------------------------------------- */
+
+#define SENT_AT   1790000000
+#define DELIVERED 1790000004
+#define READ_AT   1790000090
+#define PLAYED_AT 1790010845          /* 3 h 0 min 45 s after it was sent */
+
+static void test_elapsed(void) {
+    char s[96];
+    receipt_elapsed_text(SENT_AT, SENT_AT + 41, s, sizeof(s));
+    CHECK(strcmp(s, "41 s after it was sent") == 0, "seconds");
+    receipt_elapsed_text(SENT_AT, SENT_AT + 252, s, sizeof(s));
+    CHECK(strcmp(s, "4 min 12 s after it was sent") == 0, "minutes and seconds");
+    receipt_elapsed_text(SENT_AT, PLAYED_AT, s, sizeof(s));
+    CHECK(strcmp(s, "3 h 0 min after it was sent") == 0, "hours and minutes");
+    receipt_elapsed_text(SENT_AT, SENT_AT + 3 * 86400 + 2 * 3600 + 5, s, sizeof(s));
+    CHECK(strcmp(s, "3 d 2 h after it was sent") == 0, "days and hours");
+    receipt_elapsed_text(SENT_AT, SENT_AT, s, sizeof(s));
+    CHECK(s[0] == '\0', "nothing for the same moment");
+    receipt_elapsed_text(SENT_AT, SENT_AT - 5, s, sizeof(s));
+    CHECK(s[0] == '\0', "nor for a clock that is behind");
+    receipt_elapsed_text(0, SENT_AT, s, sizeof(s));
+    CHECK(s[0] == '\0', "nor without a send time");
+}
+
+static int on_screen(const char *words) {
+    char line[512];
+    for (int y = 0; y < LINES; y++) {
+        if (mvinnstr(y, 0, line, sizeof(line) - 1) != ERR && strstr(line, words)) return 1;
+    }
+    return 0;
+}
+
+static int row_of(const char *words, int *column) {
+    char line[512];
+    for (int y = 0; y < LINES; y++) {
+        if (mvinnstr(y, 0, line, sizeof(line) - 1) == ERR) continue;
+        char *at = strstr(line, words);
+        if (at) { *column = (int)(at - line); return y; }
+    }
+    return -1;
+}
+
+static Receipt receipt_of(const char *name, int64_t delivered, int64_t read, int64_t played) {
+    Receipt r;
+    memset(&r, 0, sizeof(r));
+    str_copy(r.name, sizeof(r.name), name);
+    str_copy(r.jid, sizeof(r.jid), name);
+    r.delivered_at = delivered;
+    r.read_at = read;
+    r.played_at = played;
+    return r;
+}
+
+static void test_openable_lines(void) {
+    setlocale(LC_ALL, "");
+    FILE *out = fopen("/dev/null", "w"), *in = fopen("/dev/null", "r");
+    SCREEN *screen = out && in ? newterm("xterm-256color", out, in) : NULL;
+    CHECK(screen != NULL, "a screen to draw on");
+    if (!screen) return;
+    tui_palette_init();
+    resizeterm(40, 100);
+    UiRect area = { 0, 0, 40, 100 };
+    char read_exact[40], played_exact[40], sent_exact[40];
+    clock_format_exact(READ_AT, read_exact, sizeof(read_exact));
+    clock_format_exact(PLAYED_AT, played_exact, sizeof(played_exact));
+    clock_format_exact(SENT_AT, sent_exact, sizeof(sent_exact));
+
+    /* A voice note you sent, to one person. */
+    Message m;
+    message_init(&m);
+    str_copy(m.id, sizeof(m.id), "V1");
+    str_copy(m.chat_jid, sizeof(m.chat_jid), "27820000001@s.whatsapp.net");
+    m.from_me = 1;
+    m.type = MESSAGE_TYPE_AUDIO;
+    m.timestamp = SENT_AT;
+    Receipt one = receipt_of("Mom", DELIVERED, READ_AT, PLAYED_AT);
+    MessageInfoPanel p;
+    message_info_panel_open(&p, &m, 0);
+
+    erase();
+    message_info_panel_render(&p, area, &one, 1, 1);
+    CHECK(on_screen("Sent") && on_screen("Delivered") && on_screen("Read") && on_screen("Played") && on_screen("\xE2\x96\xB8"),
+          "the lines show with an arrow that opens each");
+    CHECK(p.item_count == 4 && !on_screen(played_exact) && !on_screen("after it was sent"), "closed, no exact time shows");
+
+    /* Down to Played (Sent, Delivered, Read, Played), then open it with Enter. */
+    message_info_panel_key(&p, 1, KEY_DOWN);
+    message_info_panel_key(&p, 1, KEY_DOWN);
+    message_info_panel_key(&p, 1, KEY_DOWN);
+    CHECK(p.open && p.cursor == 3, "the arrow keys move between the lines");
+    CHECK(message_info_panel_key(&p, 0, '\n') == POPUP_NONE && p.open, "Enter opens the line and does not close the dialog");
+    erase();
+    message_info_panel_render(&p, area, &one, 1, 1);
+    CHECK(on_screen(played_exact) && on_screen("3 h 0 min after it was sent") && on_screen("\xE2\x96\xBE"),
+          "opened, a line gives the exact date and time and how long after the message it came");
+    CHECK(!on_screen(read_exact), "and only that line opens");
+
+    /* A click on a line opens it too. */
+    int column = 0;
+    int y = row_of("Read", &column);
+    CHECK(y >= 0 && message_info_panel_click(&p, y, column + 2) == POPUP_NONE && p.open, "a click on a line does not close the dialog");
+    erase();
+    message_info_panel_render(&p, area, &one, 1, 1);
+    CHECK(on_screen(read_exact), "it opens that line");
+
+    /* Left closes the line the arrow keys are on; Esc closes the dialog. */
+    message_info_panel_key(&p, 1, KEY_LEFT);
+    erase();
+    message_info_panel_render(&p, area, &one, 1, 1);
+    CHECK(!on_screen(read_exact) && on_screen(played_exact), "Left closes the line it is on");
+    CHECK(message_info_panel_click(&p, 0, 0) == POPUP_CLOSED && !p.open, "a click outside closes the dialog");
+
+    /* Not played yet: the line is there, says so, and has nothing to open. */
+    Receipt unplayed = receipt_of("Mom", DELIVERED, READ_AT, 0);
+    message_info_panel_open(&p, &m, 0);
+    erase();
+    message_info_panel_render(&p, area, &unplayed, 1, 1);
+    CHECK(on_screen("Played") && on_screen("not yet") && p.item_count == 3, "a note not played yet shows Played as not yet, with no arrow to open");
+
+    /* A text message you sent has no Played line unless it was played. */
+    Message text = m;
+    text.type = MESSAGE_TYPE_TEXT;
+    message_info_panel_open(&p, &text, 0);
+    erase();
+    message_info_panel_render(&p, area, &unplayed, 1, 1);
+    CHECK(!on_screen("Played"), "a text message shows no Played line");
+
+    /* A group: a line a person, opening to each step they reached. */
+    Receipt group[2] = { receipt_of("Anna", DELIVERED, READ_AT, PLAYED_AT), receipt_of("Ben", DELIVERED, 0, 0) };
+    message_info_panel_open(&p, &m, 1);
+    erase();
+    message_info_panel_render(&p, area, group, 2, 1);
+    CHECK(on_screen("Read by 1") && on_screen("Anna") && on_screen("Delivered to 1") && on_screen("Ben"), "a group lists who read it and who got it");
+    message_info_panel_key(&p, 1, KEY_DOWN);                  /* Sent, then Anna */
+    message_info_panel_key(&p, 0, ' ');
+    erase();
+    message_info_panel_render(&p, area, group, 2, 1);
+    CHECK(on_screen(played_exact) && on_screen(read_exact) && on_screen("Delivered 20"), "a person opens to the exact time of each step");
+
+    message_dispose(&m);
+    endwin();
+    delscreen(screen);
+    fclose(out);
+    fclose(in);
+}
+
 int main(void) {
     test_protocol();
     test_store();
     test_panel();
+    test_elapsed();
+    test_openable_lines();
     if (failures) return 1;
     printf("ok: message info shows who received and read a message\n");
     return 0;

@@ -7,7 +7,6 @@
 #include "clients/tui/thumbnail_cache.h"
 #include "clients/tui/media_sources.h"
 #include "clients/tui/message_formatter.h"
-#include "clients/tui/receipt_source.h"
 #include "clients/tui/status_source.h"
 #include "clients/tui/summary_source.h"
 #include "clients/tui/transcript_source.h"
@@ -48,8 +47,6 @@ typedef struct MessageViewContext {
     const TranscriptSource *transcripts;
     /* The TL;DR summaries of long messages, shown in their place until unfolded; NULL in a chat that is not in TL;DR mode. */
     const SummarySource *summaries;
-    /* How the voice notes and videos you sent were received, shown under them; NULL shows none. */
-    const ReceiptSource *receipts;
 } MessageViewContext;
 
 #endif

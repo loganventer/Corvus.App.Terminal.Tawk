@@ -3,7 +3,7 @@
 # Run `make help` for every target and option.
 
 APP        ?= tawk
-VERSION    ?= 0.28.0
+VERSION    ?= 0.29.0
 # The commit this build comes from, so `tawk --update` can tell whether it is current.
 COMMIT     ?= $(shell git rev-parse HEAD 2>/dev/null)
 
@@ -271,7 +271,7 @@ TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_
          $(BUILD)/tests/control_accounts_test $(BUILD)/tests/two_accounts_test \
          $(BUILD)/tests/tab_title_test $(BUILD)/tests/attachment_policy_test \
          $(BUILD)/tests/account_migration_rules_test $(BUILD)/tests/account_migration_test \
-         $(BUILD)/tests/voice_note_details_test $(BUILD)/tests/voice_note_receipts_test
+         $(BUILD)/tests/voice_note_details_test
 
 test: $(TESTS)
 	$(call say,Running tests)
@@ -295,10 +295,6 @@ $(BUILD)/tests/account_migration_rules_test: $(BUILD)/tests/account_migration_ru
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
 $(BUILD)/tests/account_migration_test: $(BUILD)/tests/account_migration_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
-	$(call step,LD,$@)
-	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
-
-$(BUILD)/tests/voice_note_receipts_test: $(BUILD)/tests/voice_note_receipts_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
 	$(call step,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 

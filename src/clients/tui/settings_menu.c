@@ -238,7 +238,6 @@ static const MenuNode KEYS[] = {
     TEXT("Alt+O/M/P/A     chat options, mute, pin, archive (chat list)"),
     TEXT("Alt+Q/E/M       reply, react, menu (selected message)"),
     TEXT("Alt+Shift+E     edit your message"),
-    TEXT("Alt+D           open or close how your voice note was received"),
     TEXT("Up (empty input) edit your last message, when it is the newest"),
     TEXT("Alt+R           retry a failed message"),
     TEXT("Right-click     message or chat menu (Ctrl+click on a Mac)"),

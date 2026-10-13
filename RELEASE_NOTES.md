@@ -4,6 +4,16 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.29.0 (2026-10-13)
+
+The detail of how a voice note was received moves from the conversation into Message info, where each line opens.
+
+- **Message info, line by line.** Every line with a time (Sent, Delivered, Read, Played, and each person of a group) has an arrow. Press Enter, Space or Right, or click the line, and it opens to the exact date and time to the second, and how long after the message it came. Left closes it. Up and Down move between the lines.
+- **Played always shows for a voice note or video you sent**, as "not yet" until someone plays it.
+- **The conversation is as it was.** The line under a voice note and Alt+D from 0.28.0 are gone; the note shows its play line and its transcript only.
+- Enter now opens the line you are on in Message info, and Esc or q closes it.
+- The database is unchanged (still version 27).
+
 ## 0.28.0 (2026-10-13)
 
 A voice note or video you sent shows how it was received, under it, and opens for the detail.

@@ -1675,7 +1675,6 @@ TuiApp *tui_app_create(const TuiAppDeps *deps) {
     app->formatter = (MessageFormatter){ app, format_through_manager, preview_through_manager };
     app->status_source = (StatusSource){ app, status_through_feed };
     tui_app_init_transcripts(app);
-    tui_app_init_receipts(app);
     tui_app_init_summaries(app);
     app->focus = TUI_FOCUS_CHATS;
     app->last_auth = AUTH_STATE_STARTING;

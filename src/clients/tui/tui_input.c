@@ -543,12 +543,6 @@ static void handle_mouse_event(TuiApp *app, MEVENT ev) {
         } else if (press) {
             int quoted = message_view_hit_quote(&app->message_view, ev.y, ev.x);
             if (quoted >= 0) { tui_app_go_to_quote(app, quoted); return; }     /* a click on a quote jumps to it */
-            int shown = message_view_hit_details(&app->message_view, ev.y, ev.x);
-            if (shown >= 0) {                                   /* the head line of a voice note's details opens and closes them */
-                app->message_view.selected = shown;
-                tui_app_toggle_details(app, shown);
-                return;
-            }
             int idx = message_view_hit(&app->message_view, ev.y, ev.x);
             if (idx >= 0) {
                 app->message_view.selected = idx;
@@ -665,7 +659,6 @@ static void handle_messages(TuiApp *app, int is_key, int ch, int alt) {
     } else if (is_key && ch == KEY_DOWN) message_view_select(v, count, 1);
     else if ((is_key && ch == KEY_END) || is_ctrl_end(is_key, ch)) tui_app_show_latest(app);
     else if (is_enter(is_key, ch) && v->selected >= 0) tui_app_activate_message(app, v->selected);
-    else if (alt && !is_key && (ch == 'd' || ch == 'D') && v->selected >= 0) tui_app_toggle_details(app, v->selected);
     else if (alt && !is_key && ch == 'q' && v->selected >= 0) tui_app_start_reply(app, v->selected);
     else if (alt && !is_key && ch == 'e' && v->selected >= 0) tui_app_open_reactions(app, v->selected);
     else if (alt && !is_key && ch == 'E' && v->selected >= 0) tui_app_start_edit(app, v->selected);
