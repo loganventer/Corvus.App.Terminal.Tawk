@@ -5,6 +5,7 @@
 #include "clients/tui/message_row.h"
 #include "clients/tui/message_view_context.h"
 #include "clients/tui/quoted_status.h"
+#include "clients/tui/receipt_view.h"
 #include "clients/tui/summary_view.h"
 #include "clients/tui/transcript_view.h"
 #include "clients/tui/ui_rect.h"
@@ -14,6 +15,7 @@
 #define MESSAGE_VIEW_MAX_SCREEN_ROWS 512
 #define MESSAGE_VIEW_MAX_PLACEMENTS  16
 #define MESSAGE_VIEW_MAX_UNFOLDED    32
+#define MESSAGE_VIEW_MAX_OPENED      32
 
 /* The conversation pane: bubbles, day separators, media and voice notes. */
 typedef struct MessageView {
@@ -25,6 +27,7 @@ typedef struct MessageView {
     int         row_cap;
     int         screen_rows[MESSAGE_VIEW_MAX_SCREEN_ROWS];   /* view row -> message index or -1 */
     unsigned char screen_quote[MESSAGE_VIEW_MAX_SCREEN_ROWS];  /* the row is a quote strip */
+    unsigned char screen_details[MESSAGE_VIEW_MAX_SCREEN_ROWS]; /* the row is the head line of a voice note's details */
     short       screen_x0[MESSAGE_VIEW_MAX_SCREEN_ROWS];     /* the bubble's columns on that row */
     short       screen_x1[MESSAGE_VIEW_MAX_SCREEN_ROWS];
     UiRect      last_rect;
@@ -45,6 +48,10 @@ typedef struct MessageView {
     int         summary_count;
     char        unfolded[MESSAGE_VIEW_MAX_UNFOLDED][64];   /* ids of summarised messages showing their original */
     int         unfolded_count;
+    ReceiptView *receipts;       /* per message: how a voice note or video you sent was received (found 0 when none) */
+    int         receipt_count;
+    char        opened[MESSAGE_VIEW_MAX_OPENED][64];       /* ids of voice notes showing their details */
+    int         opened_count;
     int         held;            /* the place below is put back at the next render */
     char        held_top[64];    /* id of the message at the top of the screen */
     int         held_offset;     /* which of its rows is the top row */
@@ -75,6 +82,14 @@ int  message_view_summarised(const MessageView *view, int index);
 int  message_view_unfolded(const MessageView *view, const char *message_id);
 /* Unfolds a summarised message to its original, or folds it back to the summary. */
 void message_view_toggle_summary(MessageView *view, const char *message_id);
+/* Whether message `index` shows how it was received (its head line) at the last render. */
+int  message_view_has_details(const MessageView *view, int index);
+/* Whether a voice note shows its details open. */
+int  message_view_details_open(const MessageView *view, const char *message_id);
+/* Opens a voice note's details, or closes them. */
+void message_view_toggle_details(MessageView *view, const char *message_id);
+/* The message whose details head line is under (y, x), or -1. */
+int  message_view_hit_details(MessageView *view, int y, int x);
 /* Message whose bubble is under (y, x), or -1 (a click beside a bubble hits nothing). */
 int  message_view_hit(MessageView *view, int y, int x);
 /* The message whose quote strip is under (y, x), or -1. */

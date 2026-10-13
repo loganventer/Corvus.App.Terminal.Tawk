@@ -4,6 +4,16 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.28.0 (2026-10-13)
+
+A voice note or video you sent shows how it was received, under it, and opens for the detail.
+
+- **A line under it.** Once someone has received it, a line sits under the voice note: `▸ Played 2026-10-13 07:28:41`, or `▸ Not played yet`. In a group it reads `▸ Played by 2 of 3, first 2026-10-13 07:28:41`.
+- **Open it for the detail.** Click the line, or select the message and press Alt+D, and the arrow turns (`▾`) and lines appear for Sent, Delivered, Read and Played, each with the date and the exact time to the second. In a group, one line each for the people who got it.
+- **The exact time, always.** The date is shown also for a note you sent today, and for an old one.
+- Enter still plays the note, and the message info panel is unchanged.
+- The database is unchanged (still version 27).
+
 ## 0.27.0 (2026-10-13)
 
 Agents can be told the moment someone plays a voice note you sent.

@@ -186,6 +186,7 @@ void tui_render_frame(TuiApp *app, int64_t now) {
             .statuses = &app->status_source,
             .transcripts = tui_app_transcripts_for(app, chat),
             .summaries = tui_app_summaries_for(app, chat),
+            .receipts = &app->receipt_source,
         };
         ScheduledMessage *scheduled = NULL;
         int n_scheduled = 0;

@@ -96,6 +96,7 @@ struct TuiApp {
     StatusSource        status_source;        /* the statuses replies answer, from the status feed manager */
     TranscriptSource    transcript_source;    /* the transcripts of voice notes, from the transcript manager */
     SummarySource       summary_source;       /* the TL;DR summaries of long messages, from the summary manager */
+    ReceiptSource       receipt_source;       /* how voice notes you sent were received, from the messaging manager */
     HeaderHits          header_hits;          /* where the header drew + and your name */
     SplashView          splash;               /* the start-up animation */
     ChatPicker          forward_picker;       /* choosing chats to forward a message to */
@@ -373,6 +374,9 @@ void tui_app_refresh_alerts_pref(TuiApp *app);
 void tui_app_step_alerts(TuiApp *app, const char *jid);
 /* Unfolds a summarised message to its original, or folds it back; 0 when the message has no summary. */
 int  tui_app_toggle_summary(TuiApp *app, int index);
+/* How voice notes you sent were received (tui_receipts.c): opens or closes the details under one; 0 when it has none. */
+void tui_app_init_receipts(TuiApp *app);
+int  tui_app_toggle_details(TuiApp *app, int index);
 /* Voice note transcripts (tui_transcripts.c). */
 void tui_app_init_transcripts(TuiApp *app);
 /* Where the conversation of `chat` gets transcripts, or NULL when they are not shown in it. */

@@ -18,6 +18,8 @@ void    clock_format_day(int64_t epoch_s, char *out, size_t size);
 /* A time still to come: "Today 18:00", "Tomorrow 09:00", "Friday 17:30"
  * within a week, else "12 Oct 18:00". */
 void    clock_format_upcoming(int64_t epoch_s, int use_24h, char *out, size_t size);
+/* The whole moment in local time, to the second: "2026-10-13 07:28:41". */
+void    clock_format_exact(int64_t epoch_s, char *out, size_t size);
 /* Days since epoch in local time, used to detect day boundaries. */
 int64_t clock_local_day(int64_t epoch_s);
 

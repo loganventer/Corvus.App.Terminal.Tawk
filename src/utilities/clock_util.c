@@ -22,6 +22,11 @@ int64_t clock_local_day(int64_t epoch_s) {
     return (int64_t)(tm_v.tm_year) * 400 + tm_v.tm_yday;
 }
 
+void clock_format_exact(int64_t epoch_s, char *out, size_t size) {
+    struct tm tm_v = local_tm(epoch_s);
+    strftime(out, size, "%Y-%m-%d %H:%M:%S", &tm_v);
+}
+
 void clock_format_time(int64_t epoch_s, int use_24h, char *out, size_t size) {
     struct tm tm_v = local_tm(epoch_s);
     strftime(out, size, use_24h ? "%H:%M" : "%I:%M %p", &tm_v);
