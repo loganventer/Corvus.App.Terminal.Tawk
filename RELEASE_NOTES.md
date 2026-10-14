@@ -4,6 +4,15 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.31.0 (2026-10-14)
+
+The notification sound is chosen from a list in Settings.
+
+- **Settings, Notifications, Sound, Choose sound** lists the sounds that come with tawk and any of your own. Moving through the list plays each one; Enter keeps it and Esc leaves the sound you had.
+- **Your own sounds** go in `~/.config/tawk/sounds/` (WAV or OGG) and appear in the list. A file there with the name of a bundled sound replaces it. The Sound file setting is still there for a file kept anywhere else.
+- **`/tone` takes a name** for one chat, such as `/tone bong`.
+- The database is unchanged (still version 27).
+
 ## 0.30.0 (2026-10-14)
 
 A few more notification sounds come with tawk, so a chat can sound different from the rest.

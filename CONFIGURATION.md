@@ -24,6 +24,7 @@ Your files (created with owner-only permissions, folders 0700 and files 0600):
 |---|---|---|
 | `~/.config/tawk/config.ini` | Settings | Yes, defaults are written again |
 | `~/.config/tawk/themes/` | Your own themes | Yes |
+| `~/.config/tawk/sounds/` | Your own notification sounds (WAV or OGG), listed beside the bundled ones in Settings, Notifications, Sound | Yes |
 | `~/.local/share/tawk/tawk.db` | Chats, messages, contacts, reactions, per-chat preferences (drafts, mutes, tones, chat themes, soft locks), profiles (about text, business and group details, which picture files belong to whom, the block list) and statuses (kept for `status_keep_days`) | Yes, history syncs again after linking, but local preferences are lost |
 | `~/.local/share/tawk/tawk.db.pre-v10` (and later versions) | A copy of the database as it was before tawk upgraded it, kept once so a failed or unwanted upgrade can be undone by hand. Encrypted when the database is. `tawk --encrypt` offers to remove unencrypted ones | Yes, once the upgraded tawk works |
 | `~/.local/share/tawk/tawk.lock` | Held while tawk runs, so only one tawk uses the data folder at a time (and `--encrypt`, `--decrypt` and `--change-passphrase` wait for it to quit) | Yes, when no tawk is running |

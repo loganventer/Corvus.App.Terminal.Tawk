@@ -109,7 +109,7 @@ flowchart TD
         PS["IProfileStore (SQLite)"]
         SS["IStatusStore (SQLite)"]
         EX["IChatExporter (text)"]
-        CFG["ISettingsStore (INI) ·<br/>IThemeRepository (JSON) ·<br/>IEmojiCatalog (TSV)"]
+        CFG["ISettingsStore (INI) ·<br/>IThemeRepository (JSON) ·<br/>ISoundCatalog (folders) ·<br/>IEmojiCatalog (TSV)"]
     end
     subgraph Infrastructure
         AU["IAudioBackend · IAudioPlayer ·<br/>IAudioRecorder · ICamera"]
@@ -167,6 +167,7 @@ flowchart TD
 | `IEmojiCatalog` | `tsv_emoji_catalog` (reads `emoji.tsv`: glyph, group, name and CLDR keywords per line) |
 | `ISettingsStore` | `ini_settings_store` |
 | `IThemeRepository` | `json_theme_repository` |
+| `ISoundCatalog` | `folder_sound_catalog` (the `.wav` and `.ogg` files of the bundled sounds folder and of `~/.config/tawk/sounds/`; the settings panel lists them through `sound_picker` and `sound_picker_view`, and `sound_name` decides which files count and what to call them) |
 | `IAudioBackend` | `pulse`, `pipewire`, `alsa`, `coreaudio`, `dshow`, chosen by `audio_backend_factory` |
 | `IAudioPlayer` | `process_audio_player` (uses an `IAudioBackend`; reports how long the current file has played, for the voice note progress bar) |
 | `IAudioRecorder` | `pipeline_audio_recorder` (backend capture piped into ffmpeg) |
@@ -328,6 +329,7 @@ flowchart LR
     subgraph Settings["Settings and themes"]
         INI["ini_settings_store<br/>ISettingsStore"]
         THEMES["json_theme_repository<br/>IThemeRepository"]
+        SOUNDS["folder_sound_catalog<br/>ISoundCatalog"]
         EMOJI["tsv_emoji_catalog<br/>IEmojiCatalog"]
     end
     subgraph Storage["Storage: sqlite_database_open"]

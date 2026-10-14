@@ -219,7 +219,7 @@ Type a command at the start of the input. Suggestions appear above the input as 
 | `/archive` | | Move this chat to Archived |
 | `/unarchive` | | Move this chat back to the chats |
 | `/theme` | `[id\|default]` | Theme for this chat; without an argument the theme picker opens, `default` returns to the app theme |
-| `/tone` | `[file\|none\|default]` | Notification sound for this chat; without an argument the file picker opens |
+| `/tone` | `[name\|file\|none\|default]` | Notification sound for this chat: the name of a bundled or own sound such as `bong`, or a file; without an argument the file picker opens |
 | `/dnd` | | Toggle do not disturb |
 | `/screensaver` | | Start the screensaver now |
 | `/lock` | | Start the screensaver now |
@@ -790,7 +790,7 @@ When a message arrives in a chat that is not open, tawk can:
 
 The tab title follows what is going on, like `🟢 tawk · Mom · 💬 3  📷 1`. It names the open chat and, while something is happening, says what with a spinning braille glyph in front: `⠼ Loading older messages · Dev team`, `⠹ Connecting…`, `Recording 0:07`. While someone types to you the tab moves like the typing dots in a chat: ✍️ and 💬 take turns in front and the dots after `Jan is typing` count up and start again. It follows the open chat first and otherwise any chat where someone is typing (`Mom is typing`, or `Dev team: Jan is typing` for a group); soft-locked chats are left out. Unread counts per type follow at the end and alternate with `✉ 3 new` while new messages wait. The leading symbol shows the status: 🟢 online, 🟡 connecting, 🔴 unavailable, 🔗 not linked, 🔕 do not disturb, 🔴REC recording, 🎧 playing. In Windows Terminal the tab also shows a spinning progress ring while reconnecting and a red one while retries are paused.
 
-**Choosing the sound.** tawk comes with nine short sounds in its `sounds` folder (`/usr/local/share/tawk/sounds/`, or `~/.local/share/tawk/sounds/` when installed under your home): `notify` (the default), `bong`, `pluck`, `glass`, `drop`, `open`, `question`, `rise` and `confirm`. Point **Sound file** in Settings, Notifications at one of them to change it everywhere, or give one chat its own with `/tone` (the file picker opens, so pick one of the files above). Any WAV or OGG file of your own works the same way.
+**Choosing the sound.** tawk comes with nine short sounds in its `sounds` folder (`/usr/local/share/tawk/sounds/`, or `~/.local/share/tawk/sounds/` when installed under your home): `notify` (the default), `bong`, `pluck`, `glass`, `drop`, `open`, `question`, `rise` and `confirm`. Settings, Notifications, Sound, **Choose sound** lists them (0.31.0): moving through the list plays each one, Enter keeps it and Esc leaves the sound you had. Give one chat its own with `/tone` and a name, such as `/tone bong`, or with no argument for the file picker. Any WAV or OGG file of your own works too: put it in `~/.config/tawk/sounds/` and it appears in the list (a file there with a bundled name replaces the bundled one), or type its path into **Sound file**, which is still there for a file kept anywhere else.
 
 Each of these can be turned on or off in Settings, Notifications. Do not disturb (Ctrl+D or `/dnd`) silences all of them. Group chats can be silenced separately, muted chats never notify, and a chat whose tone is set to none alerts without sound.
 

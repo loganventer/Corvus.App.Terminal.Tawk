@@ -1,9 +1,11 @@
 #include "clients/tui/settings_panel.h"
 #include "clients/tui/toggle_switch.h"
 #include "clients/tui/settings_menu.h"
+#include "clients/tui/sound_picker_view.h"
 #include "clients/tui/tui_draw.h"
 #include "clients/tui/tui_palette.h"
 #include "core/settings_schema.h"
+#include "engines/sound_name.h"
 #include "utilities/str_util.h"
 #include "utilities/utf8_text.h"
 
@@ -23,6 +25,7 @@ void settings_panel_open(SettingsPanel *p) {
     p->stack[0] = settings_menu_root();
     p->selected[0] = p->scroll[0] = 0;
     p->picking_theme = p->editing = 0;
+    p->sounds.active = 0;
 }
 
 static void end_theme_pick(SettingsPanel *p, int keep) {
@@ -41,6 +44,7 @@ static void end_theme_pick(SettingsPanel *p, int keep) {
 
 void settings_panel_close(SettingsPanel *p) {
     end_theme_pick(p, 0);
+    p->sounds.active = 0;
     p->open = 0;
 }
 
@@ -64,6 +68,39 @@ static void save(SettingsPanel *p, const Settings *s, const SettingField *f, lon
     } else {
         toast(p, "Could not save the config file", now);
     }
+}
+
+static ISoundCatalog *sound_catalog(SettingsPanel *p) {
+    return p->host.sounds ? p->host.sounds(p->host.ctx) : NULL;
+}
+
+/* Stores the highlighted sound as the notification sound. */
+static void use_highlighted_sound(SettingsPanel *p, ISoundCatalog *catalog, long long now) {
+    const SoundOption *option = sound_picker_current(&p->sounds, catalog);
+    const SettingField *f = settings_schema_find(SETTING_CATEGORY_NOTIFICATIONS, "sound_file");
+    if (!option || !f) return;
+    Settings s = *p->host.settings(p->host.ctx);
+    setting_set_string(&s, f, option->path);
+    save(p, &s, f, now);
+}
+
+/* Reacts to what the sound picker reported: play on a move, store on a choice. */
+static void follow_sound_picker(SettingsPanel *p, SoundPickerOutcome outcome, long long now) {
+    ISoundCatalog *catalog = sound_catalog(p);
+    if (!catalog) { p->sounds.active = 0; return; }
+    if (outcome == SOUND_PICKER_MOVED) {
+        const SoundOption *option = sound_picker_current(&p->sounds, catalog);
+        if (option && p->host.play_sound) p->host.play_sound(p->host.ctx, option->path);
+    } else if (outcome == SOUND_PICKER_CHOSEN) {
+        use_highlighted_sound(p, catalog, now);
+    }
+}
+
+static void begin_sound_pick(SettingsPanel *p, long long now) {
+    ISoundCatalog *catalog = sound_catalog(p);
+    if (!catalog) { toast(p, "No sounds folder found", now); return; }
+    catalog->reload(catalog);
+    sound_picker_begin(&p->sounds, catalog, p->host.settings(p->host.ctx)->sound_file);
 }
 
 static void cycle_choice(Settings *s, const SettingField *f, int dir) {
@@ -142,6 +179,9 @@ static void activate(SettingsPanel *p, int index, long long now) {
         case MENU_NODE_THEMES:
             begin_theme_pick(p);
             break;
+        case MENU_NODE_SOUNDS:
+            begin_sound_pick(p, now);
+            break;
         case MENU_NODE_ACTION:
             p->host.run_action(p->host.ctx, n->action);
             break;
@@ -181,6 +221,13 @@ int settings_panel_key(SettingsPanel *p, int is_key, int ch, long long now) {
             p->edit[p->edit_len++] = (wchar_t)ch;
             p->edit[p->edit_len] = L'\0';
         }
+        return 0;
+    }
+
+    if (p->sounds.active) {
+        ISoundCatalog *catalog = sound_catalog(p);
+        if (!catalog) { p->sounds.active = 0; return 0; }
+        follow_sound_picker(p, sound_picker_key(&p->sounds, catalog, is_key, ch), now);
         return 0;
     }
 
@@ -235,6 +282,12 @@ void settings_panel_paste(SettingsPanel *p, const char *utf8) {
 }
 
 void settings_panel_wheel(SettingsPanel *p, int delta) {
+    if (p->sounds.active) {
+        ISoundCatalog *catalog = sound_catalog(p);
+        if (catalog) follow_sound_picker(p, sound_picker_wheel(&p->sounds, catalog, delta), 0);
+        else p->sounds.active = 0;
+        return;
+    }
     if (p->picking_theme) {
         IThemeRepository *repo = p->host.themes(p->host.ctx);
         p->theme_index += delta;
@@ -257,11 +310,18 @@ int settings_panel_click(SettingsPanel *p, int y, int x, long long now) {
         for (int d = 0; d < p->depth; d++) {
             if (x >= p->crumb_x[d] && x < p->crumb_x[d + 1]) {
                 end_theme_pick(p, 0);
+                p->sounds.active = 0;
                 p->editing = 0;
                 p->depth = d + 1;
                 return 0;
             }
         }
+        return 0;
+    }
+    if (p->sounds.active) {
+        ISoundCatalog *catalog = sound_catalog(p);
+        if (catalog) follow_sound_picker(p, sound_picker_click(&p->sounds, catalog, y), now);
+        else p->sounds.active = 0;
         return 0;
     }
     int k = y - r.y;
@@ -291,6 +351,10 @@ static void value_text(SettingsPanel *p, const MenuNode *n, char *out, size_t si
         p->host.info(p->host.ctx, n->info, out, size);
         return;
     }
+    if (n->kind == MENU_NODE_SOUNDS) {
+        sound_name_label(p->host.settings(p->host.ctx)->sound_file, out, size);
+        return;
+    }
     const SettingField *f = field_of(n);
     if (!f) return;
     const Settings *s = p->host.settings(p->host.ctx);
@@ -317,6 +381,7 @@ static void render_breadcrumb(SettingsPanel *p, UiRect r) {
     }
     p->crumb_x[p->depth] = x;
     if (p->picking_theme) tui_text(r.y + 1, x, r.w - (x - r.x) - 2, " \xE2\x80\xBA Choose theme", attr | ATTR_BOLD);
+    if (p->sounds.active) tui_text(r.y + 1, x, r.w - (x - r.x) - 2, " \xE2\x80\xBA Choose sound", attr | ATTR_BOLD);
 }
 
 static void render_themes(SettingsPanel *p, UiRect list) {
@@ -395,10 +460,13 @@ void settings_panel_render(SettingsPanel *p, UiRect r, long long now) {
     tui_fill((UiRect){ r.y + 1, r.x + 1, r.h - 2, r.w - 2 }, tui_palette_attr(THEME_SLOT_BASE));
     render_breadcrumb(p, r);
     UiRect list = { r.y + 3, r.x + 1, r.h - 6, r.w - 2 };
-    if (p->picking_theme) render_themes(p, list);
+    ISoundCatalog *sounds = p->sounds.active ? sound_catalog(p) : NULL;
+    if (sounds) sound_picker_view_render(&p->sounds, sounds, list, p->host.settings(p->host.ctx)->sound_file);
+    else if (p->picking_theme) render_themes(p, list);
     else render_items(p, list);
 
-    const char *hint = p->picking_theme ? "\xE2\x86\x91\xE2\x86\x93 preview \xC2\xB7 Enter apply \xC2\xB7 Esc cancel"
+    const char *hint = p->sounds.active ? "\xE2\x86\x91\xE2\x86\x93 hear it \xC2\xB7 Enter use it \xC2\xB7 Esc cancel"
+                     : p->picking_theme ? "\xE2\x86\x91\xE2\x86\x93 preview \xC2\xB7 Enter apply \xC2\xB7 Esc cancel"
                      : p->editing ? "Type or drop a path \xC2\xB7 Enter save \xC2\xB7 Esc cancel"
                      : "\xE2\x86\x91\xE2\x86\x93 move \xC2\xB7 Enter open/toggle \xC2\xB7 \xE2\x86\x90\xE2\x86\x92 adjust \xC2\xB7 Esc back";
     if (p->toast[0] && now < p->toast_until_ms) {

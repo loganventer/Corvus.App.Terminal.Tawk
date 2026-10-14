@@ -38,6 +38,7 @@
 #include "infrastructure/desktop_notifier.h"
 #include "infrastructure/osc_notifier.h"
 #include "infrastructure/sound_notifier.h"
+#include "resource_access/folder_sound_catalog.h"
 #include "infrastructure/system_clipboard_image.h"
 #include "infrastructure/system_media_opener.h"
 #include "infrastructure/authenticated_file_cipher.h"
@@ -407,15 +408,17 @@ int main(int argc, char **argv) {
     }
 
     /* Settings and themes */
-    char config_dir[512], user_themes[600], bundled_themes[600], emoji_dir[600];
+    char config_dir[512], user_themes[600], bundled_themes[600], emoji_dir[600], user_sounds[600], bundled_sounds[600];
     path_config_dir(config_dir, sizeof(config_dir));
     path_join(user_themes, sizeof(user_themes), config_dir, "themes");
+    path_join(user_sounds, sizeof(user_sounds), config_dir, "sounds");
     if (!opt.doctor) {                          /* the setup check never writes anything */
         path_mkdir_p(config_dir, 0700);
         path_mkdir_p(user_themes, 0700);
     }
     locate(APP_SHARE_DIR "/themes", "themes", "/whatsapp-dark.json", bundled_themes, sizeof(bundled_themes));
     locate(APP_SHARE_DIR "/emoji", "assets/emoji", "/emoji.tsv", emoji_dir, sizeof(emoji_dir));
+    locate(APP_SHARE_DIR "/sounds", "assets/sounds", "/notify.wav", bundled_sounds, sizeof(bundled_sounds));
     char emoji_file[700];
     path_join(emoji_file, sizeof(emoji_file), emoji_dir, "emoji.tsv");
     IEmojiCatalog *emoji = tsv_emoji_catalog_create(emoji_file);
@@ -523,6 +526,7 @@ int main(int argc, char **argv) {
     IAudioBackend *audio = audio_backend_factory_create(s->audio_backend);
     IAudioPlayer *voice_player = process_audio_player_create(audio);
     IAudioPlayer *sound_player = process_audio_player_create(audio);
+    ISoundCatalog *sound_catalog = folder_sound_catalog_create(bundled_sounds, user_sounds);
     IAudioRecorder *recorder = pipeline_audio_recorder_create(audio);
     IMediaOpener *opener = system_media_opener_create(s);
     IIdleAction *screensaver = pty_idle_action_create();
@@ -589,7 +593,7 @@ int main(int argc, char **argv) {
     terminal_graphics_cell_pixels(&cell_w, &cell_h);
     TuiAppDeps tdeps = {
         .messaging = active->messaging, .profiles = active->profiles, .calls = active->calls, .media = media,
-        .settings = settings_mgr, .screensaver = screensaver, .sound_player = sound_player, .emoji = emoji,
+        .settings = settings_mgr, .screensaver = screensaver, .sound_player = sound_player, .sounds = sound_catalog, .emoji = emoji,
         .clipboard = clipboard, .video_posters = posters, .document_pages = pages, .clipboard_image = clipboard_image,
         .notifier = notifier, .blink = &blink, .title = &flasher,
         .backend_name = active->backend_name, .audio_backend_name = audio->name(audio), .user_theme_dir = user_themes,
@@ -634,6 +638,7 @@ int main(int argc, char **argv) {
     recorder->destroy(recorder);
     if (camera) camera->destroy(camera);
     sound_player->destroy(sound_player);
+    if (sound_catalog) sound_catalog->destroy(sound_catalog);
     voice_player->destroy(voice_player);
     audio->destroy(audio);
     exporter->destroy(exporter);

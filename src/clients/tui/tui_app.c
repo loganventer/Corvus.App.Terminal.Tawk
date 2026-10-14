@@ -1120,6 +1120,12 @@ static int host_apply(void *ctx, const Settings *updated) {
 }
 
 static IThemeRepository *host_themes(void *ctx) { return settings_manager_themes(((TuiApp *)ctx)->deps.settings); }
+static ISoundCatalog *host_sounds(void *ctx) { return ((TuiApp *)ctx)->deps.sounds; }
+
+static void host_play_sound(void *ctx, const char *path) {
+    TuiApp *app = ctx;
+    if (app->deps.sound_player) app->deps.sound_player->play(app->deps.sound_player, path);
+}
 
 static void host_preview(void *ctx, const Theme *theme) {
     TuiApp *app = ctx;
@@ -1664,7 +1670,8 @@ TuiApp *tui_app_create(const TuiAppDeps *deps) {
     message_view_init(&app->message_view);
     composer_view_init(&app->composer);
     login_view_init(&app->login);
-    SettingsPanelHost host = { app, host_settings, host_apply, host_themes, host_preview, host_action, host_info, host_agent_connected };
+    SettingsPanelHost host = { app, host_settings, host_apply, host_themes, host_preview, host_action, host_info, host_agent_connected,
+                              host_sounds, host_play_sound };
     settings_panel_init(&app->settings_panel, host);
     file_picker_init(&app->file_picker);
     search_overlay_init(&app->search);

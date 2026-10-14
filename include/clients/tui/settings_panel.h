@@ -5,6 +5,7 @@
 
 #include "clients/tui/menu_node.h"
 #include "clients/tui/settings_panel_host.h"
+#include "clients/tui/sound_picker.h"
 #include "clients/tui/text_caret.h"
 #include "clients/tui/ui_rect.h"
 
@@ -12,7 +13,8 @@
 #define SETTINGS_PANEL_ROWS  128
 
 /* Android-style settings: nested menus with breadcrumbs, toggles, steppers,
- * inline text editing and a theme picker with live preview. */
+ * inline text editing, a theme picker with live preview and a sound picker
+ * that plays each sound as you move. */
 typedef struct SettingsPanel {
     SettingsPanelHost host;
     const MenuNode   *stack[SETTINGS_PANEL_DEPTH];
@@ -25,6 +27,8 @@ typedef struct SettingsPanel {
     int               theme_index;
     int               theme_scroll;
     char              theme_before[48];
+
+    SoundPicker       sounds;         /* the list of notification sounds, while open */
 
     int               editing;
     wchar_t           edit[512];

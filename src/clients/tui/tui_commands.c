@@ -114,6 +114,13 @@ static void cmd_tone(TuiApp *app, const char *args) {
     if (!args[0]) { str_copy(app->tone_jid, sizeof(app->tone_jid), jid); tui_app_open_file_picker(app, FILE_PICKER_FOR_TONE); return; }
     if (!strcmp(args, "default")) { messaging_manager_set_tone(app->deps.messaging, jid, ""); tui_app_toast(app, "Default tone", 0); return; }
     if (!strcmp(args, "none")) { messaging_manager_set_tone(app->deps.messaging, jid, "none"); tui_app_toast(app, "No sound for this chat", 0); return; }
+    ISoundCatalog *sounds = app->deps.sounds;
+    int named = sounds ? sounds->index_of_id(sounds, args) : -1;
+    if (named >= 0) {
+        messaging_manager_set_tone(app->deps.messaging, jid, sounds->at(sounds, named)->path);
+        tui_app_toast(app, "\xF0\x9F\x8E\xB5 Tone set for this chat", 0);
+        return;
+    }
     char path[1024];
     path_expand_home(args, path, sizeof(path));
     if (!path_is_regular_file(path)) { tui_app_toast(app, "That sound file does not exist", 1); return; }
@@ -215,7 +222,7 @@ static const SlashCommand COMMANDS[] = {
     { "archive",     "",                     "move this chat to Archived",      cmd_archive },
     { "unarchive",   "",                     "move this chat back to chats",    cmd_unarchive },
     { "theme",       "[id|default]",         "theme for this chat",             cmd_theme },
-    { "tone",        "[file|none|default]",  "notification sound for this chat", cmd_tone },
+    { "tone",        "[name|file|none|default]", "notification sound for this chat", cmd_tone },
     { "dnd",         "",                     "toggle do not disturb",           cmd_dnd },
     { "screensaver", "",                     "start the screensaver now",       cmd_screensaver },
     { "lock",        "",                     "lock until the passphrase is typed (encrypted chats), else the screensaver", cmd_lock },

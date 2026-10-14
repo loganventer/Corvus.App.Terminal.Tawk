@@ -5,6 +5,7 @@
 
 #include "clients/tui/menu_action.h"
 #include "clients/tui/menu_info.h"
+#include "contracts/i_sound_catalog.h"
 #include "contracts/i_theme_repository.h"
 #include "core/settings.h"
 
@@ -19,6 +20,8 @@ typedef struct SettingsPanelHost {
     void              (*run_action)(void *ctx, MenuAction action);
     void              (*info)(void *ctx, MenuInfo info, char *out, size_t size);
     int               (*agent_connected)(void *ctx);   /* a program acting for a model is on the control socket now */
+    ISoundCatalog    *(*sounds)(void *ctx);            /* the sounds to choose from; may be NULL */
+    void              (*play_sound)(void *ctx, const char *path);
 } SettingsPanelHost;
 
 #endif

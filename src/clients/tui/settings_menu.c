@@ -50,6 +50,8 @@ static const MenuNode ALERTS[] = {
 
 static const MenuNode SOUND[] = {
     FIELD(SETTING_CATEGORY_NOTIFICATIONS, "sound"),
+    { MENU_NODE_SOUNDS, "\xF0\x9F\x8E\xB5", "Choose sound", "Each plays as you move, Enter to use it",
+      SETTING_CATEGORY_NOTIFICATIONS, "sound_file", MENU_ACTION_NONE, MENU_INFO_STATIC, NULL, 0 },
     FIELD(SETTING_CATEGORY_NOTIFICATIONS, "sound_file"),
     INFO("Audio system", MENU_INFO_AUDIO),
     ACTION("\xE2\x96\xB6", "Play test sound", MENU_ACTION_TEST_SOUND),

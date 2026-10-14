@@ -16,6 +16,7 @@
 #include "contracts/i_frame_hook.h"
 #include "contracts/i_idle_action.h"
 #include "contracts/i_notifier.h"
+#include "contracts/i_sound_catalog.h"
 #include "contracts/i_video_poster.h"
 #include "managers/account_manager.h"
 #include "managers/automation_manager.h"
@@ -45,6 +46,7 @@ typedef struct TuiAppDeps {
     ReminderManager       *reminders;             /* chats put aside; may be NULL */
     DatabaseCryptManager  *crypt;                 /* whether your chats are encrypted, and what opens them; may be NULL */
     IAudioPlayer          *sound_player;
+    ISoundCatalog         *sounds;                /* the notification sounds to choose from; may be NULL */
     IEmojiCatalog         *emoji;
     IClipboard            *clipboard;
     IVideoPoster          *video_posters;
