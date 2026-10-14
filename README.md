@@ -137,7 +137,7 @@ tawk/
 ├── bridge/whatsmeow/     Go bridge, built as a static C archive
 ├── sidecar/              Node.js Baileys bridge
 ├── themes/               JSON colour themes
-├── assets/sounds/        notification sound
+├── assets/sounds/        notification sounds
 ├── assets/emoji/         Unicode emoji list for the picker
 ├── vendor/               cJSON and stb_image
 ├── tests/                tests (make test)

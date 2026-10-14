@@ -43,7 +43,7 @@ Installed files (with the default prefix `/usr/local`):
 |---|---|
 | `/usr/local/bin/tawk` | The program |
 | `/usr/local/share/tawk/themes/` | Bundled themes |
-| `/usr/local/share/tawk/sounds/` | Notification sound |
+| `/usr/local/share/tawk/sounds/` | Notification sounds (the default `notify.wav` and a few alternatives) |
 | `/usr/local/share/tawk/emoji/emoji.tsv` | The emoji list used by the emoji picker and `(word` shortcodes (Unicode emoji data with CLDR keywords) |
 | `/usr/local/lib/tawk/sidecar/` | The Node.js backend, when installed |
 | `/usr/local/share/man/man1/tawk.1` | Man page |
@@ -120,7 +120,7 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `quiet_hours` | (empty) | A stretch of the day with no alerts, such as `22:00-07:00` (it may run over midnight). A mention still gets through when `mention_notifications` is on. Empty: none |
 | `quiet_hours_weekend` | (empty) | Other quiet hours for Saturday and Sunday. Empty: the same as on weekdays |
 | `sound` | `true` | Play a sound for new messages, and every 3 seconds while a call rings |
-| `sound_file` | `/usr/local/share/tawk/sounds/notify.wav` | WAV/OGG file to play |
+| `sound_file` | `/usr/local/share/tawk/sounds/notify.wav` | WAV/OGG file to play. The sounds folder also holds `bong.wav`, `pluck.wav`, `glass.wav`, `drop.wav`, `open.wav`, `question.wav`, `rise.wav` and `confirm.wav` |
 | `blink` | `true` | Blink the chat in the list and the status bar |
 | `blink_seconds` | `8` | How long the blink lasts (1 to 60) |
 | `title_flash` | `true` | Show per-type unread counts in the terminal title and flash it |

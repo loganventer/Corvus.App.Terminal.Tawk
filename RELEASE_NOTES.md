@@ -4,6 +4,15 @@ What changed in each version of tawk, newest first. `tawk --update` shows every 
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.30.0 (2026-10-14)
+
+A few more notification sounds come with tawk, so a chat can sound different from the rest.
+
+- **Eight new sounds** in the sounds folder next to `notify.wav`: `bong`, `pluck`, `glass`, `drop`, `open`, `question`, `rise` and `confirm`. Each is under a second, and all are set to the same peak level.
+- **Pick one for everything** with Settings, Notifications, Sound file, or **for one chat** with `/tone` or Alt+O.
+- They are public domain (CC0) sounds from the Interface Sounds pack by Kenney; `assets/sounds/README.md` lists them and their licence.
+- The database is unchanged (still version 27).
+
 ## 0.29.0 (2026-10-13)
 
 The detail of how a voice note was received moves from the conversation into Message info, where each line opens.
