@@ -81,7 +81,7 @@ static void check_terminal(Tally *t) {
     section("Terminal");
     const char *term = getenv("TERM");
     line(t, term && *term && strcmp(term, "dumb") != 0 ? OK : FAIL, "TERM", term && *term ? term : "not set",
-         "run tawk inside a terminal emulator");
+         "run corvus-tawk inside a terminal emulator");
     const char *codeset = nl_langinfo(CODESET);
     int utf8 = codeset && (strcasecmp(codeset, "UTF-8") == 0 || strcasecmp(codeset, "utf8") == 0);
     line(t, utf8 ? OK : WARN, "UTF-8 locale", codeset ? codeset : "unknown",
@@ -107,10 +107,10 @@ static void check_files(Tally *t, const DoctorInputs *in) {
         line(t, in->sqlcipher_built ? OK : FAIL, "encryption", "your chats are encrypted with a passphrase",
              "this build has no SQLCipher to open them; install SQLCipher and build again");
     } else {
-        line(t, OK, "encryption", in->sqlcipher_built ? "off (tawk --encrypt turns it on)" : "not available (built without SQLCipher)", NULL);
+        line(t, OK, "encryption", in->sqlcipher_built ? "off (corvus-tawk --encrypt turns it on)" : "not available (built without SQLCipher)", NULL);
     }
     int openssl = process_on_path("openssl");
-    line(t, openssl ? OK : WARN, "backups", openssl ? "openssl found (tawk --backup)" : "openssl not found",
+    line(t, openssl ? OK : WARN, "backups", openssl ? "openssl found (corvus-tawk --backup)" : "openssl not found",
          install_hint("openssl"));
     line(t, OK, "log", in->log_path, NULL);
     char buf[640];

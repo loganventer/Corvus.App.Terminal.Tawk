@@ -8,12 +8,12 @@
 #include "managers/account_export_manager.h"
 #include "managers/account_import_manager.h"
 
-/* `tawk --migrate-out ACCOUNT FILE [--with-media]`: asks for a passphrase
+/* `corvus-tawk --migrate-out ACCOUNT FILE [--with-media]`: asks for a passphrase
  * twice and writes the encrypted package of one account. The caller holds
  * the instance lock. Returns the exit status. */
 int migrate_out_command_run(AccountExportManager *mgr, IPassphrasePrompt *prompt, const AccountExportRequest *request);
 
-/* `tawk --migrate-in FILE [--label NAME] [--yes]`: asks before it adds
+/* `corvus-tawk --migrate-in FILE [--label NAME] [--yes]`: asks before it adds
  * anything (unless --yes), asks for the package's passphrase, brings the
  * account in and says what to do next. Returns the exit status. */
 int migrate_in_command_run(AccountImportManager *mgr, IPassphrasePrompt *prompt, const AccountImportRequest *request, int assume_yes);

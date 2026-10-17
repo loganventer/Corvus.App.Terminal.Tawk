@@ -3,15 +3,15 @@
 
 #include <stddef.h>
 
-/* $XDG_CONFIG_HOME/APP_NAME or ~/.config/APP_NAME */
+/* $XDG_CONFIG_HOME/APP_DIR or ~/.config/APP_DIR */
 void path_config_dir(char *out, size_t size);
-/* $XDG_DATA_HOME/APP_NAME or ~/.local/share/APP_NAME */
+/* $XDG_DATA_HOME/APP_DIR or ~/.local/share/APP_DIR */
 void path_data_dir(char *out, size_t size);
-/* $XDG_CACHE_HOME/APP_NAME or ~/.cache/APP_NAME (re-downloadable media) */
+/* $XDG_CACHE_HOME/APP_DIR or ~/.cache/APP_DIR (re-downloadable media) */
 void path_cache_dir(char *out, size_t size);
-/* $XDG_STATE_HOME/APP_NAME or ~/.local/state/APP_NAME (logs) */
+/* $XDG_STATE_HOME/APP_DIR or ~/.local/state/APP_DIR (logs) */
 void path_state_dir(char *out, size_t size);
-/* $XDG_RUNTIME_DIR/APP_NAME, or the state folder where there is none (sockets). */
+/* $XDG_RUNTIME_DIR/APP_DIR, or the state folder where there is none (sockets). */
 void path_runtime_dir(char *out, size_t size);
 /* Expands a leading "~/" to $HOME. No other expansion is performed, so a
  * config value can never trigger command substitution. */

@@ -1055,11 +1055,11 @@ static void test_live_and_log(void) {
     CHECK(st->listening && st->session_count >= 4, "the status says who is connected");
     int labelled = next_conn++;
     inbox[inbox_count++] = (ControlInbound){ CONTROL_INBOUND_OPENED, labelled, NULL };
-    say(labelled, "{\"id\":\"h9\",\"op\":\"hello\",\"args\":{\"client\":\"tawk-mcp\",\"origin\":\"mcp\",\"protocol\":1,\"label\":\"wats (stdio, pid 7)\"}}");
+    say(labelled, "{\"id\":\"h9\",\"op\":\"hello\",\"args\":{\"client\":\"corvus-tawk-mcp\",\"origin\":\"mcp\",\"protocol\":1,\"label\":\"wats (stdio, pid 7)\"}}");
     tick();
     st = automation_manager_status(automation);
     int told_apart = 0;
-    for (int i = 0; i < st->session_count; i++) told_apart += !strcmp(st->sessions[i].client, "tawk-mcp") && !strcmp(st->sessions[i].label, "wats (stdio, pid 7)");
+    for (int i = 0; i < st->session_count; i++) told_apart += !strcmp(st->sessions[i].client, "corvus-tawk-mcp") && !strcmp(st->sessions[i].label, "wats (stdio, pid 7)");
     CHECK(told_apart == 1, "a program that says what tells it apart is listed with that label");
     say(labelled, "{\"id\":\"h10\",\"op\":\"describe\",\"args\":{\"text\":\"Catching up on the family chat\\nfor Logan\"}}");
     r = reply("h10");
@@ -1255,7 +1255,7 @@ static void test_transcripts(void) {
     add_voice_note("VH", HIDDEN, 1790000230);
     int conn = next_conn++;
     inbox[inbox_count++] = (ControlInbound){ CONTROL_INBOUND_OPENED, conn, NULL };
-    say(conn, "{\"id\":\"h\",\"op\":\"hello\",\"args\":{\"client\":\"tawk-mcp\",\"protocol\":1,\"origin\":\"mcp\",\"features\":[\"transcripts\"]}}");
+    say(conn, "{\"id\":\"h\",\"op\":\"hello\",\"args\":{\"client\":\"corvus-tawk-mcp\",\"protocol\":1,\"origin\":\"mcp\",\"features\":[\"transcripts\"]}}");
     cJSON *r = reply("h");
     CHECK(r && has_feature(result(r), "transcripts") && has_feature(result(r), "send_file"),
           "hello names transcripts and send_file among what this tawk can do");
@@ -1425,7 +1425,7 @@ static void test_tldr(void) {
     summary_manager_set_tldr(summaries, MOM, 0);
     int first = next_conn++;
     inbox[inbox_count++] = (ControlInbound){ CONTROL_INBOUND_OPENED, first, NULL };
-    say(first, "{\"id\":\"h\",\"op\":\"hello\",\"args\":{\"client\":\"tawk-mcp\",\"protocol\":1,\"origin\":\"mcp\",\"label\":\"dev (stdio, pid 11)\",\"features\":[\"transcripts\",\"summaries\"]}}");
+    say(first, "{\"id\":\"h\",\"op\":\"hello\",\"args\":{\"client\":\"corvus-tawk-mcp\",\"protocol\":1,\"origin\":\"mcp\",\"label\":\"dev (stdio, pid 11)\",\"features\":[\"transcripts\",\"summaries\"]}}");
     cJSON *r = reply("h");
     CHECK(r && has_feature(result(r), "summaries") && has_feature(result(r), "summary_decline"),
           "hello names summaries, and answering that none is needed, among what this tawk can do");
@@ -1497,13 +1497,13 @@ static void test_tldr(void) {
     /* A second agent connects: with none chosen, tawk asks you which one. */
     int second = next_conn++;
     inbox[inbox_count++] = (ControlInbound){ CONTROL_INBOUND_OPENED, second, NULL };
-    say(second, "{\"id\":\"h2\",\"op\":\"hello\",\"args\":{\"client\":\"tawk-mcp\",\"protocol\":1,\"origin\":\"mcp\",\"label\":\"home (http)\",\"version\":\"0.10.0\"}}");
+    say(second, "{\"id\":\"h2\",\"op\":\"hello\",\"args\":{\"client\":\"corvus-tawk-mcp\",\"protocol\":1,\"origin\":\"mcp\",\"label\":\"home (http)\",\"version\":\"0.10.0\"}}");
     clear_outbox();
     last_text[0] = '\0';
     int sent_before = texts;
     arrives("L2", MOM, LONG_TEXT, 0);
     CHECK(!asked_for("L2"), "with two agents and none chosen, neither is handed the message");
-    CHECK(texts == sent_before + 1 && strstr(last_text, "which agent") && strstr(last_text, "1. tawk-mcp, dev") && strstr(last_text, "2. tawk-mcp, home"),
+    CHECK(texts == sent_before + 1 && strstr(last_text, "which agent") && strstr(last_text, "1. corvus-tawk-mcp, dev") && strstr(last_text, "2. corvus-tawk-mcp, home"),
           "tawk asks you in your own chat, listing them");
     arrives("L3", MOM, LONG_TEXT, 0);
     CHECK(texts == sent_before + 1, "once, not for every message");

@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-/* Where the control socket lives: $TAWK_CONTROL_SOCKET when set, else
+/* Where the control socket lives: $CORVUS_TAWK_CONTROL_SOCKET when set, else
  * control.sock in the runtime folder (see path_runtime_dir). */
 void control_socket_path(char *out, size_t size);
 

@@ -107,14 +107,14 @@ static void test_engines(void) {
 
     AutomationSession agents[2];
     memset(agents, 0, sizeof(agents));
-    str_copy(agents[0].client, sizeof(agents[0].client), "tawk-mcp");
+    str_copy(agents[0].client, sizeof(agents[0].client), "corvus-tawk-mcp");
     str_copy(agents[0].label, sizeof(agents[0].label), "dev (stdio, pid 3002)");
     str_copy(agents[0].doing, sizeof(agents[0].doing), "Reviewing the billing service");
-    str_copy(agents[1].client, sizeof(agents[1].client), "tawk-mcp");
+    str_copy(agents[1].client, sizeof(agents[1].client), "corvus-tawk-mcp");
     str_copy(agents[1].label, sizeof(agents[1].label), "home (http)");
     char question[600];
     agent_question_text(agents, 2, question, sizeof(question));
-    CHECK(strstr(question, "1. tawk-mcp, dev (stdio, pid 3002): Reviewing the billing service") && strstr(question, "2. tawk-mcp, home (http)"),
+    CHECK(strstr(question, "1. corvus-tawk-mcp, dev (stdio, pid 3002): Reviewing the billing service") && strstr(question, "2. corvus-tawk-mcp, home (http)"),
           "the question lists each agent with what it says it is doing");
     CHECK(agent_question_answer("2", 2) == 1 && agent_question_answer(" 1. ", 2) == 0 && agent_question_answer("2\n", 2) == 1, "a number answers it");
     CHECK(agent_question_answer("3", 2) == -1 && agent_question_answer("0", 2) == -1 && agent_question_answer("2 please", 2) == -1 &&
@@ -170,7 +170,7 @@ static void test_store_and_manager(sqlite3 *db) {
     messages->save(messages, &c);
 
     CHECK(!summary_manager_tldr(mgr, MOM), "a chat starts out of TL;DR mode");
-    CHECK(summary_manager_save(mgr, &a, &mom, "Evening moved to Thursday.", "m", "tawk-mcp") == SUMMARY_OFF, "and takes no summary then");
+    CHECK(summary_manager_save(mgr, &a, &mom, "Evening moved to Thursday.", "m", "corvus-tawk-mcp") == SUMMARY_OFF, "and takes no summary then");
     char id[64];
     summary_manager_want(mgr, &a, &mom);
     CHECK(!summary_manager_next_wanted(mgr, id, sizeof(id)), "nor is anything asked for");
@@ -188,22 +188,22 @@ static void test_store_and_manager(sqlite3 *db) {
     summary_manager_drop_wanted(mgr);
     CHECK(!summary_manager_next_wanted(mgr, id, sizeof(id)), "each is asked for once, however often it is looked at");
 
-    CHECK(summary_manager_save(mgr, &a, &mom, "  Evening moved\nto Thursday. ", "sonnet", "tawk-mcp") == SUMMARY_SAVED, "a summary is kept");
+    CHECK(summary_manager_save(mgr, &a, &mom, "  Evening moved\nto Thursday. ", "sonnet", "corvus-tawk-mcp") == SUMMARY_SAVED, "a summary is kept");
     Summary got;
     CHECK(summary_manager_find(mgr, "L1", &got) == 0 && strcmp(got.text, "Evening moved to Thursday.") == 0 &&
-          strcmp(got.model, "sonnet") == 0 && strcmp(got.source, "tawk-mcp") == 0, "cleaned, with who wrote it");
+          strcmp(got.model, "sonnet") == 0 && strcmp(got.source, "corvus-tawk-mcp") == 0, "cleaned, with who wrote it");
     summary_dispose(&got);
-    CHECK(summary_manager_save(mgr, &a, &mom, "Thursday now.", "sonnet", "tawk-mcp") == SUMMARY_SAVED &&
+    CHECK(summary_manager_save(mgr, &a, &mom, "Thursday now.", "sonnet", "corvus-tawk-mcp") == SUMMARY_SAVED &&
           summary_manager_find(mgr, "L1", &got) == 0 && strcmp(got.text, "Thursday now.") == 0, "a second one replaces the first");
     summary_dispose(&got);
     summary_manager_want(mgr, &c, &mom);
-    summary_manager_save(mgr, &c, &mom, "Same again.", "", "tawk-mcp");
+    summary_manager_save(mgr, &c, &mom, "Same again.", "", "corvus-tawk-mcp");
     CHECK(!has_summary(other, "L1"), "another account sees none of them");
 
     CHECK(summary_manager_set_tldr(mgr, MOM, 0) == 0 && has_summary(store, "L1"), "switching TL;DR off keeps the summaries");
     summary_manager_set_tldr(mgr, MOM, 1);
     CHECK(messages->edit_text(messages, "L1", "Changed my mind", 0) == 0 && !has_summary(store, "L1"), "an edited message loses its summary, which no longer fits");
-    summary_manager_save(mgr, &b, &mom, "Evening moved.", "", "tawk-mcp");
+    summary_manager_save(mgr, &b, &mom, "Evening moved.", "", "corvus-tawk-mcp");
     CHECK(messages->edit_text(messages, "L2", NULL, 1) == 0 && !has_summary(store, "L2"), "so does one deleted for everyone");
     CHECK(has_summary(store, "L3") && messages->remove(messages, "L3") == 0 && !has_summary(store, "L3"), "and one deleted here");
     /* the floor keeps very short messages out, whatever length you chose */
@@ -219,9 +219,9 @@ static void test_store_and_manager(sqlite3 *db) {
     Message d;
     text_message(&d, "X1", MOM, LONG_TEXT);
     messages->save(messages, &d);
-    CHECK(summary_manager_decline(mgr, &d, &mom, "boring", "tawk-mcp") == SUMMARY_DECLINE_REFUSED && !store->declined(store, "X1"),
+    CHECK(summary_manager_decline(mgr, &d, &mom, "boring", "corvus-tawk-mcp") == SUMMARY_DECLINE_REFUSED && !store->declined(store, "X1"),
           "a reason tawk does not know is refused");
-    CHECK(summary_manager_decline(mgr, &d, &mom, "nothing_to_say", "tawk-mcp") == SUMMARY_DECLINED && store->declined(store, "X1"),
+    CHECK(summary_manager_decline(mgr, &d, &mom, "nothing_to_say", "corvus-tawk-mcp") == SUMMARY_DECLINED && store->declined(store, "X1"),
           "a message an agent says needs no summary is remembered");
     summary_manager_want(mgr, &d, &mom);
     int waiting_for_x1 = 0;                                 /* what else waits is of no interest here */

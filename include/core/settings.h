@@ -87,7 +87,7 @@ typedef struct Settings {
     int  breaker_threshold;     /* consecutive failures before the circuit opens */
     int  breaker_cooldown_s;    /* open duration before a half-open trial */
 
-    /* Automation: the control socket for tawk-mcp and shell commands */
+    /* Automation: the control socket for corvus-tawk-mcp and shell commands */
     int  control_socket;        /* listen for other programs of yours (off: nothing can connect) */
     char automation_access[8];  /* read, send (messages you confirm), manage (everything else too) or admin (may answer its own sends) */
     char automation_chats[512]; /* comma-separated chats they may use; empty: all but locked ones */

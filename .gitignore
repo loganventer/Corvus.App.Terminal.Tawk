@@ -1,5 +1,6 @@
 # Build output
 /build/
+/corvus-tawk
 /tawk
 *.o
 *.d

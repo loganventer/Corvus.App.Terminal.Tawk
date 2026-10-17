@@ -235,7 +235,7 @@ static void hello(ControlServer *s, ControlSession *session, const ControlReques
     const char *label = control_codec_string(req->args, "label");
     str_copy(session->label, sizeof(session->label), label ? label : "");
     str_strip_controls(session->label);
-    /* What the client can do for tawk when tawk asks: named in "features", or known from the version of a tawk-mcp that did not say. */
+    /* What the client can do for tawk when tawk asks: named in "features", or known from the version of a corvus-tawk-mcp (or the tawk-mcp it was before) that did not say. */
     const cJSON *can = cJSON_GetObjectItemCaseSensitive(req->args, "features");
     session->can_transcribe = session->can_summarise = session->can_owner = 0;
     if (cJSON_IsArray(can)) {
@@ -246,7 +246,7 @@ static void hello(ControlServer *s, ControlSession *session, const ControlReques
             if (strcmp(f->valuestring, "summaries") == 0) session->can_summarise = 1;
             if (strcmp(f->valuestring, "owner_chat") == 0) session->can_owner = 1;
         }
-    } else if (strcmp(session->client, "tawk-mcp") == 0 && client_version_at_least(control_codec_string(req->args, "version"), 0, 10)) {
+    } else if ((strcmp(session->client, "corvus-tawk-mcp") == 0 || strcmp(session->client, "tawk-mcp") == 0) && client_version_at_least(control_codec_string(req->args, "version"), 0, 10)) {
         session->can_transcribe = session->can_summarise = 1;
     }
     const char *version = control_codec_string(req->args, "version");

@@ -3,7 +3,7 @@
 
 #include "core/backup_paths.h"
 
-/* `tawk --backup FILE [--with-media] [--with-login]`. */
+/* `corvus-tawk --backup FILE [--with-media] [--with-login]`. */
 typedef struct BackupRequest {
     BackupPaths paths;
     const char *output;          /* must not exist yet */

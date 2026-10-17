@@ -703,7 +703,7 @@ static void ask_agent(ApprovalQueue *q, int id, const char *op, const char *jid,
     memset(&r, 0, sizeof(r));
     r.id = id;
     r.origin = CONTROL_ORIGIN_MCP;
-    str_copy(r.client, sizeof(r.client), "tawk-mcp");
+    str_copy(r.client, sizeof(r.client), "corvus-tawk-mcp");
     str_copy(r.op, sizeof(r.op), op);
     str_copy(r.chat_jid, sizeof(r.chat_jid), jid);
     str_copy(r.chat_name, sizeof(r.chat_name), chat);
@@ -760,27 +760,27 @@ static void agents_scenes(void) {
     status.mcp_sessions = 1;
     status.cli_sessions = 1;
     status.waiting = approval_queue_count(q);
-    str_copy(status.socket_path, sizeof(status.socket_path), "/run/user/1000/tawk/control.sock");
-    status.sessions[0] = (AutomationSession){ 3, "tawk-mcp", CONTROL_ORIGIN_MCP, (int64_t)time(NULL) - 95 * 60, 38, 2, 0 };
+    str_copy(status.socket_path, sizeof(status.socket_path), "/run/user/1000/corvus/tawk/control.sock");
+    status.sessions[0] = (AutomationSession){ 3, "corvus-tawk-mcp", CONTROL_ORIGIN_MCP, (int64_t)time(NULL) - 95 * 60, 38, 2, 0 };
     status.sessions[1] = (AutomationSession){ 5, "tawk", CONTROL_ORIGIN_CLI, (int64_t)time(NULL) - 3 * 60, 1, 0, 0 };
     status.session_count = 2;
 
     AutomationEntry log[] = {
-        log_entry(2, CONTROL_ORIGIN_MCP, "tawk-mcp", "send_message", sarah, "Sounds good, see you at 7 at the usual place", AUTOMATION_OUTCOME_APPROVED),
-        log_entry(3, CONTROL_ORIGIN_MCP, "tawk-mcp", "send_message", mom, "Leaving now, home by six", AUTOMATION_OUTCOME_SELF_APPROVED),
-        log_entry(4, CONTROL_ORIGIN_MCP, "tawk-mcp", "react", book, "\xF0\x9F\x91\x8D", AUTOMATION_OUTCOME_ALLOWED),
-        log_entry(7, CONTROL_ORIGIN_MCP, "tawk-mcp", "react", dev, "\xF0\x9F\x8E\x89", AUTOMATION_OUTCOME_ALLOWED),
-        log_entry(9, CONTROL_ORIGIN_MCP, "tawk-mcp", "read_messages", dev, "last 40 messages", AUTOMATION_OUTCOME_READ),
-        log_entry(11, CONTROL_ORIGIN_MCP, "tawk-mcp", "send_message", dev, "Staging looks good from here, shipping after lunch", AUTOMATION_OUTCOME_APPROVED),
-        log_entry(18, CONTROL_ORIGIN_MCP, "tawk-mcp", "delete_message", nadia, "delete \"Thanks for the book tip\" for everyone", AUTOMATION_OUTCOME_DECLINED),
+        log_entry(2, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "send_message", sarah, "Sounds good, see you at 7 at the usual place", AUTOMATION_OUTCOME_APPROVED),
+        log_entry(3, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "send_message", mom, "Leaving now, home by six", AUTOMATION_OUTCOME_SELF_APPROVED),
+        log_entry(4, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "react", book, "\xF0\x9F\x91\x8D", AUTOMATION_OUTCOME_ALLOWED),
+        log_entry(7, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "react", dev, "\xF0\x9F\x8E\x89", AUTOMATION_OUTCOME_ALLOWED),
+        log_entry(9, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "read_messages", dev, "last 40 messages", AUTOMATION_OUTCOME_READ),
+        log_entry(11, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "send_message", dev, "Staging looks good from here, shipping after lunch", AUTOMATION_OUTCOME_APPROVED),
+        log_entry(18, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "delete_message", nadia, "delete \"Thanks for the book tip\" for everyone", AUTOMATION_OUTCOME_DECLINED),
         log_entry(26, CONTROL_ORIGIN_CLI, "tawk", "send_message", mom, "Home by six, I'll bring bread", AUTOMATION_OUTCOME_DONE),
-        log_entry(34, CONTROL_ORIGIN_MCP, "tawk-mcp", "schedule_message", pieter, "Happy birthday Pieter! Drinks on Friday?", AUTOMATION_OUTCOME_TIMED_OUT),
-        log_entry(47, CONTROL_ORIGIN_MCP, "tawk-mcp", "set_profile", "", "about: Out hiking, back on Monday", AUTOMATION_OUTCOME_REFUSED),
-        log_entry(52, CONTROL_ORIGIN_MCP, "tawk-mcp", "mark_read", book, "12 messages", AUTOMATION_OUTCOME_ALLOWED),
-        log_entry(63, CONTROL_ORIGIN_MCP, "tawk-mcp", "send_message", sarah, "Are we still on for Saturday?", AUTOMATION_OUTCOME_DECLINED),
-        log_entry(78, CONTROL_ORIGIN_MCP, "tawk-mcp", "draft_message", mom, "Happy birthday Mom! Lunch on Sunday?", AUTOMATION_OUTCOME_DONE),
-        log_entry(88, CONTROL_ORIGIN_MCP, "tawk-mcp", "send_message", sarah, "Can you send me the address again?", AUTOMATION_OUTCOME_RATE_LIMITED),
-        log_entry(95, CONTROL_ORIGIN_MCP, "tawk-mcp", "hello", "", "tawk-mcp 0.3 acting for a model", AUTOMATION_OUTCOME_CONNECTED),
+        log_entry(34, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "schedule_message", pieter, "Happy birthday Pieter! Drinks on Friday?", AUTOMATION_OUTCOME_TIMED_OUT),
+        log_entry(47, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "set_profile", "", "about: Out hiking, back on Monday", AUTOMATION_OUTCOME_REFUSED),
+        log_entry(52, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "mark_read", book, "12 messages", AUTOMATION_OUTCOME_ALLOWED),
+        log_entry(63, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "send_message", sarah, "Are we still on for Saturday?", AUTOMATION_OUTCOME_DECLINED),
+        log_entry(78, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "draft_message", mom, "Happy birthday Mom! Lunch on Sunday?", AUTOMATION_OUTCOME_DONE),
+        log_entry(88, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "send_message", sarah, "Can you send me the address again?", AUTOMATION_OUTCOME_RATE_LIMITED),
+        log_entry(95, CONTROL_ORIGIN_MCP, "corvus-tawk-mcp", "hello", "", "corvus-tawk-mcp 0.3 acting for a model", AUTOMATION_OUTCOME_CONNECTED),
     };
     AgentsPanelModel m = { q, &status, log, (int)(sizeof(log) / sizeof(log[0])), &settings, AGENTS_NOW_MS, agents_chat_name, NULL, NULL, NULL };
 
@@ -924,7 +924,7 @@ int main(int argc, char **argv) {
     resizeterm(ROWS, COLS);
     tui_palette_init();
     IThemeRepository *themes = json_theme_repository_create("themes", NULL);
-    const char *theme = getenv("TAWK_SHOT_THEME");         /* another theme, to check colours */
+    const char *theme = getenv("CORVUS_TAWK_SHOT_THEME");         /* another theme, to check colours */
     int index = themes->index_of(themes, theme && *theme ? theme : "whatsapp-dark");
     tui_palette_apply(themes->at(themes, index < 0 ? 0 : index));
     s_thumbs = thumbnail_cache_create(16);

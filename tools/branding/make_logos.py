@@ -5,7 +5,7 @@
 
 Needs Pillow and the DejaVu fonts (DejaVuSans-Bold.ttf and
 DejaVuSansMono-Bold.ttf), in /usr/share/fonts/truetype/dejavu or the folder
-named by TAWK_SHOT_FONTS. Everything is drawn four times too large and
+named by CORVUS_TAWK_SHOT_FONTS. Everything is drawn four times too large and
 scaled down, so edges are smooth.
 """
 import os
@@ -13,7 +13,7 @@ import sys
 
 from PIL import Image, ImageDraw, ImageFont
 
-FONT_DIR = os.environ.get("TAWK_SHOT_FONTS", "/usr/share/fonts/truetype/dejavu")
+FONT_DIR = os.environ.get("CORVUS_TAWK_SHOT_FONTS", "/usr/share/fonts/truetype/dejavu")
 GREEN = (92, 196, 126, 255)
 BLUE = (152, 198, 222, 255)
 TEAL = (90, 169, 184, 255)

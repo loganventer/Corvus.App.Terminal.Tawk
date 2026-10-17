@@ -3,7 +3,7 @@
 
 #include "core/backup_paths.h"
 
-/* `tawk --migrate-out ACCOUNT FILE [--with-media]`. */
+/* `corvus-tawk --migrate-out ACCOUNT FILE [--with-media]`. */
 typedef struct AccountExportRequest {
     BackupPaths paths;
     const char *account;        /* its label, or its id */

@@ -1,24 +1,28 @@
 #!/usr/bin/env bash
-# tawk installer: builds and installs tawk from source.
+# corvus-tawk installer: builds and installs Corvus Tawk from source.
 #
 # From a checkout:     ./install.sh [options]
-# Straight from GitHub: curl -fsSL https://raw.githubusercontent.com/loganventer/tawk/main/install.sh | bash
+# Straight from GitHub: curl -fsSL https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Tawk/main/install.sh | bash
 #                       curl -fsSL .../install.sh | bash -s -- --prefix "$HOME/.local"
 #
 # Options:
 #   --prefix DIR       install location (default /usr/local)
 #   --ref REF          branch or tag to build when cloning (default main)
-#   --repo URL         repository to clone (default https://github.com/loganventer/tawk.git)
+#   --repo URL         repository to clone (default https://github.com/loganventer/Corvus.App.Terminal.Tawk.git)
 #   --with-sidecar     also install the Node.js (Baileys) backend
 #   --no-whatsmeow     skip the in-process backend (no Go needed; implies --with-sidecar)
 #   --no-deps          do not install system packages
-#   --alias NAME       add "alias NAME=tawk" to your shell rc file
-#   --uninstall        remove an installed tawk
+#   --alias NAME       add "alias NAME=corvus-tawk" to your shell rc file
+#   --no-legacy        do not install the deprecated "tawk" symlink
+#   --uninstall        remove an installed corvus-tawk (and the legacy tawk symlink)
 #   -y, --yes          do not ask before installing packages
 #   -h, --help         show this help
 set -euo pipefail
 
-REPO_URL="https://github.com/loganventer/tawk.git"
+REPO_URL="https://github.com/loganventer/Corvus.App.Terminal.Tawk.git"
+APP="corvus-tawk"          # the installed command
+APP_DIR="corvus/tawk"      # per-user folders under each XDG base
+LEGACY="tawk"              # the old command name, installed as a deprecated symlink to $APP
 REF="main"
 PREFIX="/usr/local"
 WITH_SIDECAR=0
@@ -34,7 +38,7 @@ warn() { printf '\033[1;33m!!\033[0m %s\n' "$*" >&2; }
 die()  { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
 have() { command -v "$1" >/dev/null 2>&1; }
 
-usage() { sed -n '2,20p' "$0" 2>/dev/null | sed 's/^# \{0,1\}//' || true; }
+usage() { sed -n '2,19p' "$0" 2>/dev/null | sed 's/^# \{0,1\}//' || true; }
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -45,6 +49,7 @@ while [ $# -gt 0 ]; do
         --no-whatsmeow) WHATSMEOW=0; WITH_SIDECAR=1; shift ;;
         --no-deps)      INSTALL_DEPS=0; shift ;;
         --alias)        ALIAS_NAME="${2:?--alias needs a name}"; shift 2 ;;
+        --no-legacy)    LEGACY=""; shift ;;
         --uninstall)    UNINSTALL=1; shift ;;
         -y|--yes)       ASSUME_YES=1; shift ;;
         -h|--help)      usage; exit 0 ;;
@@ -70,11 +75,13 @@ need_root_for() {
 
 if [ "$UNINSTALL" -eq 1 ]; then
     need_root_for "$PREFIX/bin"
-    $SUDO rm -f "$PREFIX/bin/tawk" "$PREFIX/share/man/man1/tawk.1" "$PREFIX/share/bash-completion/completions/tawk"
-    $SUDO rm -rf "$PREFIX/share/tawk" "$PREFIX/lib/tawk" "$PREFIX/share/doc/tawk"
-    say "removed tawk from $PREFIX"
-    echo "    Your files were kept: ~/.config/tawk (settings), ~/.local/share/tawk (chats, login),"
-    echo "    ~/.cache/tawk (media) and ~/.local/state/tawk (logs). Delete them to remove everything."
+    $SUDO rm -f "$PREFIX/bin/$APP" "$PREFIX/share/man/man1/$APP.1" "$PREFIX/share/bash-completion/completions/$APP"
+    # the legacy symlink only when it is ours; a real tawk binary there is left alone
+    if [ -L "$PREFIX/bin/tawk" ] && [ "$(readlink "$PREFIX/bin/tawk")" = "$APP" ]; then $SUDO rm -f "$PREFIX/bin/tawk"; fi
+    $SUDO rm -rf "$PREFIX/share/$APP" "$PREFIX/lib/$APP" "$PREFIX/share/doc/$APP"
+    say "removed $APP from $PREFIX"
+    echo "    Your files were kept: ~/.config/$APP_DIR (settings), ~/.local/share/$APP_DIR (chats, login),"
+    echo "    ~/.cache/$APP_DIR (media) and ~/.local/state/$APP_DIR (logs). Delete them to remove everything."
     exit 0
 fi
 
@@ -296,7 +303,7 @@ if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/Makefile" ] && [ -f "$SCRIPT_DIR/sr
     SRC="$SCRIPT_DIR"
     say "building from $SRC"
 else
-    have git || die "git is required to download tawk"
+    have git || die "git is required to download corvus-tawk"
     # The download and the build need room. /tmp is small on some systems (a memory disk, or a full one),
     # so the first folder with enough free space is used: TMPDIR or /tmp, then your cache folder.
     NEED_MB=600
@@ -306,17 +313,17 @@ else
         mkdir -p "$dir" 2>/dev/null || continue
         [ -w "$dir" ] || continue
         if [ "$(free_mb "$dir" || echo 0)" -ge "$NEED_MB" ] 2>/dev/null; then BUILD_PARENT="$dir"; break; fi
-        warn "$dir has only $(free_mb "$dir") MB free; tawk needs about $NEED_MB MB to build"
+        warn "$dir has only $(free_mb "$dir") MB free; corvus-tawk needs about $NEED_MB MB to build"
     done
-    [ -n "$BUILD_PARENT" ] || die "not enough free disk space to download and build tawk (about $NEED_MB MB is needed).
+    [ -n "$BUILD_PARENT" ] || die "not enough free disk space to download and build corvus-tawk (about $NEED_MB MB is needed).
 Free some space, or name a folder on a disk that has room and run the installer again:
     TMPDIR=/path/with/space bash install.sh
 Free space now:
 $(df -h "${TMPDIR:-/tmp}" "$HOME" 2>/dev/null)"
-    SRC="$(mktemp -d "$BUILD_PARENT/tawk-build.XXXXXX")"
+    SRC="$(mktemp -d "$BUILD_PARENT/corvus-tawk-build.XXXXXX")"
     CLEANUP="$SRC"
     trap '[ -n "$CLEANUP" ] && rm -rf "$CLEANUP"' EXIT
-    say "downloading tawk ($REF) from $REPO_URL into $SRC"
+    say "downloading corvus-tawk ($REF) from $REPO_URL into $SRC"
     git clone --quiet --depth 1 --branch "$REF" "$REPO_URL" "$SRC" || die "the download failed. If it says it was unable to write a file, the disk is full or the folder cannot be written to.
 Free space now:
 $(df -h "$BUILD_PARENT" "$HOME" 2>/dev/null)"
@@ -343,22 +350,37 @@ fi
 
 need_root_for "$PREFIX/bin"
 say "installing to $PREFIX${SUDO:+ (using sudo, $PREFIX is not writable by you)}"
-$SUDO make install WHATSMEOW="$WHATSMEOW" PREFIX="$PREFIX"
+$SUDO make install WHATSMEOW="$WHATSMEOW" PREFIX="$PREFIX" LEGACY="$LEGACY"
 
 if [ -n "$ALIAS_NAME" ]; then
     RC="$HOME/.bashrc"
     [ -n "${ZSH_VERSION:-}" ] || [ "$(basename "${SHELL:-}")" = zsh ] && RC="$HOME/.zshrc"
     if ! grep -qE "^alias $ALIAS_NAME=" "$RC" 2>/dev/null; then
-        printf "\nalias %s='%s'\n" "$ALIAS_NAME" "$PREFIX/bin/tawk" >> "$RC"
+        printf "\nalias %s='%s'\n" "$ALIAS_NAME" "$PREFIX/bin/$APP" >> "$RC"
         say "added alias $ALIAS_NAME to $RC (open a new shell to use it)"
     else
         warn "alias $ALIAS_NAME already exists in $RC; left it unchanged"
     fi
 fi
 
-say "checking the setup (tawk --doctor)"
-"$PREFIX/bin/tawk" --doctor || warn "fix the problems above, then run: tawk --doctor"
+say "checking the setup ($APP --doctor)"
+"$PREFIX/bin/$APP" --doctor || warn "fix the problems above, then run: $APP --doctor"
 
-say "done. Run: tawk"
+# Data of the tawk this replaces stays where it was until it is copied across;
+# without that copy corvus-tawk starts empty and asks to be linked again.
+OLD_DATA="${XDG_DATA_HOME:-$HOME/.local/share}/tawk"
+NEW_DATA="${XDG_DATA_HOME:-$HOME/.local/share}/$APP_DIR"
+if [ -d "$OLD_DATA" ] && [ ! -e "$NEW_DATA" ]; then
+    warn "your tawk chats and WhatsApp login are still in $OLD_DATA."
+    warn "quit tawk, then copy them across before the first start (see CUTOVER.md):"
+    if [ -n "$CLEANUP" ]; then
+        warn "    curl -fsSL https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Tawk/main/scripts/migrate-from-legacy.sh | sh"
+    else
+        warn "    sh $SRC/scripts/migrate-from-legacy.sh"
+    fi
+fi
+
+say "done. Run: $APP"
+[ -n "$LEGACY" ] && echo "    '$LEGACY' still works for now as a deprecated symlink to $APP"
 echo "    Link it from your phone: WhatsApp > Settings > Linked devices > Link a device"
-echo "    Settings live in ~/.config/tawk/config.ini (or press F2 inside tawk)"
+echo "    Settings live in ~/.config/$APP_DIR/config.ini (or press F2 inside corvus-tawk)"

@@ -23,9 +23,9 @@ static const char *home_dir(void) {
 static void xdg_dir(char *out, size_t size, const char *env, const char *fallback) {
     const char *base = getenv(env);
     if (base && base[0] == '/') {
-        snprintf(out, size, "%s/%s", base, APP_NAME);
+        snprintf(out, size, "%s/%s", base, APP_DIR);
     } else {
-        snprintf(out, size, "%s/%s/%s", home_dir(), fallback, APP_NAME);
+        snprintf(out, size, "%s/%s/%s", home_dir(), fallback, APP_DIR);
     }
 }
 
@@ -36,7 +36,7 @@ void path_state_dir(char *out, size_t size)  { xdg_dir(out, size, "XDG_STATE_HOM
 
 void path_runtime_dir(char *out, size_t size) {
     const char *base = getenv("XDG_RUNTIME_DIR");
-    if (base && base[0] == '/') snprintf(out, size, "%s/%s", base, APP_NAME);
+    if (base && base[0] == '/') snprintf(out, size, "%s/%s", base, APP_DIR);
     else path_state_dir(out, size);
 }
 
@@ -83,9 +83,9 @@ void path_download_dir(char *out, size_t size) {
     const char *env = getenv("XDG_DOWNLOAD_DIR");
     if (env && env[0] == '/') { str_copy(out, size, env); return; }
     char config[512], dirs[600];
-    path_config_dir(config, sizeof(config));
-    char *slash = strrchr(config, '/');                     /* ~/.config/tawk -> ~/.config */
-    if (slash) *slash = '\0';
+    const char *xdg_config = getenv("XDG_CONFIG_HOME");     /* the base, not ~/.config/corvus/tawk */
+    if (xdg_config && xdg_config[0] == '/') str_copy(config, sizeof(config), xdg_config);
+    else snprintf(config, sizeof(config), "%s/.config", home_dir());
     snprintf(dirs, sizeof(dirs), "%s/user-dirs.dirs", config);
     FILE *f = fopen(dirs, "r");
     if (f) {

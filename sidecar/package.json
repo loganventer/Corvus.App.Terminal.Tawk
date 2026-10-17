@@ -1,8 +1,8 @@
 {
-  "name": "tawk-sidecar",
+  "name": "corvus-tawk-sidecar",
   "version": "0.12.0",
   "private": true,
-  "description": "Baileys bridge for tawk: speaks the tawk JSON line protocol on stdin/stdout",
+  "description": "Baileys bridge for Corvus Tawk (corvus-tawk): speaks the tawk JSON line protocol on stdin/stdout",
   "type": "module",
   "main": "src/index.js",
   "engines": {
@@ -14,5 +14,5 @@
     "qrcode-terminal": "0.12.0"
   },
   "author": "Logan Venter <logan.venter@outlook.com>",
-  "homepage": "https://github.com/loganventer/tawk"
+  "homepage": "https://github.com/loganventer/Corvus.App.Terminal.Tawk"
 }

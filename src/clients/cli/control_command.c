@@ -1,4 +1,4 @@
-/* tawk send, tail, unread and status-line: small clients of a running
+/* corvus-tawk send, tail, unread and status-line: small clients of a running
  * tawk's control socket, for scripts and status bars. */
 #include "clients/cli/control_command.h"
 #include "cJSON.h"
@@ -48,7 +48,7 @@ static int failed(const cJSON *reply) {
     const cJSON *err = cJSON_GetObjectItemCaseSensitive(reply, "error");
     const cJSON *code = cJSON_GetObjectItemCaseSensitive(err, "code");
     const cJSON *msg = cJSON_GetObjectItemCaseSensitive(err, "message");
-    fprintf(stderr, "tawk: %s\n", cJSON_IsString(msg) ? msg->valuestring : "it failed");
+    fprintf(stderr, "%s: %s\n", APP_NAME, cJSON_IsString(msg) ? msg->valuestring : "it failed");
     const char *c = cJSON_IsString(code) ? code->valuestring : "";
     return !strcmp(c, "declined") || !strcmp(c, "not_allowed") || !strcmp(c, "timed_out") ? CONTROL_EXIT_REFUSED : CONTROL_EXIT_FAILED;
 }
@@ -59,7 +59,7 @@ static const cJSON *result_of(const cJSON *reply) {
 
 static int hello(IControlClient *c) {
     cJSON *args = cJSON_CreateObject();
-    cJSON_AddStringToObject(args, "client", "tawk");
+    cJSON_AddStringToObject(args, "client", APP_NAME);
     cJSON_AddStringToObject(args, "version", APP_VERSION);
     cJSON_AddNumberToObject(args, "protocol", 1);
     cJSON_AddStringToObject(args, "origin", "cli");
@@ -90,7 +90,7 @@ static char *read_stdin(void) {
 
 static void waiting_note(const cJSON *evt) {
     const cJSON *name = cJSON_GetObjectItemCaseSensitive(evt, "evt");
-    if (cJSON_IsString(name) && !strcmp(name->valuestring, "approval")) fprintf(stderr, "tawk: waiting for your answer in tawk (F3)\n");
+    if (cJSON_IsString(name) && !strcmp(name->valuestring, "approval")) fprintf(stderr, "%s: waiting for your answer in tawk (F3)\n", APP_NAME);
 }
 
 static int run_send(IControlClient *c, const ControlOptions *o) {
@@ -106,7 +106,7 @@ static int run_send(IControlClient *c, const ControlOptions *o) {
             strcat(text, o->words[i]);
         }
     }
-    if (!text || !*text) { free(text); fprintf(stderr, "tawk: nothing to send\n"); return CONTROL_EXIT_FAILED; }
+    if (!text || !*text) { free(text); fprintf(stderr, "%s: nothing to send\n", APP_NAME); return CONTROL_EXIT_FAILED; }
     cJSON *args = cJSON_CreateObject();
     cJSON_AddStringToObject(args, "chat", o->chats[0]);
     cJSON_AddStringToObject(args, "text", text);
@@ -114,7 +114,7 @@ static int run_send(IControlClient *c, const ControlOptions *o) {
     free(text);
     if (request(c, "send", "send_message", args) != 0) return CONTROL_EXIT_NOT_RUNNING;
     cJSON *reply = answer(c, "send", ANSWER_WAIT_MS, waiting_note);
-    if (!reply) { fprintf(stderr, "tawk: tawk went away before answering\n"); return CONTROL_EXIT_FAILED; }
+    if (!reply) { fprintf(stderr, "%s: tawk went away before answering\n", APP_NAME); return CONTROL_EXIT_FAILED; }
     int rc = result_of(reply) ? CONTROL_EXIT_OK : failed(reply);
     cJSON_Delete(reply);
     return rc;
@@ -271,7 +271,7 @@ static int run_status_line(IControlClient *c, const ControlOptions *o) {
 int control_command_run(const ControlOptions *o, IControlClient *c, const char *socket_path) {
     if (c->connect(c, socket_path) != 0) {
         if (o->kind == CONTROL_COMMAND_STATUS_LINE) { printf("\n"); return CONTROL_EXIT_OK; }
-        fprintf(stderr, "tawk: no tawk is listening on %s (is it running, with Settings > Automation > Agent access on?)\n", socket_path);
+        fprintf(stderr, "%s: no tawk is listening on %s (is %s running, with Settings > Automation > Agent access on?)\n", APP_NAME, socket_path, APP_NAME);
         return CONTROL_EXIT_NOT_RUNNING;
     }
     int rc = hello(c);

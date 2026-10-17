@@ -5,7 +5,7 @@
 #include "contracts/i_frame_hook.h"
 
 /* The control client: a second way into tawk beside the terminal, for
- * tawk-mcp and the tawk send, tail and unread commands. It speaks the
+ * corvus-tawk-mcp and the corvus-tawk send, tail and unread commands. It speaks the
  * protocol in CONTROL.md over the control socket and uses the same
  * managers as the terminal client, asking the automation manager what is
  * allowed. It listens only while Settings > Automation > Control socket is

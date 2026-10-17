@@ -128,13 +128,13 @@ static void test_socket(const char *dir) {
 static void test_options(void) {
     ControlOptions o;
     char *send[] = { "Mom", "on", "my", "way" };
-    CHECK(control_options_parse(CONTROL_COMMAND_SEND, 4, send, &o) == 0 && o.chat_count == 1 && o.word_count == 3, "tawk send CHAT words");
+    CHECK(control_options_parse(CONTROL_COMMAND_SEND, 4, send, &o) == 0 && o.chat_count == 1 && o.word_count == 3, "corvus-tawk send CHAT words");
     char *piped[] = { "Mom", "-" };
-    CHECK(control_options_parse(CONTROL_COMMAND_SEND, 2, piped, &o) == 0 && o.from_stdin, "tawk send CHAT - reads standard input");
+    CHECK(control_options_parse(CONTROL_COMMAND_SEND, 2, piped, &o) == 0 && o.from_stdin, "corvus-tawk send CHAT - reads standard input");
     char *empty[] = { "Mom" };
     CHECK(control_options_parse(CONTROL_COMMAND_SEND, 1, empty, &o) != 0, "a send without text is refused");
     char *tail[] = { "Mom", "Work", "--json" };
-    CHECK(control_options_parse(CONTROL_COMMAND_TAIL, 3, tail, &o) == 0 && o.chat_count == 2 && o.json, "tawk tail chats --json");
+    CHECK(control_options_parse(CONTROL_COMMAND_TAIL, 3, tail, &o) == 0 && o.chat_count == 2 && o.json, "corvus-tawk tail chats --json");
     char *line[] = { "--format", "{unread}" };
     CHECK(control_options_parse(CONTROL_COMMAND_STATUS_LINE, 2, line, &o) == 0 && !strcmp(o.format, "{unread}"), "status-line --format");
     CHECK(control_command_kind_of("unread") == CONTROL_COMMAND_UNREAD && control_command_kind_of("--help") == CONTROL_COMMAND_NONE,

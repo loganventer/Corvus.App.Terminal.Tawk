@@ -13,11 +13,11 @@
 #include <unistd.h>
 
 #define REPO_URL    APP_HOMEPAGE ".git"
-#define INSTALL_URL "https://raw.githubusercontent.com/loganventer/tawk/main/install.sh"
-#define NOTES_URL   "https://raw.githubusercontent.com/loganventer/tawk/main/RELEASE_NOTES.md"
+#define INSTALL_URL "https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Tawk/main/install.sh"
+#define NOTES_URL   "https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Tawk/main/RELEASE_NOTES.md"
 #define NOTES_LINES 400
 
-/* /usr/local/bin/tawk -> /usr/local */
+/* /usr/local/bin/corvus-tawk -> /usr/local */
 static int prefix_of(const char *self, char *out, size_t size) {
     char path[1024];
     str_copy(path, sizeof(path), self);
@@ -43,7 +43,7 @@ static int confirm(const char *question) {
  * version, newest first, each under a "## <version>" heading: every section above the one for
  * this version is new. An update that cannot fetch the notes still goes ahead. */
 static void show_release_notes(void) {
-    char tmpl[] = "/tmp/tawk-notes.XXXXXX";
+    char tmpl[] = "/tmp/corvus-tawk-notes.XXXXXX";
     int fd = mkstemp(tmpl);
     if (fd < 0) return;
     close(fd);
@@ -118,7 +118,7 @@ int updater_run(const UpdaterOptions *o) {
     fflush(stdout);                                    /* before the installer writes its own output */
 
     /* Download to a private file first (no pipe into a shell), then run it. */
-    char tmpl[] = "/tmp/tawk-install.XXXXXX";
+    char tmpl[] = "/tmp/corvus-tawk-install.XXXXXX";
     int fd = mkstemp(tmpl);
     if (fd < 0) { perror("mkstemp"); return 1; }
     close(fd);

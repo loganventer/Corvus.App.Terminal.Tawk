@@ -12,7 +12,7 @@
 typedef struct AutomationEntry {
     int64_t           at;              /* epoch seconds */
     ControlOrigin     origin;
-    char              client[64];      /* the name it gave, such as "tawk-mcp" */
+    char              client[64];      /* the name it gave, such as "corvus-tawk-mcp" */
     char              op[32];
     char              chat_jid[128];
     char              summary[256];    /* the start of the text sent, or the emoji */

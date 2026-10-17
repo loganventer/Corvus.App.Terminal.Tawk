@@ -204,9 +204,9 @@ static void test_manager(sqlite3 *db) {
     messages->save(messages, &b);
     messages->save(messages, &c);
 
-    CHECK(transcript_manager_save(mgr, &a, &mom, "EN", "  Hello\tthere \x1b ", "large-v3", "tawk-mcp", 0) == TRANSCRIPT_SAVED, "a transcript is kept");
+    CHECK(transcript_manager_save(mgr, &a, &mom, "EN", "  Hello\tthere \x1b ", "large-v3", "corvus-tawk-mcp", 0) == TRANSCRIPT_SAVED, "a transcript is kept");
     CHECK(transcript_manager_take_changed(mgr) && !transcript_manager_take_changed(mgr), "the change is reported once");
-    CHECK(transcript_manager_save(mgr, &a, &mom, "af", "Hallo daar", "large-v3", "tawk-mcp", 0) == TRANSCRIPT_SAVED, "and one in another language");
+    CHECK(transcript_manager_save(mgr, &a, &mom, "af", "Hallo daar", "large-v3", "corvus-tawk-mcp", 0) == TRANSCRIPT_SAVED, "and one in another language");
     Transcript best;
     transcript_init(&best);
     int others = -1;
@@ -215,7 +215,7 @@ static void test_manager(sqlite3 *db) {
     transcript_dispose(&best);
     str_copy(settings.transcribe_languages, sizeof(settings.transcribe_languages), "en");
     transcript_init(&best);
-    CHECK(transcript_manager_best(mgr, "M1", &best, NULL) == 0 && strcmp(best.text, "Hello there") == 0 && strcmp(best.source, "tawk-mcp") == 0,
+    CHECK(transcript_manager_best(mgr, "M1", &best, NULL) == 0 && strcmp(best.text, "Hello there") == 0 && strcmp(best.source, "corvus-tawk-mcp") == 0,
           "and it was cleaned on the way in");
     transcript_dispose(&best);
     transcript_init(&best);
@@ -224,13 +224,13 @@ static void test_manager(sqlite3 *db) {
     CHECK(transcript_manager_save(mgr, &text, &mom, "af", "Hallo", "", "", 0) == TRANSCRIPT_REFUSED && transcript_manager_error(mgr)[0],
           "a text message is refused, with a reason");
 
-    CHECK(transcript_manager_save(mgr, &a, &mom, "af", "Hallo daar, hoe gaan dit", "large-v3", "tawk-mcp", 1) == TRANSCRIPT_SAVED, "a voice note is written out again");
+    CHECK(transcript_manager_save(mgr, &a, &mom, "af", "Hallo daar, hoe gaan dit", "large-v3", "corvus-tawk-mcp", 1) == TRANSCRIPT_SAVED, "a voice note is written out again");
     Transcript *again = NULL;
     int again_count = 0;
     transcript_manager_find(mgr, "M1", &again, &again_count);
     CHECK(again_count == 1 && strcmp(again[0].text, "Hallo daar, hoe gaan dit") == 0, "which takes the place of every transcript it had");
     transcript_array_free(again, again_count);
-    transcript_manager_save(mgr, &a, &mom, "en", "Hello there", "large-v3", "tawk-mcp", 0);
+    transcript_manager_save(mgr, &a, &mom, "en", "Hello there", "large-v3", "corvus-tawk-mcp", 0);
 
     /* showing: the setting and the chat's own choice */
     CHECK(transcript_manager_shown(mgr, MOM) && transcript_manager_display_choice(mgr, MOM) == CHAT_TRANSCRIPT_FOLLOW, "shown while the setting is on");
@@ -251,7 +251,7 @@ static void test_manager(sqlite3 *db) {
     CHECK(transcript_manager_transcribing(mgr, &mom) && transcript_manager_transcribe_chosen(mgr, MOM), "a chat is transcribed to begin with");
     CHECK(transcript_manager_set_transcribing(mgr, MOM, 0) == 0 && !transcript_manager_transcribing(mgr, &mom) &&
           !transcript_manager_transcribe_chosen(mgr, MOM) && transcript_manager_transcribing(mgr, &work), "one chat can be switched off");
-    CHECK(transcript_manager_save(mgr, &b, &mom, "af", "Nuwe stemnota", "", "tawk-mcp", 0) == TRANSCRIPT_OFF, "a new transcript for it is refused");
+    CHECK(transcript_manager_save(mgr, &b, &mom, "af", "Nuwe stemnota", "", "corvus-tawk-mcp", 0) == TRANSCRIPT_OFF, "a new transcript for it is refused");
     transcript_init(&best);
     CHECK(transcript_manager_best(mgr, "M2", &best, NULL) != 0, "and nothing is kept");
     transcript_dispose(&best);
@@ -259,11 +259,11 @@ static void test_manager(sqlite3 *db) {
     CHECK(transcript_manager_best(mgr, "M1", &best, NULL) == 0 && strcmp(best.text, "Hello there") == 0,
           "the transcripts it already had are still there");
     transcript_dispose(&best);
-    CHECK(transcript_manager_save(mgr, &c, &work, "", "Stand-up in five", "", "tawk-mcp", 0) == TRANSCRIPT_SAVED, "another chat carries on");
+    CHECK(transcript_manager_save(mgr, &c, &work, "", "Stand-up in five", "", "corvus-tawk-mcp", 0) == TRANSCRIPT_SAVED, "another chat carries on");
     CHECK(transcript_manager_set_transcribing(mgr, MOM, 1) == 0 &&
-          transcript_manager_save(mgr, &b, &mom, "af", "Nuwe stemnota", "", "tawk-mcp", 0) == TRANSCRIPT_SAVED, "and it can be switched on again");
+          transcript_manager_save(mgr, &b, &mom, "af", "Nuwe stemnota", "", "corvus-tawk-mcp", 0) == TRANSCRIPT_SAVED, "and it can be switched on again");
     mom.soft_locked = 1;
-    CHECK(transcript_manager_save(mgr, &b, &mom, "en", "New voice note", "", "tawk-mcp", 0) == TRANSCRIPT_OFF && transcript_manager_transcribe_chosen(mgr, MOM),
+    CHECK(transcript_manager_save(mgr, &b, &mom, "en", "New voice note", "", "corvus-tawk-mcp", 0) == TRANSCRIPT_OFF && transcript_manager_transcribe_chosen(mgr, MOM),
           "a soft-locked chat takes none, whatever was chosen");
     mom.soft_locked = 0;
 

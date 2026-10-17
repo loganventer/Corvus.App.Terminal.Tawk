@@ -1,10 +1,15 @@
-# tawk: WhatsApp in your terminal
+# Corvus Tawk (corvus-tawk): WhatsApp in your terminal
 #
 # Run `make help` for every target and option.
 
-APP        ?= tawk
-VERSION    ?= 0.31.0
-# The commit this build comes from, so `tawk --update` can tell whether it is current.
+APP        ?= corvus-tawk
+# The per-user folders under each XDG base (~/.config/corvus/tawk and so on).
+APP_DIR    ?= corvus/tawk
+# The command's name before the Corvus rename, installed as a symlink to $(APP)
+# that says it is deprecated. LEGACY= (empty) installs no symlink.
+LEGACY     ?= tawk
+VERSION    ?= 0.32.0
+# The commit this build comes from, so `corvus-tawk --update` can tell whether it is current.
 COMMIT     ?= $(shell git rev-parse HEAD 2>/dev/null)
 
 # Install layout follows the Filesystem Hierarchy Standard: self-built
@@ -86,7 +91,7 @@ CSTD     := -std=c11
 WARN     := -Wall -Wextra -Wpedantic -Wformat=2 -Wformat-security -Wshadow -Wno-unused-parameter
 HARDEN   := -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fPIE
 DEFINES  := -D_GNU_SOURCE -D_DEFAULT_SOURCE -D_XOPEN_SOURCE_EXTENDED \
-            -DAPP_NAME=\"$(APP)\" -DAPP_VERSION=\"$(VERSION)\" -DAPP_COMMIT=\"$(COMMIT)\" -DAPP_SHARE_DIR=\"$(SHAREDIR)\" -DAPP_LIB_DIR=\"$(LIBDIR)\"
+            -DAPP_NAME=\"$(APP)\" -DAPP_DIR=\"$(APP_DIR)\" -DAPP_VERSION=\"$(VERSION)\" -DAPP_COMMIT=\"$(COMMIT)\" -DAPP_SHARE_DIR=\"$(SHAREDIR)\" -DAPP_LIB_DIR=\"$(LIBDIR)\"
 CFLAGS   ?= -O2 -g
 CFLAGS   += $(CSTD) $(WARN) $(HARDEN) $(DEFINES) -Iinclude -Ivendor/cjson -Ivendor/stb $(NCURSES_CFLAGS) $(SQLITE_CFLAGS)
 LDFLAGS  += -pie
@@ -192,6 +197,10 @@ install: $(APP)
 	           $(DESTDIR)$(MANDIR) $(DESTDIR)$(DOCDIR) $(DESTDIR)$(COMPDIR)
 	$(Q)install -m 0755 $(APP) $(DESTDIR)$(BINDIR)/$(APP)
 	$(call step,bin,$(BINDIR)/$(APP))
+	@if [ -n "$(LEGACY)" ] && [ "$(LEGACY)" != "$(APP)" ]; then \
+	  ln -sfn $(APP) $(DESTDIR)$(BINDIR)/$(LEGACY); \
+	  printf '  $(C_STEP)%-6s$(C_OFF) %s\n' "legacy" "$(BINDIR)/$(LEGACY) -> $(APP)  (old name, deprecated; prints a notice)"; \
+	fi
 	@f="$(DESTDIR)$(BINDIR)/$(APP)"; \
 	  size=$$(du -h "$$f" | cut -f1); \
 	  mode=$$(stat -c '%A' "$$f" 2>/dev/null || stat -f '%Sp' "$$f"); \
@@ -208,14 +217,14 @@ install: $(APP)
 	$(call step,sounds,$(SHAREDIR)/sounds)
 	$(Q)install -d $(DESTDIR)$(SHAREDIR)/emoji && install -m 0644 assets/emoji/emoji.tsv $(DESTDIR)$(SHAREDIR)/emoji/
 	$(call step,emoji,$(SHAREDIR)/emoji ($$(grep -vc '^#' assets/emoji/emoji.tsv) emoji, Unicode data))
-	$(Q)sed 's/@APP@/$(APP)/g; s/@VERSION@/$(VERSION)/g' docs/tawk.1 > $(DESTDIR)$(MANDIR)/$(APP).1
+	$(Q)sed 's/@APP@/$(APP)/g; s/@VERSION@/$(VERSION)/g' docs/corvus-tawk.1 > $(DESTDIR)$(MANDIR)/$(APP).1
 	$(Q)chmod 0644 $(DESTDIR)$(MANDIR)/$(APP).1
 	$(call step,man,$(MANDIR)/$(APP).1  (man $(APP)))
 	$(Q)install -m 0644 *.md LICENSE $(DESTDIR)$(DOCDIR)/
 	$(Q)install -d -m 0755 $(DESTDIR)$(DOCDIR)/docs/images
 	$(Q)install -m 0644 docs/images/*.png $(DESTDIR)$(DOCDIR)/docs/images/
 	$(call step,docs,$(DOCDIR))
-	$(Q)sed 's/@APP@/$(APP)/g' completions/tawk.bash > $(DESTDIR)$(COMPDIR)/$(APP)
+	$(Q)sed 's/@APP@/$(APP)/g' completions/corvus-tawk.bash > $(DESTDIR)$(COMPDIR)/$(APP)
 	$(Q)chmod 0644 $(DESTDIR)$(COMPDIR)/$(APP)
 	$(call step,bash,$(COMPDIR)/$(APP)  (tab completion))
 	@if [ -d sidecar/node_modules ]; then \
@@ -228,24 +237,28 @@ install: $(APP)
 	fi
 	$(call say,Done)
 	$(call note,your own files are created on first run:)
-	$(call note,  ~/.config/$(APP)        settings and your themes)
-	$(call note,  ~/.local/share/$(APP)   chats and the WhatsApp login)
-	$(call note,  ~/.cache/$(APP)         downloaded media)
-	$(call note,  ~/.local/state/$(APP)   logs)
+	$(call note,  ~/.config/$(APP_DIR)        settings and your themes)
+	$(call note,  ~/.local/share/$(APP_DIR)   chats and the WhatsApp login)
+	$(call note,  ~/.cache/$(APP_DIR)         downloaded media)
+	$(call note,  ~/.local/state/$(APP_DIR)   logs)
+	$(call note,coming from tawk? see CUTOVER.md and scripts/migrate-from-legacy.sh)
 	@case ":$$PATH:" in *":$(BINDIR):"*) printf '  %s\n' "run: $(APP)";; \
 	  *) printf '$(C_WARN)!!$(C_OFF)  %s\n' "$(BINDIR) is not on your PATH; add it or run $(BINDIR)/$(APP)";; esac
 
 uninstall:
 	$(call say,Removing $(APP) from $(DESTDIR)$(PREFIX))
 	$(Q)rm -f $(DESTDIR)$(BINDIR)/$(APP) $(DESTDIR)$(MANDIR)/$(APP).1 $(DESTDIR)$(COMPDIR)/$(APP)
+	@if [ -n "$(LEGACY)" ] && [ -L $(DESTDIR)$(BINDIR)/$(LEGACY) ] && [ "$$(readlink $(DESTDIR)$(BINDIR)/$(LEGACY))" = "$(APP)" ]; then \
+	  rm -f $(DESTDIR)$(BINDIR)/$(LEGACY); fi
 	$(Q)rm -rf $(DESTDIR)$(SHAREDIR) $(DESTDIR)$(LIBDIR) $(DESTDIR)$(DOCDIR)
-	$(call note,your own files were kept: ~/.config/$(APP) ~/.local/share/$(APP) ~/.cache/$(APP) ~/.local/state/$(APP))
+	$(call note,your own files were kept: ~/.config/$(APP_DIR) ~/.local/share/$(APP_DIR) ~/.cache/$(APP_DIR) ~/.local/state/$(APP_DIR))
 
 # ---- housekeeping -------------------------------------------------------------
 
 check: $(APP)
 	$(call say,Smoke test)
 	$(Q)./$(APP) --version
+	$(Q)sh -n scripts/migrate-from-legacy.sh
 
 # Tests that need no WhatsApp account; run on Linux and macOS in CI.
 TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_test $(BUILD)/tests/chat_list_drag_test $(BUILD)/tests/attach_photo_test \
@@ -535,7 +548,9 @@ help:
 	  "  DESTDIR=DIR          stage the install under DIR (for packaging)" \
 	  "  WHATSMEOW=0          leave out the in-process backend (no Go needed)" \
 	  "  SQLCIPHER=0          build without database encryption even when SQLCipher is installed" \
-	  "  APP=NAME             build under another name (binary and folders)" \
+	  "  APP=NAME             build under another command name (default corvus-tawk)" \
+	  "  APP_DIR=PATH         per-user folders under each XDG base (default corvus/tawk)" \
+	  "  LEGACY=NAME          old command name installed as a deprecated symlink (default tawk; empty for none)" \
 	  "  V=1                  show full compiler and linker commands" \
 	  "  CC=clang CFLAGS=..   choose the compiler and flags"
 

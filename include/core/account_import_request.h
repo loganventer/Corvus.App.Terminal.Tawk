@@ -3,7 +3,7 @@
 
 #include "core/backup_paths.h"
 
-/* `tawk --migrate-in FILE [--label NAME]`. */
+/* `corvus-tawk --migrate-in FILE [--label NAME]`. */
 typedef struct AccountImportRequest {
     BackupPaths paths;
     const char *input;

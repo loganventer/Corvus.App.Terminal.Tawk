@@ -1,4 +1,5 @@
 #include "infrastructure/stored_passphrase_prompt.h"
+#include "utilities/app_info.h"
 #include "utilities/secure_zero.h"
 
 #include <fcntl.h>
@@ -22,7 +23,7 @@ static int read_key_file(const char *path, Passphrase *out) {
     struct stat st;
     if (fstat(fd, &st) != 0 || !S_ISREG(st.st_mode) || st.st_uid != getuid()) { close(fd); return -1; }
     if ((st.st_mode & 077) != 0) {
-        fprintf(stderr, "tawk: %s is readable by others, so it is not used. Run: chmod 600 %s\n", path, path);
+        fprintf(stderr, "%s: %s is readable by others, so it is not used. Run: chmod 600 %s\n", APP_NAME, path, path);
         close(fd);
         return -1;
     }

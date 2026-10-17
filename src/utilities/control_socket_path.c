@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 void control_socket_path(char *out, size_t size) {
-    const char *forced = getenv("TAWK_CONTROL_SOCKET");
+    const char *forced = getenv("CORVUS_TAWK_CONTROL_SOCKET");
     if (forced && forced[0] == '/') { str_copy(out, size, forced); return; }
     char dir[512];
     path_runtime_dir(dir, sizeof(dir));

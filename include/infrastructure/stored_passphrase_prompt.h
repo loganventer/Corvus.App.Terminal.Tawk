@@ -15,7 +15,7 @@
 IPassphrasePrompt *stored_passphrase_prompt_create(IPassphrasePrompt *fallback, const char *path);
 
 /* The same, with the file beside the settings: `db.key` in the folder of
- * `config_path`, such as ~/.config/tawk/db.key. */
+ * `config_path`, such as ~/.config/corvus/tawk/db.key. */
 IPassphrasePrompt *stored_passphrase_prompt_create_default(IPassphrasePrompt *fallback, const char *config_path);
 
 #endif

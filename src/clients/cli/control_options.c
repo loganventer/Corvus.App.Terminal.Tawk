@@ -1,4 +1,5 @@
 #include "clients/cli/control_options.h"
+#include "utilities/app_info.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -36,11 +37,11 @@ int control_options_parse(ControlCommandKind kind, int argc, char **argv, Contro
             continue;
         }
         if (kind == CONTROL_COMMAND_TAIL && o->chat_count < CONTROL_OPTIONS_CHATS && a[0] != '-') { o->chats[o->chat_count++] = a; continue; }
-        fprintf(stderr, "tawk: unexpected %s\n", a);
+        fprintf(stderr, "%s: unexpected %s\n", APP_NAME, a);
         return -1;
     }
     if (kind == CONTROL_COMMAND_SEND && (o->chat_count == 0 || (o->word_count == 0 && !o->from_stdin))) {
-        fprintf(stderr, "usage: tawk send CHAT TEXT...   or   tawk send CHAT - < file\n");
+        fprintf(stderr, "usage: %s send CHAT TEXT...   or   %s send CHAT - < file\n", APP_NAME, APP_NAME);
         return -1;
     }
     return 0;

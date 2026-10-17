@@ -540,7 +540,7 @@ static void draw_permissions(AgentsPanel *p, const AgentsPanelModel *m, UiRect l
     UiRect r = detail;
     if (f && r.h > 0) { int used = draw_wrapped(r, f->help, base); r.y += used + 1; r.h -= used + 1; }
     static const char *const NOTES =
-        "Needs: tawk running with the control socket on, and tawk-mcp (or a tawk command) connecting to it. "
+        "Needs: tawk running with the control socket on, and corvus-tawk-mcp (or a tawk command) connecting to it. "
         "Risks: chat text an agent reads goes to its model's provider; a message someone sends you can try to steer the agent; "
         "an allowed send goes out as you. Guards: sends and changes wait here for you, deletes and blocks need a yes in "
         "the agent's app and a Y here, locked chats are never shown, and everything is logged.";

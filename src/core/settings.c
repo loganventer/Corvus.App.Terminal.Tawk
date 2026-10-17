@@ -105,11 +105,11 @@ void settings_set_defaults(Settings *s) {
     path_join(s->config_path, sizeof(s->config_path), dir, "config.ini");
 }
 
-void settings_db_path(const Settings *s, char *out, unsigned long size)   { path_join(out, size, s->data_dir, APP_NAME ".db"); }
+void settings_db_path(const Settings *s, char *out, unsigned long size)   { path_join(out, size, s->data_dir, APP_FILE_STEM ".db"); }
 void settings_auth_dir(const Settings *s, char *out, unsigned long size)  { path_join(out, size, s->data_dir, "auth"); }
 void settings_log_path(const Settings *s, char *out, unsigned long size) {
     (void)s;
     char state[512];
     path_state_dir(state, sizeof(state));
-    path_join(out, size, state, APP_NAME ".log");
+    path_join(out, size, state, APP_FILE_STEM ".log");
 }

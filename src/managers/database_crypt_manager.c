@@ -33,7 +33,7 @@ static int refuse(char *why, unsigned long size, const char *text) {
 /* Common checks: the build can do it, and there is a database to change. */
 static int ready(DatabaseCryptManager *m, char *why, unsigned long size) {
     if (!database_crypt_manager_supported(m)) return refuse(why, size, "this build of tawk has no SQLCipher, so it cannot encrypt");
-    if (access(m->deps.db_path, F_OK) != 0) return refuse(why, size, "there is no database yet; start tawk once first");
+    if (access(m->deps.db_path, F_OK) != 0) return refuse(why, size, "there is no database yet; start corvus-tawk once first");
     return 0;
 }
 

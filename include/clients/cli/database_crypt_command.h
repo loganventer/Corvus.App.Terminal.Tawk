@@ -5,7 +5,7 @@
 #include "contracts/i_passphrase_prompt.h"
 #include "managers/database_crypt_manager.h"
 
-/* `tawk --encrypt`, `--decrypt` and `--change-passphrase`. The caller
+/* `corvus-tawk --encrypt`, `--decrypt` and `--change-passphrase`. The caller
  * holds the instance lock. Returns the exit status: 0 done, 1 failed or
  * refused. */
 int database_crypt_command_run(DatabaseCryptAction action, DatabaseCryptManager *mgr, IPassphrasePrompt *prompt,

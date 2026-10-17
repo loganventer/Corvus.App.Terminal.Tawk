@@ -287,10 +287,10 @@ void tui_app_apply_settings(TuiApp *app, const Settings *updated) {
     if (updated->control_socket && !settings(app)->control_socket) {
         app->pending_settings = *updated;
         confirm_dialog_open(&app->confirm, CONFIRM_ENABLE_AGENTS, "", "Let agents reach tawk?",
-                            "Programs of yours, such as tawk-mcp for Claude Code, can then read your chats and ask to act for you.",
+                            "Programs of yours, such as corvus-tawk-mcp for Claude Code, can then read your chats and ask to act for you.",
                             "Chat text they read goes to their model's provider. A message someone sends you can try to steer them. "
                             "Locked chats stay hidden; every send or change waits for you in the Agents tab (F3), and deletes need two yeses. "
-                            "It needs tawk-mcp added to your MCP client (see the manual).",
+                            "It needs corvus-tawk-mcp added to your MCP client (see the manual).",
                             "Turn on", 1);
         app->dirty = 1;
         return;
@@ -1183,7 +1183,7 @@ static void host_action(void *ctx, MenuAction action) {
             break;
         case MENU_ACTION_CLEAR_LOGS:
             confirm_dialog_open(&app->confirm, CONFIRM_CLEAR_LOGS, "", " Clear logs ", "Clear the log files?",
-                                "Empties tawk.log and the backend's logs in ~/.local/state/tawk. "
+                                "Empties tawk.log and the backend's logs in ~/.local/state/corvus/tawk. "
                                 "They only help with troubleshooting.", "Clear logs", 0);
             break;
         default:

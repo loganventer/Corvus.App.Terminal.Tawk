@@ -82,9 +82,9 @@ static void rules(void) {
           !owner_reply_rule_covers(NULL), "only a plain message goes out unasked there");
 
     char text[4096];
-    ApprovalCard card = { "tawk-mcp", "send a message", "Mom", "Personal", "On my way", 1, 0, 3 };
+    ApprovalCard card = { "corvus-tawk-mcp", "send a message", "Mom", "Personal", "On my way", 1, 0, 3 };
     approval_card_text(&card, text, sizeof(text));
-    CHECK(strstr(text, "tawk: tawk-mcp wants to send a message in Mom (from Personal):") == text && strstr(text, "\n\nOn my way\n\n") &&
+    CHECK(strstr(text, "tawk: corvus-tawk-mcp wants to send a message in Mom (from Personal):") == text && strstr(text, "\n\nOn my way\n\n") &&
           strstr(text, "with y to allow it or n to decline it") && strstr(text, "other words") && strstr(text, "in 3 minutes."),
           "a card says who asks, what for, where, from which number, the exact words, and how to answer");
     ApprovalCard fixed = { "", "react with a heart", "", "", NULL, 0, 1, 1 };

@@ -5,8 +5,8 @@
 
 #define CONTROL_OPTIONS_CHATS 32
 
-/* What a shell command asked for: tawk send CHAT [TEXT|-], tawk tail
- * [CHAT...] [--json], tawk unread [--json], tawk status-line [--format F],
+/* What a shell command asked for: corvus-tawk send CHAT [TEXT|-], corvus-tawk tail
+ * [CHAT...] [--json], corvus-tawk unread [--json], corvus-tawk status-line [--format F],
  * each with --account NAME to pick one of your accounts. */
 typedef struct ControlOptions {
     ControlCommandKind kind;

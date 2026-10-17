@@ -157,9 +157,9 @@ static const MenuNode AGENT_EVENTS[] = {
     FIELD(SETTING_CATEGORY_AUTOMATION, "push_edits"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "push_scheduled"),
     FIELD(SETTING_CATEGORY_AUTOMATION, "push_presence"),
-    TEXT("An agent that listens (tawk-mcp's channel) hears each of these as it happens"),
+    TEXT("An agent that listens (corvus-tawk-mcp's channel) hears each of these as it happens"),
     TEXT("Off, it still sees messages when it reads a chat"),
-    TEXT("Your own tawk tail always shows messages, and none of the others"),
+    TEXT("Your own corvus-tawk tail always shows messages, and none of the others"),
 };
 
 /* Access admin: where an agent holding the admin token may answer its own sends, and how often. */
@@ -172,13 +172,13 @@ static const MenuNode SELF_APPROVAL[] = {
     TEXT("Each one is logged as approved by the agent and shown on screen"),
 };
 
-/* How an agent's transcriber (tawk-mcp) writes out voice notes. tawk only holds the choices. */
+/* How an agent's transcriber (corvus-tawk-mcp) writes out voice notes. tawk only holds the choices. */
 static const MenuNode TRANSCRIPTION[] = {
     FIELD(SETTING_CATEGORY_AUTOMATION, "transcribe_model"),
     INFO("Voice note languages", MENU_INFO_VOICE_LANGUAGES),
     ACTION("\xF0\x9F\x97\xA3", "Choose the languages\xE2\x80\xA6", MENU_ACTION_VOICE_LANGUAGES),
     FIELD(SETTING_CATEGORY_AUTOMATION, "transcribe_auto"),
-    TEXT("tawk-mcp does the transcribing, on this computer, when it is started with --transcribe"),
+    TEXT("corvus-tawk-mcp does the transcribing, on this computer, when it is started with --transcribe"),
     TEXT("Several languages give one transcription each, for voice notes that mix them"),
     TEXT("An agent can read these choices and cannot change them"),
 };
@@ -192,7 +192,7 @@ static const MenuNode TRANSCRIPTION_IDLE =
 
 static const MenuNode AUTOMATION_ABOUT[] = {
     TEXT("The Agentic tab (F3): requests to answer, who is connected, the log"),
-    TEXT("Needs: tawk running with this on, and tawk-mcp in your MCP client"),
+    TEXT("Needs: tawk running with this on, and corvus-tawk-mcp in your MCP client"),
     TEXT("Risk: chat text an agent reads goes to its model's provider"),
     TEXT("Risk: messages others send you can try to steer an agent"),
     TEXT("Guard: sends and changes wait for you; deletes need two yeses"),

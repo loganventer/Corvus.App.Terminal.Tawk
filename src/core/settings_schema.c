@@ -90,11 +90,11 @@ static const SettingField FIELDS[] = {
     I(SETTING_CATEGORY_RESILIENCE, "breaker_threshold", "Circuit breaker threshold", "Consecutive failures before retries pause", breaker_threshold, 1, 50, 1, 0),
     I(SETTING_CATEGORY_RESILIENCE, "breaker_cooldown_s", "Circuit breaker cooldown (s)", "Pause before a trial reconnect", breaker_cooldown_s, 5, 3600, 5, 0),
 
-    B(SETTING_CATEGORY_AUTOMATION, "control_socket", "Agent access (MCP)", "Let tawk-mcp and the tawk send, tail and unread commands reach this tawk; off, nothing can connect", control_socket),
+    B(SETTING_CATEGORY_AUTOMATION, "control_socket", "Agent access (MCP)", "Let corvus-tawk-mcp and the corvus-tawk send, tail and unread commands reach this tawk; off, nothing can connect", control_socket),
     { SETTING_CATEGORY_AUTOMATION, "access", "What they may do", "read lists and reads chats; send also sends, reacts, schedules and drafts; manage changes chats, statuses, your profile and settings. You allow each change. admin also lets a program holding the admin token answer its own sends in the chats you choose for that",
       SETTING_KIND_CHOICE, offsetof(Settings, automation_access), sizeof(((Settings *)0)->automation_access), 0, 0, 0, "read|send|manage|admin", 0 },
     S(SETTING_CATEGORY_AUTOMATION, "chats", "Chats they may use", "Names or numbers, separated by commas; empty allows every chat except locked ones", automation_chats, 0),
-    B(SETTING_CATEGORY_AUTOMATION, "confirm_cli", "Ask for shell commands too", "tawk send asks first as well; programs acting for a model always ask", automation_confirm_cli),
+    B(SETTING_CATEGORY_AUTOMATION, "confirm_cli", "Ask for shell commands too", "corvus-tawk send asks first as well; programs acting for a model always ask", automation_confirm_cli),
     I(SETTING_CATEGORY_AUTOMATION, "writes_per_minute", "Writes per minute", "More than this are refused until a minute has passed", automation_rate, 1, 60, 1, 0),
     B(SETTING_CATEGORY_AUTOMATION, "ai_disclaimer", "Add AI disclaimer", "Messages an agent sends, schedules or replies to a status with get a line underneath saying an AI wrote them", automation_disclaimer),
     S(SETTING_CATEGORY_AUTOMATION, "ai_disclaimer_text", "Disclaimer text", "The line added under those messages", automation_disclaimer_text, 0),

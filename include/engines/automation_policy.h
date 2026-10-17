@@ -32,7 +32,7 @@ SelfApprovalVerdict automation_policy_self_approval(const Settings *settings, co
 /* Whether a client that subscribed is told about a new message as it
  * arrives: programs acting for a model follow the two push settings (one
  * for what other people send, one for what you send); your own shell
- * commands, such as tawk tail, always are. */
+ * commands, such as corvus-tawk tail, always are. */
 int               automation_policy_pushes(const Settings *settings, ControlOrigin origin, int from_me);
 /* Whether a client that subscribed is told about something other than a new
  * message (a read, a reaction, an edit or delete, a scheduled send): only

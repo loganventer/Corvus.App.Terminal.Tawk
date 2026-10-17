@@ -153,7 +153,7 @@ static void usage(void) {
            "       %s tail [CHAT...] [--json]\n"
            "       %s unread [--json]\n"
            "       %s status-line [--format '{unread} {mentions} {chats}']\n"
-           "       The commands talk to a running tawk with Settings > Automation > Agent access on.\n"
+           "       The commands talk to a running %s with Settings > Automation > Agent access on.\n"
            "       With several accounts, --account NAME picks one; unread and status-line cover all without it.\n\n"
            "  --config PATH     use this config file (default ~/.config/%s/config.ini)\n"
            "  --backend NAME    whatsmeow (in-process) or baileys (Node.js sidecar)\n"
@@ -175,7 +175,7 @@ static void usage(void) {
            "  --help            show this help\n"
            "Each option may be written with two dashes, one or none: --update, -update, update\n\n"
            "%s by %s <%s>, %s\n",
-           APP_NAME, APP_VERSION, APP_NAME, APP_NAME, APP_NAME, APP_NAME, APP_NAME, APP_NAME, APP_NAME, APP_AUTHOR, APP_AUTHOR_EMAIL, APP_HOMEPAGE);
+           APP_NAME, APP_VERSION, APP_NAME, APP_NAME, APP_NAME, APP_NAME, APP_NAME, APP_NAME, APP_DIR, APP_NAME, APP_AUTHOR, APP_AUTHOR_EMAIL, APP_HOMEPAGE);
 }
 
 /* An option by its name, written with two dashes, one or none: --update, -update or update. */
@@ -268,7 +268,7 @@ static void restart_self(int argc, char **argv) {
     free(args);
 }
 
-/* `tawk --update`: reinstalls from GitHub where this binary lives. */
+/* `corvus-tawk --update`: reinstalls from GitHub where this binary lives. */
 static int run_update(const Options *opt, const char *argv0) {
     char self[1024];
     self_path(argv0, self, sizeof(self));
@@ -283,7 +283,7 @@ static int run_update(const Options *opt, const char *argv0) {
     return updater_run(&u);
 }
 
-/* `tawk --doctor`: checks the setup without changing the database or using the network. */
+/* `corvus-tawk --doctor`: checks the setup without changing the database or using the network. */
 static int run_doctor(const Options *opt, const Settings *s, SettingsManager *settings_mgr, ISettingsStore *store,
                       IThemeRepository *themes, IEmojiCatalog *emoji, const char *themes_dir,
                       const char *db_path, const char *log_path) {
@@ -312,7 +312,7 @@ static int run_doctor(const Options *opt, const Settings *s, SettingsManager *se
     return rc;
 }
 
-/* `tawk --backup FILE` and `tawk --restore FILE`, under the instance lock. */
+/* `corvus-tawk --backup FILE` and `corvus-tawk --restore FILE`, under the instance lock. */
 static int run_backup_or_restore(const Options *opt, const Settings *s, const char *config_path, const char *themes_dir,
                                  const char *db_path, const char *auth_dir, IPassphrasePrompt *prompt) {
     IDatabaseSnapshot *snapshot = sqlite_file_snapshot_create();
@@ -337,7 +337,7 @@ static int run_backup_or_restore(const Options *opt, const Settings *s, const ch
     return rc;
 }
 
-/* `tawk --migrate-out` and `tawk --migrate-in`, with the database open and the instance lock held. */
+/* `corvus-tawk --migrate-out` and `corvus-tawk --migrate-in`, with the database open and the instance lock held. */
 static int run_migrate(const Options *opt, const Settings *s, sqlite3 *db, IAccountStore *accounts, const char *config_path,
                        const char *themes_dir, const char *db_path, const char *auth_dir, IPassphrasePrompt *prompt) {
     ISchemaInspector *schema = sqlite_schema_inspector_create(db);
@@ -372,7 +372,7 @@ static int run_migrate(const Options *opt, const Settings *s, sqlite3 *db, IAcco
     return rc;
 }
 
-/* tawk send, tail, unread and status-line talk to the tawk already
+/* corvus-tawk send, tail, unread and status-line talk to the one already
  * running, so they need no terminal, lock or database of their own. */
 static int run_control_command(ControlCommandKind kind, int argc, char **argv) {
     setlocale(LC_ALL, "");
@@ -388,7 +388,19 @@ static int run_control_command(ControlCommandKind kind, int argc, char **argv) {
     return rc;
 }
 
+/* Started as the legacy symlink (tawk): one line on stderr says the name is
+ * going away. Everything else works as under the new name. */
+static void warn_if_legacy_name(const char *argv0) {
+    if (!argv0 || strcmp(APP_NAME, APP_LEGACY_NAME) == 0) return;
+    const char *slash = strrchr(argv0, '/');
+    const char *base = slash ? slash + 1 : argv0;
+    if (strcmp(base, APP_LEGACY_NAME) == 0)
+        fprintf(stderr, "%s: the command name '%s' is deprecated and will be removed; use '%s' instead\n",
+                APP_NAME, APP_LEGACY_NAME, APP_NAME);
+}
+
 int main(int argc, char **argv) {
+    warn_if_legacy_name(argc > 0 ? argv[0] : NULL);
     ControlCommandKind command = argc > 1 ? control_command_kind_of(argv[1]) : CONTROL_COMMAND_NONE;
     if (command != CONTROL_COMMAND_NONE) return run_control_command(command, argc - 2, argv + 2);
     Options opt;
