@@ -81,7 +81,7 @@ static int idle_run(IIdleAction *self, const char *command, IdleWakeCheck wake_c
 
     /* Close our end first: on macOS an exiting process waits until its pty
      * output has been read, and we stopped reading, so a command that draws
-     * a lot (matrix-clock) would never exit. Closing discards that output. */
+     * a lot (corvus-matrix-clock) would never exit. Closing discards that output. */
     close(master);
     if (!child_done) stop_child(pid);
     if (have_termios) tcsetattr(STDIN_FILENO, TCSANOW, &saved);

@@ -261,7 +261,7 @@ static const MenuNode ROOT_CHILDREN[] = {
     SUB("\xF0\x9F\x94\x94", "Notifications", "Alerts, sound, blink, title bar", NOTIFICATIONS),
     SUB("\xF0\x9F\x8E\xA8", "Appearance", "Themes and layout", APPEARANCE),
     SUB("\xF0\x9F\x96\xBC", "Media", "Photos, videos, voice notes", MEDIA),
-    SUB("\xF0\x9F\x8C\x99", "Screensaver", "Idle command such as matrix-clock", SCREENSAVER),
+    SUB("\xF0\x9F\x8C\x99", "Screensaver", "Idle command such as corvus-matrix-clock", SCREENSAVER),
     SUB("\xF0\x9F\x94\x8C", "Connection", "Backend, reconnects, circuit breaker", CONNECTION),
     SUB("\xF0\x9F\xA4\x96", "Automation", "Agents: access, events, answering for itself", AUTOMATION),
     SUB("\xE2\x9A\x99", "Advanced", "Paths and logging", ADVANCED),

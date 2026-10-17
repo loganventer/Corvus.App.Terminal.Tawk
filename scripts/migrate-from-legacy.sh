@@ -218,6 +218,13 @@ rewrite_config() {
         o="$(sed_lit "${pair%%|*}")"; n="$(sed_lit "${pair#*|}")"
         set -- "$@" -e "s|=\([[:space:]]*\)$o/|=\1$n/|" -e "s|=\([[:space:]]*\)$o\$|=\1$n|"
     done
+    # The screensaver's matrix-clock became corvus-matrix-clock; switch only once that is installed.
+    if command -v corvus-matrix-clock >/dev/null 2>&1; then
+        set -- "$@" -e "s|^\(command[[:space:]]*=[[:space:]]*\)matrix-clock\([[:space:]]\)|\1corvus-matrix-clock\2|" \
+                    -e "s|^\(command[[:space:]]*=[[:space:]]*\)matrix-clock\$|\1corvus-matrix-clock|"
+    elif grep -qE '^command[[:space:]]*=[[:space:]]*matrix-clock([[:space:]]|$)' "$ini.legacy-paths"; then
+        say "   the screensaver still runs matrix-clock; set it to corvus-matrix-clock once that is installed"
+    fi
     sed "$@" "$ini.legacy-paths" > "$ini.tmp" && chmod 0600 "$ini.tmp" && mv "$ini.tmp" "$ini"
     if cmp -s "$ini" "$ini.legacy-paths"; then
         say "   nothing named the old folders"

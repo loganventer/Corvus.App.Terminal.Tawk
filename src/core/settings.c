@@ -68,7 +68,7 @@ void settings_set_defaults(Settings *s) {
 
     s->screensaver = 1;
     s->idle_minutes = 5;
-    str_copy(s->screensaver_command, sizeof(s->screensaver_command), "matrix-clock");
+    str_copy(s->screensaver_command, sizeof(s->screensaver_command), "corvus-matrix-clock");
     s->wake_on_message = 1;
 
     s->backoff_initial_ms = 1000;
