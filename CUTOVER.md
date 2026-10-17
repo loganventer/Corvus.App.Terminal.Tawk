@@ -13,18 +13,22 @@ name the old command, folders and variables, apart from the legacy-symlink code.
 
 ## Contents
 
-- [[#Old to new]]
-  - [[#Commands and installed files]]
-  - [[#Environment variables]]
-  - [[#Per-user paths]]
-  - [[#Names other programs see]]
-  - [[#Kept on purpose]]
-- [[#What the migration script does]]
-- [[#Switching a live install over]]
-  - [[#Rollback]]
-  - [[#Cleaning up, once corvus-tawk runs well]]
+- [Old to new](#Old%20to%20new)
+  - [Commands and installed files](#Commands%20and%20installed%20files)
+  - [Environment variables](#Environment%20variables)
+  - [Per-user paths](#Per-user%20paths)
+  - [Names other programs see](#Names%20other%20programs%20see)
+  - [Kept on purpose](#Kept%20on%20purpose)
+- [What the migration script does](#What%20the%20migration%20script%20does)
+- [Switching a live install over](#Switching%20a%20live%20install%20over)
+  - [Rollback](#Rollback)
+  - [Cleaning up, once corvus-tawk runs well](#Cleaning%20up,%20once%20corvus-tawk%20runs%20well)
+
+<a id="Old to new"></a>
 
 ## Old to new
+
+<a id="Commands and installed files"></a>
 
 ### Commands and installed files
 
@@ -47,6 +51,8 @@ name the old command, folders and variables, apart from the legacy-symlink code.
 | Makefile | `APP ?= tawk` | `APP ?= corvus-tawk`, `APP_DIR ?= corvus/tawk`, `LEGACY ?= tawk` |
 | Desktop entry, systemd unit | none | none |
 
+<a id="Environment variables"></a>
+
 ### Environment variables
 
 There is no fallback to the old names. The migration script lists any old
@@ -58,6 +64,8 @@ variable that is still set.
 | `TAWK_SHOT_FONTS` (screenshot and logo tools) | `CORVUS_TAWK_SHOT_FONTS` |
 | `TAWK_SHOT_THEME` (screenshot tool) | `CORVUS_TAWK_SHOT_THEME` |
 | any other `TAWK_*` | `CORVUS_TAWK_*` |
+
+<a id="Per-user paths"></a>
 
 ### Per-user paths
 
@@ -89,6 +97,8 @@ File names inside the folders do not change.
 | Control socket | `$XDG_RUNTIME_DIR/tawk/control.sock` (fallback `~/.local/state/tawk/control.sock`) | `$XDG_RUNTIME_DIR/corvus/tawk/control.sock` (fallback `~/.local/state/corvus/tawk/control.sock`) |
 | Admin token | `$XDG_RUNTIME_DIR/tawk/admin.token` (next to the socket) | `$XDG_RUNTIME_DIR/corvus/tawk/admin.token` (next to the socket) |
 
+<a id="Names other programs see"></a>
+
 ### Names other programs see
 
 | What | Old | New |
@@ -100,15 +110,19 @@ File names inside the folders do not change.
 | `--update` source | github.com/loganventer/tawk | github.com/loganventer/Corvus.App.Terminal.Tawk |
 | `hello` result field `tawk` (the version) | `tawk` | unchanged (protocol) |
 
+<a id="Kept on purpose"></a>
+
 ### Kept on purpose
 
 - The file names `tawk.db`, `tawk.log`, `tawk.lock`, `auth/`, `accounts/`, and
   the names inside backups and account packages (`tawk.db`, `manifest.txt`,
   the `.tawk` package extension).
-- The control protocol (protocol 1, every op, event and field), [[CONTROL]] and
-  [[PROTOCOL]] apart from names, paths and variables.
+- The control protocol (protocol 1, every op, event and field), [CONTROL](CONTROL.md) and
+  [PROTOCOL](PROTOCOL.md) apart from names, paths and variables.
 - The database schema (version 27) and the whatsmeow and Baileys session files.
 - C identifiers (`tawk_wm_emit`, `libtawkwm`, the SQL function `tawk_media_path`).
+
+<a id="What the migration script does"></a>
 
 ## What the migration script does
 
@@ -140,6 +154,8 @@ config, data, state and cache folders to the new ones:
   environment variables that are still set.
 - It is safe to run again: a folder it already copied is reported and left
   alone. `--dry-run` prints the plan and changes nothing.
+
+<a id="Switching a live install over"></a>
 
 ## Switching a live install over
 
@@ -206,12 +222,16 @@ them from a checkout of this repository.
    With Agent access on, `ls $XDG_RUNTIME_DIR/corvus/tawk/` shows
    `control.sock` (and `admin.token` when an agent has admin access).
 
+<a id="Rollback"></a>
+
 ### Rollback
 
 Quit corvus-tawk, then `mv ~/.local/bin/tawk-0.31.0.bak ~/.local/bin/tawk`
 (this replaces the symlink) and start `tawk`. The old folders were never
 changed, so it carries on from where it stopped; messages that arrived while
 corvus-tawk ran are on your phone and in the new folders, not in the old ones.
+
+<a id="Cleaning up, once corvus-tawk runs well"></a>
 
 ### Cleaning up, once corvus-tawk runs well
 

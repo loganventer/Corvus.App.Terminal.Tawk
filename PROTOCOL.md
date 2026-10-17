@@ -44,16 +44,18 @@ In both cases the C side sees the same lines. The difference is the transport: p
 
 ## Contents
 
-- [[#Commands (tawk to backend)]]
-- [[#Events (backend to tawk)]]
-- [[#Deleting messages]]
-- [[#Profiles, pictures and blocking]]
-- [[#Statuses]]
-- [[#Calls]]
-- [[#Addressing phone numbers and LIDs|Addressing: phone numbers and LIDs]]
-- [[#Typing and presence]]
-- [[#Limits enforced by tawk]]
-- [[#Example]]
+- [Commands (tawk to backend)](#Commands%20(tawk%20to%20backend))
+- [Events (backend to tawk)](#Events%20(backend%20to%20tawk))
+- [Deleting messages](#Deleting%20messages)
+- [Profiles, pictures and blocking](#Profiles,%20pictures%20and%20blocking)
+- [Statuses](#Statuses)
+- [Calls](#Calls)
+- [Addressing: phone numbers and LIDs](#Addressing%20phone%20numbers%20and%20LIDs)
+- [Typing and presence](#Typing%20and%20presence)
+- [Limits enforced by tawk](#Limits%20enforced%20by%20tawk)
+- [Example](#Example)
+
+<a id="Commands (tawk to backend)"></a>
 
 ## Commands (tawk to backend)
 
@@ -92,6 +94,8 @@ In both cases the C side sees the same lines. The difference is the transport: p
 
 `path` values must point inside the media folder. Backends check this again and reject anything else. Message ids in `edit`, `react`, `delete` and `history` must look like WhatsApp message ids, and so must call ids in `reject_call`; `edit` text is limited to 64 KB. Backends ignore commands that do not pass these checks.
 
+<a id="Events (backend to tawk)"></a>
+
 ## Events (backend to tawk)
 
 | `evt` | Fields | Meaning |
@@ -125,6 +129,8 @@ In both cases the C side sees the same lines. The difference is the transport: p
 | `status_posted` | `id`, `ok`, `detail`? | The `post_status` with this `id` went out (`ok` true) or failed, with the reason in `detail` (whatsmeow only) |
 | `error` | `detail`, `id`? | Something failed; `id` ties it to a download |
 
+<a id="Deleting messages"></a>
+
 ## Deleting messages
 
 The C side builds a `DeleteRequest` from the stored message and `json_protocol_encode_delete` turns it into the `delete` command. tawk only asks for a delete for everyone on your own messages that were sent, are not already deleted and are less than about 60 hours old (`messaging_manager_can_delete_for_everyone`). A message of yours that failed or is still pending never reached WhatsApp, so it is removed locally and no command is sent.
@@ -137,9 +143,11 @@ The C side builds a `DeleteRequest` from the stored message and `json_protocol_e
 
 A delete for everyone made by the sender, on any device, still arrives as `edit` with `deleted` true, and the message shows as "This message was deleted". A delete for me removes the row, so the message disappears.
 
+<a id="Profiles, pictures and blocking"></a>
+
 ## Profiles, pictures and blocking
 
-The profile manager asks for details with `profile` and for pictures with `picture`, a few requests at a time (see [[HOW_IT_WORKS#Profiles and portraits|HOW_IT_WORKS]]). The backends answer as follows:
+The profile manager asks for details with `profile` and for pictures with `picture`, a few requests at a time (see [HOW_IT_WORKS](HOW_IT_WORKS.md#Profiles%20and%20portraits)). The backends answer as follows:
 
 | | whatsmeow | Baileys |
 |---|---|---|
@@ -157,25 +165,35 @@ The backend downloads a picture itself and reports only the file. The file is na
 
 Neither library can report a contact to WhatsApp, so tawk does not offer reporting.
 
+<a id="Statuses"></a>
+
 ## Statuses
 
 Messages on `status@broadcast` are statuses. tawk never shows them as a chat, notifies about them or counts them as unread; the status feed keeps them (yours and your contacts') for `status_keep_days`, the last day as current statuses and the rest as the archive, downloads a photo or video when it is looked at (with no size limit) or, while the archive is on, when it arrives, and deletes the files when the statuses are pruned. whatsmeow also passes on the statuses in history sync (`statusV3Messages`), so ones posted before linking appear too. A status deleted with `edit` (`deleted` true) or `removed` goes away. Looking at a status sends no read receipt. For your own statuses, the `receipt` events of each viewer (read or played) say who saw it and when, and a `reaction` on `status@broadcast` with the status's id is a like; tawk keeps both and lists them in the viewers list. Answers to someone else's status are ordinary messages in your chat with them whose `reply_to` has `status` true; replies to your statuses arrive the same way, with `quote.status` true, and tawk stores the mark (`messages.quoted_status`) so the bubble can show the status it answers.
 
 `post_status` is handled by whatsmeow only: it sends a text or link status as an `ExtendedTextMessage` with white text on the `bg` colour (a link status also names its first address as `MatchedText`, without a preview picture), and a photo or video with the same upload as `send_media`, to `types.StatusBroadcastJID`. whatsmeow sends it to the people your phone's status privacy setting allows. Baileys needs that list from the caller, so the sidecar has no `post_status`; tawk offers to switch to whatsmeow instead. After a status is posted, whatsmeow also sends a `message` event for it on `status@broadcast` (`from_me` true, with `bg`, and for a photo or video its `ref` and local `path`), so it shows among your statuses like one posted from the phone.
 
+<a id="Calls"></a>
+
 ## Calls
 
 Both backends report calls as `call` events: whatsmeow from `events.CallOffer`, `CallOfferNotice`, `CallAccept` and `CallTerminate`, and Baileys from its `call` event. `reject_call` declines a call with whatsmeow's `RejectCall` or Baileys' `rejectCall`. tawk cannot answer a call or carry its audio, because neither library implements WhatsApp's call media; it can only show that a call is ringing and decline it.
 
+<a id="Addressing phone numbers and LIDs"></a>
+
 ## Addressing: phone numbers and LIDs
 
 WhatsApp can address the same person by phone number (`27821234567@s.whatsapp.net`) or by a hidden id (`1234567890@lid`). tawk keys chats and contacts by phone number. Backends translate a LID to its phone number whenever they know the mapping, and report every mapping they learn as an `alias` event: from message metadata, from the mappings that arrive with history sync, from the whatsmeow login store after each connect, and from Baileys' `chats.phoneNumberShare`. tawk stores each alias, rewrites the JIDs of later events to the phone number form, and merges any chat, messages, contact and reactions it had stored under the LID into the phone number chat.
+
+<a id="Typing and presence"></a>
 
 ## Typing and presence
 
 tawk sends `presence` with `available` true after connecting when "Appear online" is on and you are active, and `false` after two idle minutes, while the screensaver runs, and on exit. WhatsApp only delivers other people's `typing` events to a device that is online, and only for contacts it has been asked about, so tawk sends `subscribe` whenever a one-to-one chat is opened and again after each reconnect. While you type, tawk sends `typing` with `composing` at most every 7 seconds, `recording` while you record a voice note, and `paused` when you stop, send, switch chats or go idle. An incoming `typing` notice is shown for 8 seconds unless it is refreshed.
 
 The same subscription brings the `presence` event: WhatsApp answers a `subscribe` with the contact's state at once, and sends another whenever they come online or leave. A contact who hides their online status sends nothing, and one who hides their last seen leaves `last_seen` at 0. tawk keeps the state while it is connected and shown as online itself, and forgets it otherwise, since WhatsApp stops sending it then.
+
+<a id="Limits enforced by tawk"></a>
 
 ## Limits enforced by tawk
 
@@ -184,6 +202,8 @@ The same subscription brings the `presence` event: WhatsApp answers a `subscribe
 - `thumb` is accepted only when it decodes to a JPEG of at most 64 KB; anything else is dropped. Backends only send previews under 48 KB.
 - Single-line fields (ids, JIDs, names, codes, reasons) have control characters replaced with spaces before they reach the screen or the terminal title; message text keeps only newlines and tabs.
 - Unknown events and malformed JSON are ignored.
+
+<a id="Example"></a>
 
 ## Example
 

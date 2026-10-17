@@ -1,14 +1,16 @@
 # Quickstart
 
-Having an AI agent install tawk for you? Point it at [[AGENT_SETUP]], which covers Windows, Linux and macOS step by step.
+Having an AI agent install tawk for you? Point it at [AGENT_SETUP](AGENT_SETUP.md), which covers Windows, Linux and macOS step by step.
 
 ## Contents
 
-- [[#Install with one command]]
-- [[#Install from a checkout]]
-- [[#Common variations]]
-- [[#First run]]
-- [[#Tips]]
+- [Install with one command](#Install%20with%20one%20command)
+- [Install from a checkout](#Install%20from%20a%20checkout)
+- [Common variations](#Common%20variations)
+- [First run](#First%20run)
+- [Tips](#Tips)
+
+<a id="Install with one command"></a>
 
 ## Install with one command
 
@@ -38,6 +40,8 @@ less install.sh
 bash install.sh
 ```
 
+<a id="Install from a checkout"></a>
+
 ## Install from a checkout
 
 ```bash
@@ -45,6 +49,8 @@ git clone https://github.com/loganventer/Corvus.App.Terminal.Tawk.git
 cd Corvus.App.Terminal.Tawk
 ./install.sh
 ```
+
+<a id="Common variations"></a>
 
 ## Common variations
 
@@ -59,7 +65,9 @@ cd Corvus.App.Terminal.Tawk
 | Install packages without asking | `./install.sh --yes` |
 | Remove tawk | `./install.sh --uninstall` |
 
-Everything the script does can be done by hand with `make`, see the Building section of the [[README]].
+Everything the script does can be done by hand with `make`, see the Building section of the [README](README.md).
+
+<a id="First run"></a>
 
 ## First run
 
@@ -80,6 +88,8 @@ The QR code needs a window of roughly 70 by 40 characters. If yours is smaller, 
 If something does not work, run `corvus-tawk --doctor`. It checks the terminal, your files, the backend, the voice note and media tools, the PDF page tools and the screensaver command, and tells you what to install.
 
 ![corvus-tawk --doctor listing each check and what to install for the one that is missing](docs/images/doctor.png)
+
+<a id="Tips"></a>
 
 ## Tips
 
@@ -104,4 +114,4 @@ If something does not work, run `corvus-tawk --doctor`. It checks the terminal, 
 - Click **➕** in the input and choose Take a photo (or type **/camera**) for the camera: Space takes a photo, V records a video, and Enter attaches what you took.
 - **Ctrl+B** hides the chat list when the window is narrow.
 - Try a theme: F2, Appearance, Theme, Choose theme, then use the arrow keys to preview.
-- Everything else is in the [[MANUAL]].
+- Everything else is in the [MANUAL](MANUAL.md).

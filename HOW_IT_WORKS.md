@@ -2,42 +2,44 @@
 
 ## Contents
 
-- [[#Start-up]]
-- [[#The event loop]]
-- [[#Linking a phone]]
-- [[#Receiving a message]]
-  - [[#Formatting and mentions on screen]]
-  - [[#Mentions]]
-  - [[#Who saw your status]]
-- [[#Sending a message or file]]
-- [[#Replies, reactions, edits and deletions]]
-- [[#Scheduled messages]]
-- [[#Typing and presence]]
-- [[#Loading older messages]]
-- [[#One chat per person]]
-- [[#Search]]
-- [[#Soft lock]]
-- [[#The chat list]]
-- [[#Profiles and portraits]]
-- [[#Contact details]]
-- [[#Your profile]]
-- [[#Statuses]]
-- [[#Incoming calls]]
-- [[#Photos, videos and PDFs]]
-- [[#Pasting a picture]]
-- [[#The camera]]
-- [[#Saving files]]
-- [[#Voice notes]]
-- [[#Transcripts]]
-- [[#TL;DR summaries]]
-- [[#Reconnecting]]
-- [[#Screensaver]]
-- [[#Encrypted chats]]
-- [[#Backups]]
-- [[#Moving an account]]
-- [[#Several accounts]]
-- [[#Agents and the control socket]]
-- [[#The setup check]]
+- [Start-up](#Start-up)
+- [The event loop](#The%20event%20loop)
+- [Linking a phone](#Linking%20a%20phone)
+- [Receiving a message](#Receiving%20a%20message)
+  - [Formatting and mentions on screen](#Formatting%20and%20mentions%20on%20screen)
+  - [Mentions](#Mentions)
+  - [Who saw your status](#Who%20saw%20your%20status)
+- [Sending a message or file](#Sending%20a%20message%20or%20file)
+- [Replies, reactions, edits and deletions](#Replies,%20reactions,%20edits%20and%20deletions)
+- [Scheduled messages](#Scheduled%20messages)
+- [Typing and presence](#Typing%20and%20presence)
+- [Loading older messages](#Loading%20older%20messages)
+- [One chat per person](#One%20chat%20per%20person)
+- [Search](#Search)
+- [Soft lock](#Soft%20lock)
+- [The chat list](#The%20chat%20list)
+- [Profiles and portraits](#Profiles%20and%20portraits)
+- [Contact details](#Contact%20details)
+- [Your profile](#Your%20profile)
+- [Statuses](#Statuses)
+- [Incoming calls](#Incoming%20calls)
+- [Photos, videos and PDFs](#Photos,%20videos%20and%20PDFs)
+- [Pasting a picture](#Pasting%20a%20picture)
+- [The camera](#The%20camera)
+- [Saving files](#Saving%20files)
+- [Voice notes](#Voice%20notes)
+- [Transcripts](#Transcripts)
+- [TL;DR summaries](#TL;DR%20summaries)
+- [Reconnecting](#Reconnecting)
+- [Screensaver](#Screensaver)
+- [Encrypted chats](#Encrypted%20chats)
+- [Backups](#Backups)
+- [Moving an account](#Moving%20an%20account)
+- [Several accounts](#Several%20accounts)
+- [Agents and the control socket](#Agents%20and%20the%20control%20socket)
+- [The setup check](#The%20setup%20check)
+
+<a id="Start-up"></a>
 
 ## Start-up
 
@@ -48,6 +50,8 @@
 5. SQLite (SQLCipher when built with it) opens with that passphrase, keeps a copy of the database before an upgrade (encrypted the same way), and applies any pending schema migrations, the message and contact stores are wrapped in caching decorators, the reaction, receipt, alias, profile and status stores and the chat exporter are created, and the event queue is created.
 6. The WhatsApp gateway is chosen (whatsmeow unless configured otherwise) along with the profile editor it hands out and, on whatsmeow only, the status publisher. Then come the audio backend, players, recorder, camera, media opener, screensaver, terminal title, clipboard, video poster, PDF page renderer, clipboard picture reader and notifiers.
 7. The managers are created with those dependencies (the profile, call, account, status and status feed managers first, with their observers joined in a composite event observer that the messaging manager receives along with the network monitor; the camera goes to the media manager), then the client, which starts curses, asks the messaging manager to start the backend and connect, and shows the splash while it does (unless `splash` is off). The splash lasts about two seconds and any key skips it. Starting curses also turns on mouse reporting (when `mouse` is on), bracketed paste, modified key reporting (`CSI > 4;1 m`) and a blinking bar cursor (`CSI 5 q`); on exit tawk turns them off again and restores the terminal's own cursor style (`CSI 0 q`).
+
+<a id="The event loop"></a>
 
 ## The event loop
 
@@ -86,6 +90,8 @@ Everything the UI needs from a tick arrives in a `ManagerChanges` record (chats 
 At the end of each frame the terminal cursor, a blinking bar, is moved to the field that takes typing: the topmost popup's field (search, the emoji picker's search, a setting being edited), else the phone number in the linking wizard, else the chat list filter, else the message input. Each of these widgets records where its caret belongs in a `TextCaret`. When no field takes typing (the viewer, a menu or a picker is open) the cursor is hidden, and tawk only changes the cursor state when it differs from the last frame, so it never flickers.
 
 An Esc from curses is passed to `escape_sequence_read`, which reads what follows without waiting: the start of a bracketed paste, or a modified key in the form `CSI 27;<mods>;<key>~` or `CSI <key>;<mods> u`. That is how Ctrl+Shift+L is told apart from Ctrl+L. Other modified keys carry on as the key curses would have reported, and anything else is pushed back, so a bare Esc stays an Esc and Esc followed by a key is still Alt+key. Enter with Shift or Alt becomes one new-line key, `TUI_KEY_NEWLINE` (`tui_key_newline.h`): the message input and the status composer's `text_field`, which allows line breaks, insert a line break, and one-line fields ignore it. On macOS, `mac_option_letter` turns the characters Option types on a US layout (`¬` for Option+L, for example) into the Alt shortcut they stand for; letters such as `å` and `ø` count only where no text is being typed, so they still type in a message.
+
+<a id="Linking a phone"></a>
 
 ## Linking a phone
 
@@ -127,6 +133,8 @@ sequenceDiagram
 A QR code that is never scanned ends with `connection` `qr_timeout`, which leaves tawk waiting for a login. Asking for a new QR code sends `qr`, which drops the connection and starts again.
 
 The QR code is rendered by the backend with half-block characters, two QR rows per text row, so it fits a normal terminal. Pairing codes are requested only after the socket is ready, which is why the phone step waits for the first QR from WhatsApp.
+
+<a id="Receiving a message"></a>
 
 ## Receiving a message
 
@@ -179,17 +187,25 @@ The gateway step runs on the sidecar's reader thread or on a whatsmeow goroutine
 4. `NotificationPolicy` decides whether to alert (notifications on, not do-not-disturb, chat not muted (a timed mute ends by itself), group rule, chat not open). If so, it adds one to the per-type tally shown in the header and tab title, the composite notifier plays the chat's tone (or the default sound, or nothing when the tone is "none") and the TUI notifier starts the blink, the title flash and optional bell or screen flash.
 5. Photos, videos, stickers and voice notes below the size limit are downloaded immediately; the backend writes the file into the media folder, named only from the message id, and reports its path. tawk refuses any path outside the media folder.
 
+<a id="Formatting and mentions on screen"></a>
+
 ### Formatting and mentions on screen
 
 Stored text keeps the marks as they arrived. When the conversation is drawn, `messaging_manager_format_message` runs the `whatsapp_markup` engine over each message: it takes out the marks WhatsApp would take (`*`, `_`, `~` and `` ` `` at word edges on one line, ```` ``` ```` blocks, `> ` quotes and `- `/`* ` lists), turns `@<digits>` of a mentioned person into `@Name` (named from contacts, your own from the linked name) and returns the text as shown with runs of styles. The view wraps that text, so widths are right, and `styled_text_view` draws each run. Chat previews, notifications and search results use `messaging_manager_message_preview`, the same text flattened to one line. With `format_text` off the raw text is shown and wrapped as before.
+
+<a id="Mentions"></a>
 
 ### Mentions
 
 A message that mentions people carries their JIDs beside the text, which holds `@<number>` for each. The bridges read them (`contextInfoOf` and `mentionsOf` in whatsmeow, `mentionsOf` in the sidecar), report each as `{jid, user}` and flag `mentions_me` by comparing with the account's phone JID and LID. The messaging manager maps LIDs to phone numbers, stores the list and, for an unread message that mentions you, marks the chat (`unread_mention`, cleared with its unread count). `notification_policy` lets such a message through a mute and the group switch. Typing `@` in a group runs `tui_app_refresh_mention`: members come from the group's details in the profile manager, named through the messaging manager, ranked by `mention_matcher`. Picking one inserts `@Name` and remembers who it was; on send, `messaging_manager_send_text_mentioning` runs `mention_encoder` to turn each `@Name` into `@<number>` and lists the JIDs, and the bridges convert both to LIDs for groups that use them.
 
+<a id="Who saw your status"></a>
+
 ### Who saw your status
 
 Viewers come from data tawk already keeps. Each viewer's phone sends a read receipt for your status, which the messaging manager stores in `message_receipts` like any other receipt. A like is a reaction sent to `status@broadcast` with the status's id: the messaging manager passes it to the status feed with the other status events, and the feed keeps it in the reactions table when the status is yours and queues it as a new like. `status_feed_manager_viewers` merges the two (a view is a read or played time; a like without a view still counts), newest first; the viewer draws `Seen by n · ❤️ m` under your own statuses and the `status_viewers_dialog` lists them. New likes appear in the footer through `status_feed_manager_take_like`.
+
+<a id="Sending a message or file"></a>
 
 ## Sending a message or file
 
@@ -238,6 +254,8 @@ Alongside `status`, both backends send a `receipt` event for each recipient of a
 - **A dropped file:** the terminal pastes the path inside bracketed-paste markers. tawk resolves the path (quotes, `file://`, Windows drive paths under WSL), shows it as an attachment, and on Enter `outgoing_media_copy` copies the file into `media/outgoing/`, named after the message id (only a regular file of at most 100 MB, and the copy is created with `O_EXCL` and `O_NOFOLLOW` so it never writes through a link), before asking the backend to upload it. The backend re-checks that the path is inside the media folder.
 
 - **Forwarding:** ↪ Forward… in the message menu opens `chat_picker` (a `text_field` search, filtered with the `chat_match` engine, which also leaves Locked chats out; Space ticks up to five). `messaging_manager_forward` then sends one copy per chat, each with its own id, stored as yours with `forwarded` set. Text goes through `messaging_manager_send_text_to` with `OutgoingText.forwarded`. A downloaded file is copied again with `outgoing_media_copy` and uploaded through `send_media`; media that was never downloaded goes through `forward_media`, where whatsmeow decodes the stored `ref` (the full media message) and sends it with `ContextInfo.IsForwarded` and `ForwardingScore`, and Baileys calls `sendMessage` with `forward`. The score is 1, or 2 for a message that was already forwarded. Received messages carry `forwarded`, and the bubble gets a `↪ Forwarded` row.
+
+<a id="Replies, reactions, edits and deletions"></a>
 
 ## Replies, reactions, edits and deletions
 
@@ -295,11 +313,15 @@ sequenceDiagram
 
 Delete for me is always offered. Delete for everyone is offered only for your own messages that were sent, are not already deleted and are less than about 60 hours old, WhatsApp's limit. Deleting for me on your phone reaches tawk as a `removed` event, so the message goes here too. Whatever the backend does, the local copy is updated at once; if the command could not be sent tawk says the phone was not reachable.
 
+<a id="Scheduled messages"></a>
+
 ## Scheduled messages
 
 `/later <when> <text>` in a chat hands the line to `SchedulingManager`, which reads the time from its start with the `schedule_time_parser` engine (`18:00` today or tomorrow once past, `6:30pm`, `+30m` or `+1h30m`, `today 18:00`, `tomorrow 9:00`, or a weekday such as `fri 17:30`, the next one) and keeps the rest in `IScheduledMessageStore` (the `scheduled_messages` table, migration 12). Nothing leaves the computer until the message is due.
 
 The scheduling manager never sends anything itself. Each pass of the loop, while connected, `tui_scheduling.c` asks it for the messages that are due, hands each to `messaging_manager_send_text_to` for its chat (so it goes out as an ordinary message with its own id, pending until WhatsApp takes it) and marks it sent, which removes it, or failed. Messages that fell due while tawk was closed or offline go as soon as it is connected again, with a note that they were late. The open chat shows its waiting messages after the others as dimmed bubbles with `🕓` and the time; they cannot be selected. `/scheduled` opens `scheduled_list_dialog`: every waiting message across chats, with Send now (which makes it due at once), Change time (read by the same parser) and Cancel. A chat whose hidden id (LID) turns out to be a phone number keeps its scheduled messages, through the `alias` event the messaging manager now also hands to its observer.
+
+<a id="Typing and presence"></a>
 
 ## Typing and presence
 
@@ -310,6 +332,8 @@ Incoming `typing` events are kept per chat and sender and expire after 8 seconds
 WhatsApp delivers typing notices only to devices that are online and subscribed to the contact. tawk sends `presence` available after connecting while "Appear online" is on and you are active, and unavailable after two minutes without input, while the screensaver runs and on exit. It sends `subscribe` for a one-to-one chat when you open it and again after each reconnect.
 
 The same subscription carries who is online. Both backends pass a contact's `presence` (online or offline, with a last-seen time when shared) to the messaging manager, which keeps it in a `presence_tracker`: one entry per contact, 64 at most. Each time the chats are rebuilt the tracker fills `Chat.presence` and `Chat.last_seen` for one-to-one chats, and `chat_subtitle` turns them into the dim line under the open chat's name through `presence_text` ("online", "last seen today at 14:32"), falling back to the about text when nothing is known or "Show online status" is off. The tracker is emptied whenever tawk is not both connected and shown as online, because WhatsApp sends no presence then and an old "online" would be wrong. Only a change of state is passed on to those who follow along: it goes into the live ring as `LIVE_KIND_PRESENCE`, and the control server sends it to agents as a `presence` event when "Push online status" is on. A client can also ask: the `presence` operation (`control_ops_presence.c`) answers from the tracker through `messaging_manager_presence` and calls `messaging_manager_watch_presence`, which sends the same `subscribe` as opening the chat. `automation_policy_presence_lookup` lets your own shell ask always and an agent only with "Look up online status" on.
+
+<a id="Loading older messages"></a>
 
 ## Loading older messages
 
@@ -350,17 +374,23 @@ The open chat keeps a window of messages in memory: what is on screen and `messa
 
 Pictures are decoded once per width: layout and drawing ask the thumbnail cache for the same size, and the cache holds more pictures than a full window can contain. A delivery tick or a read receipt reloads the conversation only when its message is among those loaded.
 
+<a id="One chat per person"></a>
+
 ## One chat per person
 
 WhatsApp may address the same person by phone number or by a hidden LID. Both backends translate LIDs to phone numbers when they can and report every mapping they learn as an `alias` event. `MessagingManager` stores the alias through `IJidAliasStore`, rewrites the JIDs of every later event to the phone number, and merges what it already had under the LID: messages move to the phone number chat, chat details and preferences are combined, contact names are merged, reactions are reassigned and unread tallies are added together. If the LID chat was open, the phone number chat opens in its place.
+
+<a id="Search"></a>
 
 ## Search
 
 Message text is indexed by an SQLite FTS5 table that database triggers keep in step with every insert, edit and delete. A query is split into words, each word is quoted and made a prefix term, and the matches are returned newest first. `messaging_manager_search` then drops every result from a soft-locked chat. Choosing a result opens the chat and selects the message.
 
+<a id="Soft lock"></a>
+
 ## Soft lock
 
-A soft lock keeps a chat's conversation off the screen, for example while someone can see your terminal. Ctrl+Shift+L (where the terminal reports it, see [[CONFIGURATION#Ctrl+Shift+L in Windows Terminal|CONFIGURATION]]) and Alt+L toggle it for the chat selected in the list when the list has focus, and for the open chat otherwise; `/softlock` toggles the open chat and the chat options their own chat. `messaging_manager_toggle_soft_lock` stores the new state through `IChatStore.set_soft_locked` in the `soft_locked` column (database version 5), so it survives restarts. It is local to tawk and never sent to WhatsApp.
+A soft lock keeps a chat's conversation off the screen, for example while someone can see your terminal. Ctrl+Shift+L (where the terminal reports it, see [CONFIGURATION](CONFIGURATION.md#Ctrl+Shift+L%20in%20Windows%20Terminal)) and Alt+L toggle it for the chat selected in the list when the list has focus, and for the open chat otherwise; `/softlock` toggles the open chat and the chat options their own chat. `messaging_manager_toggle_soft_lock` stores the new state through `IChatStore.set_soft_locked` in the `soft_locked` column (database version 5), so it survives restarts. It is local to tawk and never sent to WhatsApp.
 
 While a chat is soft-locked:
 
@@ -373,6 +403,8 @@ While a chat is soft-locked:
 
 Notifications, unread counts and sending work as usual.
 
+<a id="The chat list"></a>
+
 ## The chat list
 
 When some chats are pinned, the Chats folder is split into two groups: Pinned, then Chats (everything else). Each group has a header with a fold arrow, its name, the number of chats and how many have unread messages, and a rule that sets it apart. Enter or a click on a header folds or unfolds the group, ← folds it and → unfolds it. The state is written to `pinned_folded` and `chats_folded` in `config.ini`, so it is the same after a restart. Without pinned chats, and while the name filter is in use, the list is not grouped.
@@ -380,6 +412,8 @@ When some chats are pinned, the Chats folder is split into two groups: Pinned, t
 `chat_spacing` sets the blank lines between chats (0, 1 or 2) in both the detailed and the compact style. Group headers take the same height as a chat, with a blank line above the header when the height allows.
 
 A bar on the left edge marks a chat: the accent colour for the open chat, the badge colour for chats with unread messages. In the detailed style, with `portraits` on, each chat starts with its portrait, four columns wide and two rows high (see [Profiles and portraits](#profiles-and-portraits)). Up to 24 of them are drawn as Sixel images at once.
+
+<a id="Profiles and portraits"></a>
 
 ## Profiles and portraits
 
@@ -443,6 +477,8 @@ With `portraits` on, the chat title bar takes two rows: the portrait, the name, 
 
 The full size view is the image viewer in portrait mode. It shows the preview at once, asks for the full picture, and switches to it when it arrives; with neither, tawk says there is no profile picture instead of opening it. The picture is shown square and whole, not round. Esc, q, Enter or a click closes it.
 
+<a id="Contact details"></a>
+
 ## Contact details
 
 Clicking the name in the title bar, Alt+I (the chat selected in the list when the list has focus, otherwise the open chat), `/info` and Contact info… in the chat options open `contact_panel` over the right of the conversation pane. Opening it asks WhatsApp for the details again. The panel shows the picture, the name, the phone number or the group's member count, notes such as blocked, under a soft lock, muted, pinned and the chat theme, then the about text and business details (verified name, category, address, email) or the group description, who created it and when, and the members with admins marked. Until the first answer arrives it says it is asking WhatsApp. The details scroll with the wheel, PgUp and PgDn; the actions stay at the bottom, chosen with ↑ ↓ and Enter or a click. Esc, q or a click outside closes it, and a click on the picture opens the full size view.
@@ -471,11 +507,15 @@ Exporting goes through `messaging_manager_export_chat`, which reads every stored
 
 Your messages are signed "You". A photo, video, voice note, document or sticker is written as `<attached: file>` when its file was copied, otherwise as `<photo omitted>` (or video, voice note, document, sticker), with any caption on the next line (a document's text is its file name, so it is not repeated). Without media the result is `tawk chat with NAME.txt` in the downloads folder (`download_dir`, else your downloads folder); with media it is a folder `tawk chat with NAME` holding the text file and copies of every downloaded file, named as Save to Downloads names them. Nothing is ever overwritten: names that are taken get ` (1)`, ` (2)` and so on, the text file is created with `O_EXCL` and `O_NOFOLLOW`, and the files are copied with `file_copy`. Only what tawk has stored is exported; older history still on the phone is not fetched first.
 
+<a id="Your profile"></a>
+
 ## Your profile
 
 Clicking your name in the header (right of the connection emoji) or `/profile` opens `profile_dialogs`: your photo, name, about text and number. Name and About open an editor with a character count and WhatsApp's limits (25 and 139 characters, checked by the `profile_field_validator` engine). Photo offers choosing a file, taking a photo with the camera, pasting a picture, viewing it full size and removing it.
 
 `AccountManager` checks the change, copies a new photo into `media/outgoing/` with `outgoing_media_copy`, and sends it through the gateway's `IProfileEditor`. Only one change per field is in flight at a time. The backend answers with `profile_updated`, which reaches the account manager through the composite observer; with no answer after 30 seconds it reports that WhatsApp did not answer. `tui_account.c` takes each finished change and shows it as a toast. A new about text is followed by a `profile` event for your own JID and a new or removed photo by `picture_changed`, so the profile manager shows the new details like any contact's.
+
+<a id="Statuses"></a>
 
 ## Statuses
 
@@ -491,6 +531,8 @@ A status's photo or video is downloaded when it is looked at, with no size limit
 
 **Pasting into the composer.** A path pasted or dropped while the composer is open, or Alt+V with a picture on the clipboard, is given to `status_manager_kind_for_file`, which asks the `media_type_detector` engine whether it is a photo or a video; the dialog then switches to that tab. Anything else is refused in the dialog.
 
+<a id="Incoming calls"></a>
+
 ## Incoming calls
 
 Both backends report calls as `call` events. `CallManager` takes an `offer` for a voice call as the ringing call and forgets it when an event for the same call says `accepted` (answered on another device) or `ended`, or after 60 seconds, about when WhatsApp stops ringing. Video calls are ignored.
@@ -498,6 +540,8 @@ Both backends report calls as `call` events. `CallManager` takes an `offer` for 
 While a call rings, and you are not in the linking wizard, `incoming_call_view` draws a box above everything else, confirmations included: the caller's portrait and name, how long it has been ringing, and two buttons. Its border pulses twice a second. Every 3 seconds tawk plays the notification sound (when `sound` is on) and flashes the terminal title, unless do not disturb is on. The prompt takes every key and click: d (or n) or the Decline button declines the call through `reject_call`, and Enter, Esc, Space or Answer on phone only closes the prompt, leaving the call ringing on your phone.
 
 tawk cannot answer a call or carry its audio. Neither whatsmeow nor Baileys implements WhatsApp's call media, only the signalling that reports and declines calls, so answering is left to the phone.
+
+<a id="Photos, videos and PDFs"></a>
 
 ## Photos, videos and PDFs
 
@@ -587,6 +631,8 @@ In the viewer a PDF is drawn without the document badge, and the header shows "p
 
 Outside tawk, the opener runs the `image_viewer` or `video_player` command when the config file is trusted. Otherwise videos go to the first of mpv, vlc, celluloid, totem and ffplay found (unless the system can hand them to macOS or Windows), and everything else to the system default viewer.
 
+<a id="Pasting a picture"></a>
+
 ## Pasting a picture
 
 A terminal paste carries text only, so a picture on the clipboard never reaches tawk through the terminal. Alt+V, `/paste`, a Ctrl+V the terminal passes through, or an empty bracketed paste ask `IClipboardImage` for it instead:
@@ -620,6 +666,8 @@ flowchart TD
 
 Each tool runs without a shell, with a four second limit, and the file lands in the media folder like any download. WhatsApp sends only JPEG and PNG as photos, and the Windows clipboard often reaches WSL as BMP, so any other picture is converted to PNG with ffmpeg (without a shell, its output discarded). Without ffmpeg, or when the conversion fails, the original file is attached and goes out as a document.
 
+<a id="The camera"></a>
+
 ## The camera
 
 ➕ in the input opens `attach_menu` with Take a photo and Choose a file; Take a photo and `/camera` open `camera_view` over the conversation. The same viewfinder serves the profile photo menu and the status composer, and a `CameraPurpose` recorded when it opens says where the result goes: the open chat's attachment, `AccountManager` as a new profile photo, or the status composer as its photo or video. The menu says "(no camera)" when `media_manager_camera_available` is false, which on Linux means there is no ffmpeg or no readable `/dev/video0` (usual under WSL).
@@ -640,6 +688,8 @@ flowchart TD
 ```
 
 `ffmpeg_camera` implements `ICamera`. It runs ffmpeg on the camera (`avfoundation` on macOS, `v4l2` on `/dev/video0` elsewhere) with raw RGB frames on a pipe, which a reader thread collects, keeping only the newest so the picture never lags; the UI thread takes it on each tick. Without a first frame within 8 seconds tawk closes the viewfinder and says the camera was most likely refused (on a Mac, the terminal needs camera access in Privacy & Security). A photo is the newest frame written out and turned into a JPEG by ffmpeg. For a video, `MediaManager` asks the audio backend for its capture command, and the same ffmpeg also encodes the picture to H.264 while the capture records the sound; when recording stops the two are joined into an MP4 with AAC sound, trimmed so they stay in sync. The client stops a recording once `media_manager_video_limit_reached` reports 3 minutes. Photos and videos are named after a new message id in `media/outgoing/`, every tool runs without a shell, and a file you retake or cancel is deleted.
+
+<a id="Saving files"></a>
 
 ## Saving files
 
@@ -665,6 +715,8 @@ flowchart TD
 
 `message_file_name` takes the document's name from the start of its text (up to its extension), falling back to the downloaded file's name and then the message id. Slashes, backslashes and control characters become `_`, and a leading dot becomes `_`, so a saved file can never be hidden or land outside the folder. `file_copy` creates the new file exclusively and never follows a link, so it can never replace or write through anything already there, and a partial copy is removed.
 
+<a id="Voice notes"></a>
+
 ## Voice notes
 
 ```mermaid
@@ -676,6 +728,8 @@ flowchart LR
 ```
 
 The audio backend only describes commands. The recorder connects the capture command to ffmpeg with a pipe; stopping sends an interrupt to the capture side, ffmpeg sees the end of input and finishes the Ogg file cleanly. Playback asks the same backend how to play a file and runs it in the background, tracked so a second click stops it.
+
+<a id="Transcripts"></a>
 
 ## Transcripts
 
@@ -699,6 +753,8 @@ sequenceDiagram
 ```
 
 What shows is decided when a frame is drawn: `transcript_display_policy` takes the "Voice note transcripts" setting and the chat's own choice from `chat_prefs`, and the conversation is handed a `TranscriptSource` or none. Hiding transcripts therefore removes nothing. Whether a chat is transcribed at all is `transcription_policy`: the chat's switch, and never a locked or soft-locked chat; it is asked when a transcript arrives, and tawk tells the transcriber beforehand so that no audio is read for nothing. A voice note you scroll to that has no transcript is put on a short waiting list by `TranscriptManager` and told to one agent as `transcript_wanted`, once while tawk runs. Two triggers on `messages` remove a message's transcripts when it is deleted.
+
+<a id="TL;DR summaries"></a>
 
 ## TL;DR summaries
 
@@ -728,6 +784,8 @@ Which agent is asked is `summariser_choice`: the one you made your default agent
 A request that is not answered in 90 seconds is asked for again, at most five times in all: `summary_manager_requeue` counts each unanswered request per message, and the fifth records a decline (reason `other`, source `tawk`) in `summary_declines` instead of putting the message back, so a message an agent cannot or will not summarise stops being asked for, and an edit of its text clears that like any decline.
 
 The summary never replaces the message. `message_view` swaps the message's text rows for the summary rows while it is folded and keeps a small set of unfolded message ids; copy, reply, forward and search read the original. A trigger removes a summary when its message is deleted or its text is edited.
+
+<a id="Reconnecting"></a>
 
 ## Reconnecting
 
@@ -789,9 +847,13 @@ A connection opened on one network adapter usually hangs without any error once 
 
 The bridges help from their side. whatsmeow runs with its own reconnecting turned off; it gives each dial and handshake 30 seconds, and after 3 keep-alive pings in a row go unanswered it disconnects and reports `closed`, since the socket would otherwise stay open forever. When keep-alives are answered again before that, it reports `open`. The Baileys sidecar shares one socket between two quick `connect` calls and ignores a close from a socket it has already replaced.
 
+<a id="Screensaver"></a>
+
 ## Screensaver
 
 After `idle_minutes` without input, or at once when you press Ctrl+L or type `/screensaver` or `/lock`, tawk leaves curses mode and starts the screensaver command in a new pseudo-terminal the size of the window. It copies the command's output to the screen and never forwards your keystrokes to it: the first key or mouse event ends the command (while it runs tawk asks the terminal to report clicks, so a click counts too), and tawk restores curses and redraws. While it runs, tawk keeps processing WhatsApp events, updates the tab title, forwards window resizes to the command, and stops it when a message arrives if `wake_on_message` is on.
+
+<a id="Encrypted chats"></a>
 
 ## Encrypted chats
 
@@ -807,6 +869,8 @@ flowchart LR
 ```
 
 Decrypting and changing the passphrase use the same rewrite with the old key on the source and the new key (or none) on the copy. At start-up `database_unlock` asks for the passphrase when the file lacks SQLite's plain header, checks it with `IDatabaseCipher.unlocks`, and `sqlite_database_open` keys the connection with `sqlite3_key` before reading anything; a wrong key fails the schema read, and tawk asks again. SQLCipher's own log is turned off, so a wrong passphrase prints only tawk's message. The `Passphrase` type is wiped with `explicit_bzero` once the database is open.
+
+<a id="Backups"></a>
 
 ## Backups
 
@@ -827,6 +891,8 @@ flowchart TD
 ```
 
 The media and login folders are copied into the working folder with hard links where the filesystem allows, so a large media folder costs no extra space while it is packed.
+
+<a id="Moving an account"></a>
 
 ## Moving an account
 
@@ -869,6 +935,8 @@ sequenceDiagram
     end
 ```
 
+<a id="Several accounts"></a>
+
 ## Several accounts
 
 **Start-up.** `main.c` opens the database, reads the roster of accounts and asks the `AccountHost` to start each one. Starting an account creates its gateway, its event queue, its stores bound to its id, and its managers. The first account logs in from `auth/`, every other from `accounts/<id>/auth/`. All of them connect at once.
@@ -885,9 +953,11 @@ sequenceDiagram
 
 **Agents.** The control client resolves the account of each request before the operation runs, swaps in that account's managers, and tells the `AutomationManager` which level and which self-approval chats apply. A request that waits for your answer keeps its account and is carried out by it.
 
+<a id="Agents and the control socket"></a>
+
 ## Agents and the control socket
 
-With Settings, Automation, Agent access on, the control client (`src/clients/control`) listens on `$XDG_RUNTIME_DIR/corvus/tawk/control.sock` through `IControlTransport`. It runs on the UI thread: the terminal client calls its `IFrameHook` once a frame, so it uses the same managers as the terminal without locks. It starts listening when the setting turns on, stops when it turns off (saying goodbye to connected clients), and listens again if the socket file is removed. Each line is one request from [[CONTROL]], handled by one of the `control_ops_*.c` files. Reads are answered at once and logged as reads; nothing is marked read and the chat open on screen does not change, because `messaging_manager_history` reads any chat straight from the store.
+With Settings, Automation, Agent access on, the control client (`src/clients/control`) listens on `$XDG_RUNTIME_DIR/corvus/tawk/control.sock` through `IControlTransport`. It runs on the UI thread: the terminal client calls its `IFrameHook` once a frame, so it uses the same managers as the terminal without locks. It starts listening when the setting turns on, stops when it turns off (saying goodbye to connected clients), and listens again if the socket file is removed. Each line is one request from [CONTROL](CONTROL.md), handled by one of the `control_ops_*.c` files. Reads are answered at once and logged as reads; nothing is marked read and the chat open on screen does not change, because `messaging_manager_history` reads any chat straight from the store.
 
 A write passes through `control_writes.c`. The automation manager's policy says whether the access allows it, whether the chat may be used and whether you must be asked; the rate limiter counts it; destructive writes are held behind a one-time token first. What needs you goes to the `ApprovalQueue`, which the Agentic tab shows and answers; the client polls the answers each frame and carries the write out through the managers, or reports it declined or expired. Every outcome goes to the automation log.
 
@@ -1002,6 +1072,8 @@ A destructive request (deleting, clearing, blocking, removing your photo, cancel
 New messages reach subscribers through a ring of the last 256 messages the messaging manager saw arrive or sent (`live_message_ring`); each frame the control client sends those after the last one it passed on to every client following that chat, and every half second it compares the unread counts it last told each client. Messages in locked or hidden chats are never passed on.
 
 The shell commands (`corvus-tawk send`, `tail`, `unread`, `status-line`) are small clients of the same socket, run before tawk would take its lock or open the database, since another tawk is already doing both.
+
+<a id="The setup check"></a>
 
 ## The setup check
 

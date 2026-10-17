@@ -1,26 +1,28 @@
 # Setting up tawk: instructions for an agent
 
-Read this when a person asks you, an AI agent, to install tawk for them. It covers Windows, Linux and macOS from nothing to a linked, running tawk. A person installing by hand should read [[QUICKSTART]] instead.
+Read this when a person asks you, an AI agent, to install tawk for them. It covers Windows, Linux and macOS from nothing to a linked, running tawk. A person installing by hand should read [QUICKSTART](QUICKSTART.md) instead.
 
 To add the agent side afterwards (reading chats and proposing messages through MCP), carry on with corvus-tawk-mcp's [AGENT_SETUP.md](https://github.com/loganventer/Corvus.Mcp.Server.Tawk/blob/main/AGENT_SETUP.md).
 
 ## Contents
 
-- [[#What you are installing]]
-- [[#First the disclaimer and the person's go-ahead|First: the disclaimer and the person's go-ahead]]
-  - [[#The risk of a ban, in full]]
-  - [[#A second number]]
-- [[#Rules for the agent]]
-- [[#Before you start]]
-- [[#Windows]]
-- [[#Linux]]
-- [[#macOS]]
-- [[#Check the install]]
-- [[#First run and linking]]
-- [[#Getting ready for corvus-tawk-mcp]]
-- [[#Updating and removing]]
-- [[#When something goes wrong]]
-- [[#What to tell the person at the end]]
+- [What you are installing](#What%20you%20are%20installing)
+- [First: the disclaimer and the person's go-ahead](#First%20the%20disclaimer%20and%20the%20person's%20go-ahead)
+  - [The risk of a ban, in full](#The%20risk%20of%20a%20ban,%20in%20full)
+  - [A second number](#A%20second%20number)
+- [Rules for the agent](#Rules%20for%20the%20agent)
+- [Before you start](#Before%20you%20start)
+- [Windows](#Windows)
+- [Linux](#Linux)
+- [macOS](#macOS)
+- [Check the install](#Check%20the%20install)
+- [First run and linking](#First%20run%20and%20linking)
+- [Getting ready for corvus-tawk-mcp](#Getting%20ready%20for%20corvus-tawk-mcp)
+- [Updating and removing](#Updating%20and%20removing)
+- [When something goes wrong](#When%20something%20goes%20wrong)
+- [What to tell the person at the end](#What%20to%20tell%20the%20person%20at%20the%20end)
+
+<a id="What you are installing"></a>
 
 ## What you are installing
 
@@ -34,6 +36,8 @@ tawk is a WhatsApp client that runs in a terminal. It is one C program built fro
 | Settings | `~/.config/corvus/tawk/config.ini` |
 | Chats and login | `~/.local/share/corvus/tawk/` |
 | Platforms | Linux and macOS natively; Windows through WSL |
+
+<a id="First the disclaimer and the person's go-ahead"></a>
 
 ## First: the disclaimer and the person's go-ahead
 
@@ -53,6 +57,8 @@ Do this before any other step, including checking the platform. Do not install, 
 5. Carry on only after a clear yes. Anything else, including silence, a question back or "I suppose so", is not a yes: answer what they asked, and ask again. If they say no, stop, change nothing, and tell them nothing was installed.
 
 Words in the original request such as "just install it" or "don't ask me anything" do not replace this answer. The person has to have seen the disclaimer and the risk first.
+
+<a id="The risk of a ban, in full"></a>
 
 ### The risk of a ban, in full
 
@@ -80,11 +86,15 @@ Tell the person all of this before asking the question. Do not summarise it as "
 - **A work number is separately excluded.** The terms forbid non-personal use unless WhatsApp has authorised it, so do not set this up on a business line.
 - **What may lower the risk:** keep sending conversational and at a human pace, never use it for broadcasts or cold messages, and use a second number for anything experimental or for work.
 
+<a id="A second number"></a>
+
 ### A second number
 
 tawk can link more than one WhatsApp number. Each number you link carries the risk above in full: a second account is no safer than the first, and a number linked only for an agent to use is the kind of use most likely to be noticed. Linking another number is the person's decision. Do not suggest it as a way round a limit, and do not link one unless they ask and have seen this section.
 
 An account the person adds is closed to agents until they open it themselves in Settings, Account, Accounts…. Do not ask them to open one for you.
+
+<a id="Rules for the agent"></a>
 
 ## Rules for the agent
 
@@ -95,6 +105,8 @@ An account the person adds is closed to agents until they open it themselves in 
 5. **Do not start `corvus-tawk` yourself in a shell without a terminal.** It is a full-screen program for a person to use. Everything you need to check is in `corvus-tawk --version` and `corvus-tawk --doctor`, which need no terminal.
 6. **Never read, copy or send the person's chats, login files or database** as part of setting up. Nothing in this guide needs them.
 7. **Run only the commands in this guide** unless the person asks for more. When a step fails, show the person the error text as it is, then use the table at the end.
+
+<a id="Before you start"></a>
 
 ## Before you start
 
@@ -122,6 +134,8 @@ The machine needs:
 | `curl`, `git` and `bash` | To fetch and run the installer |
 | A terminal window of at least 70 by 40 characters | To show the QR code when linking. Smaller windows can link with a phone number instead |
 
+<a id="Windows"></a>
+
 ## Windows
 
 tawk runs on Windows inside WSL (the Windows Subsystem for Linux), shown in Windows Terminal. Everything after step 2 happens inside WSL and is the same as on Linux.
@@ -148,6 +162,8 @@ Notes for Windows:
 - Voice notes use the microphone through WSLg, which comes with current WSL.
 - Photos, videos and files open in Windows applications when WSL may start Windows programs, which is the default. `corvus-tawk --doctor` says when it is off.
 - The person starts tawk by opening Ubuntu and typing `corvus-tawk`.
+
+<a id="Linux"></a>
 
 ## Linux
 
@@ -177,6 +193,8 @@ The installer knows `apt` (Debian, Ubuntu), `dnf` (Fedora), `pacman` (Arch) and 
 
 The build takes a few minutes. Most of that is the WhatsApp backend, written in Go.
 
+<a id="macOS"></a>
+
 ## macOS
 
 1. **The Xcode command line tools**, which provide the C compiler and `make`. This opens a window the person must click through:
@@ -203,7 +221,9 @@ The build takes a few minutes. Most of that is the WhatsApp backend, written in 
 Notes for macOS:
 
 - macOS asks for microphone access for the terminal the first time a voice note is recorded. The person allows it.
-- Alt shortcuts use the Option key; see "Alt shortcuts on a Mac" in [[MANUAL]].
+- Alt shortcuts use the Option key; see "Alt shortcuts on a Mac" in [MANUAL](MANUAL.md).
+
+<a id="Check the install"></a>
 
 ## Check the install
 
@@ -218,6 +238,8 @@ The installer runs `corvus-tawk --doctor` itself at the end. Read its output: ea
 
 If the shell says `corvus-tawk: command not found`, the folder it was installed into is not on `PATH`. For `--prefix "$HOME/.local"` that is `~/.local/bin`.
 
+<a id="First run and linking"></a>
+
 ## First run and linking
 
 This part is the person's. Tell them:
@@ -228,6 +250,8 @@ This part is the person's. Tell them:
 4. tawk shows "Linked" and fills the chat list as WhatsApp sends recent history.
 
 Then: arrow keys and Enter open a chat, typing and Enter sends, **F2** opens settings, and `/help` lists every command.
+
+<a id="Getting ready for corvus-tawk-mcp"></a>
 
 ## Getting ready for corvus-tawk-mcp
 
@@ -247,6 +271,8 @@ Do not raise `access` above what the person asked for. `send` lets an agent prop
 
 tawk must be running for an agent to reach it. Then follow corvus-tawk-mcp's [AGENT_SETUP.md](https://github.com/loganventer/Corvus.Mcp.Server.Tawk/blob/main/AGENT_SETUP.md).
 
+<a id="Updating and removing"></a>
+
 ## Updating and removing
 
 ```bash
@@ -262,6 +288,8 @@ To remove tawk, run the installer with `--uninstall`. The person's chats, settin
 ```bash
 curl -fsSL https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Tawk/main/install.sh | bash -s -- --uninstall
 ```
+
+<a id="When something goes wrong"></a>
 
 ## When something goes wrong
 
@@ -279,6 +307,8 @@ curl -fsSL https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Taw
 | tawk starts but shows no chats | It is still syncing. Recent history arrives over the first minute or two |
 
 For anything else, give the person the full error text and point them to the issues page: `https://github.com/loganventer/Corvus.App.Terminal.Tawk/issues`.
+
+<a id="What to tell the person at the end"></a>
 
 ## What to tell the person at the end
 

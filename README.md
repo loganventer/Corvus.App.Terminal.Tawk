@@ -7,7 +7,7 @@
 
 # Corvus Tawk (`corvus-tawk`)
 
-Formerly **tawk**: the command is now `corvus-tawk` and its folders are under `corvus/tawk` (`~/.config/corvus/tawk`, `~/.local/share/corvus/tawk`, and so on). `tawk` still works for now as a deprecated (legacy) symlink. Coming from tawk? See [[CUTOVER]].
+Formerly **tawk**: the command is now `corvus-tawk` and its folders are under `corvus/tawk` (`~/.config/corvus/tawk`, `~/.local/share/corvus/tawk`, and so on). `tawk` still works for now as a deprecated (legacy) symlink. Coming from tawk? See [CUTOVER](CUTOVER.md).
 
 > **Disclaimer.** tawk is an independent project and is not affiliated with, endorsed by or connected to WhatsApp or Meta. It uses unofficial protocol libraries; use it at your own risk and in line with [WhatsApp's terms of service](https://www.whatsapp.com/legal/terms-of-service).
 
@@ -25,7 +25,7 @@ Formerly **tawk**: the command is now `corvus-tawk` and its folders are under `c
 <td width="33%"><img src="docs/images/profile.png" alt="The Profile dialog"></td>
 </tr><tr><td>Statuses</td><td>Camera</td><td>Your profile</td></tr></table>
 
-Screenshots come from a demo account with the chat text blurred, and those of statuses, the camera and your profile are drawn by tawk's own code with made-up data; the [[MANUAL|manual]] has one for every screen.
+Screenshots come from a demo account with the chat text blurred, and those of statuses, the camera and your profile are drawn by tawk's own code with made-up data; the [manual](MANUAL.md) has one for every screen.
 
 ```mermaid
 flowchart LR
@@ -38,20 +38,22 @@ flowchart LR
 
 ## Contents
 
-- [[#Quick Start]]
-  - [[#Installing on macOS]]
-  - [[#Installing on Windows]]
-- [[#Features]]
-- [[#How It Works]]
-- [[#Directory Structure]]
-- [[#Documentation]]
-- [[#Building]]
-- [[#Platforms]]
-- [[#Logo]]
-- [[#Disclaimer]]
-- [[#Contributing]]
-- [[#Author]]
-- [[#License]]
+- [Quick Start](#Quick%20Start)
+  - [Installing on macOS](#Installing%20on%20macOS)
+  - [Installing on Windows](#Installing%20on%20Windows)
+- [Features](#Features)
+- [How It Works](#How%20It%20Works)
+- [Directory Structure](#Directory%20Structure)
+- [Documentation](#Documentation)
+- [Building](#Building)
+- [Platforms](#Platforms)
+- [Logo](#Logo)
+- [Disclaimer](#Disclaimer)
+- [Contributing](#Contributing)
+- [Author](#Author)
+- [License](#License)
+
+<a id="Quick Start"></a>
 
 ## Quick Start
 
@@ -60,9 +62,11 @@ curl -fsSL https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Taw
 corvus-tawk
 ```
 
-On first run a wizard links tawk to your phone with a QR code or a pairing code. See [[QUICKSTART]] for other ways to install and a first-run walkthrough.
+On first run a wizard links tawk to your phone with a QR code or a pairing code. See [QUICKSTART](QUICKSTART.md) for other ways to install and a first-run walkthrough.
 
 Update later with `corvus-tawk --update`: it compares the commit this build came from (shown by `corvus-tawk --version`) with the newest one on GitHub, says so when you are up to date, and otherwise shows what it will install and asks first. `corvus-tawk --reinstall` installs again even when current.
+
+<a id="Installing on macOS"></a>
 
 ### Installing on macOS
 
@@ -81,7 +85,9 @@ Update later with `corvus-tawk --update`: it compares the commit this build came
    ```
 4. Run `corvus-tawk --doctor` to check the setup, then `corvus-tawk`.
 
-Use [iTerm2](https://iterm2.com) (3.5 or later), [WezTerm](https://wezterm.org) or [Ghostty](https://ghostty.org) rather than the macOS Terminal app. tawk runs in Terminal, but it looks broken there: thin black lines cut through the chat bubbles, and profile badges have jagged edges. tawk draws bubble padding, rounded badge corners and the chat bars with block characters (`▀ ▄ ▌ ▗`). Most terminals draw those characters themselves so they fill the whole cell, but Terminal takes them from the font, whose blocks are shorter than a row, and the gaps show. Changing tawk cannot fix this without changing the look. Terminal also has no Sixel support, so profile pictures show as initials and photos as coloured blocks; iTerm2 and WezTerm show both in full resolution. Photos, videos and files open in their default macOS applications, and voice notes record through CoreAudio with SoX, since ffmpeg's microphone capture clicks on some Macs (allow microphone access for your terminal when macOS asks). Alt shortcuts such as Alt+L work with the Option key; see [[MANUAL#Alt shortcuts on a Mac|Alt shortcuts on a Mac]].
+Use [iTerm2](https://iterm2.com) (3.5 or later), [WezTerm](https://wezterm.org) or [Ghostty](https://ghostty.org) rather than the macOS Terminal app. tawk runs in Terminal, but it looks broken there: thin black lines cut through the chat bubbles, and profile badges have jagged edges. tawk draws bubble padding, rounded badge corners and the chat bars with block characters (`▀ ▄ ▌ ▗`). Most terminals draw those characters themselves so they fill the whole cell, but Terminal takes them from the font, whose blocks are shorter than a row, and the gaps show. Changing tawk cannot fix this without changing the look. Terminal also has no Sixel support, so profile pictures show as initials and photos as coloured blocks; iTerm2 and WezTerm show both in full resolution. Photos, videos and files open in their default macOS applications, and voice notes record through CoreAudio with SoX, since ffmpeg's microphone capture clicks on some Macs (allow microphone access for your terminal when macOS asks). Alt shortcuts such as Alt+L work with the Option key; see [Alt shortcuts on a Mac](MANUAL.md#Alt%20shortcuts%20on%20a%20Mac).
+
+<a id="Installing on Windows"></a>
 
 ### Installing on Windows
 
@@ -97,12 +103,14 @@ tawk runs on Windows through WSL (the Windows Subsystem for Linux), in Windows T
    ```
 3. Run `corvus-tawk --doctor`, then `corvus-tawk`.
 
-Use **Windows Terminal** 1.22 or later: it draws photos and PDFs as real pixels (Sixel) and shows tawk's status in the tab title. Voice notes use the microphone through WSLg, which comes with current WSL. To open photos, videos and files in Windows applications (the Photos app, your video player), WSL must be allowed to start Windows programs; this is on by default, and `corvus-tawk --doctor` tells you when it is off. Without it tawk uses its own viewer and Linux players. For Ctrl+Shift+L (soft lock) in Windows Terminal, see [[MANUAL#Soft lock|the manual]]; Alt+L always works.
+Use **Windows Terminal** 1.22 or later: it draws photos and PDFs as real pixels (Sixel) and shows tawk's status in the tab title. Voice notes use the microphone through WSLg, which comes with current WSL. To open photos, videos and files in Windows applications (the Photos app, your video player), WSL must be allowed to start Windows programs; this is on by default, and `corvus-tawk --doctor` tells you when it is off. Without it tawk uses its own viewer and Linux players. For Ctrl+Shift+L (soft lock) in Windows Terminal, see [the manual](MANUAL.md#Soft%20lock); Alt+L always works.
+
+<a id="Features"></a>
 
 ## Features
 
 - **Two WhatsApp backends behind one contract:** [whatsmeow](https://github.com/tulir/whatsmeow) linked into the binary (default, no runtime dependencies) or [Baileys](https://github.com/WhiskeySockets/Baileys) in a Node.js sidecar. Switch with one config key.
-- **Several accounts:** up to eight WhatsApp numbers connected at once in one window and one database (Settings, Account, Accounts…). One chat list with a badge per account, someone who writes to two of your numbers shown as one conversation (`merge_accounts`, or per contact), a sending number per contact (Alt+A, the contact card), and a separate agent access level for each account. See [[MANUAL#Several accounts|Several accounts]].
+- **Several accounts:** up to eight WhatsApp numbers connected at once in one window and one database (Settings, Account, Accounts…). One chat list with a badge per account, someone who writes to two of your numbers shown as one conversation (`merge_accounts`, or per contact), a sending number per contact (Alt+A, the contact card), and a separate agent access level for each account. See [Several accounts](MANUAL.md#Several%20accounts).
 - **Linking wizard:** scan a QR code, or type your number and enter an 8-character code on the phone.
 - **Chats:** a detailed or compact list with adjustable spacing, unread bars and badges, pinned chats in their own foldable group, timed mutes, Archived and Locked folders, per-chat notification tones and themes, drafts kept per chat, a soft lock that blurs a chat's conversation (Ctrl+Shift+L or Alt+L), typing indicators both ways, online and last seen under the name of the open chat, next-unread, read receipts, history sync.
 - **Contacts and groups:** profile pictures in the chat list and the title bar (round, in real pixels on Sixel terminals, or an initials badge), the about text or member count under the chat name, and a details panel (click the name, Alt+I or `/info`) with the chat's own settings (which number sends, merging, agents answering, transcripts, TL;DR), business details, the group description and members, blocking, clearing, deleting and exporting a chat in WhatsApp's text format, with or without its media.
@@ -115,12 +123,12 @@ Use **Windows Terminal** 1.22 or later: it draws photos and PDFs as real pixels 
 - **Forwarding and scheduling:** forward a message to up to five chats, marked as forwarded; `/later 18:00 text` keeps a message on this computer and sends it when it is due, even after a restart (`/scheduled` lists them).
 - **Link previews:** cards for links others send; making them for your own links is opt-in, since the site sees your IP address.
 - **Your data at rest:** `corvus-tawk --encrypt` encrypts the chat database with a passphrase (SQLCipher), and `corvus-tawk --backup` and `--restore` make and restore encrypted backups, and `--migrate-out` and `--migrate-in` move one account to another computer.
-- **Agents and automation:** turn on Agent access and [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk) lets an AI assistant such as Claude Code read your chats and draft or send messages; every send or change waits for you in the Agentic tab (F3), deletes need two yeses, and locked chats stay hidden. `corvus-tawk send`, `corvus-tawk tail`, `corvus-tawk unread` and `corvus-tawk status-line` do the same for scripts and status bars. See [[MANUAL#Automation and MCP|Automation and MCP]].
+- **Agents and automation:** turn on Agent access and [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk) lets an AI assistant such as Claude Code read your chats and draft or send messages; every send or change waits for you in the Agentic tab (F3), deletes need two yeses, and locked chats stay hidden. `corvus-tawk send`, `corvus-tawk tail`, `corvus-tawk unread` and `corvus-tawk status-line` do the same for scripts and status bars. See [Automation and MCP](MANUAL.md#Automation%20and%20MCP).
 - **Emoji:** the full Unicode emoji set in a searchable picker with group tabs and recent emoji (Ctrl+E), a quick reaction palette, emoticons such as `:)` and `<3` turned into emoji as you type, and `(word` shortcodes that list matching emoji to click.
 - **Media:** photos and videos drawn inside the chat, in real pixels on Sixel terminals (Windows Terminal, WezTerm, foot) and with coloured blocks elsewhere; videos show a frame with a play button and PDFs their first page with a document badge. A built-in viewer shows photos full size, turns the pages of PDFs and browses a chat's photos, videos and PDFs; videos play in mpv, vlc or ffplay, documents open in the system default application, and any file can be saved to your Downloads folder. Files tawk does not recognise offer Save or Open instead of guessing. Attach with the file picker (Ctrl+O, remembers the last folder), by dropping a file on the terminal, or paste a picture from the clipboard with Alt+V (converted to PNG when the clipboard holds another format, so it goes out as a photo).
 - **Voice notes:** shown with 🔊; play them inline; record with Ctrl+R. Works with PulseAudio, PipeWire, ALSA, CoreAudio and DirectShow.
-- **Transcripts:** a voice note that an agent's transcriber has written out shows its words in its own bubble, under the play line, in grey italics. Shown whole, in the language spoken: you switch on the languages you hear, for every chat and for one. On for every chat or off, and each chat can always or never show them, or be left untranscribed altogether, from its contact card. Kept in the database, so they are there after a restart. See [[MANUAL#Voice notes|Voice notes]].
-- **TL;DR mode:** switch it on for a chat and its messages show as a short summary that unfolds to the original with Enter and folds back. A connected agent's model writes the summaries; you choose which agent (your default agent) in the Agents list, and when several are connected and none is chosen tawk asks you in your own chat on WhatsApp. The last 30 days of such a chat are summarised by themselves. See [[MANUAL#TL;DR mode|TL;DR mode]].
+- **Transcripts:** a voice note that an agent's transcriber has written out shows its words in its own bubble, under the play line, in grey italics. Shown whole, in the language spoken: you switch on the languages you hear, for every chat and for one. On for every chat or off, and each chat can always or never show them, or be left untranscribed altogether, from its contact card. Kept in the database, so they are there after a restart. See [Voice notes](MANUAL.md#Voice%20notes).
+- **TL;DR mode:** switch it on for a chat and its messages show as a short summary that unfolds to the original with Enter and folds back. A connected agent's model writes the summaries; you choose which agent (your default agent) in the Agents list, and when several are connected and none is chosen tawk asks you in your own chat on WhatsApp. The last 30 days of such a chat are summarised by themselves. See [TL;DR mode](MANUAL.md#TL;DR%20mode).
 - **Notifications:** sound, a blinking chat, and a terminal tab title such as `🟢 tawk · Mom · 💬 3  📷 1`, which animates while someone is typing to you (`✍️ Jan is typing...`). In Windows Terminal the tab also shows a progress ring while reconnecting.
 - **Resilience:** exponential backoff with jitter behind a circuit breaker, with a clear overlay while WhatsApp is unavailable. tawk reconnects as soon as the network changes (Wi-Fi to Ethernet or a hotspot, for example), drops a connection whose keep-alives fail, and retries a connect that gets no answer within 45 seconds.
 - **Settings panel:** nested menus like the Android app, saved to `~/.config/corvus/tawk/config.ini` as you change them.
@@ -131,11 +139,15 @@ Use **Windows Terminal** 1.22 or later: it draws photos and PDFs as real pixels 
 - **Keyboard and mouse:** slash commands with suggestions (`/help`), Shift+Enter or Alt+Enter for a new line, Option as Alt on a Mac, a right-click menu on messages (reply, react, copy, edit, save, delete), click chats and media, drag chats into and out of the Pinned group, scroll, drag the divider to resize, collapse the chat list with Ctrl+B. The layout reflows when the window is resized.
 - **Setup check:** `corvus-tawk --doctor` checks the terminal, files, backend, voice note and media tools, the PDF page tools and the screensaver command, and says what to install.
 
+<a id="How It Works"></a>
+
 ## How It Works
 
-tawk is a single C program organised in [[ARCHITECTURE|iDesign]] layers. The client (the ncurses UI) talks to managers, managers use engines and resource access, and every dependency arrives through a small vtable contract built in `src/main.c`. The WhatsApp protocol comes from a backend that speaks a JSON line protocol ([[PROTOCOL]]).
+tawk is a single C program organised in [iDesign](ARCHITECTURE.md) layers. The client (the ncurses UI) talks to managers, managers use engines and resource access, and every dependency arrives through a small vtable contract built in `src/main.c`. The WhatsApp protocol comes from a backend that speaks a JSON line protocol ([PROTOCOL](PROTOCOL.md)).
 
-See [[HOW_IT_WORKS]] for the runtime flow with diagrams.
+See [HOW_IT_WORKS](HOW_IT_WORKS.md) for the runtime flow with diagrams.
+
+<a id="Directory Structure"></a>
 
 ## Directory Structure
 
@@ -168,23 +180,27 @@ Corvus.App.Terminal.Tawk/
 └── install.sh
 ```
 
+<a id="Documentation"></a>
+
 ## Documentation
 
 | Document | Contents |
 |---|---|
-| [[INTENT]] | Purpose, scope and boundaries |
-| [[QUICKSTART]] | Install and first run |
-| [[AGENT_SETUP]] | Instructions for an AI agent installing tawk for you, on Windows, Linux and macOS |
-| [[MANUAL]] | Everyday use and every shortcut |
-| [[CONFIGURATION]] | Every setting, file locations, themes |
-| [[HOW_IT_WORKS]] | Runtime flow, login, reconnects, media |
-| [[ARCHITECTURE]] | Layers, contracts and design principles |
-| [[PROTOCOL]] | The backend JSON line protocol |
-| [[CONTROL]] | The control socket protocol, for corvus-tawk-mcp and scripts |
-| [[SECURITY]] | Threat model, controls and reporting |
-| [[CUTOVER]] | Switching an install of tawk over to corvus-tawk: every old and new name, and the steps |
+| [INTENT](INTENT.md) | Purpose, scope and boundaries |
+| [QUICKSTART](QUICKSTART.md) | Install and first run |
+| [AGENT_SETUP](AGENT_SETUP.md) | Instructions for an AI agent installing tawk for you, on Windows, Linux and macOS |
+| [MANUAL](MANUAL.md) | Everyday use and every shortcut |
+| [CONFIGURATION](CONFIGURATION.md) | Every setting, file locations, themes |
+| [HOW_IT_WORKS](HOW_IT_WORKS.md) | Runtime flow, login, reconnects, media |
+| [ARCHITECTURE](ARCHITECTURE.md) | Layers, contracts and design principles |
+| [PROTOCOL](PROTOCOL.md) | The backend JSON line protocol |
+| [CONTROL](CONTROL.md) | The control socket protocol, for corvus-tawk-mcp and scripts |
+| [SECURITY](SECURITY.md) | Threat model, controls and reporting |
+| [CUTOVER](CUTOVER.md) | Switching an install of tawk over to corvus-tawk: every old and new name, and the steps |
 
 After installing, `man corvus-tawk` covers the command line.
+
+<a id="Building"></a>
 
 ## Building
 
@@ -200,9 +216,13 @@ corvus-tawk --doctor        # check the result
 
 Requirements: a C11 compiler, make, pkg-config, ncurses (wide-character), SQLite 3 with FTS5, and Go 1.21 or newer for the in-process backend. At run time ffmpeg and your audio system's tools (for example `pulseaudio-utils`) enable voice notes, `xdg-utils` opens media on Linux, and poppler (`pdftoppm` and `pdfinfo`, in `poppler-utils` on most Linux systems) shows PDF pages inside tawk. Node.js 20 or newer is only needed for the Baileys backend.
 
+<a id="Platforms"></a>
+
 ## Platforms
 
 Linux and macOS natively; Windows through WSL (recommended) or MSYS2. tawk is tested on Ubuntu under WSL2 with Windows Terminal.
+
+<a id="Logo"></a>
 
 ## Logo
 
@@ -218,17 +238,25 @@ The logo files are PNGs with a transparent background, in `docs/images`. `make l
 | `logo-icon-small.png`, `logo-icon-32.png`, `logo-icon-16.png` | The small icon with three plain bars | Favicons and other tiny sizes |
 | `logo-symbol-32.png` | The symbol at 32 pixels | Small places on a plain background |
 
+<a id="Disclaimer"></a>
+
 ## Disclaimer
 
 tawk is an independent project and is not affiliated with, endorsed by or connected to WhatsApp or Meta. It uses unofficial protocol libraries; use it at your own risk and in line with [WhatsApp's terms of service](https://www.whatsapp.com/legal/terms-of-service).
 
+<a id="Contributing"></a>
+
 ## Contributing
 
-Issues and pull requests are welcome. Keep to the existing structure: one type per file, contracts for dependencies, composition over inheritance. Run `make` with no warnings before opening a pull request. [[CONTRIBUTING]] has the rules in full.
+Issues and pull requests are welcome. Keep to the existing structure: one type per file, contracts for dependencies, composition over inheritance. Run `make` with no warnings before opening a pull request. [CONTRIBUTING](CONTRIBUTING.md) has the rules in full.
+
+<a id="Author"></a>
 
 ## Author
 
 tawk is written and maintained by **Logan Venter** ([logan.venter@outlook.com](mailto:logan.venter@outlook.com)). Issues and ideas are welcome on [GitHub](https://github.com/loganventer/Corvus.App.Terminal.Tawk/issues).
+
+<a id="License"></a>
 
 ## License
 

@@ -2,29 +2,31 @@
 
 A running tawk can be reached by other programs on the same computer through its control socket: the `corvus-tawk send`, `corvus-tawk tail`, `corvus-tawk unread` and `corvus-tawk status-line` commands, and [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk), which lets MCP clients such as Claude Code read your chats and, when you allow it, send messages that you confirm in tawk.
 
-The socket is off until you turn on **Settings → Automation → Agent access (MCP)** (`control_socket = on` in `[automation]`). What agents ask for is answered in tawk's **Agentic** tab (F3). Everything a client may see or do is decided inside tawk by the settings described in [[CONFIGURATION#automation|CONFIGURATION]]; a client cannot widen them.
+The socket is off until you turn on **Settings → Automation → Agent access (MCP)** (`control_socket = on` in `[automation]`). What agents ask for is answered in tawk's **Agentic** tab (F3). Everything a client may see or do is decided inside tawk by the settings described in [CONFIGURATION](CONFIGURATION.md#automation); a client cannot widen them.
 
 ## Contents
 
-- [[#Transport]]
-- [[#Messages]]
-  - [[#Error codes]]
-- [[#Values]]
-- [[#Operations]]
+- [Transport](#Transport)
+- [Messages](#Messages)
+  - [Error codes](#Error%20codes)
+- [Values](#Values)
+- [Operations](#Operations)
   - [[#`hello`]]
-  - [[#Reading]]
-  - [[#Transcripts]]
-  - [[#TL;DR summaries]]
-  - [[#Rules for one chat, and hidden text]]
-  - [[#Labels, reminders and awaiting replies]]
-  - [[#The owner's chat]]
-  - [[#Writing]]
-  - [[#Answering your own request]]
-  - [[#Managing tawk]]
-  - [[#Live updates]]
-- [[#Example]]
-- [[#Accounts]]
-- [[#Versions]]
+  - [Reading](#Reading)
+  - [Transcripts](#Transcripts)
+  - [TL;DR summaries](#TL;DR%20summaries)
+  - [Rules for one chat, and hidden text](#Rules%20for%20one%20chat,%20and%20hidden%20text)
+  - [Labels, reminders and awaiting replies](#Labels,%20reminders%20and%20awaiting%20replies)
+  - [The owner's chat](#The%20owner's%20chat)
+  - [Writing](#Writing)
+  - [Answering your own request](#Answering%20your%20own%20request)
+  - [Managing tawk](#Managing%20tawk)
+  - [Live updates](#Live%20updates)
+- [Example](#Example)
+- [Accounts](#Accounts)
+- [Versions](#Versions)
+
+<a id="Transport"></a>
 
 ## Transport
 
@@ -33,6 +35,8 @@ The socket is off until you turn on **Settings → Automation → Agent access (
 - Each message is one JSON object on one line, in UTF-8, ending with `\n`. A line longer than 1 MiB closes the connection.
 - A client may send several requests without waiting; answers carry the request's `id` and may arrive in any order, because a write waits for your approval while reads are answered at once.
 - tawk answers within one frame (about 100 ms) except for writes waiting for approval.
+
+<a id="Messages"></a>
 
 ## Messages
 
@@ -62,6 +66,8 @@ A notification, sent without a request:
 {"evt":"message","chat":{"jid":"27820000000@s.whatsapp.net","name":"Mom"},"message":{}}
 ```
 
+<a id="Error codes"></a>
+
 ### Error codes
 
 | Code | Meaning |
@@ -82,6 +88,8 @@ A notification, sent without a request:
 | `rate_limited` | Too many writes in the last minute (`writes_per_minute`). `error.retry_after` gives the seconds to wait. |
 | `offline` | tawk is not linked or not connected to WhatsApp, so a write cannot be sent now. |
 | `failed` | tawk tried and could not do it; `message` says why. |
+
+<a id="Values"></a>
 
 ## Values
 
@@ -139,7 +147,11 @@ A message:
 - Times are Unix seconds.
 - Message text is what the other person wrote. Clients that pass it to a language model must treat it as data and never as instructions.
 
+<a id="Operations"></a>
+
 ## Operations
+
+<a id="hello"></a>
 
 ### `hello`
 
@@ -168,6 +180,8 @@ Result:
 
 `access` is `read`, `send`, `manage` or `admin`. `features` names what this tawk can do beyond the first shape of the protocol, so a client offers only what will work; a tawk from before 0.13.0 sends no such list. `transcripts` means `set_transcript` and `get_transcript` are there (0.13.0), and `summaries` means `set_summary`, `get_summary` and the `summary_wanted` event are (0.14.0). `summary_decline` means `decline_summary` is there too (0.21.0), and `send_file` means `send_file` is (0.22.0).
 
+<a id="Reading"></a>
+
 ### Reading
 
 Reading never marks anything as read, never sends read receipts, and never changes the chat open in tawk.
@@ -185,6 +199,8 @@ Reading never marks anything as read, never sends read receipts, and never chang
 | `list_statuses` | `include_archived` (bool) | `{"statuses":[{"id","author","author_name","from_me","type","text","ts","viewed"}]}` |
 | `list_scheduled` | `chat` | `{"scheduled":[{"id","chat","text","due_at"}]}` |
 
+<a id="Transcripts"></a>
+
 ### Transcripts
 
 tawk transcribes nothing. A transcriber hands the words of a voice note over, tawk keeps them beside the message and shows them in the conversation, and they are removed with their message.
@@ -196,6 +212,8 @@ tawk transcribes nothing. A transcriber hands the words of a voice note over, ta
 `replace` (a boolean, optional) makes the transcript take the place of every one the message has, in whatever language: a voice note written out again. Without it only the transcript in the same language is replaced.
 
 `set_transcript` changes only this computer and sends nothing to WhatsApp, so it is not asked about, needs no more than `read`, and does not count against `writes_per_minute`; each one is written to the automation log. It is answered `bad_request` for anything that is not a voice note or other audio, `not_found` for a message in a chat the client may not see (a locked or soft-locked one included), and `transcripts_off` for a chat whose voice notes are not transcribed. Control characters in the text are replaced, and the text is shown as plain text, never formatted. A client cannot change a chat's transcript choices: they are set on its contact card.
+
+<a id="TL;DR summaries"></a>
 
 ### TL;DR summaries
 
@@ -214,6 +232,8 @@ tawk asks with an event, sent to one client only whether or not it subscribed:
 
 Which client that is: the one you made your default agent in the Agents list while it is connected; else the only client connected with origin `mcp` that named `summaries` and is not paused; else, with several such and none chosen, nobody until you choose. A client that did not name the feature is never asked and does not count. A `summary_wanted` that is not answered with `set_summary` or `decline_summary` within 90 seconds goes to be asked for again, at most five times in all (0.25.0): after the fifth request that went unanswered tawk records the message as declined (reason `other`, source `tawk`), so it is not asked for again, also after a restart, until its text is edited. A client that lets two in a row go unanswered is not asked for five minutes, in case it was only busy, and is then tried again; any answer clears that. tawk then asks you in the "message yourself" chat of the account the chat is in, and the number you answer with chooses. The choice is kept in `default_agent` under `[automation]`, as the client's `label` with any ", pid N" taken out, so a client that wants to be recognised again keeps its label the same.
 
+<a id="Rules for one chat, and hidden text"></a>
+
 ### Rules for one chat, and hidden text
 
 You can give a chat a rule of its own on its contact card. A client is not told the rule; it sees what the rule does.
@@ -223,6 +243,8 @@ You can give a chat a rule of its own on its contact card. A client is not told 
 - In an *always ask* chat every write waits for you: `remember` does not cover the next one, and `approve` answers `not_allowed`.
 
 With `mask_codes` on, a client with origin `mcp` is given `[code]` in place of a one-time code and `[card number]` in place of a card number, in a message's `text`, its `reply_to.text`, its `link` title and description, and a chat's `preview`. A client with origin `cli` is given the text as it is.
+
+<a id="Labels, reminders and awaiting replies"></a>
 
 ### Labels, reminders and awaiting replies
 
@@ -239,6 +261,8 @@ Your own labels on chats, the chats you put aside, and the chats where your last
 
 `chat_info` also carries `"labels":[...]` and, for a chat put aside, `"reminder":{"due_at":N}`.
 
+<a id="The owner's chat"></a>
+
 ### The owner's chat
 
 You can name the "message yourself" chat of one of your numbers as your chat with the agent, on that chat's contact card. A tawk that has the feature names `owner_chat` in the `features` of its hello, and a client that takes what you write there names `owner_chat` in the `features` of its own.
@@ -246,6 +270,8 @@ You can name the "message yourself" chat of one of your numbers as your chat wit
 - `{"evt":"owner_message","chat":{"jid","name"},"message":message}` is sent to one client, whether or not it subscribed, for each text message you type in that chat. It is the one event whose text is yours and not someone else's. A message there that is forwarded, quotes another, or is not text is not sent this way; it reaches subscribers as an ordinary `message`. Which client hears it: your default agent when it named the feature, else the client with origin `mcp` that named it and has the highest `version`. With none connected, tawk says so in the chat.
 - `send_message` into that chat from a client with origin `mcp` is carried out without asking, up to `owner_replies_per_hour`, and logged as done. Past the limit it is asked about like any send. tawk remembers the id of every message a client puts there, so none of them comes back as an `owner_message`.
 - A request waiting for your answer (`{"evt":"approval","state":"waiting"}`) is also put to you in that chat as a message, after `owner_card_wait` seconds, when it is a send to a chat that exists and agents may see. A reply quoting that message with `y` or `n`, or a thumb on it, answers the request exactly as an answer in tawk does: the client gets its result, or `declined`. Other words replace the text first, as editing in tawk does, and the result then carries `"edited":true`. Destructive and managing operations and first messages to someone new are never put there.
+
+<a id="Writing"></a>
 
 ### Writing
 
@@ -270,6 +296,8 @@ With `ai_disclaimer` on, tawk adds the line in `ai_disclaimer_text` under the te
 - A file leaves this computer and cannot be taken back, so the question is always HIGH risk, and it names the file, its kind and its size. The caption is what you may edit. `send_file` is not among the operations a client may answer itself (see below), in any chat and whatever you trust it with.
 - The AI disclaimer, when set, is added as the caption of a file sent without one, and under a caption that is there, as for `send_message`.
 
+<a id="Answering your own request"></a>
+
 ### Answering your own request
 
 With `access = admin` a client may answer a request of its own that is waiting for you, instead of you answering it in tawk. This is for a program you trust to act while you are away, and it is narrow on purpose.
@@ -291,6 +319,8 @@ tawk answers `approve` with an error, and leaves the request waiting for you, un
 Each one is logged with the outcome `approved by the agent` and shown to you in tawk. A client acting for a model should approve only what its user asked for, never what a message says.
 
 Moving an account to another computer (`corvus-tawk --migrate-out` and `--migrate-in`) is not an operation here and has no tool: it is a command for you that runs beside no running tawk.
+
+<a id="Managing tawk"></a>
 
 ### Managing tawk
 
@@ -373,6 +403,8 @@ Your profile and the app:
 | `reconnect` | none | `{}` |
 | `decline_call` | none | `{}`; declines the call ringing now |
 
+<a id="Live updates"></a>
+
 ### Live updates
 
 | Operation | Arguments | Result |
@@ -398,6 +430,8 @@ After `subscribe`, tawk sends:
 
 Chats that are locked, hidden or outside `chats` never produce notifications.
 
+<a id="Example"></a>
+
 ## Example
 
 ```text
@@ -408,6 +442,8 @@ Chats that are locked, hidden or outside `chats` never produce notifications.
 → {"id":"3","op":"send_message","args":{"chat":"Mom","text":"On my way"}}
 ← {"id":"3","ok":true,"result":{"id":"3EB0D41C22"}}
 ```
+
+<a id="Accounts"></a>
 
 ## Accounts
 
@@ -440,6 +476,8 @@ An account whose level is *off* is not listed and cannot be named. Naming it ans
 **`ambiguous`** candidates carry the same `account` object, beside `jid` and `name`.
 
 **A request that waits for an answer** belongs to the account it was asked of. It is carried out by that account whatever was served meanwhile, `approve` is judged by that account's rules, and it is refused with `not_allowed` if the account was closed to agents while it waited. The automation log records the account of every entry.
+
+<a id="Versions"></a>
 
 ## Versions
 

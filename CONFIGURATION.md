@@ -2,26 +2,28 @@
 
 ## Contents
 
-- [[#Where things live]]
-- [[#The config file]]
-- [[#All settings]]
-  - [[#appearance]]
-  - [[#chats]]
-  - [[#notifications]]
-  - [[#media]]
-  - [[#screensaver]]
-  - [[#resilience]]
-  - [[#automation]]
-  - [[#advanced]]
-  - [[#Settings and accounts]]
-- [[#Themes]]
-- [[#Database encryption (SQLCipher)]]
-- [[#Choosing a backend]]
-- [[#Audio systems]]
-- [[#Command settings and file trust]]
-- [[#Ctrl+Shift+L in Windows Terminal]]
-- [[#Shift+Enter in Windows Terminal]]
-- [[#Environment variables]]
+- [Where things live](#Where%20things%20live)
+- [The config file](#The%20config%20file)
+- [All settings](#All%20settings)
+  - [appearance](#appearance)
+  - [chats](#chats)
+  - [notifications](#notifications)
+  - [media](#media)
+  - [screensaver](#screensaver)
+  - [resilience](#resilience)
+  - [automation](#automation)
+  - [advanced](#advanced)
+  - [Settings and accounts](#Settings%20and%20accounts)
+- [Themes](#Themes)
+- [Database encryption (SQLCipher)](#Database%20encryption%20(SQLCipher))
+- [Choosing a backend](#Choosing%20a%20backend)
+- [Audio systems](#Audio%20systems)
+- [Command settings and file trust](#Command%20settings%20and%20file%20trust)
+- [Ctrl+Shift+L in Windows Terminal](#Ctrl+Shift+L%20in%20Windows%20Terminal)
+- [Shift+Enter in Windows Terminal](#Shift+Enter%20in%20Windows%20Terminal)
+- [Environment variables](#Environment%20variables)
+
+<a id="Where things live"></a>
 
 ## Where things live
 
@@ -62,7 +64,9 @@ Installed files (with the default prefix `/usr/local`):
 
 A user install (`--prefix ~/.local`) puts the same tree under `~/.local`. When tawk runs straight from a source checkout it falls back to `themes/`, `assets/emoji/` and `sidecar/` in the current folder.
 
-`corvus-tawk --doctor` reports where each of these was found and whether your folders are writable (see [[MANUAL#Checking your setup|MANUAL]]).
+`corvus-tawk --doctor` reports where each of these was found and whether your folders are writable (see [MANUAL](MANUAL.md#Checking%20your%20setup)).
+
+<a id="The config file"></a>
 
 ## The config file
 
@@ -70,11 +74,15 @@ A user install (`--prefix ~/.local`) puts the same tree under `~/.local`. When t
 
 Use another file with `corvus-tawk --config /path/to/config.ini`.
 
+<a id="All settings"></a>
+
 ## All settings
 
 Settings marked "restart required" apply the next time tawk starts. Everything else applies immediately. Numbers in brackets are the allowed range; values outside it are clamped.
 
 Some preferences are set per chat: mutes, pins, archiving, the notification tone, the chat theme, the draft and the soft lock. They are set from the chat options (Alt+O) or with slash commands and are kept in the chat database. The soft lock is local to tawk and never sent to WhatsApp.
+
+<a id="appearance"></a>
 
 ### [appearance]
 
@@ -93,6 +101,8 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `image_mode` | `auto` | `sixel` draws real pixels (Windows Terminal 1.22+, WezTerm, foot, mlterm, contour); `blocks` uses coloured half blocks and works in any 256-colour terminal; `auto` picks sixel where it is known to work and not inside tmux or screen. Not shown in the settings panel; set it here |
 | `mouse` | `true` | Click chats, scroll, and open media |
 | `splash` | `true` | Show the animated logo for about two seconds while tawk connects; any key skips it |
+
+<a id="chats"></a>
 
 ### [chats]
 
@@ -117,6 +127,8 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `status_keep_days` | `30` | How long tawk keeps statuses (1 to 365 days). WhatsApp shows a status for a day; after that it moves to the Status archive until this many days have passed. 1 keeps no archive. While the archive is on and `auto_download` is set, a status's photo or video is fetched when it arrives (up to `auto_download_max_mb`), since WhatsApp's copy does not last |
 | `send_read_receipts` | `true` | Tell senders when you have read their messages |
 
+<a id="notifications"></a>
+
 ### [notifications]
 
 | Key | Default | Description |
@@ -137,6 +149,8 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `terminal_bell` | `false` | Ring the bell; Windows Terminal flashes the taskbar |
 | `screen_flash` | `false` | Flash the whole screen once |
 
+<a id="media"></a>
+
 ### [media]
 
 | Key | Default | Description |
@@ -153,6 +167,8 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `mic_device` | `default` | Capture device for the audio system; "default" uses the system default |
 | `voice_max_seconds` | `300` | Recording stops and sends at this length (10 to 900) |
 
+<a id="screensaver"></a>
+
 ### [screensaver]
 
 | Key | Default | Description |
@@ -163,6 +179,8 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `command` | `corvus-matrix-clock` | Shell command to run; any key stops it. Ctrl+L, `/screensaver` and `/lock` start it at once |
 | `wake_on_message` | `true` | Stop the screensaver when a message arrives |
 
+<a id="resilience"></a>
+
 ### [resilience]
 
 | Key | Default | Description |
@@ -172,9 +190,11 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `breaker_threshold` | `5` | Consecutive failures before retries pause (1 to 50) |
 | `breaker_cooldown_s` | `120` | Pause before a trial reconnect (5 to 3600) |
 
+<a id="automation"></a>
+
 ### [automation]
 
-What other programs reaching tawk through its control socket may do: corvus-tawk-mcp and the `corvus-tawk send`, `tail`, `unread` and `status-line` commands. See [[MANUAL#Automation and MCP|Automation and MCP]] and [[CONTROL]].
+What other programs reaching tawk through its control socket may do: corvus-tawk-mcp and the `corvus-tawk send`, `tail`, `unread` and `status-line` commands. See [Automation and MCP](MANUAL.md#Automation%20and%20MCP) and [CONTROL](CONTROL.md).
 
 | Key | Default | Description |
 |---|---|---|
@@ -199,7 +219,7 @@ What other programs reaching tawk through its control socket may do: corvus-tawk
 | `transcribe_languages` | `en` | The languages voice notes are spoken in, as codes separated by commas, or `auto` for any. Set from Settings, Chats, Voice note languages as a list of switches. Each voice note is written once, in whichever of them is spoken; a chat's own languages (its contact card) come first |
 | `transcribe_auto` | `off` | Every voice note other people send is transcribed as it arrives. Off, only the ones an agent asks for |
 | `mask_codes` | `on` | One-time codes and card numbers in messages reach an agent acting for a model as `[code]` and `[card number]`. Your own shell commands see the text as it is |
-| `owner_chat` | (empty) | The account, by its id, whose "message yourself" chat is your chat with the agent (see [[MANUAL#The owner's chat|The owner's chat]]). Set from that chat's contact card. Empty is off. An agent cannot change it |
+| `owner_chat` | (empty) | The account, by its id, whose "message yourself" chat is your chat with the agent (see [The owner's chat](MANUAL.md#The%20owner's%20chat)). Set from that chat's contact card. Empty is off. An agent cannot change it |
 | `owner_replies_per_hour` | `60` | How many answers an agent may send you in the owner's chat by itself in an hour (1 to 600); past this they wait for you like any send |
 | `owner_approvals` | `on` | A send that waits for your answer in tawk is also put to you in the owner's chat, to allow or decline from your phone |
 | `owner_card_wait` | `20` | Seconds a request waits in tawk before it is put to you on WhatsApp (0 to 600); 0 asks there at once |
@@ -207,6 +227,8 @@ What other programs reaching tawk through its control socket may do: corvus-tawk
 | `self_approvals_per_hour` | `20` | With `access = admin`: requests a program may answer itself in an hour (1 to 240); past this they wait for you |
 
 None of these can be changed over the socket, nor can settings that run a program, folders, the backend or the log level.
+
+<a id="advanced"></a>
 
 ### [advanced]
 
@@ -220,6 +242,8 @@ None of these can be changed over the socket, nor can settings that run a progra
 
 Settings, Advanced also has a Clear logs action. It empties `tawk.log` and every other `*.log` file in the same folder (the backend's log included) in place, so the programs writing them carry on, and reports how much space it freed.
 
+<a id="Settings and accounts"></a>
+
 ### Settings and accounts
 
 The config file holds one set of settings for tawk as a whole. What belongs to one account is kept in the database, in the `accounts` table, and is changed under Settings, Account, Accounts…: its label, whether it is the primary account, what agents may do with it, and the chats an agent may answer by itself in.
@@ -228,6 +252,8 @@ The config file holds one set of settings for tawk as a whole. What belongs to o
 - `[automation] access` is the level an account uses while its own level is *follow*. Only the first account starts at *follow*; every account you add starts at *off*.
 - `[automation] self_approval_chats` is still read for an account at *follow* that has no list of its own, so an existing setup keeps working. A chat switched on or off from a contact card is stored with its account.
 - `[automation] chats`, the rate limits and the AI disclaimer apply to every account.
+
+<a id="Themes"></a>
 
 ## Themes
 
@@ -272,9 +298,11 @@ After adding or editing a file, use Settings, Appearance, Theme, Reload theme fi
 
 A theme can also be applied to a single chat with its chat options or `/theme <id>`. Only the conversation pane (bubbles, the chat title bar, day separators and the meta line) takes the chat's colours; the chat list, header, input and footer keep the app theme. The chat stores the theme's `id`, so a personal theme with the same `id` as a bundled one is used there too.
 
+<a id="Database encryption (SQLCipher)"></a>
+
 ## Database encryption (SQLCipher)
 
-`corvus-tawk --encrypt` encrypts the database with a passphrase (see [[MANUAL#Encrypting your chats|the manual]]). It needs a build with SQLCipher, a copy of SQLite that can encrypt. The build uses SQLCipher instead of SQLite whenever `pkg-config` finds it, and the configure summary says which one it chose:
+`corvus-tawk --encrypt` encrypts the database with a passphrase (see [the manual](MANUAL.md#Encrypting%20your%20chats)). It needs a build with SQLCipher, a copy of SQLite that can encrypt. The build uses SQLCipher instead of SQLite whenever `pkg-config` finds it, and the configure summary says which one it chose:
 
 ```
   sqlite      SQLCipher 3.51.2, database encryption available
@@ -282,7 +310,9 @@ A theme can also be applied to a single chat with its chat options or `/theme <i
 
 The installer adds it (`libsqlcipher-dev` on Debian and Ubuntu, `sqlcipher-devel` on Fedora and openSUSE, `sqlcipher` on Arch and Homebrew). `make SQLCIPHER=0` builds with plain SQLite even when SQLCipher is installed; such a build cannot open an encrypted database and says so. The passphrase is never a setting: it is typed at start-up and kept only in memory.
 
-Backups (`corvus-tawk --backup`, see [[MANUAL#Backups|the manual]]) need no build option: they are packed with the system's `tar` and encrypted with the `openssl` command, which the installer adds.
+Backups (`corvus-tawk --backup`, see [the manual](MANUAL.md#Backups)) need no build option: they are packed with the system's `tar` and encrypted with the `openssl` command, which the installer adds.
+
+<a id="Choosing a backend"></a>
 
 ## Choosing a backend
 
@@ -298,6 +328,8 @@ Each backend keeps its own login (whatsmeow in `~/.local/share/corvus/tawk/auth/
 
 Posting a status needs whatsmeow; viewing statuses and changing your profile work on both. On Baileys, + in the header and `/status` offer to switch: tawk saves `backend = whatsmeow`, shuts down cleanly and starts again without any `--backend` option, ready to link with a QR code or pairing code. Your chats stay in the database.
 
+<a id="Audio systems"></a>
+
 ## Audio systems
 
 `audio_backend = auto` picks the first available of CoreAudio (macOS), DirectShow (Windows builds), PipeWire, PulseAudio and ALSA. Under WSL this is PulseAudio through WSLg.
@@ -312,6 +344,8 @@ Posting a status needs whatsmeow; viewing statuses and changing your profile wor
 
 Recordings are always encoded by `ffmpeg` to 48 kHz mono Ogg/Opus, the format WhatsApp uses for voice notes. `mic_device` takes the device name your audio system uses (`pactl list short sources`, `pw-cli ls Node`, `arecord -L`, or `ffmpeg -f avfoundation -list_devices true -i ""`). DirectShow needs the exact device name.
 
+<a id="Command settings and file trust"></a>
+
 ## Command settings and file trust
 
 Four settings name programs tawk will start: `screensaver.command`, `media.image_viewer`, `media.video_player` and `advanced.node_binary` (plus `advanced.sidecar_dir`, which decides what code Node.js runs). tawk honours them only when `config.ini` is owned by you and not writable by your group or others. If the file is shared or loosely permissioned, tawk logs a warning, uses the defaults for those settings, and does not rewrite the file. Fix it with:
@@ -323,6 +357,8 @@ chmod 600 ~/.config/corvus/tawk/config.ini
 `corvus-tawk --doctor` warns when the file is not private. While it is not, Ctrl+L, `/screensaver` and the idle timer show a message instead of starting the screensaver.
 
 The screensaver command runs through `/bin/sh -c` so that pipes and arguments work. Viewer and player settings are split into arguments without any shell, and the file path is passed as a separate argument.
+
+<a id="Ctrl+Shift+L in Windows Terminal"></a>
 
 ## Ctrl+Shift+L in Windows Terminal
 
@@ -336,6 +372,8 @@ Windows Terminal does not report Ctrl+Shift+L distinctly. To make it work there,
 
 The binding applies to every program in Windows Terminal, so other programs that read Ctrl+Shift+L see this sequence too.
 
+<a id="Shift+Enter in Windows Terminal"></a>
+
 ## Shift+Enter in Windows Terminal
 
 Shift+Enter starts a new line in the message input and the status composer, and so does Alt+Enter in every terminal. Terminals that report modified keys (xterm, WezTerm, foot, Ghostty, iTerm2) send Shift+Enter distinctly with no setup. Windows Terminal sends it exactly like Enter, so it sends the message. To make it a new line there, add this entry to the `actions` list as well:
@@ -345,6 +383,8 @@ Shift+Enter starts a new line in the message input and the status composer, and 
 ```
 
 Like the Ctrl+Shift+L binding, it applies to every program in Windows Terminal.
+
+<a id="Environment variables"></a>
 
 ## Environment variables
 

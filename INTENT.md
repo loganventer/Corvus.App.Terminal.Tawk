@@ -2,15 +2,19 @@
 
 ## Contents
 
-- [[#Purpose]]
-- [[#Scope]]
-- [[#Out of scope]]
-- [[#Boundary Rules]]
-- [[#Relationship to other tools]]
+- [Purpose](#Purpose)
+- [Scope](#Scope)
+- [Out of scope](#Out%20of%20scope)
+- [Boundary Rules](#Boundary%20Rules)
+- [Relationship to other tools](#Relationship%20to%20other%20tools)
+
+<a id="Purpose"></a>
 
 ## Purpose
 
 tawk exists so that people who live in a terminal can use WhatsApp there: read and answer chats, hear and send voice notes, look at photos, and get notified, without switching to a browser or a phone. It aims to feel like the Android app in the places where that helps (settings, alignment of bubbles, unread highlighting) and like a good terminal tool everywhere else (keyboard first, fast, scriptable install, respectful of the filesystem).
+
+<a id="Scope"></a>
 
 ## Scope
 
@@ -30,6 +34,8 @@ In scope:
 - The owner's chat, when you name one: the "message yourself" chat of one of your own connected numbers, where what you write reaches a connected agent as your words, the agent answers you by itself through that number, and a send that waits for you can be allowed or declined.
 - Linux, macOS, and Windows through WSL or MSYS2.
 
+<a id="Out of scope"></a>
+
 ## Out of scope
 
 - Carrying call audio or video; tawk only shows an incoming call and can decline it.
@@ -38,6 +44,8 @@ In scope:
 - Running without a phone: tawk is always a linked device.
 - Business or bulk messaging features, including agents sending on their own: automation always waits for you. The one exception is an agent's answers to you in the owner's chat, which reach nobody else.
 - A native Windows console build; Windows users run tawk under WSL.
+
+<a id="Boundary Rules"></a>
 
 ## Boundary Rules
 
@@ -50,6 +58,8 @@ In scope:
 - An agent sends without being asked in one place only, the owner's chat, and only a plain message. Every other chat keeps its approval, and nothing destructive can be asked for or approved from WhatsApp.
 - User files follow XDG and installed files follow the Filesystem Hierarchy Standard. tawk never writes outside those locations.
 - Every executable tawk starts is either a fixed tool (ffmpeg, the audio player, the system opener) run with an argument list, tawk itself when it restarts after switching backend, or a command from the user's own configuration file.
+
+<a id="Relationship to other tools"></a>
 
 ## Relationship to other tools
 

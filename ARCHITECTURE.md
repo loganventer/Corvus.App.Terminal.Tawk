@@ -2,29 +2,33 @@
 
 ## Contents
 
-- [[#Overview]]
-- [[#Layers]]
-- [[#Component map]]
-- [[#Contracts]]
-  - [[#Client widgets]]
-- [[#Composition root]]
-- [[#Accounts]]
-- [[#Threads]]
-- [[#Backends]]
-- [[#Storage]]
-- [[#Design principles]]
-- [[#Adding things]]
+- [Overview](#Overview)
+- [Layers](#Layers)
+- [Component map](#Component%20map)
+- [Contracts](#Contracts)
+  - [Client widgets](#Client%20widgets)
+- [Composition root](#Composition%20root)
+- [Accounts](#Accounts)
+- [Threads](#Threads)
+- [Backends](#Backends)
+- [Storage](#Storage)
+- [Design principles](#Design%20principles)
+- [Adding things](#Adding%20things)
+
+<a id="Overview"></a>
 
 ## Overview
 
 tawk is one C11 program arranged in [iDesign](https://www.idesign.net/) layers. Volatile concerns (the WhatsApp protocol, the audio system, the terminal, the database) sit behind small interfaces so they can change without touching the logic that uses them. Every interface is a struct of function pointers with a `ctx` pointer, and every concrete implementation is created in exactly one place, `src/main.c`.
+
+<a id="Layers"></a>
 
 ## Layers
 
 | Layer | Folder | Responsibility | May call |
 |---|---|---|---|
 | Composition | `composition` | Builds one account's components and owns the set of running accounts. Part of the composition root | Everything, as `main.c` does |
-| Client | `clients/tui`, `clients/control`, `clients/cli` | `tui`: the ncurses UI (widgets, input, slash commands, layout, the settings panel, the Chats and Agentic tabs). `control`: the control socket client that serves corvus-tawk-mcp and the shell commands ([[CONTROL]]). `cli`: the `--doctor` setup check, the `--update` installer, `--encrypt`, `--decrypt` and `--change-passphrase`, `--backup` and `--restore`, the start-up passphrase prompt, and `corvus-tawk send`, `tail`, `unread` and `status-line` | Managers, and the contracts the composition root hands it |
+| Client | `clients/tui`, `clients/control`, `clients/cli` | `tui`: the ncurses UI (widgets, input, slash commands, layout, the settings panel, the Chats and Agentic tabs). `control`: the control socket client that serves corvus-tawk-mcp and the shell commands ([CONTROL](CONTROL.md)). `cli`: the `--doctor` setup check, the `--update` installer, `--encrypt`, `--decrypt` and `--change-passphrase`, `--backup` and `--restore`, the start-up passphrase prompt, and `corvus-tawk send`, `tail`, `unread` and `status-line` | Managers, and the contracts the composition root hands it |
 | Managers | `managers` | Use cases: messaging and connection supervision, profiles and profile pictures, your own profile, posting statuses, the status feed, messages scheduled for later, incoming calls, media, settings, encrypting the database, encrypted backups, voice note transcripts and TL;DR summaries (keeping what is handed over, and each chat's choices about them), the rules and log for agents (automation), plus the composite event observer that hands backend events to the managers that listen for them | Engines, contracts |
 | Engines | `engines` | Business rules with no I/O: backoff, circuit breaker, notification policy, chat visibility, idle tracking, message ids, media type detection, emoticon conversion, network fingerprints and change detection, profile field and status post validation, finding a URL in text, the status background palette, matching chats against a search, reading when a scheduled message should go, the backup manifest and which archive members a restore accepts, and for agents: the automation policy (who sees which chats, which writes are asked about, which settings stay out of reach, risk, and which of its own requests a client may answer with access admin), the hourly quota for those, resolving a chat named by an agent, the rate limiter and confirmation tokens; and for transcripts and TL;DR: what may be kept (`transcript_validator`, `summary_validator`), what shows and what is transcribed or summarised (`transcript_display_policy`, `transcription_policy`, `summary_policy`, `transcript_choice`), which agent writes summaries (`summariser_choice`) and the question about that (`agent_question`) | Core, utilities |
 | Resource access | `resource_access` | SQLite stores (messages, chats, contacts, reactions, receipts, JID aliases, profiles, statuses, scheduled messages, the automation log, transcripts, summaries), database encryption with SQLCipher (`sqlite_database_crypt`, `sqlite_key`), the caching decorators, INI settings store, JSON theme repository, TSV emoji catalog, the text chat exporter, WhatsApp gateways, the JSON protocol codec | Core, utilities |
@@ -78,6 +82,8 @@ TL;DR is built the same way, one step further, because the words come from a mod
 Sending a file for an agent is rules first as well. `attachment_policy` says whether a file may go, from facts about it that `file_inspector` read (it exists, is a plain file, how big) and the rules it is given: tawk's own paths, the folders under the home folder that hold keys, and names that mean keys, all compared after links are resolved. `attachment_inspection` is the manager-level step that gathers those facts and paths from the settings, runs the policy and describes the file for the question (`attachment_info`); the control client runs it when `send_file` is asked and again after your answer. Sending itself is `messaging_manager_send_file_to`, which the terminal's file picker also uses for the open chat. The operation is a write like any other, so the approval queue, the automation log, the rate and the disclaimer apply; it is deliberately absent from the operations an admin client may answer itself.
 
 Moving one account to another computer is built the way backups are, over the same contracts. `AccountExportManager` and `AccountImportManager` (with their deps) orchestrate it; `IAccountExtractor` and `IAccountMerger` (`sqlite_account_extractor`, `sqlite_account_merger`) do the SQL against the open database and a plain package file attached beside it; `ISchemaInspector` lists tables and the schema version; `IAccountLinkExpectation` keeps the number a moved account waits for. The rules are engines with no I/O: `table_catalog` (what every table does in a move, with a test that fails for a table nobody classified), `account_import_policy`, `account_identity_rule`, `media_path_rewriter`, `account_package_path_policy` and `account_package_manifest_codec`. After the account is linked, `AccountLinkGuard` (an `IEventObserver` in each account's composite observer) compares the number that linked with the one expected and unlinks the wrong one. The command line is `migrate_command.c`; nothing is on the control socket.
+
+<a id="Component map"></a>
 
 ## Component map
 
@@ -136,6 +142,8 @@ flowchart TD
     SM --> CFG
     GW <-->|JSON lines| B["whatsmeow (Go, in-process)<br/>or Baileys (Node.js child)"]
 ```
+
+<a id="Contracts"></a>
 
 ## Contracts
 
@@ -266,6 +274,8 @@ classDiagram
 
 Composition shows up in four places: the notifiers are combined by a composite, backend events reach the listening managers through a composite event observer, the message and contact stores gain caching through decorators (`caching_message_store`, `caching_contact_store`) that implement the same contract, and the player and recorder are built around an audio backend strategy. There is no inheritance anywhere.
 
+<a id="Client widgets"></a>
+
 ### Client widgets
 
 The TUI is split into widgets that each draw one part of the screen and turn keys and clicks into results, with `tui_app.c` holding the operations they share and `tui_input.c` routing input to the topmost popup first.
@@ -320,6 +330,8 @@ The TUI is split into widgets that each draw one part of the screen and turn key
 Slash commands live in `tui_commands.c` as a table of name, argument hint, help text and handler. Handlers only call the app's public operations, so a command, a key and a menu entry share one behaviour.
 
 `tools/screenshots/scenes.c` links these widgets without `main.c` and draws the manual's pictures of newer screens (profile, statuses, camera, splash) with made-up data, writing each screen as cells; `tools/screenshots/render.py` paints the cells as PNG files in `docs/images`. `make screenshots` runs both. `tools/branding/make_logos.py` draws the logo files (`docs/images/logo-*.png`), each with a transparent background; `make logos` runs it.
+
+<a id="Composition root"></a>
 
 ## Composition root
 
@@ -417,6 +429,8 @@ Before the database opens, `main.c` takes the instance lock (`instance_lock`, an
 
 With `--doctor`, `main.c` reads the settings through a read-only store (no folders or files are created), stops after the settings, themes and emoji catalog, creates an audio backend, and hands them to `doctor_run` in a `DoctorInputs` record; the database, gateway and client are never built. Teardown closes the event queue before destroying the gateway, so a backend waiting on back-pressure can return.
 
+<a id="Accounts"></a>
+
 ## Accounts
 
 tawk holds several WhatsApp accounts in one process. The rule that keeps this simple is that an account is decided where a component is created, and never passed along with each call.
@@ -455,6 +469,8 @@ One `tawk.log` serves every account. The logger keeps a label per thread (`log_c
 
 The whatsmeow bridge keeps a session per account, keyed by a handle the gateway passes with every call, so one linked library carries all of them.
 
+<a id="Threads"></a>
+
 ## Threads
 
 tawk is single-threaded except for the edges:
@@ -468,11 +484,15 @@ The network monitor needs no thread of its own: the messaging manager polls it o
 
 Both backends hand events to a bounded `EventQueue`. When it is full, producers wait, so a large history sync slows down instead of dropping messages. On shutdown the queue is closed first so any waiting producer returns.
 
+<a id="Backends"></a>
+
 ## Backends
 
-Both backends speak the same JSON line protocol ([[PROTOCOL]]). `json_protocol.c` is the single decoder and encoder on the C side. The whatsmeow bridge is compiled with `go build -buildmode=c-archive` and linked into the binary; it registers the pure-Go SQLite driver so that only one copy of libsqlite3 is linked. The Baileys bridge is a small ES module program started with an argument list (no shell) and restarted by the messaging manager if it exits.
+Both backends speak the same JSON line protocol ([PROTOCOL](PROTOCOL.md)). `json_protocol.c` is the single decoder and encoder on the C side. The whatsmeow bridge is compiled with `go build -buildmode=c-archive` and linked into the binary; it registers the pure-Go SQLite driver so that only one copy of libsqlite3 is linked. The Baileys bridge is a small ES module program started with an argument list (no shell) and restarted by the messaging manager if it exits.
 
-Neither backend retries anything. They report `connection` events with a reason, and `MessagingManager` decides what to do using `BackoffPolicy` and `CircuitBreaker` (see [[HOW_IT_WORKS#Reconnecting|HOW_IT_WORKS]]). Profile edits and status posts travel over the same protocol, but through the smaller `IProfileEditor`, `IStatusPublisher` and `IStatusLiker` contracts that the gateways hand out, so the gateway contract does not grow with them.
+Neither backend retries anything. They report `connection` events with a reason, and `MessagingManager` decides what to do using `BackoffPolicy` and `CircuitBreaker` (see [HOW_IT_WORKS](HOW_IT_WORKS.md#Reconnecting)). Profile edits and status posts travel over the same protocol, but through the smaller `IProfileEditor`, `IStatusPublisher` and `IStatusLiker` contracts that the gateways hand out, so the gateway contract does not grow with them.
+
+<a id="Storage"></a>
 
 ## Storage
 
@@ -684,6 +704,8 @@ erDiagram
 
 Search turns what you type into a safe FTS5 query: every word becomes a quoted prefix term, so input can never use FTS operators.
 
+<a id="Design principles"></a>
+
 ## Design principles
 
 | Principle | How it shows up |
@@ -696,6 +718,8 @@ Search turns what you type into a safe FTS5 query: every word becomes a quoted p
 | Composition over inheritance | Composite notifier, composite event observer, caching decorators, audio strategy |
 | Separation of concerns | Policy in engines, orchestration in managers, I/O at the edges |
 
+<a id="Adding things"></a>
+
 ## Adding things
 
 - **An audio system:** implement `IAudioBackend` in `src/infrastructure/audio/`, add it to the table in `audio_backend_factory.c`, and add its name to the `audio_backend` choices in `settings_schema.c`.
@@ -706,4 +730,4 @@ Search turns what you type into a safe FTS5 query: every word becomes a quoted p
 - **A notifier:** implement `INotifier` and add it to the composite in `main.c`.
 - **A listener for backend events:** give the new manager an `IEventObserver`, add it to the composite event observer in `main.c`, and add the event types it needs to the list `handle_event` forwards in `messaging_manager.c`.
 - **A theme:** drop a JSON file in `themes/`.
-- **A backend command:** add an encoder to `json_protocol.c`, a function to `IMessageGateway` (or to a smaller contract the gateways hand out, such as `IProfileEditor`) and the gateways that support it, handlers in the bridges, and a row in [[PROTOCOL]].
+- **A backend command:** add an encoder to `json_protocol.c`, a function to `IMessageGateway` (or to a smaller contract the gateways hand out, such as `IProfileEditor`) and the gateways that support it, handlers in the bridges, and a row in [PROTOCOL](PROTOCOL.md).

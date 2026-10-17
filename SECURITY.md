@@ -2,17 +2,21 @@
 
 ## Contents
 
-- [[#Reporting a vulnerability]]
-- [[#What tawk protects]]
-- [[#Trust boundaries]]
-- [[#Threat model]]
-- [[#Deliberate trade-offs]]
-- [[#Logging]]
-- [[#Removing everything]]
+- [Reporting a vulnerability](#Reporting%20a%20vulnerability)
+- [What tawk protects](#What%20tawk%20protects)
+- [Trust boundaries](#Trust%20boundaries)
+- [Threat model](#Threat%20model)
+- [Deliberate trade-offs](#Deliberate%20trade-offs)
+- [Logging](#Logging)
+- [Removing everything](#Removing%20everything)
+
+<a id="Reporting a vulnerability"></a>
 
 ## Reporting a vulnerability
 
 Please report security issues privately through GitHub's "Report a vulnerability" button on the repository's Security tab rather than in a public issue. Include the version (`corvus-tawk --version`), your platform and steps to reproduce. You can expect an acknowledgement within a week.
+
+<a id="What tawk protects"></a>
 
 ## What tawk protects
 
@@ -20,6 +24,8 @@ Please report security issues privately through GitHub's "Report a vulnerability
 - **Your messages and media** in `~/.local/share/corvus/tawk/tawk.db` and `~/.cache/corvus/tawk/media/`, together with your contacts' profile details, profile pictures, their statuses and your block list.
 - **Your terminal and system** from anything a contact sends you.
 - **Your account from the agents you let in**, when Agent access is on: they see only what you allow and act only with your answer.
+
+<a id="Trust boundaries"></a>
 
 ## Trust boundaries
 
@@ -61,6 +67,8 @@ flowchart LR
     TRUST -->|no| SKIP
     USE --> PROCS
 ```
+
+<a id="Threat model"></a>
 
 ## Threat model
 
@@ -105,6 +113,8 @@ flowchart LR
 | An agent moving an account | A steered agent packing your chats, or bringing a file in | There is no control operation and no corvus-tawk-mcp tool for it; the commands refuse to run beside a running tawk, and the moved account arrives with agent access off |
 | Memory safety | Overflows in C code | Bounded copies throughout; built with `-fstack-protector-strong`, `_FORTIFY_SOURCE=2`, PIE and full RELRO; zero compiler warnings with `-Wall -Wextra -Wformat=2 -Wshadow` |
 
+<a id="Deliberate trade-offs"></a>
+
 ## Deliberate trade-offs
 
 - **The screensaver command runs through `/bin/sh -c`.** This is what makes `corvus-matrix-clock --seconds` or a pipeline work. It only happens when the config file is yours and private, the same trust you give your shell's rc file.
@@ -138,9 +148,13 @@ flowchart LR
 - **Your shell is trusted as you.** A client says whether it acts for a model or is your own command, and only a model's writes are always asked about. Any program running as your user could claim to be your shell, but such a program could also read tawk's files directly, so the socket adds no new exposure; turn on "Ask for shell commands too" (`confirm_cli`) to be asked about every write.
 - **Protocol libraries are unofficial.** tawk depends on whatsmeow and Baileys, which reverse-engineer WhatsApp Web. Keep tawk updated to pick up their fixes.
 
+<a id="Logging"></a>
+
 ## Logging
 
 Logs record events and failures, never message text, pairing codes, QR data, keys or passphrases. `corvus-tawk --doctor` prints paths, settings such as the screensaver command, and tool names; it never prints message content or login data. Debug logs from the whatsmeow bridge go to a private file (`~/.local/state/corvus/tawk/whatsmeow.log`), never to the terminal. Settings, Advanced, Clear logs empties every `*.log` file in the log folder without following links.
+
+<a id="Removing everything"></a>
 
 ## Removing everything
 

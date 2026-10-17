@@ -4,78 +4,80 @@ The screenshots in this manual were taken from tawk running on a demo account wi
 
 ## Contents
 
-- [[#Screen layout]]
-- [[#Keyboard]]
-  - [[#New lines with Shift+Enter]]
-  - [[#Alt shortcuts on a Mac]]
-- [[#Slash commands]]
-- [[#Mouse]]
-- [[#Chats]]
-  - [[#Typing and online status]]
-- [[#Finding your way in a long list]]
-- [[#Chat options]]
-- [[#Soft lock]]
-- [[#Contact details]]
-- [[#Deleting chats and messages]]
-- [[#Messages and media]]
-  - [[#The message menu]]
-  - [[#Formatting]]
-  - [[#Link previews]]
-  - [[#Mentions]]
-- [[#Replies, reactions and edits]]
-- [[#Forwarding]]
-- [[#Scheduled messages]]
-- [[#Emoji]]
-- [[#Search]]
-- [[#Voice notes]]
-- [[#TL;DR mode]]
-- [[#The owner's chat]]
-- [[#Sending files]]
-- [[#The photo viewer]]
-- [[#Notifications]]
-- [[#Incoming calls]]
-- [[#Your profile]]
-  - [[#Name and about]]
-  - [[#Photo]]
-  - [[#Saving]]
-- [[#Statuses]]
-  - [[#Viewing statuses]]
-  - [[#Answering a status]]
-  - [[#Who saw your status]]
-  - [[#The status archive]]
-  - [[#Posting a status]]
-- [[#Settings panel]]
-- [[#Themes]]
-- [[#Screensaver]]
-- [[#When WhatsApp is unavailable]]
-- [[#Linking and unlinking]]
-- [[#Several accounts]]
-  - [[#Adding and managing accounts]]
-  - [[#One chat list]]
-  - [[#The same person on two numbers]]
-  - [[#Which number a message is sent from]]
-  - [[#Agents and accounts]]
-  - [[#What happens when you update]]
-- [[#Locking tawk]]
-- [[#Encrypting your chats]]
-  - [[#Opening without typing]]
-- [[#Backups]]
-- [[#Moving an account to another computer]]
-- [[#Automation and MCP]]
-  - [[#Turning it on]]
-  - [[#Voice note transcription]]
-  - [[#Agent events]]
-  - [[#The Agentic tab]]
-  - [[#Letting an agent answer for itself]]
-  - [[#Destructive requests]]
-  - [[#Drafts from agents]]
-  - [[#Files from agents]]
-  - [[#Writing to someone new]]
-  - [[#Shell commands]]
-  - [[#corvus-tawk-mcp]]
-- [[#Command line]]
-- [[#Checking your setup]]
-- [[#Troubleshooting]]
+- [Screen layout](#Screen%20layout)
+- [Keyboard](#Keyboard)
+  - [New lines with Shift+Enter](#New%20lines%20with%20Shift+Enter)
+  - [Alt shortcuts on a Mac](#Alt%20shortcuts%20on%20a%20Mac)
+- [Slash commands](#Slash%20commands)
+- [Mouse](#Mouse)
+- [Chats](#Chats)
+  - [Typing and online status](#Typing%20and%20online%20status)
+- [Finding your way in a long list](#Finding%20your%20way%20in%20a%20long%20list)
+- [Chat options](#Chat%20options)
+- [Soft lock](#Soft%20lock)
+- [Contact details](#Contact%20details)
+- [Deleting chats and messages](#Deleting%20chats%20and%20messages)
+- [Messages and media](#Messages%20and%20media)
+  - [The message menu](#The%20message%20menu)
+  - [Formatting](#Formatting)
+  - [Link previews](#Link%20previews)
+  - [Mentions](#Mentions)
+- [Replies, reactions and edits](#Replies,%20reactions%20and%20edits)
+- [Forwarding](#Forwarding)
+- [Scheduled messages](#Scheduled%20messages)
+- [Emoji](#Emoji)
+- [Search](#Search)
+- [Voice notes](#Voice%20notes)
+- [TL;DR mode](#TL;DR%20mode)
+- [The owner's chat](#The%20owner's%20chat)
+- [Sending files](#Sending%20files)
+- [The photo viewer](#The%20photo%20viewer)
+- [Notifications](#Notifications)
+- [Incoming calls](#Incoming%20calls)
+- [Your profile](#Your%20profile)
+  - [Name and about](#Name%20and%20about)
+  - [Photo](#Photo)
+  - [Saving](#Saving)
+- [Statuses](#Statuses)
+  - [Viewing statuses](#Viewing%20statuses)
+  - [Answering a status](#Answering%20a%20status)
+  - [Who saw your status](#Who%20saw%20your%20status)
+  - [The status archive](#The%20status%20archive)
+  - [Posting a status](#Posting%20a%20status)
+- [Settings panel](#Settings%20panel)
+- [Themes](#Themes)
+- [Screensaver](#Screensaver)
+- [When WhatsApp is unavailable](#When%20WhatsApp%20is%20unavailable)
+- [Linking and unlinking](#Linking%20and%20unlinking)
+- [Several accounts](#Several%20accounts)
+  - [Adding and managing accounts](#Adding%20and%20managing%20accounts)
+  - [One chat list](#One%20chat%20list)
+  - [The same person on two numbers](#The%20same%20person%20on%20two%20numbers)
+  - [Which number a message is sent from](#Which%20number%20a%20message%20is%20sent%20from)
+  - [Agents and accounts](#Agents%20and%20accounts)
+  - [What happens when you update](#What%20happens%20when%20you%20update)
+- [Locking tawk](#Locking%20tawk)
+- [Encrypting your chats](#Encrypting%20your%20chats)
+  - [Opening without typing](#Opening%20without%20typing)
+- [Backups](#Backups)
+- [Moving an account to another computer](#Moving%20an%20account%20to%20another%20computer)
+- [Automation and MCP](#Automation%20and%20MCP)
+  - [Turning it on](#Turning%20it%20on)
+  - [Voice note transcription](#Voice%20note%20transcription)
+  - [Agent events](#Agent%20events)
+  - [The Agentic tab](#The%20Agentic%20tab)
+  - [Letting an agent answer for itself](#Letting%20an%20agent%20answer%20for%20itself)
+  - [Destructive requests](#Destructive%20requests)
+  - [Drafts from agents](#Drafts%20from%20agents)
+  - [Files from agents](#Files%20from%20agents)
+  - [Writing to someone new](#Writing%20to%20someone%20new)
+  - [Shell commands](#Shell%20commands)
+  - [corvus-tawk-mcp](#corvus-tawk-mcp)
+- [Command line](#Command%20line)
+- [Checking your setup](#Checking%20your%20setup)
+- [Troubleshooting](#Troubleshooting)
+
+<a id="Screen layout"></a>
 
 ## Screen layout
 
@@ -96,6 +98,8 @@ The layout follows the window: resize it and everything reflows. When the conver
 When tawk starts it shows a short splash while it connects: the tawk logo draws itself in WhatsApp greens with what the name stands for, Terminal Access to WhatsApp Konnector, underneath, the tagline types itself out and the connection state shows underneath. It fades after about two seconds, and any key skips it straight away. Turn it off with Settings, Appearance, Layout, Startup splash (`splash`).
 
 ![The start-up splash: the logo's speech bubble of bars over the name, in WhatsApp greens with a shine across them, the tagline and typing dots](docs/images/splash.png)
+
+<a id="Keyboard"></a>
 
 ## Keyboard
 
@@ -173,6 +177,8 @@ Input:
 | Tab | Complete a `/command` while suggestions are shown, or move through the emoji offered for a `(word` |
 | Esc | Cancel an edit, remove an attachment or cancel a reply, in that order; otherwise go back to the chat list |
 
+<a id="New lines with Shift+Enter"></a>
+
 ### New lines with Shift+Enter
 
 Shift+Enter starts a new line in the input and in the status composer; Enter alone sends or posts. tawk asks the terminal to report modified keys ("modifyOtherKeys"), which xterm, WezTerm, foot, Ghostty and iTerm2 do, so Shift+Enter works there without setup. Alt+Enter does the same in every terminal. Windows Terminal and some others send Shift+Enter exactly like Enter; to make it a new line there, add this action to Windows Terminal's settings.json (Settings, Open JSON file), or the same input as a key binding in your terminal:
@@ -180,6 +186,8 @@ Shift+Enter starts a new line in the input and in the status composer; Enter alo
 ```json
 { "command": { "action": "sendInput", "input": "\u001b[13;2u" }, "keys": "shift+enter" }
 ```
+
+<a id="Alt shortcuts on a Mac"></a>
 
 ### Alt shortcuts on a Mac
 
@@ -195,6 +203,8 @@ On a Mac the Option key types characters (Option+L types `¬`) unless the termin
 With that set, every Alt shortcut in this manual works with Option.
 
 Popups (message menu, chat options, reaction palette, emoji picker, search, file picker, theme picker, reader, profile, status dialogs and settings) take the keys while they are open. Arrow keys move, Enter chooses and Esc closes each of them.
+
+<a id="Slash commands"></a>
 
 ## Slash commands
 
@@ -248,6 +258,8 @@ Commands that act on "this chat" need an open chat.
 
 ![The help page listing commands and keys](docs/images/help.png)
 
+<a id="Mouse"></a>
+
 ## Mouse
 
 - Click a chat to open it; scroll the list with the wheel. Click a folder entry to open it.
@@ -271,6 +283,8 @@ Commands that act on "this chat" need an open chat.
 - In popups, click an item to choose it, use the wheel to scroll, and click outside a menu to close it.
 
 Mouse support can be turned off in Settings, Appearance, Layout.
+
+<a id="Chats"></a>
 
 ## Chats
 
@@ -309,6 +323,8 @@ When tawk starts it opens the chat you had open when it last quit, so you can ca
 
 Each chat keeps its own draft. Whatever you have typed stays with the chat when you switch to another one or quit, and comes back when you return. `/clear` or the chat options remove it.
 
+<a id="Typing and online status"></a>
+
 ### Typing and online status
 
 While you type in a chat, tawk tells the other person you are typing, and while you record a voice note it shows you as recording audio. When someone types to you, their chat's preview shows "typing…" (or "Name is typing…" in a group, or "recording audio…"), and in the open chat a small bubble on the last row, just above the input, says the same with three dots that light up in turn, as on the phone. Both directions can be turned off: "Share typing" (`share_typing`) stops tawk sending your state, and "Appear online" (`appear_online`) stops tawk showing you as online. WhatsApp only delivers other people's typing notices while you appear online. tawk shows you offline after two minutes without input, while the screensaver runs, and when it quits.
@@ -318,6 +334,8 @@ Under the name of an open one-to-one chat, tawk says "online" when the other per
 Agents are not told who is online unless you switch on "Push online status" under Settings, Automation, Agent events. With it on, an agent that listens hears when the person in a chat you opened comes online or leaves, for the chats it may use.
 
 An agent cannot ask whether someone is online unless you switch on "Look up online status" under Settings, Automation. With it on, it may ask about one person at a time, in a chat it may use; tawk then has WhatsApp tell it about that person, exactly as opening their chat does, and answers with what it knows. It learns nothing while tawk shows you as offline, nothing about groups or locked chats, and only what the person shares with you.
+
+<a id="Finding your way in a long list"></a>
 
 ## Finding your way in a long list
 
@@ -349,6 +367,8 @@ A narrowed list starts with a row that says what it shows. Enter on that row sho
 
 The times are the ones `/later` understands. The chat comes back at that time with a notice, a sound and a banner as your settings allow, or sooner if its person writes. `/remind reply` sets no time: the chat stays aside until they write. `/filter snoozed` shows what is put aside, the contact card's **Put aside** row says until when (Enter there brings the chat back), and `/remind off` does the same from the chat.
 
+<a id="Chat options"></a>
+
 ## Chat options
 
 Press Alt+O on a chat in the list or in the conversation, or right-click a chat. The menu shows what applies to that chat:
@@ -372,6 +392,8 @@ Press Alt+O on a chat in the list or in the conversation, or right-click a chat.
 
 Mutes, pins, archiving from tawk, tones and chat themes are kept on this computer and are not sent to your phone.
 
+<a id="Soft lock"></a>
+
 ## Soft lock
 
 A soft lock hides a chat from people looking over your shoulder. Press **Ctrl+Shift+L** (or **Alt+L**, which works in every terminal, and Option+L on a Mac; see [Alt shortcuts on a Mac](#alt-shortcuts-on-a-mac)), type `/softlock`, or choose "Soft-lock chat" in the chat options. In the chat list it acts on the selected chat, elsewhere on the open one.
@@ -393,6 +415,8 @@ Windows Terminal sends Ctrl+Shift+L the same way as Ctrl+L, so tawk cannot tell 
 ```
 
 xterm, and terminals that support its "modifyOtherKeys" mode, send Ctrl+Shift+L distinctly without any setup.
+
+<a id="Contact details"></a>
 
 ## Contact details
 
@@ -441,6 +465,8 @@ Above the actions the card lists the chat's own settings. Enter on one steps it 
 
 Every action that removes or blocks something shows a confirmation with Cancel selected first. An export never replaces an existing file; a second export becomes `tawk chat with NAME (1).txt`. Only the messages stored on this computer are exported.
 
+<a id="Deleting chats and messages"></a>
+
 ## Deleting chats and messages
 
 **A message.** Select it and press Delete, or choose "Delete…" from the message menu. Choose:
@@ -455,6 +481,8 @@ A message that never reached WhatsApp (still waiting or failed) is simply remove
 **A whole chat.** Right-click the chat in the list (or press Alt+O) and choose "Delete chat…". A confirmation flashes and warns that this is permanent: every message, photo and file in the chat is deleted from this computer, your phone and your other linked devices, and it cannot be undone. Cancel is selected first; choose "Delete permanently", press Y, or click it to go ahead. A chat deleted on your phone disappears from tawk too.
 
 ![The flashing confirmation before deleting a chat, warning that it is permanent](docs/images/delete-chat.png)
+
+<a id="Messages and media"></a>
 
 ## Messages and media
 
@@ -478,7 +506,7 @@ Any photo, video, voice note or file can also be saved with "💾 Save to Downlo
 
 Other media shows as a short labelled line: `📄 Document ↗`, `🔖 Sticker ↗`, or `⤓` instead of `↗` when the file has not been downloaded yet. Photos, videos, stickers and voice notes download automatically up to the size set in Settings, Media, Photos and videos. Selecting a file that is not downloaded downloads it and then opens it. Videos play in the first player found of mpv, vlc, celluloid, totem and ffplay (installed with ffmpeg), because a desktop's default for video is sometimes an image viewer. Other files open in your system's default application: `xdg-open` on Linux, `open` on macOS, and `wslview` or Windows Explorer under WSL when Windows interop is enabled. You can name a specific player in Settings, Media, Photos and videos, Video player.
 
-tawk draws the picture in one of two ways, chosen by `image_mode` in the `[appearance]` section of the config file (it is not in the settings panel; see [[CONFIGURATION#appearance|CONFIGURATION]]):
+tawk draws the picture in one of two ways, chosen by `image_mode` in the `[appearance]` section of the config file (it is not in the settings panel; see [CONFIGURATION](CONFIGURATION.md#appearance)):
 
 - **sixel** draws real pixels. Windows Terminal (1.22 or later), WezTerm, foot, mlterm and contour support it. A picture is encoded once with a palette of 256 colours taken from the photo, and is redrawn only when it moves or something covered it. While a menu or other window is open over the conversation, pictures fall back to blocks so the window stays readable.
 - **blocks** draws the picture with coloured half-block characters, two picture pixels per character cell. It works in any terminal with 256 colours, including inside tmux and screen.
@@ -493,6 +521,8 @@ The conversation keeps only the messages around what is on screen in memory: 50 
 ![Scrolled back in a chat, with the newer badge at the bottom right](docs/images/conversation-older.png)
 
 Downloaded media is kept in `~/.cache/corvus/tawk/media`. The oldest files are removed once the folder passes the cache limit (1 GB by default).
+
+<a id="The message menu"></a>
 
 ### The message menu
 
@@ -521,6 +551,8 @@ Message info shows when your message was delivered, read and (for voice notes) p
 
 Copy text puts the message on your system clipboard with the OSC 52 terminal sequence, so it works over SSH as well. Windows Terminal, iTerm2, kitty, WezTerm, Alacritty and foot support it; some terminals (and tmux, unless `set-clipboard` is on) need it enabled first. Up to 64 KB is copied.
 
+<a id="Formatting"></a>
+
 ### Formatting
 
 Messages are drawn with WhatsApp's formatting, as on the phone:
@@ -540,11 +572,15 @@ The marks count only where WhatsApp takes them: at the start and end of a word, 
 
 ![A group conversation with bold, italic, a mention, code, a list, reactions on the bubbles' edges, a forwarded message and a link card](docs/images/conversation.png)
 
+<a id="Link previews"></a>
+
 ### Link previews
 
 A message with a link can carry a card, as on the phone: the page's picture, its title in bold, a line or two of its description and the site's name above the text. Cards on messages you receive come from WhatsApp and always show.
 
 Cards for links you send are off by default, because making one means fetching the page, and the site then sees your IP address. Turn them on with Settings, Chats, Link previews for links you send (`link_previews`). tawk then fetches the first `https://` link in each message you send (at most 5 seconds and 1 MB, never an address on your own network) and sends the card with it; when the page cannot be fetched the message goes without one.
+
+<a id="Mentions"></a>
 
 ### Mentions
 
@@ -553,6 +589,8 @@ In a group, type `@` and the start of a name: a list of the members that fit app
 ![Typing @Li in a group lists Lindiwe and Lize above the input](docs/images/mentions.png)
 
 When someone mentions you, the chat's badge in the list shows `@` before the unread count, and you are alerted even when the chat is muted or group alerts are off (never during do not disturb). Settings, Notifications, Mentions always notify (`mention_notifications`) turns that off. Mentions in messages from before tawk 0.7 show as the number they were typed with.
+
+<a id="Replies, reactions and edits"></a>
 
 ## Replies, reactions and edits
 
@@ -563,6 +601,8 @@ When someone mentions you, the chat's badge in the list shows `@` before the unr
 ![The reaction palette under a message](docs/images/reactions.png)
 
 **Editing.** Press Alt+Shift+E on one of your own text messages, or choose Edit from the menu. When your message is the newest in the chat, ↑ in an empty input edits it straight away, as in the desktop apps. WhatsApp allows edits for 15 minutes after sending, so tawk offers it only in that window. The text moves into the input and the line above it shows `✏ Editing your message`. Enter saves the change and Esc cancels. Edited messages show `edited` in front of their time, on your side and on everyone else's.
+
+<a id="Forwarding"></a>
 
 ## Forwarding
 
@@ -581,6 +621,8 @@ Choose ↪ Forward… from the message menu to send a copy of a message to other
 Ticked chats stay at the top of the list whatever you type, and the line at the bottom counts them. Locked chats are not offered. Each chat gets its own copy, marked `↪ Forwarded` above the text, as on the phone, and the footer says how many chats it went to. A message that had already been forwarded before is marked as such again, so WhatsApp counts it on.
 
 A photo, video, voice note or document you have downloaded is sent again from the copy on this computer, which works however old the message is. One you have not downloaded is sent on from WhatsApp's own copy without downloading it, as long as WhatsApp still has it. Polls, locations and contact cards cannot be forwarded. Messages other people forwarded to you show the same `↪ Forwarded` line.
+
+<a id="Scheduled messages"></a>
 
 ## Scheduled messages
 
@@ -619,6 +661,8 @@ When the time comes, tawk sends it as an ordinary message and it moves into the 
 | Delete, C or `[ Cancel message ]` | Drop it without sending |
 | Esc, q or a click outside | Close the list |
 
+<a id="Emoji"></a>
+
 ## Emoji
 
 Press Ctrl+E, click 😀 in the input, type `/emoji`, or choose ➕ more in the reaction palette.
@@ -647,6 +691,8 @@ The recent row keeps the last 24 emoji you inserted or reacted with, most recent
 
 Both follow Settings, Chats, Emoticons to emoji (`convert_emoticons`).
 
+<a id="Search"></a>
+
 ## Search
 
 Press Ctrl+K or type `/search` followed by words to search the text of every message in every chat.
@@ -656,6 +702,8 @@ Press Ctrl+K or type `/search` followed by words to search the text of every mes
 Search covers the messages stored on this computer, which includes history your phone has synced and anything loaded with the older-messages feature.
 
 Typing in the chat list (or Ctrl+F) is different: it narrows the chat list by chat name or number.
+
+<a id="Voice notes"></a>
 
 ## Voice notes
 
@@ -685,6 +733,8 @@ To send one, open a chat and press **Ctrl+R** (or type `/voice`). The line above
 
 Recording needs ffmpeg and a microphone. tawk detects your audio system (PulseAudio, PipeWire, ALSA, CoreAudio or DirectShow); you can choose one and a microphone in Settings, Media, Voice notes. Under WSL, WSLg provides the microphone through PulseAudio.
 
+<a id="TL;DR mode"></a>
+
 ## TL;DR mode
 
 Some chats are full of long messages. Put one in TL;DR mode and each long message shows as a short summary instead, with the original one key away.
@@ -707,6 +757,8 @@ A message that has no summary yet shows in full, as it always did, and changes t
 **A message nobody answers.** The same message is asked for again when it goes unanswered for a minute and a half. After the fifth request that went unanswered (0.25.0 or later), tawk stops asking for it, says so in a notice and remembers it as a message that needs no summary, also after a restart; editing the message makes it worth asking about afresh. An agent that sends `decline_summary` for a message ends the asking at once, for any reason, which is why agents are told to answer every request with a summary or a decline.
 
 A summary is removed with its message, and when the message is edited. Switching TL;DR off for a chat hides its summaries and keeps them. A summary is a model's reading of the message: unfold it when the details matter.
+
+<a id="The owner's chat"></a>
 
 ## The owner's chat
 
@@ -731,9 +783,11 @@ The reply has to be a reply to the card (hold the card, choose Reply), so that o
 
 **What it never does.** Deletes, blocks, changes to settings or your profile, and a first message to someone new are never put to you there and cannot be allowed from WhatsApp; they wait in tawk. An agent asked for one of these from the phone says that it needs the terminal.
 
-**Who can use it.** tawk tells your messages from the agent's by remembering what it sent: both carry your number. It does not check which of your devices wrote a message, so anyone holding your unlocked phone, or at another device linked to that number, can instruct the agent within these limits. See [[SECURITY]].
+**Who can use it.** tawk tells your messages from the agent's by remembering what it sent: both carry your number. It does not check which of your devices wrote a message, so anyone holding your unlocked phone, or at another device linked to that number, can instruct the agent within these limits. See [SECURITY](SECURITY.md).
 
 The settings are under Settings, Automation: how many answers an hour the agent may send there by itself (60), whether requests are put to you there at all, and how long they wait in tawk first (20 seconds; 0 asks on WhatsApp at once).
+
+<a id="Sending files"></a>
 
 ## Sending files
 
@@ -768,6 +822,8 @@ There are five ways to attach a file. Clicking ➕ in the input opens a small me
 
 The line above the input shows `📄 photo.jpg (2.1 MB)`. Type an optional caption and press Enter. Photos and videos are sent as media, audio files as audio, anything else as a document. The limit is 100 MB.
 
+<a id="The photo viewer"></a>
+
 ## The photo viewer
 
 Clicking a photo, video or PDF (or pressing Enter on it) opens it inside tawk, fitted to the window: as large as it goes while keeping its shape. In a Sixel terminal it is drawn in full resolution; elsewhere with blocks.
@@ -789,6 +845,8 @@ The top line shows who sent it, when, its position ("3 of 12") and, for a PDF, t
 ![A PDF open in the viewer on page 2, with a bar chart](docs/images/pdf-viewer.png)
 
 To skip the viewer and always use an outside program, set Settings, Media, Photos and videos, Image viewer (`image_viewer`) to `system` (your default viewer) or to a command such as `eog`.
+
+<a id="Notifications"></a>
 
 ## Notifications
 
@@ -812,6 +870,8 @@ Each of these can be turned on or off in Settings, Notifications. Do not disturb
 
 **One chat at a time.** A chat's [contact card](#contact-details) has **Notify me**: *for every message*, or *only when mentioned*. A busy group set to mentions only stays silent until someone names you, on all your numbers. Muting a chat is still there for silence altogether.
 
+<a id="Incoming calls"></a>
+
 ## Incoming calls
 
 When someone calls you on WhatsApp, a prompt appears above everything else with the caller's picture and name and how long it has been ringing. Its border pulses, and every three seconds tawk plays the notification sound and flashes the tab title (not while do not disturb is on).
@@ -822,6 +882,8 @@ When someone calls you on WhatsApp, a prompt appears above everything else with 
 - **Answer on phone** (Enter, Esc, Space or a click) only closes the prompt; the call keeps ringing on your phone so you can pick it up there.
 
 tawk cannot answer calls or carry their sound: neither backend implements WhatsApp's call audio, only the part that reports and declines calls. The prompt goes away by itself when the call is answered on another device, when the caller hangs up, or after a minute. Video calls are not shown.
+
+<a id="Your profile"></a>
 
 ## Your profile
 
@@ -837,6 +899,8 @@ Click your name in the header (right of the connection emoji) or type `/profile`
 | Esc, q or a click outside | Close the dialog |
 
 A ✎ at the end of a row marks what you can change; it turns into … while a change to that row is being saved.
+
+<a id="Name and about"></a>
 
 ### Name and about
 
@@ -856,6 +920,8 @@ Name and About open an editor with the current text and a character count (`12/2
 
 Pasted text goes in at the cursor, with line breaks turned into spaces. Your new name shows in the header, the tab title and Settings, Account once WhatsApp has accepted it, and your contacts see it on their next message from you.
 
+<a id="Photo"></a>
+
 ### Photo
 
 Choosing Photo (or clicking the picture) opens a menu:
@@ -873,13 +939,19 @@ Choosing Photo (or clicking the picture) opens a menu:
 
 View and Remove are offered only when you have a photo. A new photo is cropped to a square around its centre and scaled to 640 by 640 pixels, as the phone does. A video from the camera cannot be a profile photo.
 
+<a id="Saving"></a>
+
 ### Saving
 
 A short message in the footer says when a change is being saved ("Saving your name…") and then whether WhatsApp accepted it ("Your name is updated") or refused it, with the reason. tawk waits up to 30 seconds for an answer and then says WhatsApp did not answer; only one change to each of the name, about and photo is sent at a time. Changes need a connection to WhatsApp. Both backends can change your profile.
 
+<a id="Statuses"></a>
+
 ## Statuses
 
 tawk shows the statuses you and your contacts post, keeps them after WhatsApp stops showing them, and can post your own. Statuses never appear as chats and never count as unread messages or notify you.
+
+<a id="Viewing statuses"></a>
 
 ### Viewing statuses
 
@@ -932,6 +1004,8 @@ A photo or video is downloaded when you view it, with "Downloading…" shown unt
 
 Statuses that were posted before tawk was linked, or while it was closed, come in with the history your phone sends after linking, as long as WhatsApp still has them. A status its author deletes disappears from tawk too.
 
+<a id="Answering a status"></a>
+
 ### Answering a status
 
 Under someone else's status the viewer offers the same answers as the phone: eight quick emoji (😍 😂 😮 😢 👏 🎉 💯 🙏), `❤️ like` and `↩ reply`.
@@ -947,6 +1021,8 @@ Answering a status tells the person you saw it, even though viewing it alone doe
 
 ![Replies to statuses in a chat: a photo status and a text status shown in the bubbles](docs/images/status-reply-chat.png)
 
+<a id="Who saw your status"></a>
+
 ### Who saw your status
 
 Under each of your own statuses the viewer shows `Seen by 5 · ❤️ 2`: how many people have seen it and how many liked it. Press ↑ or `v`, or click it, for the list, as on the phone: everyone who saw the status, the most recent first, with the time they saw it and a heart beside those who liked it. ↑ ↓ or the wheel scroll it, and Esc, ← or a click outside goes back to the status. Only you see this; nobody else sees who viewed or liked your status, and there is no public count.
@@ -955,11 +1031,15 @@ Under each of your own statuses the viewer shows `Seen by 5 · ❤️ 2`: how ma
 
 When someone likes one of your statuses, the footer says so ("❤️ Mom liked your status"). A view counts once the person's phone sends its read receipt, so people who turned read receipts off, and views while you have yours off, do not appear (WhatsApp works the same way). Someone who liked a status before their view arrived shows with the heart and no time.
 
+<a id="The status archive"></a>
+
 ### The status archive
 
 WhatsApp shows a status for a day. After that tawk moves it to the Archive tab, where it stays for 30 days by default. The archive lists My status first and then everyone else, newest first, and works like the Recent tab. Change how long statuses are kept with Settings, Chats, Keep statuses (`status_keep_days`, 1 to 365 days); 1 keeps no archive. Statuses older than that are removed with their downloaded photos and videos, checked every ten minutes.
 
 WhatsApp's copy of a status's photo or video does not last, so while the archive is on tawk downloads it when the status arrives, following Settings, Media, Photos and videos, Auto-download media and its size limit (`auto_download`, `auto_download_max_mb`). Photos and videos too large for that limit are downloaded when you view them, if WhatsApp still has them. They live in the media folder, so the media cache limit (`media_cache_mb`) can remove the oldest of them early.
+
+<a id="Posting a status"></a>
 
 ### Posting a status
 
@@ -988,6 +1068,8 @@ Enter posts the status. The dialog stays open with "Posting…" until WhatsApp a
 ![On Baileys, + offers to switch to whatsmeow](docs/images/status-switch.png)
 
 Posting statuses needs the whatsmeow backend. On Baileys, + and `/status` explain that and offer to switch: choosing "Switch to whatsmeow" saves `backend = whatsmeow`, closes tawk cleanly and starts it again with the same options (apart from `--backend`). You then link this computer once more with a QR code or pairing code, since each backend keeps its own login; your chats, settings and statuses stay. A build of tawk without whatsmeow says so instead. Viewing statuses and the archive work on both backends.
+
+<a id="Settings panel"></a>
 
 ## Settings panel
 
@@ -1018,6 +1100,8 @@ Press F2, click ⚙ or type `/settings`. The panel is a set of menus:
 
 Move with ↑ ↓, open with Enter or →, go back with Esc or ←, or click. Switches toggle with Enter, numbers and choices change with ← → (or by clicking either end), and text fields open an editor where Enter saves. Click a part of the breadcrumb at the top to jump back to it. Every change is saved to the config file at once. A few settings (marked "restart required") take effect the next time tawk starts.
 
+<a id="Themes"></a>
+
 ## Themes
 
 Settings, Appearance, Theme, Choose theme lists every theme. Moving through the list previews each one on the whole screen; Enter keeps it and Esc returns to the theme you had. tawk ships 60 themes, including WhatsApp Dark and Light, Dracula, Nord, Gruvbox, Solarized, Catppuccin, Tokyo Night and retro ones such as Commodore 64, MS-DOS and Amber CRT.
@@ -1026,13 +1110,17 @@ A chat can also have its own theme for its conversation pane. Choose "Chat theme
 
 ![The chat theme picker over the chat list, previewing a theme on the conversation](docs/images/theme-picker.png) The picker opens over the chat list so the conversation stays visible: moving through the list previews each theme on the chat, Enter applies it and Esc cancels. The first entry, "App theme (no chat theme)", removes it again (as does `/theme default`). `/theme dracula` applies a theme by its id directly.
 
-To make your own, copy any file from `/usr/local/share/corvus-tawk/themes/` into `~/.config/corvus/tawk/themes/`, change the `id`, `name` and colours, then choose "Reload theme files". The format is described in [[CONFIGURATION#Themes|CONFIGURATION]].
+To make your own, copy any file from `/usr/local/share/corvus-tawk/themes/` into `~/.config/corvus/tawk/themes/`, change the `id`, `name` and colours, then choose "Reload theme files". The format is described in [CONFIGURATION](CONFIGURATION.md#Themes).
+
+<a id="Screensaver"></a>
 
 ## Screensaver
 
 The screensaver runs a command full screen over tawk, `corvus-matrix-clock` by default. It starts after a set number of idle minutes (5 by default), or straight away with Ctrl+L, `/screensaver`, `/lock` or Settings, Screensaver, Start screensaver now. Any key or mouse movement stops it and returns to tawk exactly as you left it. tawk keeps receiving messages meanwhile, updates the tab title, and can stop the screensaver when a message arrives. It does not start by itself while you are recording or linking a phone.
 
 The command can be anything that draws in a terminal (for example `cmatrix`, `pipes.sh` or `asciiquarium`). It runs in its own pseudo-terminal the size of the window. It is only run when the config file belongs to you and nobody else can write to it.
+
+<a id="When WhatsApp is unavailable"></a>
 
 ## When WhatsApp is unavailable
 
@@ -1043,6 +1131,8 @@ If the connection drops, tawk reconnects on its own, waiting a little longer aft
 The window closes by itself once WhatsApp is back. Press R to try immediately (it drops a connection that has gone stale and connects afresh), Q to quit or F2 for settings. If another WhatsApp Web session takes over your login, tawk waits for you to press R rather than fighting over the connection.
 
 tawk also watches your network adapters. When your addresses change, for example when you move from Wi-Fi to Ethernet or a phone hotspot, or a VPN comes up, it drops the old connection and reconnects within a few seconds. A connection attempt the backend never answers is retried after 45 seconds.
+
+<a id="Linking and unlinking"></a>
 
 ## Linking and unlinking
 
@@ -1068,9 +1158,13 @@ tawk appears on your phone under Linked devices (the name shown depends on the b
 
 WhatsApp sometimes addresses a person by a hidden id (a LID) instead of their phone number. tawk learns which LID belongs to which number from both backends and merges the two, so each person appears as one chat with one name. Chats that were split before a mapping was known join up on the next connect.
 
+<a id="Several accounts"></a>
+
 ## Several accounts
 
 tawk can hold more than one WhatsApp number at once. Every account is connected at the same time, in the one window, and they share one database. The number you linked first is the account called `main`.
+
+<a id="Adding and managing accounts"></a>
 
 ### Adding and managing accounts
 
@@ -1091,7 +1185,9 @@ Settings, Account, Accounts… opens the list. Each row shows the account's labe
 
 There can be up to eight accounts. A label is yours to choose and can be changed at any time.
 
-A second number carries the same risk as the first. tawk is an unofficial client, and WhatsApp can restrict or ban any number linked to one. Read the notice at the top of the [[README]] before you link another.
+A second number carries the same risk as the first. tawk is an unofficial client, and WhatsApp can restrict or ban any number linked to one. Read the notice at the top of the [README](README.md) before you link another.
+
+<a id="One chat list"></a>
 
 ### One chat list
 
@@ -1103,11 +1199,15 @@ A new message blinks the row of the account it reached, so someone on two of you
 
 Opening a chat brings its account into view.
 
+<a id="The same person on two numbers"></a>
+
 ### The same person on two numbers
 
 Someone who writes to two of your numbers has a chat in each. With `merge_accounts` on (Settings, Chats, the default), tawk shows them as one chat: one row in the list, and one conversation with the messages of both in order. Each message from an account other than the one you are answering from is marked with its account's label. Nothing changes on WhatsApp: the two chats stay separate there, and the other person sees whichever number each message came from. A group that two of your numbers are both in shows once, with each message once.
 
 You can decide for one contact as well. Open the contact card (click the name, Alt+I or `/info`) and step **Merge across my numbers** through *follow the setting*, *always* and *never*.
+
+<a id="Which number a message is sent from"></a>
 
 ### Which number a message is sent from
 
@@ -1121,6 +1221,8 @@ In a merged chat the input shows `as <label>` beside it: the account your next m
 - Settings, Account, Accounts…, then s, lists every contact with a sending number of its own. Enter or Space steps a contact to the next number, and x or Delete clears its choice.
 
 A reply to a message always goes out from the account that message is in, since WhatsApp can only quote a message in its own chat.
+
+<a id="Agents and accounts"></a>
 
 ### Agents and accounts
 
@@ -1141,9 +1243,13 @@ An agent's new message follows the same rule as yours: unless you tell the agent
 
 When an agent asks to send something, the Agentic tab names the account in brackets after the chat, in the queue, in the detail and in the log, so you can see which number it would go out from.
 
+<a id="What happens when you update"></a>
+
 ### What happens when you update
 
 The first time a tawk with accounts opens your database it upgrades it in place. A copy of the database as it was is kept beside it first. Your existing number becomes the account `main`, with all its chats, and nothing else changes until you add a second account.
+
+<a id="Locking tawk"></a>
 
 ## Locking tawk
 
@@ -1155,6 +1261,8 @@ To have it lock by itself, set Settings, Screensaver, **Lock after (minutes)**. 
 - tawk keeps running behind the lock. Messages arrive, sounds and system notifications follow your settings, scheduled messages go out and agents are served. A request waiting for your answer waits, or expires, as it would if you were away.
 - Without encrypted chats there is no passphrase to ask for, so Ctrl+L and `/lock` start the screensaver, as they always did. `/screensaver` starts it either way.
 - It keeps a passer-by out of your chats. It does not protect a computer someone else can log in to; the database's own encryption does that once tawk is closed.
+
+<a id="Encrypting your chats"></a>
 
 ## Encrypting your chats
 
@@ -1171,6 +1279,8 @@ Passphrase for your chats:
 ```
 
 You get three tries; after that tawk stops without opening anything. Restarting tawk to switch backends asks again.
+
+<a id="Opening without typing"></a>
 
 ### Opening without typing
 
@@ -1198,6 +1308,8 @@ A few things to know:
 - **What is not encrypted.** The WhatsApp login (`~/.local/share/corvus/tawk/auth/`), downloaded media (`~/.cache/corvus/tawk/media/`), your settings and the logs stay as they were, protected by owner-only permissions. Someone with the login files can use your account as a linked device; remove tawk from Linked devices on your phone if your computer goes missing.
 - **It needs SQLCipher.** Encryption is available when tawk is built with SQLCipher, which the installer adds. `corvus-tawk --doctor` shows whether this build has it and whether your chats are encrypted.
 
+<a id="Backups"></a>
+
 ## Backups
 
 A backup is one file holding your chats, settings and your own themes, and on request your media and the WhatsApp login. It is always encrypted with a passphrase you choose, so it is safe to keep on a USB stick or a cloud drive.
@@ -1221,6 +1333,8 @@ A backup made by tawk 0.18.0 or later also carries a check over every byte. If t
 **Restoring.** tawk asks before it replaces anything (`--yes` skips the question), then for the backup's passphrase. It checks every file in the backup before unpacking any of it, and refuses a backup that holds links or anything outside its own folders. What it replaces is not deleted: it is renamed with a suffix such as `.before-restore-20260930-141502`, so `tawk.db.before-restore-20260930-141502` sits beside the restored database. Delete those once you are happy. A backup without the login leaves your current login as it is.
 
 Backups need `openssl` and `tar`, which `corvus-tawk --doctor` checks. Like the encryption commands, they refuse to run while tawk is running. There is no way to open a backup without its passphrase.
+
+<a id="Moving an account to another computer"></a>
 
 ## Moving an account to another computer
 
@@ -1248,9 +1362,13 @@ corvus-tawk --migrate-in ~/personal.tawk --label "Phone 2"
 
 Packing and bringing in refuse to run while tawk is running, like backups, and they need `openssl` and `tar`. They are commands for you: there is no way for an agent to start, see or influence one. corvus-tawk-mcp keeps its own memory (voices, contact profiles, templates) per computer; see its manual for moving that.
 
+<a id="Automation and MCP"></a>
+
 ## Automation and MCP
 
-Other programs on your computer can reach a running tawk: [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk), which lets an AI assistant such as Claude Code read your chats and, when you allow it, act for you, and tawk's own shell commands for scripts and status bars. They talk to tawk over a private socket described in [[CONTROL]]. Nothing can connect until you turn it on.
+Other programs on your computer can reach a running tawk: [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk), which lets an AI assistant such as Claude Code read your chats and, when you allow it, act for you, and tawk's own shell commands for scripts and status bars. They talk to tawk over a private socket described in [CONTROL](CONTROL.md). Nothing can connect until you turn it on.
+
+<a id="Turning it on"></a>
 
 ### Turning it on
 
@@ -1285,6 +1403,8 @@ Under **Answering for itself**:
 
 ![The Automation settings](docs/images/settings-automation.png)
 
+<a id="Voice note transcription"></a>
+
 ### Voice note transcription
 
 Settings, Automation has a submenu, **Voice note transcription**. tawk does not transcribe anything itself: these are your choices for an agent's transcriber, corvus-tawk-mcp started with `--transcribe`, which reads them and does the work on your computer.
@@ -1298,6 +1418,8 @@ Settings, Automation has a submenu, **Voice note transcription**. tawk does not 
 An agent can read these and cannot change them.
 
 The three settings show only while an agent is connected. With none connected, the submenu says **No agent connected**; your choices are kept and come back when one connects.
+
+<a id="Agent events"></a>
 
 ### Agent events
 
@@ -1316,6 +1438,8 @@ Settings, Automation has a submenu, **Agent events**, for what agents are told a
 ![The Agent events section with a switch for each kind of event](docs/images/settings-agent-events.png)
 
 With a switch off the agent is simply not told; it still sees messages when it reads a chat. Your own `corvus-tawk tail` always shows messages and none of the other kinds. corvus-tawk-mcp has a matching option for each (`CORVUS_TAWK_MCP_CHANNEL_OWN`, `_READ`, `_REACTIONS`, `_EDITS`, `_SCHEDULED`) for what it passes on to the agent, so a kind reaches the agent only when both sides have it on.
+
+<a id="The Agentic tab"></a>
 
 ### The Agentic tab
 
@@ -1358,6 +1482,8 @@ A request nobody answers is declined by itself: after 5 minutes, or 2 for HIGH o
 
 ![The log of what agents did](docs/images/agents-log.png)
 
+<a id="Letting an agent answer for itself"></a>
+
 ### Letting an agent answer for itself
 
 By default every send waits for you. Set **What they may do** to **admin** and an agent you trust can answer its own requests instead, within limits you set. It is meant for an agent that runs while you are away from tawk.
@@ -1380,21 +1506,29 @@ A request the agent may not answer simply stays in the Queue for you. Each one i
 
 Admin is the widest access there is: a message someone sends you can try to steer the agent (prompt injection), and with admin a steered agent can send in the chats you switched on without you seeing it first. Switch on few chats, keep the hourly number low, and read the Log.
 
+<a id="Destructive requests"></a>
+
 ### Destructive requests
 
 Deleting a message or a chat, clearing a chat, blocking someone, removing your profile photo and cancelling a message waiting to be sent take two separate yeses. The agent's first request only gets a one-time token back; corvus-tawk-mcp keeps that token from the model and asks you in your MCP client. Only if you agree there does it confirm, and then tawk asks again: a HIGH request ignores a, and Shift+A opens a warning that starts on Keep, where only Y allows it. Your own shell commands go through the same two steps.
 
 ![A HIGH request asking once more before anything is deleted](docs/images/agents-high.png)
 
+<a id="Drafts from agents"></a>
+
 ### Drafts from agents
 
 The safest way for an agent to help you write is a draft: it puts the text in that chat's input box and sends nothing. When the chat is open the draft appears in the input (below anything you had typed); otherwise it waits with the chat and a line says so. Edit it and send it as usual. A draft already waiting is never overwritten.
+
+<a id="Files from agents"></a>
 
 ### Files from agents
 
 An agent can send a photo, video, audio file or document from this computer, with a caption (tawk 0.22.0 or later, with corvus-tawk-mcp 0.15.0 or later). You are asked about every one, and no agent can answer for you: the question is HIGH risk, it shows the file's name, what kind of file it is and how big, and you may edit the caption before you allow it. The file is copied into tawk's media folder and goes out as any file you send.
 
 Some files are refused before you are asked, because they are tawk's own or hold secrets: tawk's login, accounts, database and settings file; anything inside `.ssh`, `.gnupg`, `.aws`, `.azure`, `.kube`, `.docker`, `.config/gcloud`, `.config/gh` or `.password-store` in your home folder; and files named `.env`, `.netrc`, `.npmrc`, `.pgpass`, `id_rsa`, `id_dsa`, `id_ecdsa` or `id_ed25519`. Folders, empty files and files over 100 MB are refused as well. tawk looks at the file again after your answer, in case it changed while you decided. If you have the AI disclaimer on, it is added as the caption of a file that has none.
+
+<a id="Writing to someone new"></a>
 
 ### Writing to someone new
 
@@ -1405,6 +1539,8 @@ You are asked about it as "start a new chat with this message", with the name yo
 "Chats they may use" decides here too: with a list, only the people on it can be reached. Someone whose chat you locked is not found by their number either. tawk does not check that a number is on WhatsApp, so a message to one that is not is queued and then shows as failed. Reading, drafting and everything else still need a chat that is already there.
 
 `corvus-tawk send` reaches someone new the same way. It asks first when "Ask for shell commands too" is on.
+
+<a id="Shell commands"></a>
 
 ### Shell commands
 
@@ -1419,9 +1555,13 @@ corvus-tawk status-line [--format F]   for tmux or waybar: 💬 3 @1, or nothing
 
 A chat is a name, the start of a word in its name, or a phone number. `--format` takes `{unread}`, `{mentions}` and `{chats}`. `corvus-tawk send` exits with 0 when sent, 2 when declined or not allowed, and 3 when no tawk is listening. For tmux, add `set -g status-right '#(tawk status-line)'`.
 
+<a id="corvus-tawk-mcp"></a>
+
 ### corvus-tawk-mcp
 
 [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk) is the MCP server for tawk. It serves MCP over streamable HTTP on `http://127.0.0.1:8765/mcp` with a bearer token (stdio with `--stdio`), and gives an MCP client tools to list and read chats, search, see unread counts and statuses, draft and send messages, and, with manage access, the rest of tawk. It starts whether or not tawk is running and connects as soon as tawk's socket appears. Its README covers installing it and adding it to Claude Code, Claude Desktop, VS Code or Docker.
+
+<a id="Command line"></a>
 
 ## Command line
 
@@ -1448,6 +1588,8 @@ The last line lists the [shell commands](#shell-commands), which talk to a tawk 
 
 See `man corvus-tawk` after installing.
 
+<a id="Checking your setup"></a>
+
 ## Checking your setup
 
 `corvus-tawk --doctor` checks everything tawk needs without changing the chat database, writing any file or connecting to WhatsApp, and says how to fix what is missing. It does not need an interactive terminal, so it also works in scripts. The installer runs it at the end.
@@ -1466,6 +1608,8 @@ See `man corvus-tawk` after installing.
 
 Each line is marked ✓ (fine), `!` (optional, with a hint such as `sudo apt install ffmpeg`) or ✗ (required). The exit status is 1 when something required is missing (a usable terminal, a writable data folder, or a backend that can run) and 0 otherwise, even when optional items are missing.
 
+<a id="Troubleshooting"></a>
+
 ## Troubleshooting
 
 | Symptom | What to do |
@@ -1473,7 +1617,7 @@ Each line is marked ✓ (fine), `!` (optional, with a hint such as `sudo apt ins
 | Something does not work and you are not sure why | Run `corvus-tawk --doctor` and follow its hints |
 | The QR code does not fit | Enlarge the window or choose "Use my phone number instead" |
 | Right-click or Ctrl+click opens the terminal's own menu (macOS) | The terminal keeps the click for itself. In iTerm2, open Settings, Pointer and remove the right-button "Open Context Menu" binding, and turn on reporting Control-click to apps; tawk treats Ctrl+click as a right-click. Alt+M and Alt+O open the same menus from the keyboard |
-| Black lines through the chat bubbles, jagged profile badges (macOS) | The macOS Terminal app draws block characters from the font, which leaves gaps between rows; use iTerm2, WezTerm or Ghostty, which draw them to fill the cell. See [[README#Installing on macOS|Installing on macOS]] |
+| Black lines through the chat bubbles, jagged profile badges (macOS) | The macOS Terminal app draws block characters from the font, which leaves gaps between rows; use iTerm2, WezTerm or Ghostty, which draw them to fill the cell. See [Installing on macOS](README.md#Installing%20on%20macOS) |
 | Profile pictures show as initials | The terminal does not support Sixel, and chat-list badges are too small for block pictures; use a Sixel terminal such as iTerm2 3.5+ or WezTerm, or set `image_mode = sixel` in the `[appearance]` section of the config file if yours supports it |
 | Boxes or emoji look wrong | Use a UTF-8 locale (`locale` should show UTF-8) and a font with emoji, such as Cascadia Code in Windows Terminal |
 | No photo previews | Previews need 256 colours (`TERM=xterm-256color`); check Settings, Appearance, Layout, Photo previews |
@@ -1488,7 +1632,7 @@ Each line is marked ✓ (fine), `!` (optional, with a hint such as `sudo apt ins
 | Voice notes will not record | Install ffmpeg; under WSL make sure WSLg is running (`pactl info` should answer) |
 | Media will not open | Set a viewer in Settings, Media, Photos and videos, or check `xdg-mime query default image/jpeg` |
 | Older messages do not load | Your phone must be online to send older history; tawk stops waiting after 20 seconds |
-| + offers to switch backends | Posting statuses needs whatsmeow; switch when asked and link again, or set `backend = whatsmeow` yourself (see [[CONFIGURATION#Choosing a backend|CONFIGURATION]]) |
+| + offers to switch backends | Posting statuses needs whatsmeow; switch when asked and link again, or set `backend = whatsmeow` yourself (see [CONFIGURATION](CONFIGURATION.md#Choosing%20a%20backend)) |
 | Stuck on 🟡 after changing networks | tawk reconnects within a few seconds of a network change; to reconnect at once, press R in the unavailable window or choose Settings, Connection, Reconnect now |
 | `corvus-tawk send` says no tawk is listening | Turn on Settings, Automation, Agent access; tawk must be running. A socket path over 107 characters (a very long `XDG_RUNTIME_DIR`) cannot be used: the Automation line says so; set `CORVUS_TAWK_CONTROL_SOCKET` to a shorter path |
 | An agent's request never appears | Check the badge and F3; requests outside the chats you allowed, or beyond what the access allows, are refused at once and show in the Log |

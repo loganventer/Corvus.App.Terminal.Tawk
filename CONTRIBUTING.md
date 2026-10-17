@@ -1,15 +1,17 @@
 # Contributing
 
-Issues and pull requests are welcome. This page holds the rules the code follows and what a change needs before it is merged. [[ARCHITECTURE]] describes every layer and component, and [[HOW_IT_WORKS]] shows the flows.
+Issues and pull requests are welcome. This page holds the rules the code follows and what a change needs before it is merged. [ARCHITECTURE](ARCHITECTURE.md) describes every layer and component, and [HOW_IT_WORKS](HOW_IT_WORKS.md) shows the flows.
 
 ## Contents
 
-- [[#The rules]]
-- [[#Where code goes]]
-- [[#Build and test]]
-- [[#Pull requests]]
-- [[#Writing]]
-- [[#Release notes]]
+- [The rules](#The%20rules)
+- [Where code goes](#Where%20code%20goes)
+- [Build and test](#Build%20and%20test)
+- [Pull requests](#Pull%20requests)
+- [Writing](#Writing)
+- [Release notes](#Release%20notes)
+
+<a id="The rules"></a>
 
 ## The rules
 
@@ -24,6 +26,8 @@ Every change keeps to these six. A pull request that breaks one is sent back, ho
 | Composition over inheritance | Behaviour is assembled from small parts: the composite notifier, the composite event observer, the caching decorators, the audio strategy. Wrap or combine a contract to extend it |
 | Separation of concerns | Policy in engines (no I/O), orchestration in managers, I/O at the edges in resource access and infrastructure. Widgets draw, managers decide, stores persist |
 
+<a id="Where code goes"></a>
+
 ## Where code goes
 
 | You are adding | It goes in |
@@ -36,9 +40,11 @@ Every change keeps to these six. A pull request that breaks one is sent back, ho
 | A domain type or enum | `core` |
 | A helper with no knowledge of tawk's domain | `utilities` |
 | Anything drawn or typed in the terminal | `clients/tui` |
-| An operation for agents or the shell commands | `clients/control`, and documented in [[CONTROL]] |
+| An operation for agents or the shell commands | `clients/control`, and documented in [CONTROL](CONTROL.md) |
 
-The "Adding things" section of [[ARCHITECTURE]] walks through the common cases step by step.
+The "Adding things" section of [ARCHITECTURE](ARCHITECTURE.md) walks through the common cases step by step.
+
+<a id="Build and test"></a>
 
 ## Build and test
 
@@ -52,13 +58,17 @@ make check      # smoke test: runs ./corvus-tawk --version
 
 A change that alters behaviour comes with a test in `tests/`, added to `TESTS` in the `Makefile`. Tests must run without a WhatsApp account.
 
+<a id="Pull requests"></a>
+
 ## Pull requests
 
 - One change per pull request, with a title that says what it does.
 - `make` with no warnings and `make test` passing, on your own machine, before you open it.
-- Update the documentation the change touches: [[MANUAL]] for anything a user sees, [[CONFIGURATION]] for a setting, [[CONTROL]] for the control socket, [[ARCHITECTURE]] for a new component or contract.
+- Update the documentation the change touches: [MANUAL](MANUAL.md) for anything a user sees, [CONFIGURATION](CONFIGURATION.md) for a setting, [CONTROL](CONTROL.md) for the control socket, [ARCHITECTURE](ARCHITECTURE.md) for a new component or contract.
 - A change to a screen in the manual needs its picture redrawn (`make screenshots`).
 - Say what you tested and on which system (Linux, macOS, WSL).
+
+<a id="Writing"></a>
 
 ## Writing
 
@@ -67,6 +77,8 @@ A change that alters behaviour comes with a test in `tests/`, added to `TESTS` i
 - Comments only where the reason is not obvious from the code.
 - Commit messages say what the change does, in the project's own voice, with no co-author or "generated with" lines.
 
+<a id="Release notes"></a>
+
 ## Release notes
 
-Every version gets a section at the top of [[RELEASE_NOTES]], headed `## <version> (<date>)`, with one plain line for each change a user would notice. `corvus-tawk --update` prints every section above the installed version, so a change that is not written there is a change nobody is told about. The commit that raises the version also adds its section.
+Every version gets a section at the top of [RELEASE_NOTES](RELEASE_NOTES.md), headed `## <version> (<date>)`, with one plain line for each change a user would notice. `corvus-tawk --update` prints every section above the installed version, so a change that is not written there is a change nobody is told about. The commit that raises the version also adds its section.
