@@ -11,6 +11,19 @@ not scan a QR code again.
 This file and `scripts/migrate-from-legacy.sh` are the only places that still
 name the old command, folders and variables, apart from the legacy-symlink code.
 
+## Contents
+
+- [[#Old to new]]
+  - [[#Commands and installed files]]
+  - [[#Environment variables]]
+  - [[#Per-user paths]]
+  - [[#Names other programs see]]
+  - [[#Kept on purpose]]
+- [[#What the migration script does]]
+- [[#Switching a live install over]]
+  - [[#Rollback]]
+  - [[#Cleaning up, once corvus-tawk runs well]]
+
 ## Old to new
 
 ### Commands and installed files
@@ -92,8 +105,8 @@ File names inside the folders do not change.
 - The file names `tawk.db`, `tawk.log`, `tawk.lock`, `auth/`, `accounts/`, and
   the names inside backups and account packages (`tawk.db`, `manifest.txt`,
   the `.tawk` package extension).
-- The control protocol (protocol 1, every op, event and field), CONTROL.md and
-  PROTOCOL.md apart from names, paths and variables.
+- The control protocol (protocol 1, every op, event and field), [[CONTROL]] and
+  [[PROTOCOL]] apart from names, paths and variables.
 - The database schema (version 27) and the whatsmeow and Baileys session files.
 - C identifiers (`tawk_wm_emit`, `libtawkwm`, the SQL function `tawk_media_path`).
 

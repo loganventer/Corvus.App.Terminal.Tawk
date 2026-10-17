@@ -2,68 +2,80 @@
 
 The screenshots in this manual were taken from tawk running on a demo account with made-up chats. Chat names and message text are blurred; everything else is exactly what tawk draws. They were taken inside tmux, so photos appear in block mode; in Windows Terminal and other Sixel terminals they are drawn in full resolution. The pictures of your profile, statuses, the camera, the formatted conversation and the start-up splash are drawn by tawk's own code with made-up data (`make screenshots` draws them again; it needs Python with Pillow and the DejaVu fonts, whose folder `CORVUS_TAWK_SHOT_FONTS` names when it is not `/usr/share/fonts/truetype/dejavu`).
 
-## Table of Contents
+## Contents
 
-- [Screen layout](#screen-layout)
-- [Keyboard](#keyboard)
-- [Slash commands](#slash-commands)
-- [Mouse](#mouse)
-- [Chats](#chats)
-- [Finding your way in a long list](#finding-your-way-in-a-long-list)
-- [Chat options](#chat-options)
-- [Soft lock](#soft-lock)
-- [Contact details](#contact-details)
-- [Deleting chats and messages](#deleting-chats-and-messages)
-- [Messages and media](#messages-and-media)
-- [Replies, reactions and edits](#replies-reactions-and-edits)
-- [Forwarding](#forwarding)
-- [Scheduled messages](#scheduled-messages)
-- [Emoji](#emoji)
-- [Search](#search)
-- [Voice notes](#voice-notes)
-- [TL;DR mode](#tldr-mode)
-- [The owner's chat](#the-owners-chat)
-- [Sending files](#sending-files)
-- [The photo viewer](#the-photo-viewer)
-- [Notifications](#notifications)
-- [Incoming calls](#incoming-calls)
-- [Your profile](#your-profile)
-- [Statuses](#statuses)
-  - [Viewing statuses](#viewing-statuses)
-  - [Answering a status](#answering-a-status)
-  - [Who saw your status](#who-saw-your-status)
-  - [The status archive](#the-status-archive)
-  - [Posting a status](#posting-a-status)
-- [Settings panel](#settings-panel)
-- [Themes](#themes)
-- [Screensaver](#screensaver)
-- [When WhatsApp is unavailable](#when-whatsapp-is-unavailable)
-- [Linking and unlinking](#linking-and-unlinking)
-- [Several accounts](#several-accounts)
-  - [Adding and managing accounts](#adding-and-managing-accounts)
-  - [One chat list](#one-chat-list)
-  - [The same person on two numbers](#the-same-person-on-two-numbers)
-  - [Which number a message is sent from](#which-number-a-message-is-sent-from)
-  - [Agents and accounts](#agents-and-accounts)
-  - [What happens when you update](#what-happens-when-you-update)
-- [Locking tawk](#locking-tawk)
-- [Encrypting your chats](#encrypting-your-chats)
-- [Backups](#backups)
-- [Moving an account to another computer](#moving-an-account-to-another-computer)
-- [Automation and MCP](#automation-and-mcp)
-  - [Turning it on](#turning-it-on)
-  - [Agent events](#agent-events)
-  - [The Agentic tab](#the-agentic-tab)
-  - [Letting an agent answer for itself](#letting-an-agent-answer-for-itself)
-  - [Destructive requests](#destructive-requests)
-  - [Drafts from agents](#drafts-from-agents)
-  - [Files from agents](#files-from-agents)
-  - [Writing to someone new](#writing-to-someone-new)
-  - [Shell commands](#shell-commands)
-  - [corvus-tawk-mcp](#corvus-tawk-mcp)
-- [Command line](#command-line)
-- [Checking your setup](#checking-your-setup)
-- [Troubleshooting](#troubleshooting)
+- [[#Screen layout]]
+- [[#Keyboard]]
+  - [[#New lines with Shift+Enter]]
+  - [[#Alt shortcuts on a Mac]]
+- [[#Slash commands]]
+- [[#Mouse]]
+- [[#Chats]]
+  - [[#Typing and online status]]
+- [[#Finding your way in a long list]]
+- [[#Chat options]]
+- [[#Soft lock]]
+- [[#Contact details]]
+- [[#Deleting chats and messages]]
+- [[#Messages and media]]
+  - [[#The message menu]]
+  - [[#Formatting]]
+  - [[#Link previews]]
+  - [[#Mentions]]
+- [[#Replies, reactions and edits]]
+- [[#Forwarding]]
+- [[#Scheduled messages]]
+- [[#Emoji]]
+- [[#Search]]
+- [[#Voice notes]]
+- [[#TL;DR mode]]
+- [[#The owner's chat]]
+- [[#Sending files]]
+- [[#The photo viewer]]
+- [[#Notifications]]
+- [[#Incoming calls]]
+- [[#Your profile]]
+  - [[#Name and about]]
+  - [[#Photo]]
+  - [[#Saving]]
+- [[#Statuses]]
+  - [[#Viewing statuses]]
+  - [[#Answering a status]]
+  - [[#Who saw your status]]
+  - [[#The status archive]]
+  - [[#Posting a status]]
+- [[#Settings panel]]
+- [[#Themes]]
+- [[#Screensaver]]
+- [[#When WhatsApp is unavailable]]
+- [[#Linking and unlinking]]
+- [[#Several accounts]]
+  - [[#Adding and managing accounts]]
+  - [[#One chat list]]
+  - [[#The same person on two numbers]]
+  - [[#Which number a message is sent from]]
+  - [[#Agents and accounts]]
+  - [[#What happens when you update]]
+- [[#Locking tawk]]
+- [[#Encrypting your chats]]
+  - [[#Opening without typing]]
+- [[#Backups]]
+- [[#Moving an account to another computer]]
+- [[#Automation and MCP]]
+  - [[#Turning it on]]
+  - [[#Voice note transcription]]
+  - [[#Agent events]]
+  - [[#The Agentic tab]]
+  - [[#Letting an agent answer for itself]]
+  - [[#Destructive requests]]
+  - [[#Drafts from agents]]
+  - [[#Files from agents]]
+  - [[#Writing to someone new]]
+  - [[#Shell commands]]
+  - [[#corvus-tawk-mcp]]
+- [[#Command line]]
+- [[#Checking your setup]]
+- [[#Troubleshooting]]
 
 ## Screen layout
 
@@ -466,7 +478,7 @@ Any photo, video, voice note or file can also be saved with "💾 Save to Downlo
 
 Other media shows as a short labelled line: `📄 Document ↗`, `🔖 Sticker ↗`, or `⤓` instead of `↗` when the file has not been downloaded yet. Photos, videos, stickers and voice notes download automatically up to the size set in Settings, Media, Photos and videos. Selecting a file that is not downloaded downloads it and then opens it. Videos play in the first player found of mpv, vlc, celluloid, totem and ffplay (installed with ffmpeg), because a desktop's default for video is sometimes an image viewer. Other files open in your system's default application: `xdg-open` on Linux, `open` on macOS, and `wslview` or Windows Explorer under WSL when Windows interop is enabled. You can name a specific player in Settings, Media, Photos and videos, Video player.
 
-tawk draws the picture in one of two ways, chosen by `image_mode` in the `[appearance]` section of the config file (it is not in the settings panel; see [CONFIGURATION.md](CONFIGURATION.md#appearance)):
+tawk draws the picture in one of two ways, chosen by `image_mode` in the `[appearance]` section of the config file (it is not in the settings panel; see [[CONFIGURATION#appearance|CONFIGURATION]]):
 
 - **sixel** draws real pixels. Windows Terminal (1.22 or later), WezTerm, foot, mlterm and contour support it. A picture is encoded once with a palette of 256 colours taken from the photo, and is redrawn only when it moves or something covered it. While a menu or other window is open over the conversation, pictures fall back to blocks so the window stays readable.
 - **blocks** draws the picture with coloured half-block characters, two picture pixels per character cell. It works in any terminal with 256 colours, including inside tmux and screen.
@@ -719,7 +731,7 @@ The reply has to be a reply to the card (hold the card, choose Reply), so that o
 
 **What it never does.** Deletes, blocks, changes to settings or your profile, and a first message to someone new are never put to you there and cannot be allowed from WhatsApp; they wait in tawk. An agent asked for one of these from the phone says that it needs the terminal.
 
-**Who can use it.** tawk tells your messages from the agent's by remembering what it sent: both carry your number. It does not check which of your devices wrote a message, so anyone holding your unlocked phone, or at another device linked to that number, can instruct the agent within these limits. See [SECURITY.md](SECURITY.md).
+**Who can use it.** tawk tells your messages from the agent's by remembering what it sent: both carry your number. It does not check which of your devices wrote a message, so anyone holding your unlocked phone, or at another device linked to that number, can instruct the agent within these limits. See [[SECURITY]].
 
 The settings are under Settings, Automation: how many answers an hour the agent may send there by itself (60), whether requests are put to you there at all, and how long they wait in tawk first (20 seconds; 0 asks on WhatsApp at once).
 
@@ -1014,7 +1026,7 @@ A chat can also have its own theme for its conversation pane. Choose "Chat theme
 
 ![The chat theme picker over the chat list, previewing a theme on the conversation](docs/images/theme-picker.png) The picker opens over the chat list so the conversation stays visible: moving through the list previews each theme on the chat, Enter applies it and Esc cancels. The first entry, "App theme (no chat theme)", removes it again (as does `/theme default`). `/theme dracula` applies a theme by its id directly.
 
-To make your own, copy any file from `/usr/local/share/corvus-tawk/themes/` into `~/.config/corvus/tawk/themes/`, change the `id`, `name` and colours, then choose "Reload theme files". The format is described in [CONFIGURATION.md](CONFIGURATION.md#themes).
+To make your own, copy any file from `/usr/local/share/corvus-tawk/themes/` into `~/.config/corvus/tawk/themes/`, change the `id`, `name` and colours, then choose "Reload theme files". The format is described in [[CONFIGURATION#Themes|CONFIGURATION]].
 
 ## Screensaver
 
@@ -1079,7 +1091,7 @@ Settings, Account, Accounts… opens the list. Each row shows the account's labe
 
 There can be up to eight accounts. A label is yours to choose and can be changed at any time.
 
-A second number carries the same risk as the first. tawk is an unofficial client, and WhatsApp can restrict or ban any number linked to one. Read the notice at the top of the [README](README.md) before you link another.
+A second number carries the same risk as the first. tawk is an unofficial client, and WhatsApp can restrict or ban any number linked to one. Read the notice at the top of the [[README]] before you link another.
 
 ### One chat list
 
@@ -1238,7 +1250,7 @@ Packing and bringing in refuse to run while tawk is running, like backups, and t
 
 ## Automation and MCP
 
-Other programs on your computer can reach a running tawk: [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk), which lets an AI assistant such as Claude Code read your chats and, when you allow it, act for you, and tawk's own shell commands for scripts and status bars. They talk to tawk over a private socket described in [CONTROL.md](CONTROL.md). Nothing can connect until you turn it on.
+Other programs on your computer can reach a running tawk: [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk), which lets an AI assistant such as Claude Code read your chats and, when you allow it, act for you, and tawk's own shell commands for scripts and status bars. They talk to tawk over a private socket described in [[CONTROL]]. Nothing can connect until you turn it on.
 
 ### Turning it on
 
@@ -1461,7 +1473,7 @@ Each line is marked ✓ (fine), `!` (optional, with a hint such as `sudo apt ins
 | Something does not work and you are not sure why | Run `corvus-tawk --doctor` and follow its hints |
 | The QR code does not fit | Enlarge the window or choose "Use my phone number instead" |
 | Right-click or Ctrl+click opens the terminal's own menu (macOS) | The terminal keeps the click for itself. In iTerm2, open Settings, Pointer and remove the right-button "Open Context Menu" binding, and turn on reporting Control-click to apps; tawk treats Ctrl+click as a right-click. Alt+M and Alt+O open the same menus from the keyboard |
-| Black lines through the chat bubbles, jagged profile badges (macOS) | The macOS Terminal app draws block characters from the font, which leaves gaps between rows; use iTerm2, WezTerm or Ghostty, which draw them to fill the cell. See [Installing on macOS](README.md#installing-on-macos) |
+| Black lines through the chat bubbles, jagged profile badges (macOS) | The macOS Terminal app draws block characters from the font, which leaves gaps between rows; use iTerm2, WezTerm or Ghostty, which draw them to fill the cell. See [[README#Installing on macOS|Installing on macOS]] |
 | Profile pictures show as initials | The terminal does not support Sixel, and chat-list badges are too small for block pictures; use a Sixel terminal such as iTerm2 3.5+ or WezTerm, or set `image_mode = sixel` in the `[appearance]` section of the config file if yours supports it |
 | Boxes or emoji look wrong | Use a UTF-8 locale (`locale` should show UTF-8) and a font with emoji, such as Cascadia Code in Windows Terminal |
 | No photo previews | Previews need 256 colours (`TERM=xterm-256color`); check Settings, Appearance, Layout, Photo previews |
@@ -1476,7 +1488,7 @@ Each line is marked ✓ (fine), `!` (optional, with a hint such as `sudo apt ins
 | Voice notes will not record | Install ffmpeg; under WSL make sure WSLg is running (`pactl info` should answer) |
 | Media will not open | Set a viewer in Settings, Media, Photos and videos, or check `xdg-mime query default image/jpeg` |
 | Older messages do not load | Your phone must be online to send older history; tawk stops waiting after 20 seconds |
-| + offers to switch backends | Posting statuses needs whatsmeow; switch when asked and link again, or set `backend = whatsmeow` yourself (see [CONFIGURATION.md](CONFIGURATION.md#choosing-a-backend)) |
+| + offers to switch backends | Posting statuses needs whatsmeow; switch when asked and link again, or set `backend = whatsmeow` yourself (see [[CONFIGURATION#Choosing a backend|CONFIGURATION]]) |
 | Stuck on 🟡 after changing networks | tawk reconnects within a few seconds of a network change; to reconnect at once, press R in the unavailable window or choose Settings, Connection, Reconnect now |
 | `corvus-tawk send` says no tawk is listening | Turn on Settings, Automation, Agent access; tawk must be running. A socket path over 107 characters (a very long `XDG_RUNTIME_DIR`) cannot be used: the Automation line says so; set `CORVUS_TAWK_CONTROL_SOCKET` to a shorter path |
 | An agent's request never appears | Check the badge and F3; requests outside the chats you allowed, or beyond what the access allows, are refused at once and show in the Log |

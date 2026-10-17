@@ -1,18 +1,19 @@
 # Architecture
 
-## Table of Contents
+## Contents
 
-- [Overview](#overview)
-- [Layers](#layers)
-- [Component map](#component-map)
-- [Contracts](#contracts)
-- [Composition root](#composition-root)
-- [Accounts](#accounts)
-- [Threads](#threads)
-- [Backends](#backends)
-- [Storage](#storage)
-- [Design principles](#design-principles)
-- [Adding things](#adding-things)
+- [[#Overview]]
+- [[#Layers]]
+- [[#Component map]]
+- [[#Contracts]]
+  - [[#Client widgets]]
+- [[#Composition root]]
+- [[#Accounts]]
+- [[#Threads]]
+- [[#Backends]]
+- [[#Storage]]
+- [[#Design principles]]
+- [[#Adding things]]
 
 ## Overview
 
@@ -23,7 +24,7 @@ tawk is one C11 program arranged in [iDesign](https://www.idesign.net/) layers. 
 | Layer | Folder | Responsibility | May call |
 |---|---|---|---|
 | Composition | `composition` | Builds one account's components and owns the set of running accounts. Part of the composition root | Everything, as `main.c` does |
-| Client | `clients/tui`, `clients/control`, `clients/cli` | `tui`: the ncurses UI (widgets, input, slash commands, layout, the settings panel, the Chats and Agentic tabs). `control`: the control socket client that serves corvus-tawk-mcp and the shell commands ([CONTROL.md](CONTROL.md)). `cli`: the `--doctor` setup check, the `--update` installer, `--encrypt`, `--decrypt` and `--change-passphrase`, `--backup` and `--restore`, the start-up passphrase prompt, and `corvus-tawk send`, `tail`, `unread` and `status-line` | Managers, and the contracts the composition root hands it |
+| Client | `clients/tui`, `clients/control`, `clients/cli` | `tui`: the ncurses UI (widgets, input, slash commands, layout, the settings panel, the Chats and Agentic tabs). `control`: the control socket client that serves corvus-tawk-mcp and the shell commands ([[CONTROL]]). `cli`: the `--doctor` setup check, the `--update` installer, `--encrypt`, `--decrypt` and `--change-passphrase`, `--backup` and `--restore`, the start-up passphrase prompt, and `corvus-tawk send`, `tail`, `unread` and `status-line` | Managers, and the contracts the composition root hands it |
 | Managers | `managers` | Use cases: messaging and connection supervision, profiles and profile pictures, your own profile, posting statuses, the status feed, messages scheduled for later, incoming calls, media, settings, encrypting the database, encrypted backups, voice note transcripts and TL;DR summaries (keeping what is handed over, and each chat's choices about them), the rules and log for agents (automation), plus the composite event observer that hands backend events to the managers that listen for them | Engines, contracts |
 | Engines | `engines` | Business rules with no I/O: backoff, circuit breaker, notification policy, chat visibility, idle tracking, message ids, media type detection, emoticon conversion, network fingerprints and change detection, profile field and status post validation, finding a URL in text, the status background palette, matching chats against a search, reading when a scheduled message should go, the backup manifest and which archive members a restore accepts, and for agents: the automation policy (who sees which chats, which writes are asked about, which settings stay out of reach, risk, and which of its own requests a client may answer with access admin), the hourly quota for those, resolving a chat named by an agent, the rate limiter and confirmation tokens; and for transcripts and TL;DR: what may be kept (`transcript_validator`, `summary_validator`), what shows and what is transcribed or summarised (`transcript_display_policy`, `transcription_policy`, `summary_policy`, `transcript_choice`), which agent writes summaries (`summariser_choice`) and the question about that (`agent_question`) | Core, utilities |
 | Resource access | `resource_access` | SQLite stores (messages, chats, contacts, reactions, receipts, JID aliases, profiles, statuses, scheduled messages, the automation log, transcripts, summaries), database encryption with SQLCipher (`sqlite_database_crypt`, `sqlite_key`), the caching decorators, INI settings store, JSON theme repository, TSV emoji catalog, the text chat exporter, WhatsApp gateways, the JSON protocol codec | Core, utilities |
@@ -469,9 +470,9 @@ Both backends hand events to a bounded `EventQueue`. When it is full, producers 
 
 ## Backends
 
-Both backends speak the same JSON line protocol ([PROTOCOL.md](PROTOCOL.md)). `json_protocol.c` is the single decoder and encoder on the C side. The whatsmeow bridge is compiled with `go build -buildmode=c-archive` and linked into the binary; it registers the pure-Go SQLite driver so that only one copy of libsqlite3 is linked. The Baileys bridge is a small ES module program started with an argument list (no shell) and restarted by the messaging manager if it exits.
+Both backends speak the same JSON line protocol ([[PROTOCOL]]). `json_protocol.c` is the single decoder and encoder on the C side. The whatsmeow bridge is compiled with `go build -buildmode=c-archive` and linked into the binary; it registers the pure-Go SQLite driver so that only one copy of libsqlite3 is linked. The Baileys bridge is a small ES module program started with an argument list (no shell) and restarted by the messaging manager if it exits.
 
-Neither backend retries anything. They report `connection` events with a reason, and `MessagingManager` decides what to do using `BackoffPolicy` and `CircuitBreaker` (see [HOW_IT_WORKS.md](HOW_IT_WORKS.md#reconnecting)). Profile edits and status posts travel over the same protocol, but through the smaller `IProfileEditor`, `IStatusPublisher` and `IStatusLiker` contracts that the gateways hand out, so the gateway contract does not grow with them.
+Neither backend retries anything. They report `connection` events with a reason, and `MessagingManager` decides what to do using `BackoffPolicy` and `CircuitBreaker` (see [[HOW_IT_WORKS#Reconnecting|HOW_IT_WORKS]]). Profile edits and status posts travel over the same protocol, but through the smaller `IProfileEditor`, `IStatusPublisher` and `IStatusLiker` contracts that the gateways hand out, so the gateway contract does not grow with them.
 
 ## Storage
 
@@ -705,4 +706,4 @@ Search turns what you type into a safe FTS5 query: every word becomes a quoted p
 - **A notifier:** implement `INotifier` and add it to the composite in `main.c`.
 - **A listener for backend events:** give the new manager an `IEventObserver`, add it to the composite event observer in `main.c`, and add the event types it needs to the list `handle_event` forwards in `messaging_manager.c`.
 - **A theme:** drop a JSON file in `themes/`.
-- **A backend command:** add an encoder to `json_protocol.c`, a function to `IMessageGateway` (or to a smaller contract the gateways hand out, such as `IProfileEditor`) and the gateways that support it, handlers in the bridges, and a row in [PROTOCOL.md](PROTOCOL.md).
+- **A backend command:** add an encoder to `json_protocol.c`, a function to `IMessageGateway` (or to a smaller contract the gateways hand out, such as `IProfileEditor`) and the gateways that support it, handlers in the bridges, and a row in [[PROTOCOL]].

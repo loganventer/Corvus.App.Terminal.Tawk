@@ -1,24 +1,26 @@
 # Setting up tawk: instructions for an agent
 
-Read this when a person asks you, an AI agent, to install tawk for them. It covers Windows, Linux and macOS from nothing to a linked, running tawk. A person installing by hand should read [QUICKSTART.md](QUICKSTART.md) instead.
+Read this when a person asks you, an AI agent, to install tawk for them. It covers Windows, Linux and macOS from nothing to a linked, running tawk. A person installing by hand should read [[QUICKSTART]] instead.
 
 To add the agent side afterwards (reading chats and proposing messages through MCP), carry on with corvus-tawk-mcp's [AGENT_SETUP.md](https://github.com/loganventer/Corvus.Mcp.Server.Tawk/blob/main/AGENT_SETUP.md).
 
-## Table of Contents
+## Contents
 
-- [What you are installing](#what-you-are-installing)
-- [First: the disclaimer and the person's go-ahead](#first-the-disclaimer-and-the-persons-go-ahead)
-- [Rules for the agent](#rules-for-the-agent)
-- [Before you start](#before-you-start)
-- [Windows](#windows)
-- [Linux](#linux)
-- [macOS](#macos)
-- [Check the install](#check-the-install)
-- [First run and linking](#first-run-and-linking)
-- [Getting ready for corvus-tawk-mcp](#getting-ready-for-corvus-tawk-mcp)
-- [Updating and removing](#updating-and-removing)
-- [When something goes wrong](#when-something-goes-wrong)
-- [What to tell the person at the end](#what-to-tell-the-person-at-the-end)
+- [[#What you are installing]]
+- [[#First the disclaimer and the person's go-ahead|First: the disclaimer and the person's go-ahead]]
+  - [[#The risk of a ban, in full]]
+  - [[#A second number]]
+- [[#Rules for the agent]]
+- [[#Before you start]]
+- [[#Windows]]
+- [[#Linux]]
+- [[#macOS]]
+- [[#Check the install]]
+- [[#First run and linking]]
+- [[#Getting ready for corvus-tawk-mcp]]
+- [[#Updating and removing]]
+- [[#When something goes wrong]]
+- [[#What to tell the person at the end]]
 
 ## What you are installing
 
@@ -201,7 +203,7 @@ The build takes a few minutes. Most of that is the WhatsApp backend, written in 
 Notes for macOS:
 
 - macOS asks for microphone access for the terminal the first time a voice note is recorded. The person allows it.
-- Alt shortcuts use the Option key; see "Alt shortcuts on a Mac" in [MANUAL.md](MANUAL.md).
+- Alt shortcuts use the Option key; see "Alt shortcuts on a Mac" in [[MANUAL]].
 
 ## Check the install
 

@@ -1,6 +1,14 @@
 # Quickstart
 
-Having an AI agent install tawk for you? Point it at [AGENT_SETUP.md](AGENT_SETUP.md), which covers Windows, Linux and macOS step by step.
+Having an AI agent install tawk for you? Point it at [[AGENT_SETUP]], which covers Windows, Linux and macOS step by step.
+
+## Contents
+
+- [[#Install with one command]]
+- [[#Install from a checkout]]
+- [[#Common variations]]
+- [[#First run]]
+- [[#Tips]]
 
 ## Install with one command
 
@@ -51,7 +59,7 @@ cd Corvus.App.Terminal.Tawk
 | Install packages without asking | `./install.sh --yes` |
 | Remove tawk | `./install.sh --uninstall` |
 
-Everything the script does can be done by hand with `make`, see the Building section of the [README](README.md).
+Everything the script does can be done by hand with `make`, see the Building section of the [[README]].
 
 ## First run
 
@@ -96,4 +104,4 @@ If something does not work, run `corvus-tawk --doctor`. It checks the terminal, 
 - Click **➕** in the input and choose Take a photo (or type **/camera**) for the camera: Space takes a photo, V records a video, and Enter attaches what you took.
 - **Ctrl+B** hides the chat list when the window is narrow.
 - Try a theme: F2, Appearance, Theme, Choose theme, then use the arrow keys to preview.
-- Everything else is in the [MANUAL](MANUAL.md).
+- Everything else is in the [[MANUAL]].

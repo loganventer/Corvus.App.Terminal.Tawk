@@ -1,5 +1,13 @@
 # Intent
 
+## Contents
+
+- [[#Purpose]]
+- [[#Scope]]
+- [[#Out of scope]]
+- [[#Boundary Rules]]
+- [[#Relationship to other tools]]
+
 ## Purpose
 
 tawk exists so that people who live in a terminal can use WhatsApp there: read and answer chats, hear and send voice notes, look at photos, and get notified, without switching to a browser or a phone. It aims to feel like the Android app in the places where that helps (settings, alignment of bubbles, unread highlighting) and like a good terminal tool everywhere else (keyboard first, fast, scriptable install, respectful of the filesystem).

@@ -1,5 +1,15 @@
 # Security
 
+## Contents
+
+- [[#Reporting a vulnerability]]
+- [[#What tawk protects]]
+- [[#Trust boundaries]]
+- [[#Threat model]]
+- [[#Deliberate trade-offs]]
+- [[#Logging]]
+- [[#Removing everything]]
+
 ## Reporting a vulnerability
 
 Please report security issues privately through GitHub's "Report a vulnerability" button on the repository's Security tab rather than in a public issue. Include the version (`corvus-tawk --version`), your platform and steps to reproduce. You can expect an acknowledgement within a week.

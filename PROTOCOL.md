@@ -42,6 +42,19 @@ sequenceDiagram
 
 In both cases the C side sees the same lines. The difference is the transport: pipes to a child process that the messaging manager restarts when it exits, or direct calls into a Go archive linked into the binary, whose callback `tawk_wm_emit` may run on any goroutine and therefore only decodes the line and pushes it onto the thread-safe queue. When the queue is full the push waits, which slows the backend down instead of dropping events.
 
+## Contents
+
+- [[#Commands (tawk to backend)]]
+- [[#Events (backend to tawk)]]
+- [[#Deleting messages]]
+- [[#Profiles, pictures and blocking]]
+- [[#Statuses]]
+- [[#Calls]]
+- [[#Addressing phone numbers and LIDs|Addressing: phone numbers and LIDs]]
+- [[#Typing and presence]]
+- [[#Limits enforced by tawk]]
+- [[#Example]]
+
 ## Commands (tawk to backend)
 
 | `cmd` | Fields | Effect |
@@ -126,7 +139,7 @@ A delete for everyone made by the sender, on any device, still arrives as `edit`
 
 ## Profiles, pictures and blocking
 
-The profile manager asks for details with `profile` and for pictures with `picture`, a few requests at a time (see [HOW_IT_WORKS.md](HOW_IT_WORKS.md#profiles-and-portraits)). The backends answer as follows:
+The profile manager asks for details with `profile` and for pictures with `picture`, a few requests at a time (see [[HOW_IT_WORKS#Profiles and portraits|HOW_IT_WORKS]]). The backends answer as follows:
 
 | | whatsmeow | Baileys |
 |---|---|---|

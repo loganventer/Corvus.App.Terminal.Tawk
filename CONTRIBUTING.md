@@ -1,14 +1,15 @@
 # Contributing
 
-Issues and pull requests are welcome. This page holds the rules the code follows and what a change needs before it is merged. [ARCHITECTURE.md](ARCHITECTURE.md) describes every layer and component, and [HOW_IT_WORKS.md](HOW_IT_WORKS.md) shows the flows.
+Issues and pull requests are welcome. This page holds the rules the code follows and what a change needs before it is merged. [[ARCHITECTURE]] describes every layer and component, and [[HOW_IT_WORKS]] shows the flows.
 
-## Table of Contents
+## Contents
 
-- [The rules](#the-rules)
-- [Where code goes](#where-code-goes)
-- [Build and test](#build-and-test)
-- [Pull requests](#pull-requests)
-- [Writing](#writing)
+- [[#The rules]]
+- [[#Where code goes]]
+- [[#Build and test]]
+- [[#Pull requests]]
+- [[#Writing]]
+- [[#Release notes]]
 
 ## The rules
 
@@ -35,9 +36,9 @@ Every change keeps to these six. A pull request that breaks one is sent back, ho
 | A domain type or enum | `core` |
 | A helper with no knowledge of tawk's domain | `utilities` |
 | Anything drawn or typed in the terminal | `clients/tui` |
-| An operation for agents or the shell commands | `clients/control`, and documented in [CONTROL.md](CONTROL.md) |
+| An operation for agents or the shell commands | `clients/control`, and documented in [[CONTROL]] |
 
-The "Adding things" section of [ARCHITECTURE.md](ARCHITECTURE.md) walks through the common cases step by step.
+The "Adding things" section of [[ARCHITECTURE]] walks through the common cases step by step.
 
 ## Build and test
 
@@ -55,7 +56,7 @@ A change that alters behaviour comes with a test in `tests/`, added to `TESTS` i
 
 - One change per pull request, with a title that says what it does.
 - `make` with no warnings and `make test` passing, on your own machine, before you open it.
-- Update the documentation the change touches: [MANUAL.md](MANUAL.md) for anything a user sees, [CONFIGURATION.md](CONFIGURATION.md) for a setting, [CONTROL.md](CONTROL.md) for the control socket, [ARCHITECTURE.md](ARCHITECTURE.md) for a new component or contract.
+- Update the documentation the change touches: [[MANUAL]] for anything a user sees, [[CONFIGURATION]] for a setting, [[CONTROL]] for the control socket, [[ARCHITECTURE]] for a new component or contract.
 - A change to a screen in the manual needs its picture redrawn (`make screenshots`).
 - Say what you tested and on which system (Linux, macOS, WSL).
 
@@ -68,4 +69,4 @@ A change that alters behaviour comes with a test in `tests/`, added to `TESTS` i
 
 ## Release notes
 
-Every version gets a section at the top of [RELEASE_NOTES.md](RELEASE_NOTES.md), headed `## <version> (<date>)`, with one plain line for each change a user would notice. `corvus-tawk --update` prints every section above the installed version, so a change that is not written there is a change nobody is told about. The commit that raises the version also adds its section.
+Every version gets a section at the top of [[RELEASE_NOTES]], headed `## <version> (<date>)`, with one plain line for each change a user would notice. `corvus-tawk --update` prints every section above the installed version, so a change that is not written there is a change nobody is told about. The commit that raises the version also adds its section.

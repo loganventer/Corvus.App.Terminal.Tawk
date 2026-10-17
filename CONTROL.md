@@ -2,7 +2,29 @@
 
 A running tawk can be reached by other programs on the same computer through its control socket: the `corvus-tawk send`, `corvus-tawk tail`, `corvus-tawk unread` and `corvus-tawk status-line` commands, and [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk), which lets MCP clients such as Claude Code read your chats and, when you allow it, send messages that you confirm in tawk.
 
-The socket is off until you turn on **Settings → Automation → Agent access (MCP)** (`control_socket = on` in `[automation]`). What agents ask for is answered in tawk's **Agentic** tab (F3). Everything a client may see or do is decided inside tawk by the settings described in [CONFIGURATION.md](CONFIGURATION.md#automation); a client cannot widen them.
+The socket is off until you turn on **Settings → Automation → Agent access (MCP)** (`control_socket = on` in `[automation]`). What agents ask for is answered in tawk's **Agentic** tab (F3). Everything a client may see or do is decided inside tawk by the settings described in [[CONFIGURATION#automation|CONFIGURATION]]; a client cannot widen them.
+
+## Contents
+
+- [[#Transport]]
+- [[#Messages]]
+  - [[#Error codes]]
+- [[#Values]]
+- [[#Operations]]
+  - [[#`hello`]]
+  - [[#Reading]]
+  - [[#Transcripts]]
+  - [[#TL;DR summaries]]
+  - [[#Rules for one chat, and hidden text]]
+  - [[#Labels, reminders and awaiting replies]]
+  - [[#The owner's chat]]
+  - [[#Writing]]
+  - [[#Answering your own request]]
+  - [[#Managing tawk]]
+  - [[#Live updates]]
+- [[#Example]]
+- [[#Accounts]]
+- [[#Versions]]
 
 ## Transport
 

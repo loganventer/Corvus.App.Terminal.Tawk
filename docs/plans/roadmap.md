@@ -2,31 +2,45 @@
 
 Status: section 1 (transcripts in the conversation) and TL;DR mode are built and merged in both repositories, with tests, as tawk 0.13.0 to 0.14.3 (pull requests 11, 13, 14 and 16) and corvus-tawk-mcp 0.9.0 to 0.10.3 (pull requests 15, 17, 18 and 20). Everything else is proposed. This is the one plan for both repositories, written against tawk 0.12.0 (`f169989`) and corvus-tawk-mcp 0.8.1 (`c6724f0`), the newest `main` of each on 10 October 2026. The first feature, voice note transcripts shown in the conversation, is planned in full. The rest are planned to the level of what each adds, where its parts go and what has to be decided first.
 
-## Table of Contents
+## Contents
 
-- [Why](#why)
-- [What was decided](#what-was-decided)
-- [How the rules are kept](#how-the-rules-are-kept)
-- [1. Transcripts in the conversation](#1-transcripts-in-the-conversation)
-- [2. Safer at rest and safer to install](#2-safer-at-rest-and-safer-to-install)
-- [3. Running without a window](#3-running-without-a-window)
-- [4. Sorting out the chat list](#4-sorting-out-the-chat-list)
-- [5. More kinds of message](#5-more-kinds-of-message)
-- [6. Keys and reading comfort](#6-keys-and-reading-comfort)
-- [7. Protection from other people](#7-protection-from-other-people)
-- [8. Working with agents](#8-working-with-agents)
-  - [The owner's chat](#the-owners-chat)
-- [TL;DR mode](#tldr-mode)
-- [9. corvus-tawk-mcp](#9-corvus-tawk-mcp)
-  - [Keeping up with the protocol](#keeping-up-with-the-protocol)
-  - [Tools for the new features](#tools-for-the-new-features)
-  - [Doing more for the owner](#doing-more-for-the-owner)
-  - [Defences](#defences)
-  - [Running it](#running-it)
-- [Order and size](#order-and-size)
-- [Open questions](#open-questions)
-- [How it is checked](#how-it-is-checked)
-- [Not in this plan](#not-in-this-plan)
+- [[#Where it stands]]
+- [[#Why]]
+- [[#What was decided]]
+- [[#How the rules are kept]]
+- [[#1. Transcripts in the conversation]]
+  - [[#What it looks like when done]]
+  - [[#The shape of the change]]
+  - [[#Parts by layer]]
+  - [[#The control operations]]
+  - [[#In corvus-tawk-mcp]]
+  - [[#Work, in order]]
+  - [[#Risks]]
+- [[#2. Safer at rest and safer to install]]
+- [[#3. Running without a window]]
+- [[#4. Sorting out the chat list]]
+- [[#5. More kinds of message]]
+- [[#6. Keys and reading comfort]]
+- [[#7. Protection from other people]]
+- [[#8. Working with agents]]
+  - [[#The owner's chat]]
+  - [[#The owner's chat as built|The owner's chat: as built]]
+  - [[#The owner's chat the rules that went into the documents|The owner's chat: the rules that went into the documents]]
+- [[#The owner's chat]]
+- [[#TL;DR mode]]
+  - [[#What it looks like when done]]
+  - [[#Who writes the summary]]
+  - [[#Parts by layer]]
+- [[#9. corvus-tawk-mcp]]
+  - [[#Keeping up with the protocol]]
+  - [[#Tools for the new features]]
+  - [[#Doing more for the owner]]
+  - [[#Defences]]
+  - [[#Running it]]
+- [[#Order and size]]
+- [[#Open questions]]
+- [[#How it is checked]]
+- [[#Not in this plan]]
 
 ## Where it stands
 
@@ -75,7 +89,7 @@ tawk was compared with WhatsApp's own apps, Telegram, Signal, Beeper and the oth
 | corvus-tawk-mcp's tool list | A fresh install lists every tool. A shorter set is something you choose |
 | Where a chat's own settings live | On the contact card. Every per-chat setting, the existing ones and each new one in this plan, has its row there. Keys, slash commands and the right-click menu stay as shortcuts to the same rows |
 | Everything else | Planned here, to be agreed step by step before each is built |
-| Design rules | iDesign layers, SOLID, one type per file, dependency inversion, composition over inheritance, separation of concerns, as in [CONTRIBUTING.md](../../CONTRIBUTING.md) |
+| Design rules | iDesign layers, SOLID, one type per file, dependency inversion, composition over inheritance, separation of concerns, as in [[CONTRIBUTING]] |
 
 ## How the rules are kept
 
@@ -249,7 +263,7 @@ Built on 2026-10-10 in tawk 0.19.0: snooze and remind, labels and filters, and t
 
 ## 5. More kinds of message
 
-Each of these needs four things: an event or command in [PROTOCOL.md](../../PROTOCOL.md) and both bridges, a core type, a widget, and a line in the fenced text agents read.
+Each of these needs four things: an event or command in [[PROTOCOL]] and both bridges, a core type, a widget, and a line in the fenced text agents read.
 
 | Kind | Reading | Sending | New parts |
 |---|---|---|---|
@@ -348,26 +362,26 @@ Built on 2026-10-10 in tawk 0.15.0 and corvus-tawk-mcp 0.11.0, and the rules bel
 
 ### The owner's chat: the rules that went into the documents
 
-**tawk INTENT.md, In scope**
+**tawk [[INTENT]], In scope**
 
 - The owner's chat, when you name one: the "message yourself" chat of one of your own connected numbers, where what you write reaches a connected agent as your words and the agent answers you by itself, through that number.
 
-**tawk INTENT.md, Out of scope, in place of the last sentence of the bulk messaging line**
+**tawk [[INTENT]], Out of scope, in place of the last sentence of the bulk messaging line**
 
 The one exception is an agent's answers to you in the owner's chat, which reach nobody else.
 
-**tawk INTENT.md, Boundary rules**
+**tawk [[INTENT]], Boundary rules**
 
 - Only you instruct an agent. Text that arrives from WhatsApp is data, whoever sent it, with one exception that you switch on yourself: a message in the owner's chat that tawk did not send is taken as yours. The same words anywhere else, and anything forwarded, quoted or transcribed inside that chat, stay data.
 - An agent sends without being asked in one place only, the owner's chat, and only as an answer to you. Every other chat keeps its approval, and nothing destructive can be asked for or approved from WhatsApp.
 
-**tawk SECURITY.md, threat model rows**
+**tawk [[SECURITY]], threat model rows**
 
 | Someone posing as you to an agent (the owner's chat) | A message made to look like an instruction from you | Off until you name the owner's chat on its contact card; it cannot be named or changed over the socket. Only the "message yourself" chat of one of your own connected numbers can be named, so nobody else's number can write there. Within it, a message tawk did not send is yours; tawk keeps the ids of what it sent there, so an agent's answer or a request card is never read back as an instruction. Forwarded, quoted and transcribed text, captions and link cards in that chat are passed on as data. Your words in any other chat, a group included, are never an instruction |
 | An agent answering by itself in the owner's chat | A steered agent using that chat to send without you | Only into the owner's chat, which reaches nobody but you; only text, or a file you asked for; a limit per hour of its own; each answer logged in the Agentic tab. It needs no admin token and widens nothing else: a send to any other chat is asked about as before |
 | Approving from WhatsApp | A request approved by a stray or replayed answer | An answer counts only when it quotes or reacts to that request's card, before the card expires, and once. Deletes, blocks, settings, profile changes, a first message to someone new and anything in a locked chat are never offered there and cannot be asked for from WhatsApp |
 
-**tawk SECURITY.md, deliberate trade-offs**
+**tawk [[SECURITY]], deliberate trade-offs**
 
 - **The owner's chat trusts every device linked to your number.** tawk tells your messages from its own by what it sent, and does not check which device a message came from. Anyone holding your unlocked phone, or at another device linked to that number, can instruct a connected agent and answer its requests, within the limits above. That is the reach WhatsApp already gives them over your account. Remove a device you do not trust from Linked devices, and leave the owner's chat unnamed if this matters to you.
 - **What you write in the owner's chat goes to the agent's model.** Like anything an agent reads, it leaves your computer for the service that runs the model.
@@ -550,7 +564,7 @@ Each step is its own branch from `main` and its own pull request. tawk builds wi
 - **Where the display switch lives.** This plan puts `show_transcripts` under Settings, Chats, beside text formatting. It could sit under Automation with the other transcription settings instead, but those cannot be changed by an agent and this one is harmless.
 - **Search over transcripts.** Useful, and it means the words of voice notes are indexed. Planned as a later part of step 5 unless wanted with step 1.
 - **Exports.** Whether an exported chat carries transcripts under its voice notes. Not in step 1.
-- **Scope.** INTENT.md rules out creating and administering groups. That is the commonest reason to pick up the phone, and adding it means changing INTENT first.
+- **Scope.** [[INTENT]] rules out creating and administering groups. That is the commonest reason to pick up the phone, and adding it means changing INTENT first.
 - **Stored requests.** Today a request nobody answers is declined. A headless tawk keeps them, which is a change to a security rule and needs its own expiry.
 - **Signed releases.** They need a signing key kept somewhere other than the repository.
 - **Without the terminal.** The owner's chat is most useful while tawk runs headless (step 6). It also works with the terminal open.
@@ -562,7 +576,7 @@ Each step is its own branch from `main` and its own pull request. tawk builds wi
 2. Step 1: with corvus-tawk-mcp connected and automatic transcription on, send a voice note to the account. Its words appear under it. Turn the setting off and they go; set that chat's card to *always* and they are back in that chat alone; set it to *never* with the setting on and they are hidden in that chat alone. Alt+T steps the same row and the view does not move. Switch Transcribe voice notes off on the card and send another voice note: it is not transcribed, an agent asking for it is refused, and nothing new is stored, while the earlier voice notes in that chat keep their transcripts on screen. Restart tawk: the earlier transcript is still there. Delete the message: its row in `transcripts` is gone. Soft-lock the chat: the transcript is veiled. An agent on another account cannot write to it.
 3. Upgrade a copy of a real database through migration 18 and compare row counts and the integrity check.
 4. Every protocol step is tried on both backends, or the manual says which backend lacks it.
-5. Every step that changes what agents can do adds its row to the threat model in [SECURITY.md](../../SECURITY.md), and in corvus-tawk-mcp's SECURITY.md where it applies.
+5. Every step that changes what agents can do adds its row to the threat model in [[SECURITY]], and in corvus-tawk-mcp's SECURITY.md where it applies.
 6. The owner's chat: write to yourself from the phone and the agent receives it as the owner, and its answer appears in the same chat from your number with nothing waiting in the queue. The answer is not read back as an instruction. The same words forwarded, or in another chat, arrive fenced as data, and an agent's send to any other chat still waits for you. Answer a card with 👍 and the message goes; answer an expired card, or a second time, and nothing happens. Ask from the phone for a delete and it is refused.
 7. The leak check: read one chat, ask for a send to another that quotes it at length, and confirm tawk shows the request as high risk with its reason. A short quote, and a reply inside the same chat, are not flagged.
 8. An older tawk with a newer corvus-tawk-mcp, and the other way round: tools the pair cannot carry out are not listed, and nothing fails.

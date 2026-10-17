@@ -1,39 +1,43 @@
 # How It Works
 
-## Table of Contents
+## Contents
 
-- [Start-up](#start-up)
-- [The event loop](#the-event-loop)
-- [Linking a phone](#linking-a-phone)
-- [Receiving a message](#receiving-a-message)
-- [Sending a message or file](#sending-a-message-or-file)
-- [Replies, reactions, edits and deletions](#replies-reactions-edits-and-deletions)
-- [Scheduled messages](#scheduled-messages)
-- [Typing and presence](#typing-and-presence)
-- [Loading older messages](#loading-older-messages)
-- [One chat per person](#one-chat-per-person)
-- [Search](#search)
-- [Soft lock](#soft-lock)
-- [The chat list](#the-chat-list)
-- [Profiles and portraits](#profiles-and-portraits)
-- [Contact details](#contact-details)
-- [Your profile](#your-profile)
-- [Statuses](#statuses)
-- [Incoming calls](#incoming-calls)
-- [Photos, videos and PDFs](#photos-videos-and-pdfs)
-- [Pasting a picture](#pasting-a-picture)
-- [The camera](#the-camera)
-- [Saving files](#saving-files)
-- [Voice notes](#voice-notes)
-- [Transcripts](#transcripts)
-- [TL;DR summaries](#tldr-summaries)
-- [Reconnecting](#reconnecting)
-- [Screensaver](#screensaver)
-- [Encrypted chats](#encrypted-chats)
-- [Backups](#backups)
-- [Several accounts](#several-accounts)
-- [Agents and the control socket](#agents-and-the-control-socket)
-- [The setup check](#the-setup-check)
+- [[#Start-up]]
+- [[#The event loop]]
+- [[#Linking a phone]]
+- [[#Receiving a message]]
+  - [[#Formatting and mentions on screen]]
+  - [[#Mentions]]
+  - [[#Who saw your status]]
+- [[#Sending a message or file]]
+- [[#Replies, reactions, edits and deletions]]
+- [[#Scheduled messages]]
+- [[#Typing and presence]]
+- [[#Loading older messages]]
+- [[#One chat per person]]
+- [[#Search]]
+- [[#Soft lock]]
+- [[#The chat list]]
+- [[#Profiles and portraits]]
+- [[#Contact details]]
+- [[#Your profile]]
+- [[#Statuses]]
+- [[#Incoming calls]]
+- [[#Photos, videos and PDFs]]
+- [[#Pasting a picture]]
+- [[#The camera]]
+- [[#Saving files]]
+- [[#Voice notes]]
+- [[#Transcripts]]
+- [[#TL;DR summaries]]
+- [[#Reconnecting]]
+- [[#Screensaver]]
+- [[#Encrypted chats]]
+- [[#Backups]]
+- [[#Moving an account]]
+- [[#Several accounts]]
+- [[#Agents and the control socket]]
+- [[#The setup check]]
 
 ## Start-up
 
@@ -356,7 +360,7 @@ Message text is indexed by an SQLite FTS5 table that database triggers keep in s
 
 ## Soft lock
 
-A soft lock keeps a chat's conversation off the screen, for example while someone can see your terminal. Ctrl+Shift+L (where the terminal reports it, see [CONFIGURATION.md](CONFIGURATION.md#ctrlshiftl-in-windows-terminal)) and Alt+L toggle it for the chat selected in the list when the list has focus, and for the open chat otherwise; `/softlock` toggles the open chat and the chat options their own chat. `messaging_manager_toggle_soft_lock` stores the new state through `IChatStore.set_soft_locked` in the `soft_locked` column (database version 5), so it survives restarts. It is local to tawk and never sent to WhatsApp.
+A soft lock keeps a chat's conversation off the screen, for example while someone can see your terminal. Ctrl+Shift+L (where the terminal reports it, see [[CONFIGURATION#Ctrl+Shift+L in Windows Terminal|CONFIGURATION]]) and Alt+L toggle it for the chat selected in the list when the list has focus, and for the open chat otherwise; `/softlock` toggles the open chat and the chat options their own chat. `messaging_manager_toggle_soft_lock` stores the new state through `IChatStore.set_soft_locked` in the `soft_locked` column (database version 5), so it survives restarts. It is local to tawk and never sent to WhatsApp.
 
 While a chat is soft-locked:
 
@@ -883,7 +887,7 @@ sequenceDiagram
 
 ## Agents and the control socket
 
-With Settings, Automation, Agent access on, the control client (`src/clients/control`) listens on `$XDG_RUNTIME_DIR/corvus/tawk/control.sock` through `IControlTransport`. It runs on the UI thread: the terminal client calls its `IFrameHook` once a frame, so it uses the same managers as the terminal without locks. It starts listening when the setting turns on, stops when it turns off (saying goodbye to connected clients), and listens again if the socket file is removed. Each line is one request from [CONTROL.md](CONTROL.md), handled by one of the `control_ops_*.c` files. Reads are answered at once and logged as reads; nothing is marked read and the chat open on screen does not change, because `messaging_manager_history` reads any chat straight from the store.
+With Settings, Automation, Agent access on, the control client (`src/clients/control`) listens on `$XDG_RUNTIME_DIR/corvus/tawk/control.sock` through `IControlTransport`. It runs on the UI thread: the terminal client calls its `IFrameHook` once a frame, so it uses the same managers as the terminal without locks. It starts listening when the setting turns on, stops when it turns off (saying goodbye to connected clients), and listens again if the socket file is removed. Each line is one request from [[CONTROL]], handled by one of the `control_ops_*.c` files. Reads are answered at once and logged as reads; nothing is marked read and the chat open on screen does not change, because `messaging_manager_history` reads any chat straight from the store.
 
 A write passes through `control_writes.c`. The automation manager's policy says whether the access allows it, whether the chat may be used and whether you must be asked; the rate limiter counts it; destructive writes are held behind a one-time token first. What needs you goes to the `ApprovalQueue`, which the Agentic tab shows and answers; the client polls the answers each frame and carries the write out through the managers, or reports it declined or expired. Every outcome goes to the automation log.
 

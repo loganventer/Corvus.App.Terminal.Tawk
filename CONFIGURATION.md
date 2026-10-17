@@ -1,18 +1,27 @@
 # Configuration
 
-## Table of Contents
+## Contents
 
-- [Where things live](#where-things-live)
-- [The config file](#the-config-file)
-- [All settings](#all-settings)
-- [Themes](#themes)
-- [Choosing a backend](#choosing-a-backend)
-- [Database encryption (SQLCipher)](#database-encryption-sqlcipher)
-- [Audio systems](#audio-systems)
-- [Command settings and file trust](#command-settings-and-file-trust)
-- [Ctrl+Shift+L in Windows Terminal](#ctrlshiftl-in-windows-terminal)
-- [Shift+Enter in Windows Terminal](#shiftenter-in-windows-terminal)
-- [Environment variables](#environment-variables)
+- [[#Where things live]]
+- [[#The config file]]
+- [[#All settings]]
+  - [[#appearance]]
+  - [[#chats]]
+  - [[#notifications]]
+  - [[#media]]
+  - [[#screensaver]]
+  - [[#resilience]]
+  - [[#automation]]
+  - [[#advanced]]
+  - [[#Settings and accounts]]
+- [[#Themes]]
+- [[#Database encryption (SQLCipher)]]
+- [[#Choosing a backend]]
+- [[#Audio systems]]
+- [[#Command settings and file trust]]
+- [[#Ctrl+Shift+L in Windows Terminal]]
+- [[#Shift+Enter in Windows Terminal]]
+- [[#Environment variables]]
 
 ## Where things live
 
@@ -53,7 +62,7 @@ Installed files (with the default prefix `/usr/local`):
 
 A user install (`--prefix ~/.local`) puts the same tree under `~/.local`. When tawk runs straight from a source checkout it falls back to `themes/`, `assets/emoji/` and `sidecar/` in the current folder.
 
-`corvus-tawk --doctor` reports where each of these was found and whether your folders are writable (see [MANUAL.md](MANUAL.md#checking-your-setup)).
+`corvus-tawk --doctor` reports where each of these was found and whether your folders are writable (see [[MANUAL#Checking your setup|MANUAL]]).
 
 ## The config file
 
@@ -165,7 +174,7 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 
 ### [automation]
 
-What other programs reaching tawk through its control socket may do: corvus-tawk-mcp and the `corvus-tawk send`, `tail`, `unread` and `status-line` commands. See [Automation and MCP](MANUAL.md#automation-and-mcp) and [CONTROL.md](CONTROL.md).
+What other programs reaching tawk through its control socket may do: corvus-tawk-mcp and the `corvus-tawk send`, `tail`, `unread` and `status-line` commands. See [[MANUAL#Automation and MCP|Automation and MCP]] and [[CONTROL]].
 
 | Key | Default | Description |
 |---|---|---|
@@ -190,7 +199,7 @@ What other programs reaching tawk through its control socket may do: corvus-tawk
 | `transcribe_languages` | `en` | The languages voice notes are spoken in, as codes separated by commas, or `auto` for any. Set from Settings, Chats, Voice note languages as a list of switches. Each voice note is written once, in whichever of them is spoken; a chat's own languages (its contact card) come first |
 | `transcribe_auto` | `off` | Every voice note other people send is transcribed as it arrives. Off, only the ones an agent asks for |
 | `mask_codes` | `on` | One-time codes and card numbers in messages reach an agent acting for a model as `[code]` and `[card number]`. Your own shell commands see the text as it is |
-| `owner_chat` | (empty) | The account, by its id, whose "message yourself" chat is your chat with the agent (see [The owner's chat](MANUAL.md#the-owners-chat)). Set from that chat's contact card. Empty is off. An agent cannot change it |
+| `owner_chat` | (empty) | The account, by its id, whose "message yourself" chat is your chat with the agent (see [[MANUAL#The owner's chat|The owner's chat]]). Set from that chat's contact card. Empty is off. An agent cannot change it |
 | `owner_replies_per_hour` | `60` | How many answers an agent may send you in the owner's chat by itself in an hour (1 to 600); past this they wait for you like any send |
 | `owner_approvals` | `on` | A send that waits for your answer in tawk is also put to you in the owner's chat, to allow or decline from your phone |
 | `owner_card_wait` | `20` | Seconds a request waits in tawk before it is put to you on WhatsApp (0 to 600); 0 asks there at once |
@@ -265,7 +274,7 @@ A theme can also be applied to a single chat with its chat options or `/theme <i
 
 ## Database encryption (SQLCipher)
 
-`corvus-tawk --encrypt` encrypts the database with a passphrase (see [the manual](MANUAL.md#encrypting-your-chats)). It needs a build with SQLCipher, a copy of SQLite that can encrypt. The build uses SQLCipher instead of SQLite whenever `pkg-config` finds it, and the configure summary says which one it chose:
+`corvus-tawk --encrypt` encrypts the database with a passphrase (see [[MANUAL#Encrypting your chats|the manual]]). It needs a build with SQLCipher, a copy of SQLite that can encrypt. The build uses SQLCipher instead of SQLite whenever `pkg-config` finds it, and the configure summary says which one it chose:
 
 ```
   sqlite      SQLCipher 3.51.2, database encryption available
@@ -273,7 +282,7 @@ A theme can also be applied to a single chat with its chat options or `/theme <i
 
 The installer adds it (`libsqlcipher-dev` on Debian and Ubuntu, `sqlcipher-devel` on Fedora and openSUSE, `sqlcipher` on Arch and Homebrew). `make SQLCIPHER=0` builds with plain SQLite even when SQLCipher is installed; such a build cannot open an encrypted database and says so. The passphrase is never a setting: it is typed at start-up and kept only in memory.
 
-Backups (`corvus-tawk --backup`, see [the manual](MANUAL.md#backups)) need no build option: they are packed with the system's `tar` and encrypted with the `openssl` command, which the installer adds.
+Backups (`corvus-tawk --backup`, see [[MANUAL#Backups|the manual]]) need no build option: they are packed with the system's `tar` and encrypted with the `openssl` command, which the installer adds.
 
 ## Choosing a backend
 

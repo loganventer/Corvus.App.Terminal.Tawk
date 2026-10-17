@@ -2,27 +2,27 @@
 
 Status: in progress, steps 1 to 5 done (see [Progress](#progress)). Branch: `feature/multi-account` in this repository (Corvus.App.Terminal.Tawk) and in Corvus.Mcp.Server.Tawk, both cut from `main`.
 
-## Table of Contents
+## Contents
 
-- [Why](#why)
-- [What was decided](#what-was-decided)
-- [Progress](#progress)
-- [What it looks like when done](#what-it-looks-like-when-done)
-- [The shape of the change](#the-shape-of-the-change)
-- [Work, in order](#work-in-order)
-  - [1. The account and the database](#1-the-account-and-the-database)
-  - [2. Several sessions in the backend](#2-several-sessions-in-the-backend)
-  - [3. One runtime per account](#3-one-runtime-per-account)
-  - [4. The terminal client](#4-the-terminal-client)
-  - [5. Merged chats and a contact's own settings](#5-merged-chats-and-a-contacts-own-settings)
-  - [6. The control socket and the shell commands](#6-the-control-socket-and-the-shell-commands)
-  - [7. corvus-tawk-mcp](#7-corvus-tawk-mcp)
-  - [8. Encryption, backup, doctor and logs](#8-encryption-backup-doctor-and-logs)
-  - [9. Documentation](#9-documentation)
-- [How the rules are kept](#how-the-rules-are-kept)
-- [Risks](#risks)
-- [How it is checked](#how-it-is-checked)
-- [Not in this change](#not-in-this-change)
+- [[#Why]]
+- [[#What was decided]]
+- [[#Progress]]
+- [[#What it looks like when done]]
+- [[#The shape of the change]]
+- [[#Work, in order]]
+  - [[#1. The account and the database]]
+  - [[#2. Several sessions in the backend]]
+  - [[#3. One runtime per account]]
+  - [[#4. The terminal client]]
+  - [[#5. Merged chats and a contact's own settings]]
+  - [[#6. The control socket and the shell commands]]
+  - [[#7. corvus-tawk-mcp]]
+  - [[#8. Encryption, backup, doctor and logs]]
+  - [[#9. Documentation]]
+- [[#How the rules are kept]]
+- [[#Risks]]
+- [[#How it is checked]]
+- [[#Not in this change]]
 
 ## Why
 
@@ -184,7 +184,7 @@ The Go bridge keeps one global session, starting a second silently drives the fi
 - The frame loop ticks **every** runtime each frame. A background account whose queue is not drained fills it and blocks its backend thread.
 - `core/notification.h` gains `account_id` and `account_label`, filled from the runtime's label, so a sink can say which number it was. `BlinkState` gains `account_id`, so a blink for one account does not light the same contact in another.
 
-`composition/` is new. It is part of the composition root and the only other place that may construct implementations; ARCHITECTURE.md is updated to say so.
+`composition/` is new. It is part of the composition root and the only other place that may construct implementations; [[ARCHITECTURE]] is updated to say so.
 
 ### 4. The terminal client
 
@@ -300,7 +300,7 @@ On `feature/multi-account` in `corvus-tawk-mcp`, after tawk's control socket is 
 
 ### 9. Documentation
 
-- Corvus.App.Terminal.Tawk: MANUAL.md (accounts, the filter, merged chats, per-account agent access, with redrawn pictures by `make screenshots`), CONFIGURATION.md (`merge_accounts`, where each account's login lives, what moved out of `[automation]`), CONTROL.md (the added fields and `list_accounts`), ARCHITECTURE.md (the account runtime, `composition/`, the new contracts and engines), HOW_IT_WORKS.md (start-up with several accounts, a merged chat), SECURITY.md (per-account agent access), README.md.
+- Corvus.App.Terminal.Tawk: [[MANUAL]] (accounts, the filter, merged chats, per-account agent access, with redrawn pictures by `make screenshots`), [[CONFIGURATION]] (`merge_accounts`, where each account's login lives, what moved out of `[automation]`), [[CONTROL]] (the added fields and `list_accounts`), [[ARCHITECTURE]] (the account runtime, `composition/`, the new contracts and engines), [[HOW_IT_WORKS]] (start-up with several accounts, a merged chat), [[SECURITY]] (per-account agent access), [[README]].
 - Corvus.Mcp.Server.Tawk: README.md tools table, MANUAL.md (the `account` argument, `list_accounts`, the channel tag, resources), CONFIGURATION.md, ARCHITECTURE.md (the tool counts there are already out of date and are recounted), HOW_IT_WORKS.md, SECURITY.md, AGENT.md.
 - Both `AGENT_SETUP.md` files: an agent is told that a second number carries the same ban risk as the first and that linking one is the person's decision.
 
