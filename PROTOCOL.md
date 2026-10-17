@@ -1,6 +1,6 @@
 # Backend Protocol
 
-tawk talks to its WhatsApp backend with JSON objects, one per line. The Node.js sidecar reads commands on stdin and writes events on stdout (diagnostics go to stderr, which tawk sends to `~/.local/state/tawk/sidecar.log`). The in-process whatsmeow bridge receives the same command objects through `TawkWmCommand` and returns events through the C callback `tawk_wm_emit`.
+tawk talks to its WhatsApp backend with JSON objects, one per line. The Node.js sidecar reads commands on stdin and writes events on stdout (diagnostics go to stderr, which tawk sends to `~/.local/state/corvus/tawk/sidecar.log`). The in-process whatsmeow bridge receives the same command objects through `TawkWmCommand` and returns events through the C callback `tawk_wm_emit`.
 
 Backends report facts and never apply policy: they do not reconnect, retry or decide on notifications. Both backends implement every command and event below, except `picture_changed` (which the sidecar sends only after you change your own picture) `post_status` with its `status_posted` answer, which only whatsmeow handles, and `like_status`, which only the sidecar handles; `json_protocol.c` is the only encoder and decoder on the C side.
 
@@ -190,7 +190,7 @@ The same subscription brings the `presence` event: WhatsApp answers a `subscribe
 < {"evt":"removed","id":"3EB0A1","chat":"27831112222@s.whatsapp.net"}
 < {"evt":"alias","lid":"123456789012345@lid","pn":"27831112222@s.whatsapp.net"}
 > {"cmd":"picture","jid":"27831112222@s.whatsapp.net","full":false}
-< {"evt":"picture","jid":"27831112222@s.whatsapp.net","full":false,"path":"/home/logan/.cache/tawk/media/pic-9f2c4e1a7b3d5c60-1790668000.jpg","id":"1790668000"}
+< {"evt":"picture","jid":"27831112222@s.whatsapp.net","full":false,"path":"/home/logan/.cache/corvus/tawk/media/pic-9f2c4e1a7b3d5c60-1790668000.jpg","id":"1790668000"}
 < {"evt":"call","id":"4A1B2C3D4E5F60718293","from":"27831112222@s.whatsapp.net","state":"offer","video":false,"group":false,"ts":1790668900}
 > {"cmd":"reject_call","jid":"27831112222@s.whatsapp.net","id":"4A1B2C3D4E5F60718293"}
 ```

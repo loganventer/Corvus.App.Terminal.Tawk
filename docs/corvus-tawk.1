@@ -46,7 +46,7 @@ phone-number pairing code.
 .SH OPTIONS
 .TP
 .BI \-\-config " PATH"
-Use this configuration file instead of ~/.config/@APP@/config.ini.
+Use this configuration file instead of ~/.config/@APP_DIR@/config.ini.
 .TP
 .BI \-\-backend " NAME"
 \fBwhatsmeow\fR runs the WhatsApp protocol in-process (default);
@@ -116,7 +116,7 @@ Print a short usage summary and exit.
 .SH COMMANDS
 These talk to the @APP@ that is running, over its control socket, when
 Settings, Automation, Agent access is on. See CONTROL.md for the protocol
-and tawk\-mcp (https://github.com/loganventer/tawk\-mcp) for AI assistants.
+and corvus\-tawk\-mcp (https://github.com/loganventer/Corvus.Mcp.Server.Tawk) for AI assistants.
 A chat is a name, the start of a word in its name, or a phone number.
 .TP
 .B send \fICHAT\fR \fITEXT\fR...
@@ -259,16 +259,16 @@ In the header, click your name for your profile, \fB+\fR to post a status
 and the circle to see statuses.
 .SH FILES
 .TP
-.I ~/.config/@APP@/config.ini
+.I ~/.config/@APP_DIR@/config.ini
 Settings, also edited from the settings panel.
 .TP
-.I ~/.config/@APP@/themes/
+.I ~/.config/@APP_DIR@/themes/
 Your own JSON themes.
 .TP
-.I ~/.local/share/@APP@/
+.I ~/.local/share/@APP_DIR@/
 Chat database and WhatsApp login.
 .TP
-.I ~/.cache/@APP@/media/
+.I ~/.cache/@APP_DIR@/media/
 Downloaded media, with video frames, rendered PDF pages and profile
 pictures; safe to delete.
 .TP
@@ -276,10 +276,10 @@ pictures; safe to delete.
 Where Save to Downloads copies files and chat exports are written, unless \fBdownload_dir\fR or
 XDG_DOWNLOAD_DIR names another folder.
 .TP
-.I ~/.local/state/@APP@/
+.I ~/.local/state/@APP_DIR@/
 Log files.
 .SH EXIT STATUS
-0 on a normal exit, 1 when tawk cannot start (for example when the
+0 on a normal exit, 1 when @APP@ cannot start (for example when the
 database cannot be opened).
 With \fB\-\-doctor\fR, 1 when something required is missing and 0
 otherwise. The commands exit with 0 when done, 1 when something failed, 2
@@ -290,9 +290,17 @@ attached.
 XDG_CONFIG_HOME, XDG_DATA_HOME, XDG_CACHE_HOME and XDG_STATE_HOME move the
 folders above. XDG_DOWNLOAD_DIR sets the downloads folder when
 \fBdownload_dir\fR is empty. XDG_RUNTIME_DIR holds the control socket
-(\fBtawk/control.sock\fR); TAWK_CONTROL_SOCKET names another path for it.
+(\fB@APP_DIR@/control.sock\fR, with \fBadmin.token\fR beside it; without
+XDG_RUNTIME_DIR, ~/.local/state/@APP_DIR@/control.sock);
+CORVUS_TAWK_CONTROL_SOCKET names another path for it.
+.SH NOTES
+This program was called \fBtawk\fR before version 0.32.0. Installs also put a
+\fBtawk\fR symlink to @APP@ in the same folder; it is deprecated and will be
+removed, and started under that name @APP@ says so on stderr. The folders and
+the TAWK_ variables of tawk are not read: CUTOVER.md in the documentation and
+scripts/migrate-from-legacy.sh in the source move an existing install across.
 .SH AUTHOR
 Written by Logan Venter <logan.venter@outlook.com>.
-Source and issues: https://github.com/loganventer/tawk
+Source and issues: https://github.com/loganventer/Corvus.App.Terminal.Tawk
 .SH SEE ALSO
-Full documentation: https://github.com/loganventer/tawk
+Full documentation: https://github.com/loganventer/Corvus.App.Terminal.Tawk

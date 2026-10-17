@@ -23,7 +23,7 @@ tawk is one C11 program arranged in [iDesign](https://www.idesign.net/) layers. 
 | Layer | Folder | Responsibility | May call |
 |---|---|---|---|
 | Composition | `composition` | Builds one account's components and owns the set of running accounts. Part of the composition root | Everything, as `main.c` does |
-| Client | `clients/tui`, `clients/control`, `clients/cli` | `tui`: the ncurses UI (widgets, input, slash commands, layout, the settings panel, the Chats and Agentic tabs). `control`: the control socket client that serves tawk-mcp and the shell commands ([CONTROL.md](CONTROL.md)). `cli`: the `--doctor` setup check, the `--update` installer, `--encrypt`, `--decrypt` and `--change-passphrase`, `--backup` and `--restore`, the start-up passphrase prompt, and `tawk send`, `tail`, `unread` and `status-line` | Managers, and the contracts the composition root hands it |
+| Client | `clients/tui`, `clients/control`, `clients/cli` | `tui`: the ncurses UI (widgets, input, slash commands, layout, the settings panel, the Chats and Agentic tabs). `control`: the control socket client that serves corvus-tawk-mcp and the shell commands ([CONTROL.md](CONTROL.md)). `cli`: the `--doctor` setup check, the `--update` installer, `--encrypt`, `--decrypt` and `--change-passphrase`, `--backup` and `--restore`, the start-up passphrase prompt, and `corvus-tawk send`, `tail`, `unread` and `status-line` | Managers, and the contracts the composition root hands it |
 | Managers | `managers` | Use cases: messaging and connection supervision, profiles and profile pictures, your own profile, posting statuses, the status feed, messages scheduled for later, incoming calls, media, settings, encrypting the database, encrypted backups, voice note transcripts and TL;DR summaries (keeping what is handed over, and each chat's choices about them), the rules and log for agents (automation), plus the composite event observer that hands backend events to the managers that listen for them | Engines, contracts |
 | Engines | `engines` | Business rules with no I/O: backoff, circuit breaker, notification policy, chat visibility, idle tracking, message ids, media type detection, emoticon conversion, network fingerprints and change detection, profile field and status post validation, finding a URL in text, the status background palette, matching chats against a search, reading when a scheduled message should go, the backup manifest and which archive members a restore accepts, and for agents: the automation policy (who sees which chats, which writes are asked about, which settings stay out of reach, risk, and which of its own requests a client may answer with access admin), the hourly quota for those, resolving a chat named by an agent, the rate limiter and confirmation tokens; and for transcripts and TL;DR: what may be kept (`transcript_validator`, `summary_validator`), what shows and what is transcribed or summarised (`transcript_display_policy`, `transcription_policy`, `summary_policy`, `transcript_choice`), which agent writes summaries (`summariser_choice`) and the question about that (`agent_question`) | Core, utilities |
 | Resource access | `resource_access` | SQLite stores (messages, chats, contacts, reactions, receipts, JID aliases, profiles, statuses, scheduled messages, the automation log, transcripts, summaries), database encryption with SQLCipher (`sqlite_database_crypt`, `sqlite_key`), the caching decorators, INI settings store, JSON theme repository, TSV emoji catalog, the text chat exporter, WhatsApp gateways, the JSON protocol codec | Core, utilities |
@@ -86,7 +86,7 @@ flowchart TD
         TUI["TuiApp<br/>loop, input, render"]
         W["Widgets<br/>header, chat list, messages, composer,<br/>portraits, contact panel, call prompt,<br/>profile and status dialogs, camera, splash,<br/>login wizard, settings panel, popups"]
         CMD["Slash commands"]
-        DOC["Doctor (tawk --doctor)<br/>Updater (tawk --update)"]
+        DOC["Doctor (corvus-tawk --doctor)<br/>Updater (corvus-tawk --update)"]
     end
     subgraph Managers
         MM["MessagingManager<br/>events, chats, sending, export, supervision"]
@@ -167,7 +167,7 @@ flowchart TD
 | `IEmojiCatalog` | `tsv_emoji_catalog` (reads `emoji.tsv`: glyph, group, name and CLDR keywords per line) |
 | `ISettingsStore` | `ini_settings_store` |
 | `IThemeRepository` | `json_theme_repository` |
-| `ISoundCatalog` | `folder_sound_catalog` (the `.wav` and `.ogg` files of the bundled sounds folder and of `~/.config/tawk/sounds/`; the settings panel lists them through `sound_picker` and `sound_picker_view`, and `sound_name` decides which files count and what to call them) |
+| `ISoundCatalog` | `folder_sound_catalog` (the `.wav` and `.ogg` files of the bundled sounds folder and of `~/.config/corvus/tawk/sounds/`; the settings panel lists them through `sound_picker` and `sound_picker_view`, and `sound_name` decides which files count and what to call them) |
 | `IAudioBackend` | `pulse`, `pipewire`, `alsa`, `coreaudio`, `dshow`, chosen by `audio_backend_factory` |
 | `IAudioPlayer` | `process_audio_player` (uses an `IAudioBackend`; reports how long the current file has played, for the voice note progress bar) |
 | `IAudioRecorder` | `pipeline_audio_recorder` (backend capture piped into ffmpeg) |
@@ -186,7 +186,7 @@ flowchart TD
 | `IArchive` | `tar_archive` (gzipped tar with the system's tar; lists names and types before extracting) |
 | `IFileCipher` | `openssl_file_cipher` (`openssl enc -aes-256-cbc -pbkdf2 -iter 600000 -salt`, passphrase on file descriptor 3), wrapped by `authenticated_file_cipher`, a decorator that puts a mark, a salt and an HMAC-SHA256 tag in front of what the other writes and refuses a file that does not match its tag before handing it on (`utilities/sha256` holds the hash, the HMAC and PBKDF2) |
 | `IControlTransport` | `unix_control_transport` (the control socket: 0600 in a 0700 folder, clients of the same user only, non-blocking, lines of at most 1 MiB, a socket left by a crashed tawk replaced) |
-| `IControlClient` | `unix_control_client` (the calling end, for `tawk send`, `tail`, `unread` and `status-line`) |
+| `IControlClient` | `unix_control_client` (the calling end, for `corvus-tawk send`, `tail`, `unread` and `status-line`) |
 | `IApprovalPrompt` | `approval_queue` in the terminal client (requests waiting in the Agentic tab; answers collected by polling) |
 | `IAutomationLog` | `sqlite_automation_log` (what agents did, in the `automation_log` table, the newest 5000 kept) |
 | `IAdminTokenStore` | `file_admin_token_store` (the admin token in `admin.token` beside the control socket, 0600, written beside itself and renamed) |
@@ -450,7 +450,7 @@ flowchart TD
 
 The clients compose across accounts. The terminal client keeps one account in view and swaps the managers it talks to when you open a chat of another (`tui_accounts.c`), builds the one chat list from every account's chats (`UnifiedChatList`), and builds a merged conversation from the chats of one person (`MergedMessageWindow`). The control client serves each request from the account it names (`control_accounts.c`), and `AutomationManager` is told which account it is serving so the existing rules in `automation_policy` are applied with that account's level.
 
-One `tawk.log` serves every account. The logger keeps a label per thread (`log_context_set`), set where an account is ticked or served, so a line written while an account is worked on starts with its label. `tawk --doctor` reads the accounts through `sqlite_account_roster_read`, which opens the database read-only and never upgrades it.
+One `tawk.log` serves every account. The logger keeps a label per thread (`log_context_set`), set where an account is ticked or served, so a line written while an account is worked on starts with its label. `corvus-tawk --doctor` reads the accounts through `sqlite_account_roster_read`, which opens the database read-only and never upgrades it.
 
 The whatsmeow bridge keeps a session per account, keyed by a handle the gateway passes with every call, so one linked library carries all of them.
 

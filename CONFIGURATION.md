@@ -22,19 +22,19 @@ Your files (created with owner-only permissions, folders 0700 and files 0600):
 
 | Path | Contents | Safe to delete? |
 |---|---|---|
-| `~/.config/tawk/config.ini` | Settings | Yes, defaults are written again |
-| `~/.config/tawk/themes/` | Your own themes | Yes |
-| `~/.config/tawk/sounds/` | Your own notification sounds (WAV or OGG), listed beside the bundled ones in Settings, Notifications, Sound | Yes |
-| `~/.local/share/tawk/tawk.db` | Chats, messages, contacts, reactions, per-chat preferences (drafts, mutes, tones, chat themes, soft locks), profiles (about text, business and group details, which picture files belong to whom, the block list) and statuses (kept for `status_keep_days`) | Yes, history syncs again after linking, but local preferences are lost |
-| `~/.local/share/tawk/tawk.db.pre-v10` (and later versions) | A copy of the database as it was before tawk upgraded it, kept once so a failed or unwanted upgrade can be undone by hand. Encrypted when the database is. `tawk --encrypt` offers to remove unencrypted ones | Yes, once the upgraded tawk works |
-| `~/.local/share/tawk/tawk.lock` | Held while tawk runs, so only one tawk uses the data folder at a time (and `--encrypt`, `--decrypt` and `--change-passphrase` wait for it to quit) | Yes, when no tawk is running |
-| `*.before-restore-<date>-<time>` beside the database, config, themes, media and login | What `tawk --restore` replaced, kept in case you want it back | Yes, once the restored data is fine |
-| `~/.local/share/tawk/.backup-*`, `.restore-*` | Working folders of a backup or restore, removed when it ends (one is left only if tawk was killed halfway) | Yes, when no backup or restore is running |
-| `~/.local/share/tawk/auth/` | The WhatsApp login of the first account | Deleting it unlinks that number |
-| `~/.local/share/tawk/accounts/<N>/auth/` | The login of each further account, by its id | Deleting one unlinks that number; its chats stay in the database |
-| `~/.cache/tawk/media/` | Downloaded photos, videos, voice notes and documents, with the frames taken from videos (`<video>.poster.jpg`) and the rendered pages of PDFs (`<pdf>.p<N>.png`) beside them, profile pictures (`pic-<hash>-<id>.jpg`, `-full` for the full size), and the photos and videos of statuses (removed with the status once it is older than `status_keep_days`) | Yes, profile pictures are fetched again |
-| `~/.local/state/tawk/` | `tawk.log`, `sidecar.log`, `whatsmeow.log` | Yes, or empty them with Settings, Advanced, Clear logs |
-| `$XDG_RUNTIME_DIR/tawk/` | `control.sock`, the control socket, while tawk runs with agent access on (0600, in a 0700 folder) | Removed when tawk quits |
+| `~/.config/corvus/tawk/config.ini` | Settings | Yes, defaults are written again |
+| `~/.config/corvus/tawk/themes/` | Your own themes | Yes |
+| `~/.config/corvus/tawk/sounds/` | Your own notification sounds (WAV or OGG), listed beside the bundled ones in Settings, Notifications, Sound | Yes |
+| `~/.local/share/corvus/tawk/tawk.db` | Chats, messages, contacts, reactions, per-chat preferences (drafts, mutes, tones, chat themes, soft locks), profiles (about text, business and group details, which picture files belong to whom, the block list) and statuses (kept for `status_keep_days`) | Yes, history syncs again after linking, but local preferences are lost |
+| `~/.local/share/corvus/tawk/tawk.db.pre-v10` (and later versions) | A copy of the database as it was before tawk upgraded it, kept once so a failed or unwanted upgrade can be undone by hand. Encrypted when the database is. `corvus-tawk --encrypt` offers to remove unencrypted ones | Yes, once the upgraded tawk works |
+| `~/.local/share/corvus/tawk/tawk.lock` | Held while tawk runs, so only one tawk uses the data folder at a time (and `--encrypt`, `--decrypt` and `--change-passphrase` wait for it to quit) | Yes, when no tawk is running |
+| `*.before-restore-<date>-<time>` beside the database, config, themes, media and login | What `corvus-tawk --restore` replaced, kept in case you want it back | Yes, once the restored data is fine |
+| `~/.local/share/corvus/tawk/.backup-*`, `.restore-*` | Working folders of a backup or restore, removed when it ends (one is left only if tawk was killed halfway) | Yes, when no backup or restore is running |
+| `~/.local/share/corvus/tawk/auth/` | The WhatsApp login of the first account | Deleting it unlinks that number |
+| `~/.local/share/corvus/tawk/accounts/<N>/auth/` | The login of each further account, by its id | Deleting one unlinks that number; its chats stay in the database |
+| `~/.cache/corvus/tawk/media/` | Downloaded photos, videos, voice notes and documents, with the frames taken from videos (`<video>.poster.jpg`) and the rendered pages of PDFs (`<pdf>.p<N>.png`) beside them, profile pictures (`pic-<hash>-<id>.jpg`, `-full` for the full size), and the photos and videos of statuses (removed with the status once it is older than `status_keep_days`) | Yes, profile pictures are fetched again |
+| `~/.local/state/corvus/tawk/` | `tawk.log`, `sidecar.log`, `whatsmeow.log` | Yes, or empty them with Settings, Advanced, Clear logs |
+| `$XDG_RUNTIME_DIR/corvus/tawk/` | `control.sock`, the control socket, while tawk runs with agent access on (0600, in a 0700 folder) | Removed when tawk quits |
 
 Save to Downloads copies a received file out of the media cache into your downloads folder (see `download_dir`). Exporting a chat from its contact details writes `tawk chat with NAME.txt` there, or with media a folder `tawk chat with NAME` holding the text file and copies of the downloaded files. Those copies are yours: tawk creates them with mode 0644, which its private umask (077) narrows to owner only (0600, and 0700 for an export folder); tawk never overwrites a file there (a second export gets ` (1)` added to its name), and it never prunes or deletes them.
 
@@ -42,24 +42,24 @@ Installed files (with the default prefix `/usr/local`):
 
 | Path | Contents |
 |---|---|
-| `/usr/local/bin/tawk` | The program |
-| `/usr/local/share/tawk/themes/` | Bundled themes |
-| `/usr/local/share/tawk/sounds/` | Notification sounds (the default `notify.wav` and a few alternatives) |
-| `/usr/local/share/tawk/emoji/emoji.tsv` | The emoji list used by the emoji picker and `(word` shortcodes (Unicode emoji data with CLDR keywords) |
-| `/usr/local/lib/tawk/sidecar/` | The Node.js backend, when installed |
-| `/usr/local/share/man/man1/tawk.1` | Man page |
-| `/usr/local/share/doc/tawk/` | This documentation and the licence |
-| `/usr/local/share/bash-completion/completions/tawk` | Bash completion |
+| `/usr/local/bin/corvus-tawk` | The program |
+| `/usr/local/share/corvus-tawk/themes/` | Bundled themes |
+| `/usr/local/share/corvus-tawk/sounds/` | Notification sounds (the default `notify.wav` and a few alternatives) |
+| `/usr/local/share/corvus-tawk/emoji/emoji.tsv` | The emoji list used by the emoji picker and `(word` shortcodes (Unicode emoji data with CLDR keywords) |
+| `/usr/local/lib/corvus-tawk/sidecar/` | The Node.js backend, when installed |
+| `/usr/local/share/man/man1/corvus-tawk.1` | Man page |
+| `/usr/local/share/doc/corvus-tawk/` | This documentation and the licence |
+| `/usr/local/share/bash-completion/completions/corvus-tawk` | Bash completion |
 
 A user install (`--prefix ~/.local`) puts the same tree under `~/.local`. When tawk runs straight from a source checkout it falls back to `themes/`, `assets/emoji/` and `sidecar/` in the current folder.
 
-`tawk --doctor` reports where each of these was found and whether your folders are writable (see [MANUAL.md](MANUAL.md#checking-your-setup)).
+`corvus-tawk --doctor` reports where each of these was found and whether your folders are writable (see [MANUAL.md](MANUAL.md#checking-your-setup)).
 
 ## The config file
 
-`~/.config/tawk/config.ini` is a plain INI file with one section per settings menu. tawk writes it on first run with every key and a comment explaining each one, and rewrites it whenever you change something in the settings panel, so the panel and the file always agree. You can also edit it by hand while tawk is closed; unknown keys are ignored and out-of-range numbers are clamped.
+`~/.config/corvus/tawk/config.ini` is a plain INI file with one section per settings menu. tawk writes it on first run with every key and a comment explaining each one, and rewrites it whenever you change something in the settings panel, so the panel and the file always agree. You can also edit it by hand while tawk is closed; unknown keys are ignored and out-of-range numbers are clamped.
 
-Use another file with `tawk --config /path/to/config.ini`.
+Use another file with `corvus-tawk --config /path/to/config.ini`.
 
 ## All settings
 
@@ -121,7 +121,7 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `quiet_hours` | (empty) | A stretch of the day with no alerts, such as `22:00-07:00` (it may run over midnight). A mention still gets through when `mention_notifications` is on. Empty: none |
 | `quiet_hours_weekend` | (empty) | Other quiet hours for Saturday and Sunday. Empty: the same as on weekdays |
 | `sound` | `true` | Play a sound for new messages, and every 3 seconds while a call rings |
-| `sound_file` | `/usr/local/share/tawk/sounds/notify.wav` | WAV/OGG file to play. The sounds folder also holds `bong.wav`, `pluck.wav`, `glass.wav`, `drop.wav`, `open.wav`, `question.wav`, `rise.wav` and `confirm.wav` |
+| `sound_file` | `/usr/local/share/corvus-tawk/sounds/notify.wav` | WAV/OGG file to play. The sounds folder also holds `bong.wav`, `pluck.wav`, `glass.wav`, `drop.wav`, `open.wav`, `question.wav`, `rise.wav` and `confirm.wav` |
 | `blink` | `true` | Blink the chat in the list and the status bar |
 | `blink_seconds` | `8` | How long the blink lasts (1 to 60) |
 | `title_flash` | `true` | Show per-type unread counts in the terminal title and flash it |
@@ -139,7 +139,7 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `download_dir` | `(empty)` | Where Save to Downloads puts files. Empty uses your downloads folder: `XDG_DOWNLOAD_DIR` from the environment or from `~/.config/user-dirs.dirs`, else `~/Downloads`. A leading `~/` is expanded, and the folder is created when missing |
 | `attach_dir` | `(empty)` | The folder the file picker opens in; tawk keeps it set to the last folder you attached from (your home folder when empty or missing) |
 | `media_cache_mb` | `1024` | Oldest downloads are removed above this size (50 to 100000) |
-| `media_dir` | `~/.cache/tawk/media` | Downloaded media (a cache: safe to delete) (restart required) |
+| `media_dir` | `~/.cache/corvus/tawk/media` | Downloaded media (a cache: safe to delete) (restart required) |
 | `audio_backend` | `auto` | auto detects PulseAudio, PipeWire, ALSA, CoreAudio or DirectShow |
 | `mic_device` | `default` | Capture device for the audio system; "default" uses the system default |
 | `voice_max_seconds` | `300` | Recording stops and sends at this length (10 to 900) |
@@ -165,7 +165,7 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 
 ### [automation]
 
-What other programs reaching tawk through its control socket may do: tawk-mcp and the `tawk send`, `tail`, `unread` and `status-line` commands. See [Automation and MCP](MANUAL.md#automation-and-mcp) and [CONTROL.md](CONTROL.md).
+What other programs reaching tawk through its control socket may do: corvus-tawk-mcp and the `corvus-tawk send`, `tail`, `unread` and `status-line` commands. See [Automation and MCP](MANUAL.md#automation-and-mcp) and [CONTROL.md](CONTROL.md).
 
 | Key | Default | Description |
 |---|---|---|
@@ -177,7 +177,7 @@ What other programs reaching tawk through its control socket may do: tawk-mcp an
 | `ai_disclaimer` | `off` | Add a line under messages a program acting for a model sends, schedules or answers a status with, saying an AI wrote them |
 | `ai_disclaimer_text` | `🤖 Created with my AI assistant` | That line |
 | `push_received` | `on` | Programs acting for a model that subscribed are told about each message other people send, as it arrives. Off, they see messages only when they read a chat |
-| `push_sent` | `on` | The same for the messages you send. Your own shell commands (`tawk tail`) always hear both |
+| `push_sent` | `on` | The same for the messages you send. Your own shell commands (`corvus-tawk tail`) always hear both |
 | `push_read` | `off` | Programs acting for a model that subscribed are told when someone reads a message you sent |
 | `push_played` | `off` | The same when someone plays a voice note or video you sent (0.27.0). Separate from `push_read`: a play is not also told as a read |
 | `push_reactions` | `off` | The same when someone reacts to a message you sent, or takes a reaction back |
@@ -186,7 +186,7 @@ What other programs reaching tawk through its control socket may do: tawk-mcp an
 | `push_presence` | `off` | The same when the person in a chat you have opened comes online or leaves. Only for chats the program may use, and only for a chat you opened or one it looked up |
 | `presence_lookup` | `off` | A program acting for a model may ask whether the person in a chat is online or when they were last seen, one person at a time and only for the chats it may use. Off, it cannot ask. Your own shell always may |
 | `self_approval_chats` | empty | With `access = admin`: the chats a program may answer its own sends in, as JIDs separated by commas, or `*` for every chat it may use. Empty allows none. Set from Settings, Automation, Answering for itself, where each chat has a switch |
-| `transcribe_model` | `large-v3-turbo` | The Whisper model an agent's transcriber (tawk-mcp) uses for voice notes: `tiny`, `base`, `small`, `medium`, `large-v3-turbo` or `large-v3`. A list to choose from in the settings panel |
+| `transcribe_model` | `large-v3-turbo` | The Whisper model an agent's transcriber (corvus-tawk-mcp) uses for voice notes: `tiny`, `base`, `small`, `medium`, `large-v3-turbo` or `large-v3`. A list to choose from in the settings panel |
 | `transcribe_languages` | `en` | The languages voice notes are spoken in, as codes separated by commas, or `auto` for any. Set from Settings, Chats, Voice note languages as a list of switches. Each voice note is written once, in whichever of them is spoken; a chat's own languages (its contact card) come first |
 | `transcribe_auto` | `off` | Every voice note other people send is transcribed as it arrives. Off, only the ones an agent asks for |
 | `mask_codes` | `on` | One-time codes and card numbers in messages reach an agent acting for a model as `[code]` and `[card number]`. Your own shell commands see the text as it is |
@@ -204,8 +204,8 @@ None of these can be changed over the socket, nor can settings that run a progra
 | Key | Default | Description |
 |---|---|---|
 | `backend` | `whatsmeow` | whatsmeow runs in-process; baileys runs a Node.js sidecar (restart required). Posting statuses needs whatsmeow |
-| `data_dir` | `~/.local/share/tawk` | Chat database and WhatsApp login (restart required) |
-| `sidecar_dir` | `/usr/local/lib/tawk/sidecar` | Location of the WhatsApp bridge (restart required) |
+| `data_dir` | `~/.local/share/corvus/tawk` | Chat database and WhatsApp login (restart required) |
+| `sidecar_dir` | `/usr/local/lib/corvus-tawk/sidecar` | Location of the WhatsApp bridge (restart required) |
 | `node_binary` | `node` | Runtime used for the bridge (restart required) |
 | `log_level` | `info` | debug, info, warn or error (restart required) |
 
@@ -222,7 +222,7 @@ The config file holds one set of settings for tawk as a whole. What belongs to o
 
 ## Themes
 
-A theme is a JSON file. tawk loads the bundled folder first and then `~/.config/tawk/themes/`; a theme of yours with the same `id` replaces the bundled one. The picker lists themes by name.
+A theme is a JSON file. tawk loads the bundled folder first and then `~/.config/corvus/tawk/themes/`; a theme of yours with the same `id` replaces the bundled one. The picker lists themes by name.
 
 ```json
 {
@@ -265,7 +265,7 @@ A theme can also be applied to a single chat with its chat options or `/theme <i
 
 ## Database encryption (SQLCipher)
 
-`tawk --encrypt` encrypts the database with a passphrase (see [the manual](MANUAL.md#encrypting-your-chats)). It needs a build with SQLCipher, a copy of SQLite that can encrypt. The build uses SQLCipher instead of SQLite whenever `pkg-config` finds it, and the configure summary says which one it chose:
+`corvus-tawk --encrypt` encrypts the database with a passphrase (see [the manual](MANUAL.md#encrypting-your-chats)). It needs a build with SQLCipher, a copy of SQLite that can encrypt. The build uses SQLCipher instead of SQLite whenever `pkg-config` finds it, and the configure summary says which one it chose:
 
 ```
   sqlite      SQLCipher 3.51.2, database encryption available
@@ -273,7 +273,7 @@ A theme can also be applied to a single chat with its chat options or `/theme <i
 
 The installer adds it (`libsqlcipher-dev` on Debian and Ubuntu, `sqlcipher-devel` on Fedora and openSUSE, `sqlcipher` on Arch and Homebrew). `make SQLCIPHER=0` builds with plain SQLite even when SQLCipher is installed; such a build cannot open an encrypted database and says so. The passphrase is never a setting: it is typed at start-up and kept only in memory.
 
-Backups (`tawk --backup`, see [the manual](MANUAL.md#backups)) need no build option: they are packed with the system's `tar` and encrypted with the `openssl` command, which the installer adds.
+Backups (`corvus-tawk --backup`, see [the manual](MANUAL.md#backups)) need no build option: they are packed with the system's `tar` and encrypted with the `openssl` command, which the installer adds.
 
 ## Choosing a backend
 
@@ -285,7 +285,7 @@ Backups (`tawk --backup`, see [the manual](MANUAL.md#backups)) need no build opt
 | Start-up | Instant | A few seconds (Node.js start and module loading) |
 | If the protocol layer crashes | tawk exits | tawk restarts the sidecar with backoff |
 
-Each backend keeps its own login (whatsmeow in `~/.local/share/tawk/auth/whatsmeow.db`, Baileys in `~/.local/share/tawk/auth/baileys/`), so switching backends means linking once more, and logging out of one never affects the other. Set `backend` in `[advanced]` (Settings, Connection, Backend) or start once with `tawk --backend baileys`.
+Each backend keeps its own login (whatsmeow in `~/.local/share/corvus/tawk/auth/whatsmeow.db`, Baileys in `~/.local/share/corvus/tawk/auth/baileys/`), so switching backends means linking once more, and logging out of one never affects the other. Set `backend` in `[advanced]` (Settings, Connection, Backend) or start once with `corvus-tawk --backend baileys`.
 
 Posting a status needs whatsmeow; viewing statuses and changing your profile work on both. On Baileys, + in the header and `/status` offer to switch: tawk saves `backend = whatsmeow`, shuts down cleanly and starts again without any `--backend` option, ready to link with a QR code or pairing code. Your chats stay in the database.
 
@@ -308,10 +308,10 @@ Recordings are always encoded by `ffmpeg` to 48 kHz mono Ogg/Opus, the format Wh
 Four settings name programs tawk will start: `screensaver.command`, `media.image_viewer`, `media.video_player` and `advanced.node_binary` (plus `advanced.sidecar_dir`, which decides what code Node.js runs). tawk honours them only when `config.ini` is owned by you and not writable by your group or others. If the file is shared or loosely permissioned, tawk logs a warning, uses the defaults for those settings, and does not rewrite the file. Fix it with:
 
 ```bash
-chmod 600 ~/.config/tawk/config.ini
+chmod 600 ~/.config/corvus/tawk/config.ini
 ```
 
-`tawk --doctor` warns when the file is not private. While it is not, Ctrl+L, `/screensaver` and the idle timer show a message instead of starting the screensaver.
+`corvus-tawk --doctor` warns when the file is not private. While it is not, Ctrl+L, `/screensaver` and the idle timer show a message instead of starting the screensaver.
 
 The screensaver command runs through `/bin/sh -c` so that pipes and arguments work. Viewer and player settings are split into arguments without any shell, and the file path is passed as a separate argument.
 
@@ -345,10 +345,10 @@ Like the Ctrl+Shift+L binding, it applies to every program in Windows Terminal.
 | `XDG_DATA_HOME` | Moves `~/.local/share` |
 | `XDG_CACHE_HOME` | Moves `~/.cache` |
 | `XDG_STATE_HOME` | Moves `~/.local/state` |
-| `XDG_RUNTIME_DIR` | Where the control socket goes (`$XDG_RUNTIME_DIR/tawk/control.sock`); without it, the state folder |
-| `TAWK_CONTROL_SOCKET` | An absolute path for the control socket instead, for tawk and its shell commands alike |
+| `XDG_RUNTIME_DIR` | Where the control socket goes (`$XDG_RUNTIME_DIR/corvus/tawk/control.sock`); without it, the state folder |
+| `CORVUS_TAWK_CONTROL_SOCKET` | An absolute path for the control socket instead, for tawk and its shell commands alike |
 | `XDG_DOWNLOAD_DIR` | Where Save to Downloads puts files when `download_dir` is empty; an absolute path. Without it tawk reads `~/.config/user-dirs.dirs`, then uses `~/Downloads` |
 | `WT_SESSION` | Set by Windows Terminal; enables the tab progress ring |
 | `TERM` | Should describe a 256-colour terminal such as `xterm-256color` for full theme colours and photo previews |
-| `COLORTERM` | Set by true-colour terminals; `tawk --doctor` uses it when checking colour support |
+| `COLORTERM` | Set by true-colour terminals; `corvus-tawk --doctor` uses it when checking colour support |
 | `LANG`, `LC_ALL` | Should select a UTF-8 locale so emoji and borders draw correctly |

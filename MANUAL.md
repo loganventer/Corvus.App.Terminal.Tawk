@@ -1,6 +1,6 @@
 # Manual
 
-The screenshots in this manual were taken from tawk running on a demo account with made-up chats. Chat names and message text are blurred; everything else is exactly what tawk draws. They were taken inside tmux, so photos appear in block mode; in Windows Terminal and other Sixel terminals they are drawn in full resolution. The pictures of your profile, statuses, the camera, the formatted conversation and the start-up splash are drawn by tawk's own code with made-up data (`make screenshots` draws them again; it needs Python with Pillow and the DejaVu fonts, whose folder `TAWK_SHOT_FONTS` names when it is not `/usr/share/fonts/truetype/dejavu`).
+The screenshots in this manual were taken from tawk running on a demo account with made-up chats. Chat names and message text are blurred; everything else is exactly what tawk draws. They were taken inside tmux, so photos appear in block mode; in Windows Terminal and other Sixel terminals they are drawn in full resolution. The pictures of your profile, statuses, the camera, the formatted conversation and the start-up splash are drawn by tawk's own code with made-up data (`make screenshots` draws them again; it needs Python with Pillow and the DejaVu fonts, whose folder `CORVUS_TAWK_SHOT_FONTS` names when it is not `/usr/share/fonts/truetype/dejavu`).
 
 ## Table of Contents
 
@@ -60,7 +60,7 @@ The screenshots in this manual were taken from tawk running on a demo account wi
   - [Files from agents](#files-from-agents)
   - [Writing to someone new](#writing-to-someone-new)
   - [Shell commands](#shell-commands)
-  - [tawk-mcp](#tawk-mcp)
+  - [corvus-tawk-mcp](#corvus-tawk-mcp)
 - [Command line](#command-line)
 - [Checking your setup](#checking-your-setup)
 - [Troubleshooting](#troubleshooting)
@@ -480,7 +480,7 @@ The conversation keeps only the messages around what is on screen in memory: 50 
 
 ![Scrolled back in a chat, with the newer badge at the bottom right](docs/images/conversation-older.png)
 
-Downloaded media is kept in `~/.cache/tawk/media`. The oldest files are removed once the folder passes the cache limit (1 GB by default).
+Downloaded media is kept in `~/.cache/corvus/tawk/media`. The oldest files are removed once the folder passes the cache limit (1 GB by default).
 
 ### The message menu
 
@@ -657,7 +657,7 @@ Voice notes show as `🔊 ▶ ●──────────── 0:14`: a p
 - On a chat's contact card, **Voice note languages…** opens the same list for that chat alone, and what you switch on there comes first. It opens with the languages that apply to the chat now switched on. Its top switch puts the chat back on what Settings, Chats says.
 - With no language switched on, the transcriber chooses among all of them, which goes wrong more often on short voice notes.
 
-In either list, type to find a language, Space or a click flips a switch, Enter saves and Esc leaves things as they were. A voice note that mixes a language with English is written in that language, with the English words left as they were said. The choice is made by tawk-mcp 0.10.2 or later; an older one writes one transcript for each language listed.
+In either list, type to find a language, Space or a click flips a switch, Enter saves and Esc leaves things as they were. A voice note that mixes a language with English is written in that language, with the English words left as they were said. The choice is made by corvus-tawk-mcp 0.10.2 or later; an older one writes one transcript for each language listed.
 
 Three things decide what you see:
 
@@ -665,7 +665,7 @@ Three things decide what you see:
 - On a chat's [contact card](#contact-details), **Show transcripts** steps through *as the setting says*, *always* and *never* for that chat. **Alt+T** (Option+T on a Mac) and `/transcripts` step the same row for the open chat, and the conversation stays where it was.
 - On the same card, **Transcribe voice notes** switches transcribing off for that chat. From then on nothing in it is transcribed, whether as it arrives or because an agent asked, and tawk refuses a transcript handed to it for that chat. It looks forwards only: the transcripts the chat already has are kept, and still shown as its Show transcripts row says.
 
-With several agents connected, a voice note goes to the one running the newest tawk-mcp. Older voice notes are filled in as you look at them. While "Transcribe voice notes as they arrive" is on, a voice note from someone else that comes onto the screen without a transcript is handed to the transcriber, and its words appear when they are ready. tawk does not go through a whole chat by itself: only what you scroll to. A voice note WhatsApp no longer holds cannot be fetched, and stays as it is.
+With several agents connected, a voice note goes to the one running the newest corvus-tawk-mcp. Older voice notes are filled in as you look at them. While "Transcribe voice notes as they arrive" is on, a voice note from someone else that comes onto the screen without a transcript is handed to the transcriber, and its words appear when they are ready. tawk does not go through a whole chat by itself: only what you scroll to. A voice note WhatsApp no longer holds cannot be fetched, and stays as it is.
 
 Hiding transcripts removes nothing, and "Show transcript" in the message menu works whether they are shown or not. A transcript is removed with its message: when you delete it, when the sender deletes it for everyone, and when you clear or delete the chat. A soft-locked chat shows the shape of a transcript only, and takes no new ones while it is locked.
 
@@ -683,12 +683,12 @@ Some chats are full of long messages. Put one in TL;DR mode and each long messag
 
 A message that has no summary yet shows in full, as it always did, and changes to its summary when one arrives. Older messages are filled in too: when you switch TL;DR on for a chat, and the first time you open such a chat after starting tawk, its messages of the last 30 days (Settings, Chats, TL;DR back, `tldr_back_days`) are handed to the agent, newest first, a few at a time. Anything older is summarised when you scroll to it. Set the days to 0 to have only what you look at summarised. Voice notes and pictures are never summarised; a voice note has its transcript.
 
-**Who writes the summaries.** tawk has no model of its own. A connected agent's model writes them: tawk tells the agent which message waits, and the agent hands the summary back. So TL;DR needs [Agent access](#automation-and-mcp) on and an agent connected that can write summaries (tawk-mcp 0.10.0 or later, started so that it takes channel events), and the text of that chat's messages goes to the service that runs that agent's model without you asking each time. A chat agents may not see, and a locked or soft-locked chat, is never summarised.
+**Who writes the summaries.** tawk has no model of its own. A connected agent's model writes them: tawk tells the agent which message waits, and the agent hands the summary back. So TL;DR needs [Agent access](#automation-and-mcp) on and an agent connected that can write summaries (corvus-tawk-mcp 0.10.0 or later, started so that it takes channel events), and the text of that chat's messages goes to the service that runs that agent's model without you asking each time. A chat agents may not see, and a locked or soft-locked chat, is never summarised.
 
 **Which agent.** In the Agentic tab's Agents list, select an agent and press **d** to make it your default agent; it is marked `★ DEFAULT`, and pressing d on it again takes the choice back. tawk remembers the choice by the agent's label, so it holds when that agent connects again. Then:
 
 - The agent you chose writes the summaries while it is connected.
-- With none chosen, or the chosen one away, the only agent connected that can write summaries is used. An agent running an older tawk-mcp is passed over and does not count.
+- With none chosen, or the chosen one away, the only agent connected that can write summaries is used. An agent running an older corvus-tawk-mcp is passed over and does not count.
 - An agent that is asked and hands nothing back is passed over for a while: after two requests in a row that go unanswered for a minute and a half each, tawk asks another agent for the next five minutes, says so in a notice, and then tries it again. An agent that was only busy picks up where it left off; a session that takes no channel events is simply passed over each time. Two sessions started in the same folder have the same label, so choosing one as default agent chooses both; the one that answers is the one that ends up writing.
 - With several connected and none chosen, tawk asks you on WhatsApp. It sends a numbered list of the agents to your own "message yourself" chat, on the number the TL;DR chat is on, and you answer there with the number. tawk confirms in the same chat, and that agent is your default agent from then on. Messages wait meanwhile. The question is asked once, and again after ten minutes if summaries are still waiting and nobody is chosen. This is the only message tawk sends by itself, and it reaches nobody but you.
 
@@ -702,7 +702,7 @@ You can talk to your agent from WhatsApp on your phone, and answer its requests 
 
 **Switching it on.** In tawk, open your own "message yourself" chat (the chat with your own number), open its [contact card](#contact-details) and press Enter on **This is my chat with the agent**. The row shows only on that chat. With several numbers, the one in view is the one named; naming another moves it. It is off until you do this, and an agent cannot do it for you.
 
-**Talking to the agent.** Type in that chat on your phone. What you type reaches the agent as your own words, the same as if you had typed it in the agent's own window, and it answers in the chat, from your number, by itself. The agent needs tawk-mcp 0.11.0 or later and its channel on; with none connected, tawk says so in the chat.
+**Talking to the agent.** Type in that chat on your phone. What you type reaches the agent as your own words, the same as if you had typed it in the agent's own window, and it answers in the chat, from your number, by itself. The agent needs corvus-tawk-mcp 0.11.0 or later and its channel on; with none connected, tawk says so in the chat.
 
 Only text you type counts as your words. A forwarded message, a message that quotes another, a voice note, a picture or a file there is passed on like any other message: something to read, never something to obey. What you write in any other chat, groups included, is never an instruction.
 
@@ -790,7 +790,7 @@ When a message arrives in a chat that is not open, tawk can:
 
 The tab title follows what is going on, like `🟢 tawk · Mom · 💬 3  📷 1`. It names the open chat and, while something is happening, says what with a spinning braille glyph in front: `⠼ Loading older messages · Dev team`, `⠹ Connecting…`, `Recording 0:07`. While someone types to you the tab moves like the typing dots in a chat: ✍️ and 💬 take turns in front and the dots after `Jan is typing` count up and start again. It follows the open chat first and otherwise any chat where someone is typing (`Mom is typing`, or `Dev team: Jan is typing` for a group); soft-locked chats are left out. Unread counts per type follow at the end and alternate with `✉ 3 new` while new messages wait. The leading symbol shows the status: 🟢 online, 🟡 connecting, 🔴 unavailable, 🔗 not linked, 🔕 do not disturb, 🔴REC recording, 🎧 playing. In Windows Terminal the tab also shows a spinning progress ring while reconnecting and a red one while retries are paused.
 
-**Choosing the sound.** tawk comes with nine short sounds in its `sounds` folder (`/usr/local/share/tawk/sounds/`, or `~/.local/share/tawk/sounds/` when installed under your home): `notify` (the default), `bong`, `pluck`, `glass`, `drop`, `open`, `question`, `rise` and `confirm`. Settings, Notifications, Sound, **Choose sound** lists them (0.31.0): moving through the list plays each one, Enter keeps it and Esc leaves the sound you had. Give one chat its own with `/tone` and a name, such as `/tone bong`, or with no argument for the file picker. Any WAV or OGG file of your own works too: put it in `~/.config/tawk/sounds/` and it appears in the list (a file there with a bundled name replaces the bundled one), or type its path into **Sound file**, which is still there for a file kept anywhere else.
+**Choosing the sound.** tawk comes with nine short sounds in its `sounds` folder (`/usr/local/share/corvus-tawk/sounds/`, or `~/.local/share/corvus-tawk/sounds/` when installed under your home): `notify` (the default), `bong`, `pluck`, `glass`, `drop`, `open`, `question`, `rise` and `confirm`. Settings, Notifications, Sound, **Choose sound** lists them (0.31.0): moving through the list plays each one, Enter keeps it and Esc leaves the sound you had. Give one chat its own with `/tone` and a name, such as `/tone bong`, or with no argument for the file picker. Any WAV or OGG file of your own works too: put it in `~/.config/corvus/tawk/sounds/` and it appears in the list (a file there with a bundled name replaces the bundled one), or type its path into **Sound file**, which is still there for a file kept anywhere else.
 
 Each of these can be turned on or off in Settings, Notifications. Do not disturb (Ctrl+D or `/dnd`) silences all of them. Group chats can be silenced separately, muted chats never notify, and a chat whose tone is set to none alerts without sound.
 
@@ -1014,7 +1014,7 @@ A chat can also have its own theme for its conversation pane. Choose "Chat theme
 
 ![The chat theme picker over the chat list, previewing a theme on the conversation](docs/images/theme-picker.png) The picker opens over the chat list so the conversation stays visible: moving through the list previews each theme on the chat, Enter applies it and Esc cancels. The first entry, "App theme (no chat theme)", removes it again (as does `/theme default`). `/theme dracula` applies a theme by its id directly.
 
-To make your own, copy any file from `/usr/local/share/tawk/themes/` into `~/.config/tawk/themes/`, change the `id`, `name` and colours, then choose "Reload theme files". The format is described in [CONFIGURATION.md](CONFIGURATION.md#themes).
+To make your own, copy any file from `/usr/local/share/corvus-tawk/themes/` into `~/.config/corvus/tawk/themes/`, change the `id`, `name` and colours, then choose "Reload theme files". The format is described in [CONFIGURATION.md](CONFIGURATION.md#themes).
 
 ## Screensaver
 
@@ -1052,7 +1052,7 @@ The first time tawk starts (and after you unlink it) a short wizard links it to 
 
 With a QR code, open WhatsApp on your phone, go to Linked devices, Link a device, and point the phone at the screen. With a phone number, tawk shows an eight-character pairing code to type into your phone instead. (The QR code above is a demo code and links to nothing.)
 
-tawk appears on your phone under Linked devices (the name shown depends on the backend and on whether you linked with a QR code or a pairing code). To unlink, use Settings, Account, Log out, or remove it from the phone. Either way tawk returns to the linking wizard. Your chat history stays in the local database until you delete `~/.local/share/tawk`.
+tawk appears on your phone under Linked devices (the name shown depends on the backend and on whether you linked with a QR code or a pairing code). To unlink, use Settings, Account, Log out, or remove it from the phone. Either way tawk returns to the linking wizard. Your chat history stays in the local database until you delete `~/.local/share/corvus/tawk`.
 
 WhatsApp sometimes addresses a person by a hidden id (a LID) instead of their phone number. tawk learns which LID belongs to which number from both backends and merges the two, so each person appears as one chat with one name. Chats that were split before a mapping was known join up on the next connect.
 
@@ -1146,10 +1146,10 @@ To have it lock by itself, set Settings, Screensaver, **Lock after (minutes)**. 
 
 ## Encrypting your chats
 
-Your chats, messages, contacts and statuses live in one database file, `~/.local/share/tawk/tawk.db`. Only you can read it (it is created with owner-only permissions), but anyone who gets hold of the disk, a stolen laptop or a copied home folder, can. Encrypting it with a passphrase stops that:
+Your chats, messages, contacts and statuses live in one database file, `~/.local/share/corvus/tawk/tawk.db`. Only you can read it (it is created with owner-only permissions), but anyone who gets hold of the disk, a stolen laptop or a copied home folder, can. Encrypting it with a passphrase stops that:
 
 ```
-tawk --encrypt
+corvus-tawk --encrypt
 ```
 
 tawk asks for a new passphrase twice (nothing shows while you type), rewrites the database encrypted, checks the new copy table by table against the old one, and only then puts it in place. From then on tawk asks for the passphrase every time it starts, before the screen is taken over:
@@ -1165,35 +1165,35 @@ You get three tries; after that tawk stops without opening anything. Restarting 
 If you would rather not type the passphrase at every start, keep it in a file beside your settings:
 
 ```
-printf '%s\n' 'your passphrase' > ~/.config/tawk/db.key
-chmod 600 ~/.config/tawk/db.key
+printf '%s\n' 'your passphrase' > ~/.config/corvus/tawk/db.key
+chmod 600 ~/.config/corvus/tawk/db.key
 ```
 
 From 0.24.0, when your chats are encrypted tawk looks for `db.key` in the folder of its settings file first and, if it holds a usable passphrase, starts with it and does not ask. The file is used only when it is a plain file you own that nobody else can read (mode 0600), and never through a link; a file others can read is ignored with a line saying how to fix it. It is tried once per start, so if it is out of date you are asked at the terminal as usual, and choosing or changing a passphrase (`--encrypt`, `--change-passphrase`) always asks you to type it. If you change the passphrase, change the file too. Without the file nothing changes. The trade-off is plain: anyone who can read your files can open your chats, so this protects a copied or backed-up database, not a compromised account.
 
 | Command | What it does |
 |---|---|
-| `tawk --encrypt` | Encrypts the database with a new passphrase, asked twice |
-| `tawk --change-passphrase` | Asks for the current passphrase, then a new one twice |
-| `tawk --decrypt` | Asks for the passphrase and turns the encryption off again |
+| `corvus-tawk --encrypt` | Encrypts the database with a new passphrase, asked twice |
+| `corvus-tawk --change-passphrase` | Asks for the current passphrase, then a new one twice |
+| `corvus-tawk --decrypt` | Asks for the passphrase and turns the encryption off again |
 
 A few things to know:
 
 - **There is no way back without the passphrase.** tawk keeps no copy of it and cannot reset it. If you forget it, delete `tawk.db`: tawk starts empty, and your chats come back from your phone's history, without your local preferences.
 - **Close tawk first.** These commands refuse to run while tawk is running, and tawk refuses to start twice on the same data folder.
 - **Nothing is lost if something fails.** The new copy is written beside the database (`tawk.db.rewriting`) and replaces it only once it matches; on any failure the database stays as it was.
-- **Older unencrypted copies.** Before upgrading its database, tawk keeps a copy of the old one beside it (`tawk.db.pre-v10`, for example). `tawk --encrypt` lists such unencrypted copies and offers to remove them (`--yes` removes them without asking). The old unencrypted database is overwritten before it is removed, but on SSDs and copy-on-write filesystems parts of it may survive on the disk; full-disk encryption covers that.
-- **What is not encrypted.** The WhatsApp login (`~/.local/share/tawk/auth/`), downloaded media (`~/.cache/tawk/media/`), your settings and the logs stay as they were, protected by owner-only permissions. Someone with the login files can use your account as a linked device; remove tawk from Linked devices on your phone if your computer goes missing.
-- **It needs SQLCipher.** Encryption is available when tawk is built with SQLCipher, which the installer adds. `tawk --doctor` shows whether this build has it and whether your chats are encrypted.
+- **Older unencrypted copies.** Before upgrading its database, tawk keeps a copy of the old one beside it (`tawk.db.pre-v10`, for example). `corvus-tawk --encrypt` lists such unencrypted copies and offers to remove them (`--yes` removes them without asking). The old unencrypted database is overwritten before it is removed, but on SSDs and copy-on-write filesystems parts of it may survive on the disk; full-disk encryption covers that.
+- **What is not encrypted.** The WhatsApp login (`~/.local/share/corvus/tawk/auth/`), downloaded media (`~/.cache/corvus/tawk/media/`), your settings and the logs stay as they were, protected by owner-only permissions. Someone with the login files can use your account as a linked device; remove tawk from Linked devices on your phone if your computer goes missing.
+- **It needs SQLCipher.** Encryption is available when tawk is built with SQLCipher, which the installer adds. `corvus-tawk --doctor` shows whether this build has it and whether your chats are encrypted.
 
 ## Backups
 
 A backup is one file holding your chats, settings and your own themes, and on request your media and the WhatsApp login. It is always encrypted with a passphrase you choose, so it is safe to keep on a USB stick or a cloud drive.
 
 ```
-tawk --backup ~/tawk-2026-09-30.backup
-tawk --backup ~/tawk-full.backup --with-media --with-login
-tawk --restore ~/tawk-2026-09-30.backup
+corvus-tawk --backup ~/tawk-2026-09-30.backup
+corvus-tawk --backup ~/tawk-full.backup --with-media --with-login
+corvus-tawk --restore ~/tawk-2026-09-30.backup
 ```
 
 A backup made by tawk 0.18.0 or later also carries a check over every byte. If the file was changed or damaged after it was made, restoring it stops at once, before anything is decrypted or unpacked, and nothing of yours is touched. Backups from earlier versions still restore; tawk then says that it could not tell whether the file was altered, and a fresh backup fixes that. An older tawk cannot read a backup made by this one.
@@ -1208,17 +1208,17 @@ A backup made by tawk 0.18.0 or later also carries a check over every byte. If t
 
 **Restoring.** tawk asks before it replaces anything (`--yes` skips the question), then for the backup's passphrase. It checks every file in the backup before unpacking any of it, and refuses a backup that holds links or anything outside its own folders. What it replaces is not deleted: it is renamed with a suffix such as `.before-restore-20260930-141502`, so `tawk.db.before-restore-20260930-141502` sits beside the restored database. Delete those once you are happy. A backup without the login leaves your current login as it is.
 
-Backups need `openssl` and `tar`, which `tawk --doctor` checks. Like the encryption commands, they refuse to run while tawk is running. There is no way to open a backup without its passphrase.
+Backups need `openssl` and `tar`, which `corvus-tawk --doctor` checks. Like the encryption commands, they refuse to run while tawk is running. There is no way to open a backup without its passphrase.
 
 ## Moving an account to another computer
 
 A backup moves the whole installation and replaces what is on the other computer. To move **one** account, and keep what the other computer already has, pack it and bring it in there. tawk 0.23.0 or later, on both computers.
 
 ```
-tawk --migrate-out Personal ~/personal.tawk
-tawk --migrate-out Personal ~/personal.tawk --with-media
-tawk --migrate-in ~/personal.tawk
-tawk --migrate-in ~/personal.tawk --label "Phone 2"
+corvus-tawk --migrate-out Personal ~/personal.tawk
+corvus-tawk --migrate-out Personal ~/personal.tawk --with-media
+corvus-tawk --migrate-in ~/personal.tawk
+corvus-tawk --migrate-in ~/personal.tawk --label "Phone 2"
 ```
 
 **Packing** (`--migrate-out ACCOUNT FILE`). `ACCOUNT` is the label the accounts dialog shows (or its number). tawk asks for a passphrase twice and writes one encrypted, tamper-checked file that never replaces an existing one. It holds that account's chats, messages, contacts, statuses, receipts, transcripts and summaries, and the labels, reminders and choices you made for its chats. It does **not** hold the WhatsApp login. Media is left out unless you add `--with-media`; without it a file is fetched again from WhatsApp when you open its message. Nothing on this computer changes, and it can be run again.
@@ -1234,17 +1234,17 @@ tawk --migrate-in ~/personal.tawk --label "Phone 2"
 | Settings, themes and the Automation settings | They belong to the computer; use `--backup` to move those. What you chose per chat (labels, reminders, the rule for agents in that chat) does come |
 | The log of what agents did | It is the history of that computer |
 
-Packing and bringing in refuse to run while tawk is running, like backups, and they need `openssl` and `tar`. They are commands for you: there is no way for an agent to start, see or influence one. tawk-mcp keeps its own memory (voices, contact profiles, templates) per computer; see its manual for moving that.
+Packing and bringing in refuse to run while tawk is running, like backups, and they need `openssl` and `tar`. They are commands for you: there is no way for an agent to start, see or influence one. corvus-tawk-mcp keeps its own memory (voices, contact profiles, templates) per computer; see its manual for moving that.
 
 ## Automation and MCP
 
-Other programs on your computer can reach a running tawk: [tawk-mcp](https://github.com/loganventer/tawk-mcp), which lets an AI assistant such as Claude Code read your chats and, when you allow it, act for you, and tawk's own shell commands for scripts and status bars. They talk to tawk over a private socket described in [CONTROL.md](CONTROL.md). Nothing can connect until you turn it on.
+Other programs on your computer can reach a running tawk: [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk), which lets an AI assistant such as Claude Code read your chats and, when you allow it, act for you, and tawk's own shell commands for scripts and status bars. They talk to tawk over a private socket described in [CONTROL.md](CONTROL.md). Nothing can connect until you turn it on.
 
 ### Turning it on
 
 Open Settings (F2), 🤖 Automation, and switch on **Agent access (MCP)**. tawk first says what that means and waits for you to confirm:
 
-- **What it needs:** tawk running with the switch on, and tawk-mcp added to your MCP client (see [tawk-mcp](#tawk-mcp)) or a tawk shell command.
+- **What it needs:** tawk running with the switch on, and corvus-tawk-mcp added to your MCP client (see [corvus-tawk-mcp](#corvus-tawk-mcp)) or a tawk shell command.
 - **The risks:** chat text an agent reads goes to the service its model runs on; a message someone sends you can try to steer the agent (prompt injection); anything you allow goes out as you.
 - **The guards:** reads never change anything; every send or change waits for your answer in the Agentic tab; deletes and blocks need a yes in the agent's app and a Y in tawk; locked and soft-locked chats are never shown; everything is logged; and an agent can never change these settings or any setting that runs a program.
 
@@ -1255,9 +1255,9 @@ The same submenu sets how far agents may go:
 | Agent access (MCP) | On or off; the line under it says whether tawk is listening and how many are connected |
 | What they may do | **read** lists, reads and searches; **send** also sends, reacts, schedules and drafts; **manage** also changes chats, statuses, your profile and settings; **admin** also lets an agent you gave the admin token answer its own sends (see [Letting an agent answer for itself](#letting-an-agent-answer-for-itself)) |
 | Chats they may use | Names or numbers separated by commas; empty allows every chat except locked ones |
-| Ask for shell commands too | Your own `tawk send` asks first as well (agents always ask) |
+| Ask for shell commands too | Your own `corvus-tawk send` asks first as well (agents always ask) |
 | Writes per minute | More are refused until a minute has passed |
-| Add AI disclaimer | Off by default. On, every message an agent sends, schedules or answers a status with gets a line underneath saying an AI wrote it. It is added after you approve, below any edit you made, and never to messages you send yourself or with `tawk send` |
+| Add AI disclaimer | Off by default. On, every message an agent sends, schedules or answers a status with gets a line underneath saying an AI wrote it. It is added after you approve, below any edit you made, and never to messages you send yourself or with `corvus-tawk send` |
 | Disclaimer text | The line that is added, "🤖 Created with my AI assistant" unless you change it |
 | Agent events | A submenu with a switch for each kind of event agents are told about as it happens |
 | Voice note transcription | A submenu for how an agent's transcriber writes out voice notes: the model, the languages, and whether every voice note is transcribed |
@@ -1275,7 +1275,7 @@ Under **Answering for itself**:
 
 ### Voice note transcription
 
-Settings, Automation has a submenu, **Voice note transcription**. tawk does not transcribe anything itself: these are your choices for an agent's transcriber, tawk-mcp started with `--transcribe`, which reads them and does the work on your computer.
+Settings, Automation has a submenu, **Voice note transcription**. tawk does not transcribe anything itself: these are your choices for an agent's transcriber, corvus-tawk-mcp started with `--transcribe`, which reads them and does the work on your computer.
 
 | Setting | What it does |
 |---|---|
@@ -1289,7 +1289,7 @@ The three settings show only while an agent is connected. With none connected, t
 
 ### Agent events
 
-Settings, Automation has a submenu, **Agent events**, for what agents are told as it happens. An agent that listens, such as tawk-mcp's channel in Claude Code, hears each kind only while its switch is on:
+Settings, Automation has a submenu, **Agent events**, for what agents are told as it happens. An agent that listens, such as corvus-tawk-mcp's channel in Claude Code, hears each kind only while its switch is on:
 
 | Switch | Default | What an agent hears |
 |---|---|---|
@@ -1303,7 +1303,7 @@ Settings, Automation has a submenu, **Agent events**, for what agents are told a
 
 ![The Agent events section with a switch for each kind of event](docs/images/settings-agent-events.png)
 
-With a switch off the agent is simply not told; it still sees messages when it reads a chat. Your own `tawk tail` always shows messages and none of the other kinds. tawk-mcp has a matching option for each (`TAWKMCP_CHANNEL_OWN`, `_READ`, `_REACTIONS`, `_EDITS`, `_SCHEDULED`) for what it passes on to the agent, so a kind reaches the agent only when both sides have it on.
+With a switch off the agent is simply not told; it still sees messages when it reads a chat. Your own `corvus-tawk tail` always shows messages and none of the other kinds. corvus-tawk-mcp has a matching option for each (`CORVUS_TAWK_MCP_CHANNEL_OWN`, `_READ`, `_REACTIONS`, `_EDITS`, `_SCHEDULED`) for what it passes on to the agent, so a kind reaches the agent only when both sides have it on.
 
 ### The Agentic tab
 
@@ -1354,8 +1354,8 @@ By default every send waits for you. Set **What they may do** to **admin** and a
 
 What changes with admin:
 
-- tawk writes an **admin token** to `admin.token` beside the control socket (`$XDG_RUNTIME_DIR/tawk/admin.token`, readable by you alone). It is a new token each time tawk starts and each time you switch to admin, and it is removed when you switch away or quit.
-- An agent that shows that token may answer a request it made itself. With tawk-mcp you give it the file with `TAWKMCP_ADMIN_TOKEN_FILE`; an agent without the file, or another agent on the same computer, cannot.
+- tawk writes an **admin token** to `admin.token` beside the control socket (`$XDG_RUNTIME_DIR/corvus/tawk/admin.token`, readable by you alone). It is a new token each time tawk starts and each time you switch to admin, and it is removed when you switch away or quit.
+- An agent that shows that token may answer a request it made itself. With corvus-tawk-mcp you give it the file with `CORVUS_TAWK_MCP_ADMIN_TOKEN_FILE`; an agent without the file, or another agent on the same computer, cannot.
 - Only these can be answered that way: sending a message, replying to a status, forwarding, editing, retrying, scheduling, rescheduling, sending or cancelling a scheduled message, a reaction, a read mark and a like. Changes to chats, your profile, statuses you post, settings, and every delete or block still wait for you.
 - Only in the chats you switch on for it. Settings, Automation, **Answering for itself** shows how many chats are switched on and the hourly number, and **Choose the chats…** there opens a list of your chats with a switch beside each and an **All chats agents may use** switch on top. Space or a click flips the highlighted switch, Ctrl+A flips All chats, typing searches, Enter saves and Esc leaves things as they were. Up to 24 chats can be switched on one by one; All chats covers every chat agents may use, including ones that appear later. With nothing switched on, nothing is answered this way. This list is separate from **Chats they may use**, which decides what agents can see at all.
 
@@ -1370,7 +1370,7 @@ Admin is the widest access there is: a message someone sends you can try to stee
 
 ### Destructive requests
 
-Deleting a message or a chat, clearing a chat, blocking someone, removing your profile photo and cancelling a message waiting to be sent take two separate yeses. The agent's first request only gets a one-time token back; tawk-mcp keeps that token from the model and asks you in your MCP client. Only if you agree there does it confirm, and then tawk asks again: a HIGH request ignores a, and Shift+A opens a warning that starts on Keep, where only Y allows it. Your own shell commands go through the same two steps.
+Deleting a message or a chat, clearing a chat, blocking someone, removing your profile photo and cancelling a message waiting to be sent take two separate yeses. The agent's first request only gets a one-time token back; corvus-tawk-mcp keeps that token from the model and asks you in your MCP client. Only if you agree there does it confirm, and then tawk asks again: a HIGH request ignores a, and Shift+A opens a warning that starts on Keep, where only Y allows it. Your own shell commands go through the same two steps.
 
 ![A HIGH request asking once more before anything is deleted](docs/images/agents-high.png)
 
@@ -1380,7 +1380,7 @@ The safest way for an agent to help you write is a draft: it puts the text in th
 
 ### Files from agents
 
-An agent can send a photo, video, audio file or document from this computer, with a caption (tawk 0.22.0 or later, with tawk-mcp 0.15.0 or later). You are asked about every one, and no agent can answer for you: the question is HIGH risk, it shows the file's name, what kind of file it is and how big, and you may edit the caption before you allow it. The file is copied into tawk's media folder and goes out as any file you send.
+An agent can send a photo, video, audio file or document from this computer, with a caption (tawk 0.22.0 or later, with corvus-tawk-mcp 0.15.0 or later). You are asked about every one, and no agent can answer for you: the question is HIGH risk, it shows the file's name, what kind of file it is and how big, and you may edit the caption before you allow it. The file is copied into tawk's media folder and goes out as any file you send.
 
 Some files are refused before you are asked, because they are tawk's own or hold secrets: tawk's login, accounts, database and settings file; anything inside `.ssh`, `.gnupg`, `.aws`, `.azure`, `.kube`, `.docker`, `.config/gcloud`, `.config/gh` or `.password-store` in your home folder; and files named `.env`, `.netrc`, `.npmrc`, `.pgpass`, `id_rsa`, `id_dsa`, `id_ecdsa` or `id_ed25519`. Folders, empty files and files over 100 MB are refused as well. tawk looks at the file again after your answer, in case it changed while you decided. If you have the AI disclaimer on, it is added as the caption of a file that has none.
 
@@ -1392,55 +1392,55 @@ You are asked about it as "start a new chat with this message", with the name yo
 
 "Chats they may use" decides here too: with a list, only the people on it can be reached. Someone whose chat you locked is not found by their number either. tawk does not check that a number is on WhatsApp, so a message to one that is not is queued and then shows as failed. Reading, drafting and everything else still need a chat that is already there.
 
-`tawk send` reaches someone new the same way. It asks first when "Ask for shell commands too" is on.
+`corvus-tawk send` reaches someone new the same way. It asks first when "Ask for shell commands too" is on.
 
 ### Shell commands
 
 With agent access on, these talk to the tawk that is running. With several accounts, add `--account NAME` (a label or an id) to pick one. Without it, `send` goes from the contact's sending number (the default account when they have none), `tail` shows every account open to agents and names each, and `unread` and `status-line` count across all of them.
 
 ```
-tawk send CHAT TEXT...          send a message (or: tawk send CHAT - < file)
-tawk tail [CHAT...] [--json]    print new messages as they arrive
-tawk unread [--json]            unread counts per chat
-tawk status-line [--format F]   for tmux or waybar: 💬 3 @1, or nothing
+corvus-tawk send CHAT TEXT...          send a message (or: corvus-tawk send CHAT - < file)
+corvus-tawk tail [CHAT...] [--json]    print new messages as they arrive
+corvus-tawk unread [--json]            unread counts per chat
+corvus-tawk status-line [--format F]   for tmux or waybar: 💬 3 @1, or nothing
 ```
 
-A chat is a name, the start of a word in its name, or a phone number. `--format` takes `{unread}`, `{mentions}` and `{chats}`. `tawk send` exits with 0 when sent, 2 when declined or not allowed, and 3 when no tawk is listening. For tmux, add `set -g status-right '#(tawk status-line)'`.
+A chat is a name, the start of a word in its name, or a phone number. `--format` takes `{unread}`, `{mentions}` and `{chats}`. `corvus-tawk send` exits with 0 when sent, 2 when declined or not allowed, and 3 when no tawk is listening. For tmux, add `set -g status-right '#(tawk status-line)'`.
 
-### tawk-mcp
+### corvus-tawk-mcp
 
-[tawk-mcp](https://github.com/loganventer/tawk-mcp) is the MCP server for tawk. It serves MCP over streamable HTTP on `http://127.0.0.1:8765/mcp` with a bearer token (stdio with `--stdio`), and gives an MCP client tools to list and read chats, search, see unread counts and statuses, draft and send messages, and, with manage access, the rest of tawk. It starts whether or not tawk is running and connects as soon as tawk's socket appears. Its README covers installing it and adding it to Claude Code, Claude Desktop, VS Code or Docker.
+[corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk) is the MCP server for tawk. It serves MCP over streamable HTTP on `http://127.0.0.1:8765/mcp` with a bearer token (stdio with `--stdio`), and gives an MCP client tools to list and read chats, search, see unread counts and statuses, draft and send messages, and, with manage access, the rest of tawk. It starts whether or not tawk is running and connects as soon as tawk's socket appears. Its README covers installing it and adding it to Claude Code, Claude Desktop, VS Code or Docker.
 
 ## Command line
 
 ```
-tawk [--config PATH] [--backend whatsmeow|baileys] [--debug]
-tawk --doctor [--config PATH] [--backend whatsmeow|baileys]
-tawk --update [--yes]
-tawk --reinstall [--yes]
-tawk --encrypt [--yes]
-tawk --decrypt
-tawk --change-passphrase
-tawk --backup FILE [--with-media] [--with-login]
-tawk --restore FILE [--yes]
-tawk --migrate-out ACCOUNT FILE [--with-media]
-tawk --migrate-in FILE [--label NAME] [--yes]
-tawk --version
-tawk --help
-tawk send CHAT TEXT... | tawk tail [CHAT...] | tawk unread | tawk status-line
+corvus-tawk [--config PATH] [--backend whatsmeow|baileys] [--debug]
+corvus-tawk --doctor [--config PATH] [--backend whatsmeow|baileys]
+corvus-tawk --update [--yes]
+corvus-tawk --reinstall [--yes]
+corvus-tawk --encrypt [--yes]
+corvus-tawk --decrypt
+corvus-tawk --change-passphrase
+corvus-tawk --backup FILE [--with-media] [--with-login]
+corvus-tawk --restore FILE [--yes]
+corvus-tawk --migrate-out ACCOUNT FILE [--with-media]
+corvus-tawk --migrate-in FILE [--label NAME] [--yes]
+corvus-tawk --version
+corvus-tawk --help
+corvus-tawk send CHAT TEXT... | corvus-tawk tail [CHAT...] | corvus-tawk unread | corvus-tawk status-line
 ```
 
 The last line lists the [shell commands](#shell-commands), which talk to a tawk that is already running.
 
-`tawk --update` installs the newest version from GitHub over the one you are running. Every build records the commit it came from (shown by `tawk --version`), so when yours matches the newest commit on GitHub, `--update` simply says tawk is up to date. Otherwise it shows your version, the newest commit and where it will install (the folder tawk runs from, with the same backends), and asks before doing anything; `--yes` skips the question. `tawk --reinstall` does the same even when you are up to date, for example to repair an installation. It downloads `install.sh` to a private temporary file, runs it, and removes it. A copy built in a source checkout is updated with `git pull` and `make` instead.
+`corvus-tawk --update` installs the newest version from GitHub over the one you are running. Every build records the commit it came from (shown by `corvus-tawk --version`), so when yours matches the newest commit on GitHub, `--update` simply says tawk is up to date. Otherwise it shows your version, the newest commit and where it will install (the folder tawk runs from, with the same backends), and asks before doing anything; `--yes` skips the question. `corvus-tawk --reinstall` does the same even when you are up to date, for example to repair an installation. It downloads `install.sh` to a private temporary file, runs it, and removes it. A copy built in a source checkout is updated with `git pull` and `make` instead.
 
-See `man tawk` after installing.
+See `man corvus-tawk` after installing.
 
 ## Checking your setup
 
-`tawk --doctor` checks everything tawk needs without changing the chat database, writing any file or connecting to WhatsApp, and says how to fix what is missing. It does not need an interactive terminal, so it also works in scripts. The installer runs it at the end.
+`corvus-tawk --doctor` checks everything tawk needs without changing the chat database, writing any file or connecting to WhatsApp, and says how to fix what is missing. It does not need an interactive terminal, so it also works in scripts. The installer runs it at the end.
 
-![Output of tawk --doctor with every check passing except clipboard pictures](docs/images/doctor.png)
+![Output of corvus-tawk --doctor with every check passing except clipboard pictures](docs/images/doctor.png)
 
 | Section | Checks |
 |---|---|
@@ -1458,7 +1458,7 @@ Each line is marked ✓ (fine), `!` (optional, with a hint such as `sudo apt ins
 
 | Symptom | What to do |
 |---|---|
-| Something does not work and you are not sure why | Run `tawk --doctor` and follow its hints |
+| Something does not work and you are not sure why | Run `corvus-tawk --doctor` and follow its hints |
 | The QR code does not fit | Enlarge the window or choose "Use my phone number instead" |
 | Right-click or Ctrl+click opens the terminal's own menu (macOS) | The terminal keeps the click for itself. In iTerm2, open Settings, Pointer and remove the right-button "Open Context Menu" binding, and turn on reporting Control-click to apps; tawk treats Ctrl+click as a right-click. Alt+M and Alt+O open the same menus from the keyboard |
 | Black lines through the chat bubbles, jagged profile badges (macOS) | The macOS Terminal app draws block characters from the font, which leaves gaps between rows; use iTerm2, WezTerm or Ghostty, which draw them to fill the cell. See [Installing on macOS](README.md#installing-on-macos) |
@@ -1466,11 +1466,11 @@ Each line is marked ✓ (fine), `!` (optional, with a hint such as `sudo apt ins
 | Boxes or emoji look wrong | Use a UTF-8 locale (`locale` should show UTF-8) and a font with emoji, such as Cascadia Code in Windows Terminal |
 | No photo previews | Previews need 256 colours (`TERM=xterm-256color`); check Settings, Appearance, Layout, Photo previews |
 | Ctrl+Shift+L starts the screensaver instead of soft-locking | Your terminal sends it like Ctrl+L; use Alt+L, or add the Windows Terminal action shown under [Soft lock](#soft-lock) |
-| PDFs show a blank page | Install poppler (`sudo apt install poppler-utils`); `tawk --doctor` checks for it |
-| Alt+V says there is no picture | Copy the picture again; check `tawk --doctor` lists a clipboard tool (install `wl-clipboard` or `xclip`) |
+| PDFs show a blank page | Install poppler (`sudo apt install poppler-utils`); `corvus-tawk --doctor` checks for it |
+| Alt+V says there is no picture | Copy the picture again; check `corvus-tawk --doctor` lists a clipboard tool (install `wl-clipboard` or `xclip`) |
 | Photos show as garbage text or not at all | The terminal does not support Sixel; set `image_mode = blocks` in the `[appearance]` section of the config file |
 | Copy text does nothing | Your terminal must allow OSC 52 clipboard writes; in tmux set `set-clipboard on` |
-| The emoji picker is empty | The emoji list is missing; reinstall tawk (`tawk --doctor` reports it) |
+| The emoji picker is empty | The emoji list is missing; reinstall tawk (`corvus-tawk --doctor` reports it) |
 | No sound | Check Settings, Notifications, Sound, then "Play test sound"; confirm the detected audio system in Settings, Media, Voice notes; check the chat's tone in its options |
 | Nobody's typing shows | Turn on Settings, Chats, Appear online; WhatsApp only sends typing notices to devices that are online |
 | Voice notes will not record | Install ffmpeg; under WSL make sure WSLg is running (`pactl info` should answer) |
@@ -1478,16 +1478,16 @@ Each line is marked ✓ (fine), `!` (optional, with a hint such as `sudo apt ins
 | Older messages do not load | Your phone must be online to send older history; tawk stops waiting after 20 seconds |
 | + offers to switch backends | Posting statuses needs whatsmeow; switch when asked and link again, or set `backend = whatsmeow` yourself (see [CONFIGURATION.md](CONFIGURATION.md#choosing-a-backend)) |
 | Stuck on 🟡 after changing networks | tawk reconnects within a few seconds of a network change; to reconnect at once, press R in the unavailable window or choose Settings, Connection, Reconnect now |
-| `tawk send` says no tawk is listening | Turn on Settings, Automation, Agent access; tawk must be running. A socket path over 107 characters (a very long `XDG_RUNTIME_DIR`) cannot be used: the Automation line says so; set `TAWK_CONTROL_SOCKET` to a shorter path |
+| `corvus-tawk send` says no tawk is listening | Turn on Settings, Automation, Agent access; tawk must be running. A socket path over 107 characters (a very long `XDG_RUNTIME_DIR`) cannot be used: the Automation line says so; set `CORVUS_TAWK_CONTROL_SOCKET` to a shorter path |
 | An agent's request never appears | Check the badge and F3; requests outside the chats you allowed, or beyond what the access allows, are refused at once and show in the Log |
 | ⭕ shows no statuses | Statuses arrive while tawk is running, or with the history your phone sends after linking; those posted before and already gone from WhatsApp cannot be fetched. Check the Archive tab (Tab) for older ones |
 | A status photo stays on "Downloading…" | WhatsApp no longer has it, or tawk is not connected. Keep the archive on (`status_keep_days` above 1) with auto-download, so photos are fetched when statuses arrive |
 | The archive is empty | Statuses move there after a day; check Settings, Chats, Keep statuses is above 1 |
 | A profile change says WhatsApp did not answer | tawk was not connected or the phone was offline; wait for 🟢 and try again |
 | "another tawk is already using" the data folder | Only one tawk runs per data folder; quit the other one (check other terminals and tmux windows). The lock goes away by itself when that tawk ends, even after a crash |
-| Forgot the passphrase of encrypted chats | It cannot be recovered. Delete `~/.local/share/tawk/tawk.db` and start tawk: your chats come back from your phone's history, without local preferences |
+| Forgot the passphrase of encrypted chats | It cannot be recovered. Delete `~/.local/share/corvus/tawk/tawk.db` and start tawk: your chats come back from your phone's history, without local preferences |
 | A restore says the passphrase is wrong | It is the backup's passphrase, chosen when the backup was made (not the one for encrypted chats). A file that is not a tawk backup, or was damaged, gives the same message |
 | A restore refuses the backup | The file holds something tawk never writes (a link, or a path outside its folders), so it was not made by tawk or was changed; nothing was restored |
 | "this build has no SQLCipher" | Install SQLCipher (`libsqlcipher-dev`, `sqlcipher-devel` or `brew install sqlcipher`) and build or reinstall tawk |
-| Keeps reconnecting | Look at `~/.local/state/tawk/tawk.log`; run `tawk --debug` for more detail |
+| Keeps reconnecting | Look at `~/.local/state/corvus/tawk/tawk.log`; run `corvus-tawk --debug` for more detail |
 | The Node.js backend starts slowly | Install to a Linux filesystem rather than a Windows drive under WSL, or use the default whatsmeow backend |

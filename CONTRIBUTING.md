@@ -42,9 +42,9 @@ The "Adding things" section of [ARCHITECTURE.md](ARCHITECTURE.md) walks through 
 ## Build and test
 
 ```sh
-make            # builds ./tawk; there must be no warnings
+make            # builds ./corvus-tawk; there must be no warnings
 make test       # the tests that need no WhatsApp account
-make check      # smoke test: runs ./tawk --version
+make check      # smoke test: runs ./corvus-tawk --version
 ```
 
 `make help` lists the other targets and options, such as `WHATSMEOW=0` to build without Go.
@@ -68,4 +68,4 @@ A change that alters behaviour comes with a test in `tests/`, added to `TESTS` i
 
 ## Release notes
 
-Every version gets a section at the top of [RELEASE_NOTES.md](RELEASE_NOTES.md), headed `## <version> (<date>)`, with one plain line for each change a user would notice. `tawk --update` prints every section above the installed version, so a change that is not written there is a change nobody is told about. The commit that raises the version also adds its section.
+Every version gets a section at the top of [RELEASE_NOTES.md](RELEASE_NOTES.md), headed `## <version> (<date>)`, with one plain line for each change a user would notice. `corvus-tawk --update` prints every section above the installed version, so a change that is not written there is a change nobody is told about. The commit that raises the version also adds its section.

@@ -38,7 +38,7 @@
 ## Start-up
 
 1. `main.c` reads the command line, sets a private umask, installs signal handlers and checks it is attached to a terminal (except for `--doctor`).
-2. The settings store loads `~/.config/tawk/config.ini` (writing defaults on first run), the theme repository loads bundled and personal themes, and the emoji catalog reads `emoji.tsv`. With `--doctor`, tawk runs the setup check at this point and exits (see [The setup check](#the-setup-check)).
+2. The settings store loads `~/.config/corvus/tawk/config.ini` (writing defaults on first run), the theme repository loads bundled and personal themes, and the emoji catalog reads `emoji.tsv`. With `--doctor`, tawk runs the setup check at this point and exits (see [The setup check](#the-setup-check)).
 3. The data, cache and state folders are created with owner-only permissions; old media is pruned to the cache limit.
 4. tawk takes the instance lock (`flock` on `tawk.lock` in the data folder) and stops if another tawk holds it. `--encrypt`, `--decrypt` and `--change-passphrase` run here, under the lock, and exit. If `tawk.db` does not start with SQLite's plain header it is encrypted: the terminal passphrase prompt asks for its passphrase on `/dev/tty` with echo off (three tries), before curses starts. The passphrase is wiped as soon as the database is open.
 5. SQLite (SQLCipher when built with it) opens with that passphrase, keeps a copy of the database before an upgrade (encrypted the same way), and applies any pending schema migrations, the message and contact stores are wrapped in caching decorators, the reaction, receipt, alias, profile and status stores and the chat exporter are created, and the event queue is created.
@@ -675,13 +675,13 @@ The audio backend only describes commands. The recorder connects the capture com
 
 ## Transcripts
 
-tawk transcribes nothing. tawk-mcp does, with a Whisper model on your computer, and hands each finished transcript to tawk, which keeps it in the `transcripts` table and draws it in the voice note's own bubble.
+tawk transcribes nothing. corvus-tawk-mcp does, with a Whisper model on your computer, and hands each finished transcript to tawk, which keeps it in the `transcripts` table and draws it in the voice note's own bubble.
 
 ```mermaid
 sequenceDiagram
     participant WA as WhatsApp
     participant T as tawk
-    participant M as tawk-mcp
+    participant M as corvus-tawk-mcp
     WA->>T: a voice note arrives
     T->>M: message event ("transcribe":false when the chat is switched off,<br/>"languages" when you named the chat's)
     Note over M: skipped when switched off, or when automatic transcription is off
@@ -883,13 +883,13 @@ sequenceDiagram
 
 ## Agents and the control socket
 
-With Settings, Automation, Agent access on, the control client (`src/clients/control`) listens on `$XDG_RUNTIME_DIR/tawk/control.sock` through `IControlTransport`. It runs on the UI thread: the terminal client calls its `IFrameHook` once a frame, so it uses the same managers as the terminal without locks. It starts listening when the setting turns on, stops when it turns off (saying goodbye to connected clients), and listens again if the socket file is removed. Each line is one request from [CONTROL.md](CONTROL.md), handled by one of the `control_ops_*.c` files. Reads are answered at once and logged as reads; nothing is marked read and the chat open on screen does not change, because `messaging_manager_history` reads any chat straight from the store.
+With Settings, Automation, Agent access on, the control client (`src/clients/control`) listens on `$XDG_RUNTIME_DIR/corvus/tawk/control.sock` through `IControlTransport`. It runs on the UI thread: the terminal client calls its `IFrameHook` once a frame, so it uses the same managers as the terminal without locks. It starts listening when the setting turns on, stops when it turns off (saying goodbye to connected clients), and listens again if the socket file is removed. Each line is one request from [CONTROL.md](CONTROL.md), handled by one of the `control_ops_*.c` files. Reads are answered at once and logged as reads; nothing is marked read and the chat open on screen does not change, because `messaging_manager_history` reads any chat straight from the store.
 
 A write passes through `control_writes.c`. The automation manager's policy says whether the access allows it, whether the chat may be used and whether you must be asked; the rate limiter counts it; destructive writes are held behind a one-time token first. What needs you goes to the `ApprovalQueue`, which the Agentic tab shows and answers; the client polls the answers each frame and carries the write out through the managers, or reports it declined or expired. Every outcome goes to the automation log.
 
 ```mermaid
 sequenceDiagram
-    participant A as tawk-mcp (or tawk send)
+    participant A as corvus-tawk-mcp (or corvus-tawk send)
     participant C as Control client
     participant AM as AutomationManager
     participant Q as ApprovalQueue
@@ -920,7 +920,7 @@ flowchart TD
     VIS -- no --> DROP["Nobody is told"]
     VIS -- yes --> EACH["For each client that subscribed to it"]
     EACH --> ORIGIN{"Acting for a model?"}
-    ORIGIN -- "no, your own shell (tawk tail)" --> SEND["Send the message event"]
+    ORIGIN -- "no, your own shell (corvus-tawk tail)" --> SEND["Send the message event"]
     ORIGIN -- yes --> MINE{"Did you send it?"}
     MINE -- yes --> PS{"Push messages you send on?"}
     MINE -- no --> PR{"Push received messages on?"}
@@ -940,7 +940,7 @@ The chats are chosen in `ChatToggleDialog`, a list with a `toggle_switch` per ch
 
 ```mermaid
 sequenceDiagram
-    participant A as tawk-mcp, holding the admin token
+    participant A as corvus-tawk-mcp, holding the admin token
     participant C as Control client
     participant AM as AutomationManager
     participant Q as ApprovalQueue
@@ -971,7 +971,7 @@ Sending a file takes the same road with one more step either side of your answer
 
 ```mermaid
 sequenceDiagram
-    participant A as tawk-mcp
+    participant A as corvus-tawk-mcp
     participant C as Control client
     participant I as attachment_inspection
     participant Q as ApprovalQueue
@@ -993,12 +993,12 @@ sequenceDiagram
     end
 ```
 
-A destructive request (deleting, clearing, blocking, removing your photo, cancelling a message for later) first answers `needs_confirmation` with a token and does nothing. tawk-mcp keeps the token from the model and asks you in your MCP client; only then does it send `confirm`, which puts the request in the queue as HIGH, where Shift+A and Y allow it. Allowances "for this session" are kept per connection and never cover destructive requests.
+A destructive request (deleting, clearing, blocking, removing your photo, cancelling a message for later) first answers `needs_confirmation` with a token and does nothing. corvus-tawk-mcp keeps the token from the model and asks you in your MCP client; only then does it send `confirm`, which puts the request in the queue as HIGH, where Shift+A and Y allow it. Allowances "for this session" are kept per connection and never cover destructive requests.
 
 New messages reach subscribers through a ring of the last 256 messages the messaging manager saw arrive or sent (`live_message_ring`); each frame the control client sends those after the last one it passed on to every client following that chat, and every half second it compares the unread counts it last told each client. Messages in locked or hidden chats are never passed on.
 
-The shell commands (`tawk send`, `tail`, `unread`, `status-line`) are small clients of the same socket, run before tawk would take its lock or open the database, since another tawk is already doing both.
+The shell commands (`corvus-tawk send`, `tail`, `unread`, `status-line`) are small clients of the same socket, run before tawk would take its lock or open the database, since another tawk is already doing both.
 
 ## The setup check
 
-`tawk --doctor` loads the settings, themes and emoji catalog exactly as a normal start does, then hands them with an audio backend to `doctor.c` in the `cli` client instead of opening the database, starting a backend or drawing the UI. Each check prints ✓, `!` or ✗ with a hint that names the package to install for the detected package manager (apt, dnf, pacman, zypper or Homebrew). The "PDF pages" line checks for `pdftoppm` and `pdfinfo` and warns (without failing) when they are missing. Only problems that stop tawk from running count as failures and set exit status 1: no usable terminal type, a data folder that cannot be written, or a backend that cannot run (whatsmeow not built in and the Baileys sidecar or Node.js missing). `install.sh` runs the check after installing.
+`corvus-tawk --doctor` loads the settings, themes and emoji catalog exactly as a normal start does, then hands them with an audio backend to `doctor.c` in the `cli` client instead of opening the database, starting a backend or drawing the UI. Each check prints ✓, `!` or ✗ with a hint that names the package to install for the detected package manager (apt, dnf, pacman, zypper or Homebrew). The "PDF pages" line checks for `pdftoppm` and `pdfinfo` and warns (without failing) when they are missing. Only problems that stop tawk from running count as failures and set exit status 1: no usable terminal type, a data folder that cannot be written, or a backend that cannot run (whatsmeow not built in and the Baileys sidecar or Node.js missing). `install.sh` runs the check after installing.

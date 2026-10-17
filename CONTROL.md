@@ -1,12 +1,12 @@
 # Control Protocol
 
-A running tawk can be reached by other programs on the same computer through its control socket: the `tawk send`, `tawk tail`, `tawk unread` and `tawk status-line` commands, and [tawk-mcp](https://github.com/loganventer/tawk-mcp), which lets MCP clients such as Claude Code read your chats and, when you allow it, send messages that you confirm in tawk.
+A running tawk can be reached by other programs on the same computer through its control socket: the `corvus-tawk send`, `corvus-tawk tail`, `corvus-tawk unread` and `corvus-tawk status-line` commands, and [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk), which lets MCP clients such as Claude Code read your chats and, when you allow it, send messages that you confirm in tawk.
 
 The socket is off until you turn on **Settings → Automation → Agent access (MCP)** (`control_socket = on` in `[automation]`). What agents ask for is answered in tawk's **Agentic** tab (F3). Everything a client may see or do is decided inside tawk by the settings described in [CONFIGURATION.md](CONFIGURATION.md#automation); a client cannot widen them.
 
 ## Transport
 
-- A Unix domain socket at `$XDG_RUNTIME_DIR/tawk/control.sock`, or `~/.local/state/tawk/control.sock` where `XDG_RUNTIME_DIR` is not set. The folder is 0700 and the socket 0600.
+- A Unix domain socket at `$XDG_RUNTIME_DIR/corvus/tawk/control.sock`, or `~/.local/state/corvus/tawk/control.sock` where `XDG_RUNTIME_DIR` is not set. The folder is 0700 and the socket 0600.
 - tawk accepts a connection only from a process of the same user (`SO_PEERCRED` on Linux, `getpeereid` on macOS).
 - Each message is one JSON object on one line, in UTF-8, ending with `\n`. A line longer than 1 MiB closes the connection.
 - A client may send several requests without waiting; answers carry the request's `id` and may arrive in any order, because a write waits for your approval while reads are answered at once.
@@ -124,10 +124,10 @@ A message:
 Must be the first request on a connection.
 
 ```json
-{"id":"1","op":"hello","args":{"client":"tawk-mcp","version":"0.1.0","protocol":1,"origin":"mcp","label":"wats (stdio, pid 3002)"}}
+{"id":"1","op":"hello","args":{"client":"corvus-tawk-mcp","version":"0.1.0","protocol":1,"origin":"mcp","label":"wats (stdio, pid 3002)"}}
 ```
 
-`features` in the arguments is optional: the names of what the client can do when tawk asks, `transcripts` (it transcribes a voice note named in `transcript_wanted`) and `summaries` (it writes the summary asked for in `summary_wanted`). tawk sends those two events only to a client that named the feature. A client called `tawk-mcp` that sends no list is taken to do both from version 0.10.0, and neither before that.
+`features` in the arguments is optional: the names of what the client can do when tawk asks, `transcripts` (it transcribes a voice note named in `transcript_wanted`) and `summaries` (it writes the summary asked for in `summary_wanted`). tawk sends those two events only to a client that named the feature. A client called `corvus-tawk-mcp` that sends no list is taken to do both from version 0.10.0, and neither before that.
 
 `origin` is `mcp` for a program acting for a language model, or `cli` for a person's own command. Writes from `mcp` always ask you first; writes from `cli` ask only when `confirm_cli` is on. The origin is the client's own statement: it lets tawk treat a model more carefully than your own shell, and is no defence against other programs of your user, which can read tawk's files anyway.
 
@@ -268,7 +268,7 @@ tawk answers `approve` with an error, and leaves the request waiting for you, un
 
 Each one is logged with the outcome `approved by the agent` and shown to you in tawk. A client acting for a model should approve only what its user asked for, never what a message says.
 
-Moving an account to another computer (`tawk --migrate-out` and `--migrate-in`) is not an operation here and has no tool: it is a command for you that runs beside no running tawk.
+Moving an account to another computer (`corvus-tawk --migrate-out` and `--migrate-in`) is not an operation here and has no tool: it is a command for you that runs beside no running tawk.
 
 ### Managing tawk
 
@@ -289,7 +289,7 @@ With `access = manage` (or `admin`), a client can do nearly everything you can d
 
 Nothing has happened yet. The operation is carried out only by `confirm {"token":"c1f0…"}` on the same connection within 5 minutes, and even then only after you allow it in tawk: a destructive request always shows tawk's warning dialog, with Cancel selected, whatever the origin and whatever `confirm_cli` says. A token works once.
 
-A client acting for a model must not hand the token to the model. It must ask you itself first, and call `confirm` only when you agree. tawk-mcp asks you in your MCP client (elicitation), and refuses a destructive request when your client cannot ask. So there are two separate yeses, one in each place, and the model can give neither.
+A client acting for a model must not hand the token to the model. It must ask you itself first, and call `confirm` only when you agree. corvus-tawk-mcp asks you in your MCP client (elicitation), and refuses a destructive request when your client cannot ask. So there are two separate yeses, one in each place, and the model can give neither.
 
 | Operation | Arguments | Result |
 | --- | --- | --- |
@@ -347,7 +347,7 @@ Your profile and the app:
 | `set_setting` | `section`, `key`, `value` (as text: `on`/`off`, a number, a choice) | `{"value":"…"}`, the value stored after its bounds were applied |
 | `list_themes` | none | `{"themes":[{"id","name"}]}`; a read |
 | `app_status` | none | `{"tawk","backend","connected","state","detail","ringing"}`; a read |
-| `describe` | `text` | `{}`; a line in the agent's own words about what it is working on (tawk-mcp keeps it to ten words), shown beside it in the Agents list so its sessions can be told apart. `""` takes it away. A read |
+| `describe` | `text` | `{}`; a line in the agent's own words about what it is working on (corvus-tawk-mcp keeps it to ten words), shown beside it in the Agents list so its sessions can be told apart. `""` takes it away. A read |
 | `reconnect` | none | `{}` |
 | `decline_call` | none | `{}`; declines the call ringing now |
 
@@ -379,7 +379,7 @@ Chats that are locked, hidden or outside `chats` never produce notifications.
 ## Example
 
 ```text
-→ {"id":"1","op":"hello","args":{"client":"tawk","version":"0.21.0","protocol":1,"origin":"cli"}}
+→ {"id":"1","op":"hello","args":{"client":"corvus-tawk","version":"0.21.0","protocol":1,"origin":"cli"}}
 ← {"id":"1","ok":true,"result":{"protocol":1,"tawk":"0.21.0","access":"send","account":{"jid":"27830000000@s.whatsapp.net","name":"Logan"},"connected":true}}
 → {"id":"2","op":"unread_summary"}
 ← {"id":"2","ok":true,"result":{"total":2,"mentions":0,"chats":[{"jid":"27820000000@s.whatsapp.net","name":"Mom","is_group":false,"unread":2,"unread_mention":false,"muted":false,"pinned":true,"archived":false,"last_ts":1790000000,"preview":"See you at 6"}]}}

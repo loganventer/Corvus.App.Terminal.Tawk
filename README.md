@@ -5,7 +5,9 @@
   </picture>
 </p>
 
-# tawk
+# Corvus Tawk (`corvus-tawk`)
+
+Formerly **tawk**: the command is now `corvus-tawk` and its folders are under `corvus/tawk` (`~/.config/corvus/tawk`, `~/.local/share/corvus/tawk`, and so on). `tawk` still works for now as a deprecated (legacy) symlink. Coming from tawk? See [CUTOVER.md](CUTOVER.md).
 
 > **Disclaimer.** tawk is an independent project and is not affiliated with, endorsed by or connected to WhatsApp or Meta. It uses unofficial protocol libraries; use it at your own risk and in line with [WhatsApp's terms of service](https://www.whatsapp.com/legal/terms-of-service).
 
@@ -37,13 +39,13 @@ flowchart LR
 ## Quick Start
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/loganventer/tawk/main/install.sh | bash
-tawk
+curl -fsSL https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Tawk/main/install.sh | bash
+corvus-tawk
 ```
 
 On first run a wizard links tawk to your phone with a QR code or a pairing code. See [QUICKSTART.md](QUICKSTART.md) for other ways to install and a first-run walkthrough.
 
-Update later with `tawk --update`: it compares the commit this build came from (shown by `tawk --version`) with the newest one on GitHub, says so when you are up to date, and otherwise shows what it will install and asks first. `tawk --reinstall` installs again even when current.
+Update later with `corvus-tawk --update`: it compares the commit this build came from (shown by `corvus-tawk --version`) with the newest one on GitHub, says so when you are up to date, and otherwise shows what it will install and asks first. `corvus-tawk --reinstall` installs again even when current.
 
 ### Installing on macOS
 
@@ -54,13 +56,13 @@ Update later with `tawk --update`: it compares the commit this build came from (
 2. Install [Homebrew](https://brew.sh) if you do not have it yet.
 3. Run the installer. It uses Homebrew for everything tawk needs (ncurses, SQLite, pkg-config, Go, ffmpeg and SoX for voice notes, poppler for PDF pages and pngpaste for pasting pictures) and asks before installing anything:
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/loganventer/tawk/main/install.sh | bash
+   curl -fsSL https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Tawk/main/install.sh | bash
    ```
    To install without `sudo`, put it in your home folder instead and make sure `~/.local/bin` is on your `PATH`:
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/loganventer/tawk/main/install.sh | bash -s -- --prefix "$HOME/.local"
+   curl -fsSL https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Tawk/main/install.sh | bash -s -- --prefix "$HOME/.local"
    ```
-4. Run `tawk --doctor` to check the setup, then `tawk`.
+4. Run `corvus-tawk --doctor` to check the setup, then `corvus-tawk`.
 
 Use [iTerm2](https://iterm2.com) (3.5 or later), [WezTerm](https://wezterm.org) or [Ghostty](https://ghostty.org) rather than the macOS Terminal app. tawk runs in Terminal, but it looks broken there: thin black lines cut through the chat bubbles, and profile badges have jagged edges. tawk draws bubble padding, rounded badge corners and the chat bars with block characters (`▀ ▄ ▌ ▗`). Most terminals draw those characters themselves so they fill the whole cell, but Terminal takes them from the font, whose blocks are shorter than a row, and the gaps show. Changing tawk cannot fix this without changing the look. Terminal also has no Sixel support, so profile pictures show as initials and photos as coloured blocks; iTerm2 and WezTerm show both in full resolution. Photos, videos and files open in their default macOS applications, and voice notes record through CoreAudio with SoX, since ffmpeg's microphone capture clicks on some Macs (allow microphone access for your terminal when macOS asks). Alt shortcuts such as Alt+L work with the Option key; see [Alt shortcuts on a Mac](MANUAL.md#alt-shortcuts-on-a-mac).
 
@@ -74,11 +76,11 @@ tawk runs on Windows through WSL (the Windows Subsystem for Linux), in Windows T
    ```
 2. Open **Ubuntu** from Windows Terminal, create your Linux user when prompted, and run the installer there:
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/loganventer/tawk/main/install.sh | bash
+   curl -fsSL https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Tawk/main/install.sh | bash
    ```
-3. Run `tawk --doctor`, then `tawk`.
+3. Run `corvus-tawk --doctor`, then `corvus-tawk`.
 
-Use **Windows Terminal** 1.22 or later: it draws photos and PDFs as real pixels (Sixel) and shows tawk's status in the tab title. Voice notes use the microphone through WSLg, which comes with current WSL. To open photos, videos and files in Windows applications (the Photos app, your video player), WSL must be allowed to start Windows programs; this is on by default, and `tawk --doctor` tells you when it is off. Without it tawk uses its own viewer and Linux players. For Ctrl+Shift+L (soft lock) in Windows Terminal, see [the manual](MANUAL.md#soft-lock); Alt+L always works.
+Use **Windows Terminal** 1.22 or later: it draws photos and PDFs as real pixels (Sixel) and shows tawk's status in the tab title. Voice notes use the microphone through WSLg, which comes with current WSL. To open photos, videos and files in Windows applications (the Photos app, your video player), WSL must be allowed to start Windows programs; this is on by default, and `corvus-tawk --doctor` tells you when it is off. Without it tawk uses its own viewer and Linux players. For Ctrl+Shift+L (soft lock) in Windows Terminal, see [the manual](MANUAL.md#soft-lock); Alt+L always works.
 
 ## Features
 
@@ -95,8 +97,8 @@ Use **Windows Terminal** 1.22 or later: it draws photos and PDFs as real pixels 
 - **Formatting and mentions:** `*bold*`, `_italic_`, `~strike~`, code and quotes shown as WhatsApp shows them; `@` suggests group members, sends real mentions, and being mentioned notifies you even in a muted chat.
 - **Forwarding and scheduling:** forward a message to up to five chats, marked as forwarded; `/later 18:00 text` keeps a message on this computer and sends it when it is due, even after a restart (`/scheduled` lists them).
 - **Link previews:** cards for links others send; making them for your own links is opt-in, since the site sees your IP address.
-- **Your data at rest:** `tawk --encrypt` encrypts the chat database with a passphrase (SQLCipher), and `tawk --backup` and `--restore` make and restore encrypted backups, and `--migrate-out` and `--migrate-in` move one account to another computer.
-- **Agents and automation:** turn on Agent access and [tawk-mcp](https://github.com/loganventer/tawk-mcp) lets an AI assistant such as Claude Code read your chats and draft or send messages; every send or change waits for you in the Agentic tab (F3), deletes need two yeses, and locked chats stay hidden. `tawk send`, `tawk tail`, `tawk unread` and `tawk status-line` do the same for scripts and status bars. See [Automation and MCP](MANUAL.md#automation-and-mcp).
+- **Your data at rest:** `corvus-tawk --encrypt` encrypts the chat database with a passphrase (SQLCipher), and `corvus-tawk --backup` and `--restore` make and restore encrypted backups, and `--migrate-out` and `--migrate-in` move one account to another computer.
+- **Agents and automation:** turn on Agent access and [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk) lets an AI assistant such as Claude Code read your chats and draft or send messages; every send or change waits for you in the Agentic tab (F3), deletes need two yeses, and locked chats stay hidden. `corvus-tawk send`, `corvus-tawk tail`, `corvus-tawk unread` and `corvus-tawk status-line` do the same for scripts and status bars. See [Automation and MCP](MANUAL.md#automation-and-mcp).
 - **Emoji:** the full Unicode emoji set in a searchable picker with group tabs and recent emoji (Ctrl+E), a quick reaction palette, emoticons such as `:)` and `<3` turned into emoji as you type, and `(word` shortcodes that list matching emoji to click.
 - **Media:** photos and videos drawn inside the chat, in real pixels on Sixel terminals (Windows Terminal, WezTerm, foot) and with coloured blocks elsewhere; videos show a frame with a play button and PDFs their first page with a document badge. A built-in viewer shows photos full size, turns the pages of PDFs and browses a chat's photos, videos and PDFs; videos play in mpv, vlc or ffplay, documents open in the system default application, and any file can be saved to your Downloads folder. Files tawk does not recognise offer Save or Open instead of guessing. Attach with the file picker (Ctrl+O, remembers the last folder), by dropping a file on the terminal, or paste a picture from the clipboard with Alt+V (converted to PNG when the clipboard holds another format, so it goes out as a photo).
 - **Voice notes:** shown with 🔊; play them inline; record with Ctrl+R. Works with PulseAudio, PipeWire, ALSA, CoreAudio and DirectShow.
@@ -104,13 +106,13 @@ Use **Windows Terminal** 1.22 or later: it draws photos and PDFs as real pixels 
 - **TL;DR mode:** switch it on for a chat and its messages show as a short summary that unfolds to the original with Enter and folds back. A connected agent's model writes the summaries; you choose which agent (your default agent) in the Agents list, and when several are connected and none is chosen tawk asks you in your own chat on WhatsApp. The last 30 days of such a chat are summarised by themselves. See [TL;DR mode](MANUAL.md#tldr-mode).
 - **Notifications:** sound, a blinking chat, and a terminal tab title such as `🟢 tawk · Mom · 💬 3  📷 1`, which animates while someone is typing to you (`✍️ Jan is typing...`). In Windows Terminal the tab also shows a progress ring while reconnecting.
 - **Resilience:** exponential backoff with jitter behind a circuit breaker, with a clear overlay while WhatsApp is unavailable. tawk reconnects as soon as the network changes (Wi-Fi to Ethernet or a hotspot, for example), drops a connection whose keep-alives fail, and retries a connect that gets no answer within 45 seconds.
-- **Settings panel:** nested menus like the Android app, saved to `~/.config/tawk/config.ini` as you change them.
+- **Settings panel:** nested menus like the Android app, saved to `~/.config/corvus/tawk/config.ini` as you change them.
 - **Start-up splash:** an animated logo while tawk connects; any key skips it, and the Startup splash setting under Appearance turns it off.
-- **60 themes** as JSON files with live preview; add your own in `~/.config/tawk/themes/`.
+- **60 themes** as JSON files with live preview; add your own in `~/.config/corvus/tawk/themes/`.
 - **Screensaver:** runs a command such as `matrix-clock` over tawk after a few idle minutes or on demand (Ctrl+L); any key or click brings tawk back.
 - **Photos and videos from your camera:** click ➕ in the input and choose Take a photo, or type `/camera`, for a live viewfinder: Space or Enter takes a photo, V records a video with sound (up to 3 minutes), and you check it before it is attached (Enter uses it, R retakes). The same viewfinder takes a new profile photo or the picture for a status (macOS, Linux).
 - **Keyboard and mouse:** slash commands with suggestions (`/help`), Shift+Enter or Alt+Enter for a new line, Option as Alt on a Mac, a right-click menu on messages (reply, react, copy, edit, save, delete), click chats and media, drag chats into and out of the Pinned group, scroll, drag the divider to resize, collapse the chat list with Ctrl+B. The layout reflows when the window is resized.
-- **Setup check:** `tawk --doctor` checks the terminal, files, backend, voice note and media tools, the PDF page tools and the screensaver command, and says what to install.
+- **Setup check:** `corvus-tawk --doctor` checks the terminal, files, backend, voice note and media tools, the PDF page tools and the screensaver command, and says what to install.
 
 ## How It Works
 
@@ -121,7 +123,7 @@ See [HOW_IT_WORKS.md](HOW_IT_WORKS.md) for the runtime flow with diagrams.
 ## Directory Structure
 
 ```
-tawk/
+Corvus.App.Terminal.Tawk/
 ├── src/, include/        C sources, mirrored by layer
 │   ├── core/             domain types (Message, Chat, ContactProfile, Settings, Theme, ...)
 │   ├── contracts/        interfaces (IMessageGateway, IChatStore, IProfileStore, IAudioBackend, ...)
@@ -131,8 +133,8 @@ tawk/
 │   ├── infrastructure/   OS integration (audio, camera, media opener, screensaver, terminal title, clipboard, network monitor)
 │   ├── managers/         use cases (messaging, profiles, your account, statuses, calls, media, settings, automation)
 │   ├── clients/tui/      the ncurses client
-│   ├── clients/control/  the control socket client for tawk-mcp and the shell commands
-│   ├── clients/cli/      the --doctor setup check, the --update installer and tawk send, tail, unread
+│   ├── clients/control/  the control socket client for corvus-tawk-mcp and the shell commands
+│   ├── clients/cli/      the --doctor setup check, the --update installer and corvus-tawk send, tail, unread
 │   └── main.c            composition root
 ├── bridge/whatsmeow/     Go bridge, built as a static C archive
 ├── sidecar/              Node.js Baileys bridge
@@ -141,7 +143,7 @@ tawk/
 ├── assets/emoji/         Unicode emoji list for the picker
 ├── vendor/               cJSON and stb_image
 ├── tests/                tests (make test)
-├── docs/                 man page (tawk.1) and screenshots (images/)
+├── docs/                 man page (corvus-tawk.1) and screenshots (images/)
 ├── completions/          bash completion
 ├── tools/screenshots/    draws the manual's newer screenshots (make screenshots)
 ├── tools/branding/       draws the logo PNGs in docs/images (make logos)
@@ -161,10 +163,11 @@ tawk/
 | [HOW_IT_WORKS.md](HOW_IT_WORKS.md) | Runtime flow, login, reconnects, media |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Layers, contracts and design principles |
 | [PROTOCOL.md](PROTOCOL.md) | The backend JSON line protocol |
-| [CONTROL.md](CONTROL.md) | The control socket protocol, for tawk-mcp and scripts |
+| [CONTROL.md](CONTROL.md) | The control socket protocol, for corvus-tawk-mcp and scripts |
 | [SECURITY.md](SECURITY.md) | Threat model, controls and reporting |
+| [CUTOVER.md](CUTOVER.md) | Switching an install of tawk over to corvus-tawk: every old and new name, and the steps |
 
-After installing, `man tawk` covers the command line.
+After installing, `man corvus-tawk` covers the command line.
 
 ## Building
 
@@ -175,7 +178,7 @@ make sidecar         # install the Node.js backend's dependencies
 sudo make install    # to /usr/local; use PREFIX=$HOME/.local for a user install
 make test            # build and run the tests
 make help            # every target and option
-tawk --doctor        # check the result
+corvus-tawk --doctor        # check the result
 ```
 
 Requirements: a C11 compiler, make, pkg-config, ncurses (wide-character), SQLite 3 with FTS5, and Go 1.21 or newer for the in-process backend. At run time ffmpeg and your audio system's tools (for example `pulseaudio-utils`) enable voice notes, `xdg-utils` opens media on Linux, and poppler (`pdftoppm` and `pdfinfo`, in `poppler-utils` on most Linux systems) shows PDF pages inside tawk. Node.js 20 or newer is only needed for the Baileys backend.
@@ -208,7 +211,7 @@ Issues and pull requests are welcome. Keep to the existing structure: one type p
 
 ## Author
 
-tawk is written and maintained by **Logan Venter** ([logan.venter@outlook.com](mailto:logan.venter@outlook.com)). Issues and ideas are welcome on [GitHub](https://github.com/loganventer/tawk/issues).
+tawk is written and maintained by **Logan Venter** ([logan.venter@outlook.com](mailto:logan.venter@outlook.com)). Issues and ideas are welcome on [GitHub](https://github.com/loganventer/Corvus.App.Terminal.Tawk/issues).
 
 ## License
 

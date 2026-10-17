@@ -217,7 +217,7 @@ install: $(APP)
 	$(call step,sounds,$(SHAREDIR)/sounds)
 	$(Q)install -d $(DESTDIR)$(SHAREDIR)/emoji && install -m 0644 assets/emoji/emoji.tsv $(DESTDIR)$(SHAREDIR)/emoji/
 	$(call step,emoji,$(SHAREDIR)/emoji ($$(grep -vc '^#' assets/emoji/emoji.tsv) emoji, Unicode data))
-	$(Q)sed 's/@APP@/$(APP)/g; s/@VERSION@/$(VERSION)/g' docs/corvus-tawk.1 > $(DESTDIR)$(MANDIR)/$(APP).1
+	$(Q)sed 's/@APP@/$(APP)/g; s/@VERSION@/$(VERSION)/g; s|@APP_DIR@|$(APP_DIR)|g' docs/corvus-tawk.1 > $(DESTDIR)$(MANDIR)/$(APP).1
 	$(Q)chmod 0644 $(DESTDIR)$(MANDIR)/$(APP).1
 	$(call step,man,$(MANDIR)/$(APP).1  (man $(APP)))
 	$(Q)install -m 0644 *.md LICENSE $(DESTDIR)$(DOCDIR)/

@@ -1,6 +1,6 @@
 # Plan: several WhatsApp accounts in one tawk
 
-Status: in progress, steps 1 to 5 done (see [Progress](#progress)). Branch: `feature/multi-account` in `tawk` and in `tawk-mcp`, both cut from `main`.
+Status: in progress, steps 1 to 5 done (see [Progress](#progress)). Branch: `feature/multi-account` in this repository (Corvus.App.Terminal.Tawk) and in Corvus.Mcp.Server.Tawk, both cut from `main`.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ Status: in progress, steps 1 to 5 done (see [Progress](#progress)). Branch: `fea
   - [4. The terminal client](#4-the-terminal-client)
   - [5. Merged chats and a contact's own settings](#5-merged-chats-and-a-contacts-own-settings)
   - [6. The control socket and the shell commands](#6-the-control-socket-and-the-shell-commands)
-  - [7. tawk-mcp](#7-tawk-mcp)
+  - [7. corvus-tawk-mcp](#7-corvus-tawk-mcp)
   - [8. Encryption, backup, doctor and logs](#8-encryption-backup-doctor-and-logs)
   - [9. Documentation](#9-documentation)
 - [How the rules are kept](#how-the-rules-are-kept)
@@ -26,7 +26,7 @@ Status: in progress, steps 1 to 5 done (see [Progress](#progress)). Branch: `fea
 
 ## Why
 
-tawk holds one WhatsApp account. A person with two numbers (a personal one and one an AI assistant works on) has to log out and link again to change number, or run a second tawk beside the first with its own folders. Neither gives one place to read and answer everything, and an agent connected through tawk-mcp cannot tell the numbers apart.
+tawk holds one WhatsApp account. A person with two numbers (a personal one and one an AI assistant works on) has to log out and link again to change number, or run a second tawk beside the first with its own folders. Neither gives one place to read and answer everything, and an agent connected through corvus-tawk-mcp cannot tell the numbers apart.
 
 The aim is one tawk, in one window, connected to every account at the same time, with agents allowed onto each account separately.
 
@@ -38,8 +38,8 @@ These were chosen by the owner before planning and are not open in this plan.
 |---|---|
 | How accounts live in tawk | All accounts connected at once in one process and one window |
 | Database | One `tawk.db`; every table that holds account data gains an account column, with a migration of the rows already there |
-| tawk-mcp | One server. Every tool that reaches tawk takes an optional `account`; `list_accounts` shows them; channel events say which account a message came from |
-| tawk-mcp memory | One shared file. Voices and people are shared; what was learned is tagged with the account it was learned on |
+| corvus-tawk-mcp | One server. Every tool that reaches tawk takes an optional `account`; `list_accounts` shows them; channel events say which account a message came from |
+| corvus-tawk-mcp memory | One shared file. Voices and people are shared; what was learned is tagged with the account it was learned on |
 | The same contact on two numbers | A setting keeps that contact as one merged chat or as separate chats, with a default for all chats and a choice per chat |
 | Which number sends | A primary account you choose, and a sending account you can set for any one contact. The input shows the sending account and one key changes it for that message |
 | A contact's own settings | Set from the contact card: the sending account, merging, and whether agents may answer that chat by themselves |
@@ -58,7 +58,7 @@ These were chosen by the owner before planning and are not open in this plan.
 | 4. The terminal client | Done: every account's chats in one list with account badges, the header's account filter, bringing an account into view, Settings, Account, Accounts (add, rename, primary, agent access, log out, remove), adding an account opening its own linking wizard, and the unread total and tab title over all accounts. A new message blinks the row of the account it reached |
 | 5. Merged chats and a contact's own settings | Done: the merged conversation with each message marked by its account, the input saying which account sends, Alt+A for the next account and Alt+Shift+A to keep it for the contact, the contact card's three settings, and the list of contacts with a sending number of their own. The planned "send as" menu on the label was left out in favour of the two keys |
 | 6. The control socket and the shell commands | Done: each request is served by the account it names or by the default one, under that account's own level; an account that is off is neither listed nor reachable; `hello` lists the accounts and `list_accounts` gives them again; events and the automation log carry the account; a write that waits is carried out by its own account; `--account` on the shell commands. Checked by `control_accounts_test` and against the running build. An approval carries its account in a field of its own, shown in the queue, the detail and the log; unread `chat` events are watched in every account open to agents; `ambiguous` candidates carry the account; a self-approval chat allowed in one account and refused in another is tested. A subscription follows a chat by its JID in every account open to agents, which is how it was planned to behave for `all` |
-| 7. tawk-mcp | Done on its `feature/multi-account` branch: `account` on the 49 tools that reach tawk or resolve a chat, carried by `IAccountScope` and the `AccountScopedTawkControl` decorator; the refusal on a tawk from before accounts; `list_accounts`; the account on events, channel tags, the event stream and waiting requests; an `account` on both prompts; memory schema step 3 and the sync column. The resources are `tawk://account/{account}/chats` and `tawk://account/{account}/chat/{jid}`, since `tawk://{account}/chat/{jid}` could not be told from the existing `tawk://chat/{jid}`. A subscription to an account resource hears about that account only |
+| 7. corvus-tawk-mcp | Done on its `feature/multi-account` branch: `account` on the 49 tools that reach tawk or resolve a chat, carried by `IAccountScope` and the `AccountScopedTawkControl` decorator; the refusal on a tawk from before accounts; `list_accounts`; the account on events, channel tags, the event stream and waiting requests; an `account` on both prompts; memory schema step 3 and the sync column. The resources are `tawk://account/{account}/chats` and `tawk://account/{account}/chat/{jid}`, since `tawk://{account}/chat/{jid}` could not be told from the existing `tawk://chat/{jid}`. A subscription to an account resource hears about that account only |
 | 8. Encryption, backup, doctor and logs | Done: a backup with the login holds every account's login under manifest format 2, and a format 1 backup still restores; `--doctor` lists each account's login folder and whether a number is linked. The doctor shows each account's label and number, read from the database without upgrading it. Each whatsmeow session has its own log, and a line in `tawk.log` written while an account is worked on starts with its label |
 | 9. Documentation | Done in both repos, with pictures of the accounts list, the badged chat list and a merged conversation drawn by the screenshot tool |
 
@@ -73,7 +73,7 @@ Added to the plan after it was first written, at the owner's request: a sending 
 - A contact who writes to two of your numbers shows as **one chat** when merging is on. Their messages appear in time order, each marked with the number it arrived on. The input says `as <label>` and Alt+A changes the sending number for that message; clicking the label opens "send this message as" and "always send to this person from".
 - The **contact card** has a section for that chat: send from, merge across my numbers, and a switch per account for agents answering by themselves.
 - A background account that loses its connection shows in the header and in Settings, Accounts. It does not take over the screen.
-- `tawk send --account work "Mom" "on my way"`, and `tawk unread` and `tawk tail` name the account.
+- `corvus-tawk send --account work "Mom" "on my way"`, and `corvus-tawk unread` and `corvus-tawk tail` name the account.
 - An agent calls `list_accounts`, passes `account` to a tool, and receives `account` on every channel event. It sees only the accounts switched on for agents.
 - An existing install opens as before: its chats, login and settings become account 1, labelled `main`, and nothing else changes until a second account is added.
 
@@ -97,7 +97,7 @@ flowchart TD
     DB[("tawk.db<br/>account_id on every account table")]
     TUI["Terminal client<br/>unified list, merged chats, switcher"]
     CTL["Control client<br/>account on every op and event"]
-    MCP(["tawk-mcp"])
+    MCP(["corvus-tawk-mcp"])
 
     MAIN -.->|creates and injects| HOST & ROSTER & TUI & CTL
     HOST --> R1 & R2
@@ -276,9 +276,9 @@ The protocol stays at version 1: fields are added and none change meaning.
 
 **Tests.** `control_protocol_test.c` gains: an agent sees only accounts switched on; an operation without `account` lands on the default; the same JID in two accounts is told apart; events are tagged; a self-approval chat allowed in one account is refused in another.
 
-### 7. tawk-mcp
+### 7. corvus-tawk-mcp
 
-On `feature/multi-account` in `tawk-mcp`, after tawk's control socket is done.
+On `feature/multi-account` in `corvus-tawk-mcp`, after tawk's control socket is done.
 
 - **Reading the accounts.** `HelloInfo` gains `Accounts` and `MultiAccount`. A `list_accounts` tool on `AppTools` and `IAppManager`.
 - **Old tawk.** If the hello has no `multi_account`, a tool call that names any account but the default is refused with a clear message. An old tawk would ignore the field and send from the wrong number, which is the worst failure this change can cause.
@@ -295,13 +295,13 @@ On `feature/multi-account` in `tawk-mcp`, after tawk's control socket is done.
 
 - **Encryption** is unchanged: one file, one passphrase. `same_contents` already compares row counts table by table and holds after the rebuild.
 - **Backup and restore**: the manifest gains the list of accounts and moves to format 2 (format 1 still restores, as account 1). `auth` is copied as a tree, and `accounts/<N>/auth` is added to the copy and to the restore path policy (`engines/archive_path_policy.c`).
-- **`tawk --doctor`** lists the accounts with their login folder and state.
+- **`corvus-tawk --doctor`** lists the accounts with their login folder and state.
 - **Logs**: one `tawk.log`; lines from a runtime carry its label.
 
 ### 9. Documentation
 
-- `tawk`: MANUAL.md (accounts, the filter, merged chats, per-account agent access, with redrawn pictures by `make screenshots`), CONFIGURATION.md (`merge_accounts`, where each account's login lives, what moved out of `[automation]`), CONTROL.md (the added fields and `list_accounts`), ARCHITECTURE.md (the account runtime, `composition/`, the new contracts and engines), HOW_IT_WORKS.md (start-up with several accounts, a merged chat), SECURITY.md (per-account agent access), README.md.
-- `tawk-mcp`: README.md tools table, MANUAL.md (the `account` argument, `list_accounts`, the channel tag, resources), CONFIGURATION.md, ARCHITECTURE.md (the tool counts there are already out of date and are recounted), HOW_IT_WORKS.md, SECURITY.md, AGENT.md.
+- Corvus.App.Terminal.Tawk: MANUAL.md (accounts, the filter, merged chats, per-account agent access, with redrawn pictures by `make screenshots`), CONFIGURATION.md (`merge_accounts`, where each account's login lives, what moved out of `[automation]`), CONTROL.md (the added fields and `list_accounts`), ARCHITECTURE.md (the account runtime, `composition/`, the new contracts and engines), HOW_IT_WORKS.md (start-up with several accounts, a merged chat), SECURITY.md (per-account agent access), README.md.
+- Corvus.Mcp.Server.Tawk: README.md tools table, MANUAL.md (the `account` argument, `list_accounts`, the channel tag, resources), CONFIGURATION.md, ARCHITECTURE.md (the tool counts there are already out of date and are recounted), HOW_IT_WORKS.md, SECURITY.md, AGENT.md.
 - Both `AGENT_SETUP.md` files: an agent is told that a second number carries the same ban risk as the first and that linking one is the person's decision.
 
 ## How the rules are kept
@@ -314,7 +314,7 @@ On `feature/multi-account` in `tawk-mcp`, after tawk's control socket is done.
 | Liskov substitution | Both gateways still satisfy `IMessageGateway` unchanged; only how one is made differs |
 | Interface segregation | `IAccountStore` and `IAccountDirectory` are new and small. No existing contract is widened |
 | Dependency inversion | The clients depend on `IAccountDirectory`, not on `AccountHost`. Implementations are made only in `main.c` and `composition/` |
-| Composition over inheritance | An account runtime is a composition of the existing parts. tawk-mcp adds the account with a decorator over `ITawkControl` |
+| Composition over inheritance | An account runtime is a composition of the existing parts. corvus-tawk-mcp adds the account with a decorator over `ITawkControl` |
 | Separation of concerns | Which chats merge and which number replies are decided in engines; the client only draws and asks |
 
 ## Risks
@@ -322,7 +322,7 @@ On `feature/multi-account` in `tawk-mcp`, after tawk's control socket is done.
 | Risk | What is done about it |
 |---|---|
 | The migration damages a real database | The `.pre-v17` copy is written first; the rebuild is one transaction and rolls back whole; the test runs it over a literal old schema with rows in every table, and over an empty one |
-| A message goes out from the wrong number | The input always names the sending account; tawk-mcp refuses a named account on a tawk that does not report `multi_account`; a scheduled message keeps the account it was written on |
+| A message goes out from the wrong number | The input always names the sending account; corvus-tawk-mcp refuses a named account on a tawk that does not report `multi_account`; a scheduled message keeps the account it was written on |
 | An agent reaches the personal number | New accounts start at `off`; hello and `list_accounts` list only accounts switched on; self-approval is per account; the control tests assert each of these |
 | whatsmeow misbehaves with two clients in one process | The bridge sets no library globals and each session has its own store. This is proven with two real numbers before the terminal client work starts; if it fails, the fallback for the second account is the Baileys sidecar, which already runs one process per instance |
 | A second linked number raises the chance of a ban | WhatsApp treats linking an unofficial client as a breach of its terms. Two numbers from one machine is two such links. The documentation and both `AGENT_SETUP.md` files say so |
@@ -330,12 +330,12 @@ On `feature/multi-account` in `tawk-mcp`, after tawk's control socket is done.
 
 ## How it is checked
 
-1. `make` with no warnings and `make test` after every step; `dotnet build TawkMcp.slnx -warnaserror` and `dotnet test TawkMcp.slnx` for tawk-mcp.
-2. **Upgrade**: copy a real `~/.local/share/tawk` aside, open it with the new build, and confirm every chat, the search, the login and the settings are as before, as account `main`.
+1. `make` with no warnings and `make test` after every step; `dotnet build TawkMcp.slnx -warnaserror` and `dotnet test TawkMcp.slnx` for corvus-tawk-mcp.
+2. **Upgrade**: copy a real `~/.local/share/corvus/tawk` aside, open it with the new build, and confirm every chat, the search, the login and the settings are as before, as account `main`.
 3. **Two numbers**: add a second account and link it. Both stay connected, each receives only its own messages, and a network change reconnects both.
 4. **Merged chat**: a contact writes to both numbers. One chat with merging on, two with it off, and the per-chat choice overrides the setting. Reply from each number and confirm on the phone which one sent.
 5. **A shared group**: each message shows once.
-6. **Agents**: with tawk-mcp connected, `list_accounts` shows only the account switched on; a send with `account` goes from that number; a channel event carries `account`; the personal account stays invisible while its access is `off`.
+6. **Agents**: with corvus-tawk-mcp connected, `list_accounts` shows only the account switched on; a send with `account` goes from that number; a channel event carries `account`; the personal account stays invisible while its access is `off`.
 7. **Backup and restore** with two accounts, with and without `--with-login`.
 8. **Encrypted database**: upgrade one and confirm it opens and the `.pre-v17` copy is encrypted.
 

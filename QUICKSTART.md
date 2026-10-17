@@ -5,10 +5,10 @@ Having an AI agent install tawk for you? Point it at [AGENT_SETUP.md](AGENT_SETU
 ## Install with one command
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/loganventer/tawk/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Tawk/main/install.sh | bash
 ```
 
-The script detects your platform, offers to install the build dependencies and the runtime tools (it asks first), downloads the source into a private temporary folder, builds it, installs it to `/usr/local` and removes the temporary folder. It uses `sudo` only for the final copy when `/usr/local` is not writable. At the end it runs `tawk --doctor` to confirm everything tawk needs is in place.
+The script detects your platform, offers to install the build dependencies and the runtime tools (it asks first), downloads the source into a private temporary folder, builds it, installs it to `/usr/local` and removes the temporary folder. It uses `sudo` only for the final copy when `/usr/local` is not writable. At the end it runs `corvus-tawk --doctor` to confirm everything tawk needs is in place.
 
 The runtime tools are only added when they are missing:
 
@@ -25,7 +25,7 @@ The recording tools are skipped when `parecord`, `pw-record` or `arecord` is alr
 Prefer to read the script before running it? Download it, look, then run it:
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/loganventer/tawk/main/install.sh
+curl -fsSLO https://raw.githubusercontent.com/loganventer/Corvus.App.Terminal.Tawk/main/install.sh
 less install.sh
 bash install.sh
 ```
@@ -33,8 +33,8 @@ bash install.sh
 ## Install from a checkout
 
 ```bash
-git clone https://github.com/loganventer/tawk.git
-cd tawk
+git clone https://github.com/loganventer/Corvus.App.Terminal.Tawk.git
+cd Corvus.App.Terminal.Tawk
 ./install.sh
 ```
 
@@ -56,7 +56,7 @@ Everything the script does can be done by hand with `make`, see the Building sec
 ## First run
 
 ```bash
-tawk
+corvus-tawk
 ```
 
 ![The linking wizard showing a QR code and the steps on the phone](docs/images/login-qr.png)
@@ -69,9 +69,9 @@ tawk
 
 The QR code needs a window of roughly 70 by 40 characters. If yours is smaller, tawk tells you, or you can use the phone number instead.
 
-If something does not work, run `tawk --doctor`. It checks the terminal, your files, the backend, the voice note and media tools, the PDF page tools and the screensaver command, and tells you what to install.
+If something does not work, run `corvus-tawk --doctor`. It checks the terminal, your files, the backend, the voice note and media tools, the PDF page tools and the screensaver command, and tells you what to install.
 
-![tawk --doctor listing each check and what to install for the one that is missing](docs/images/doctor.png)
+![corvus-tawk --doctor listing each check and what to install for the one that is missing](docs/images/doctor.png)
 
 ## Tips
 
@@ -89,7 +89,7 @@ If something does not work, run `tawk --doctor`. It checks the terminal, your fi
 - **Shift+Enter** (or Alt+Enter) starts a new line in a message; Enter sends it. Ctrl, Alt or Shift with ← and → steps through what you typed a word at a time.
 - Pinned chats have their own group at the top of the list. Enter on a group header, or ← and →, folds and unfolds it.
 - **Ctrl+R** records a voice note in the open chat; Enter sends it.
-- With an agent connected through [tawk-mcp](https://github.com/loganventer/tawk-mcp), voice notes show their words under them (**Alt+T** steps this for the open chat), and a chat's contact card has **TL;DR** to show long messages as a short summary; Enter unfolds one.
+- With an agent connected through [corvus-tawk-mcp](https://github.com/loganventer/Corvus.Mcp.Server.Tawk), voice notes show their words under them (**Alt+T** steps this for the open chat), and a chat's contact card has **TL;DR** to show long messages as a short summary; Enter unfolds one.
 - Emoticons such as `:)` and `<3` become emoji when you type a space, and `(pizza)` becomes 🍕; type `(hu` to pick from matching emoji. Turn this off under Settings, Chats, Emoticons to emoji.
 - When someone calls, tawk rings with a prompt: **d** declines, Enter or Esc closes it so you can answer on your phone. tawk cannot carry the call itself.
 - Drag a file from your file manager onto the terminal window to send it, or press **Ctrl+O** to pick one.

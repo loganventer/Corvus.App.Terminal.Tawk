@@ -1,6 +1,6 @@
-# Plan: the next features for tawk and tawk-mcp
+# Plan: the next features for tawk and corvus-tawk-mcp
 
-Status: section 1 (transcripts in the conversation) and TL;DR mode are built and merged in both repositories, with tests, as tawk 0.13.0 to 0.14.3 (pull requests 11, 13, 14 and 16) and tawk-mcp 0.9.0 to 0.10.3 (pull requests 15, 17, 18 and 20). Everything else is proposed. This is the one plan for both repositories, written against tawk 0.12.0 (`f169989`) and tawk-mcp 0.8.1 (`c6724f0`), the newest `main` of each on 10 October 2026. The first feature, voice note transcripts shown in the conversation, is planned in full. The rest are planned to the level of what each adds, where its parts go and what has to be decided first.
+Status: section 1 (transcripts in the conversation) and TL;DR mode are built and merged in both repositories, with tests, as tawk 0.13.0 to 0.14.3 (pull requests 11, 13, 14 and 16) and corvus-tawk-mcp 0.9.0 to 0.10.3 (pull requests 15, 17, 18 and 20). Everything else is proposed. This is the one plan for both repositories, written against tawk 0.12.0 (`f169989`) and corvus-tawk-mcp 0.8.1 (`c6724f0`), the newest `main` of each on 10 October 2026. The first feature, voice note transcripts shown in the conversation, is planned in full. The rest are planned to the level of what each adds, where its parts go and what has to be decided first.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ Status: section 1 (transcripts in the conversation) and TL;DR mode are built and
 - [8. Working with agents](#8-working-with-agents)
   - [The owner's chat](#the-owners-chat)
 - [TL;DR mode](#tldr-mode)
-- [9. tawk-mcp](#9-tawk-mcp)
+- [9. corvus-tawk-mcp](#9-corvus-tawk-mcp)
   - [Keeping up with the protocol](#keeping-up-with-the-protocol)
   - [Tools for the new features](#tools-for-the-new-features)
   - [Doing more for the owner](#doing-more-for-the-owner)
@@ -30,18 +30,18 @@ Status: section 1 (transcripts in the conversation) and TL;DR mode are built and
 
 ## Where it stands
 
-As of 2026-10-11, with tawk 0.23.0 and tawk-mcp 0.15.0. Work stopped here for the week with the two programs in step: every tawk feature below that an agent should reach has its control operation and its tool.
+As of 2026-10-11, with tawk 0.23.0 and corvus-tawk-mcp 0.15.0. Work stopped here for the week with the two programs in step: every tawk feature below that an agent should reach has its control operation and its tool.
 
 | Built | In |
 |---|---|
-| Transcripts in the conversation, per-chat show and transcribe, per-chat and default languages | tawk 0.13.0 to 0.14.3, tawk-mcp 0.9.0 to 0.10.2 |
-| TL;DR mode | tawk 0.14.0 to 0.14.5, tawk-mcp 0.10.0 to 0.10.3 |
-| The owner's chat, with approving from WhatsApp | tawk 0.15.0, tawk-mcp 0.11.0 |
+| Transcripts in the conversation, per-chat show and transcribe, per-chat and default languages | tawk 0.13.0 to 0.14.3, corvus-tawk-mcp 0.9.0 to 0.10.2 |
+| TL;DR mode | tawk 0.14.0 to 0.14.5, corvus-tawk-mcp 0.10.0 to 0.10.3 |
+| The owner's chat, with approving from WhatsApp | tawk 0.15.0, corvus-tawk-mcp 0.11.0 |
 | A rule per chat for agents (always ask, read only, hidden), and codes and card numbers masked for models | tawk 0.16.0 |
 | System notifications, quiet hours, mentions only per chat | tawk 0.17.0 |
 | Backups that detect tampering, and the passphrase lock | tawk 0.18.0 |
-| Labels, reminders, narrowing the chat list, awaiting a reply | tawk 0.19.0 and 0.20.0, tawk-mcp 0.12.0 |
-| An agent sends a file: control operation `send_file` and the tool of the same name, with a policy for what may never be sent and no self-approval | tawk 0.22.0, tawk-mcp 0.15.0 |
+| Labels, reminders, narrowing the chat list, awaiting a reply | tawk 0.19.0 and 0.20.0, corvus-tawk-mcp 0.12.0 |
+| An agent sends a file: control operation `send_file` and the tool of the same name, with a policy for what may never be sent and no self-approval | tawk 0.22.0, corvus-tawk-mcp 0.15.0 |
 | Moving one account to another computer: `--migrate-out` and `--migrate-in`, login never carried, the number checked when it links | tawk 0.23.0 |
 
 Not built, in the order they would be taken:
@@ -53,7 +53,7 @@ Not built, in the order they would be taken:
 5. Section 6: your own keys and a vim set, the chat switcher, split view, undo send, selecting several messages, your editor, plain mode.
 6. Section 5: polls, events, locations, contact cards, view once, disappearing messages, stickers, usernames. Each needs protocol work in both bridges, proved against a real account.
 7. Section 2, the rest: the login in the keychain, the encrypted media cache, signed releases (which need a signing key kept outside the repository), sandboxed parsers.
-8. Section 9, tawk-mcp's own steps: the 2026-07-28 protocol revision, tasks, structured results, resource links, MCP Apps, tool sets, `doctor`, the leak check, the hidden text rule, the read budget, tokens per client and in the keychain, reviewed memory with a history, catch-up marks and the new prompts.
+8. Section 9, corvus-tawk-mcp's own steps: the 2026-07-28 protocol revision, tasks, structured results, resource links, MCP Apps, tool sets, `doctor`, the leak check, the hidden text rule, the read budget, tokens per client and in the keychain, reviewed memory with a history, catch-up marks and the new prompts.
 
 Not yet tried by hand: the owner's chat against a real phone, the lock screen against an encrypted database, the terminal escape codes for banners in each terminal, and the new chat list commands in the terminal.
 
@@ -70,9 +70,9 @@ tawk was compared with WhatsApp's own apps, Telegram, Signal, Beeper and the oth
 | The right-click menu | Kept, as a shortcut to the contact card's rows |
 | The owner's chat in the written rules | Written, and kept in this plan under [the owner's chat](#the-owners-chat-rules-to-add-when-it-is-built) until the feature is built; they go into INTENT.md and SECURITY.md of both repositories with it, not before |
 | Phone notifications for the owner's chat | Not a concern. No second arrangement is planned |
-| The MCP revision | tawk-mcp uses Microsoft's official C# SDK (`ModelContextProtocol`), so the 2026-07-28 revision arrives by raising the package version |
+| The MCP revision | corvus-tawk-mcp uses Microsoft's official C# SDK (`ModelContextProtocol`), so the 2026-07-28 revision arrives by raising the package version |
 | The owner's chat | The "message yourself" chat of your own connected number. The agent answers there by itself, through that number. Which messages are yours is inferred from what tawk itself sent; the sending device is not checked |
-| tawk-mcp's tool list | A fresh install lists every tool. A shorter set is something you choose |
+| corvus-tawk-mcp's tool list | A fresh install lists every tool. A shorter set is something you choose |
 | Where a chat's own settings live | On the contact card. Every per-chat setting, the existing ones and each new one in this plan, has its row there. Keys, slash commands and the right-click menu stay as shortcuts to the same rows |
 | Everything else | Planned here, to be agreed step by step before each is built |
 | Design rules | iDesign layers, SOLID, one type per file, dependency inversion, composition over inheritance, separation of concerns, as in [CONTRIBUTING.md](../../CONTRIBUTING.md) |
@@ -108,9 +108,9 @@ Each feature below lists its parts by layer. The same pattern holds for all of t
 
 ### The shape of the change
 
-tawk does not transcribe anything, and tawk-mcp keeps finished transcripts in memory for half an hour and then drops them. So there is nothing for the conversation to show today. Three ideas close the gap.
+tawk does not transcribe anything, and corvus-tawk-mcp keeps finished transcripts in memory for half an hour and then drops them. So there is nothing for the conversation to show today. Three ideas close the gap.
 
-**1. tawk keeps transcripts, tawk-mcp makes them.** A finished transcript is handed to tawk over the control socket and stored in `tawk.db`, where encryption and backups already cover it. tawk-mcp still writes nothing to disk, so its rule of storing no messages holds.
+**1. tawk keeps transcripts, corvus-tawk-mcp makes them.** A finished transcript is handed to tawk over the control socket and stored in `tawk.db`, where encryption and backups already cover it. corvus-tawk-mcp still writes nothing to disk, so its rule of storing no messages holds.
 
 **2. A transcript is a note beside a message, never part of it.** It has its own table, store, manager and widget. `Message`, `IMessageStore` and `MessagingManager` do not change.
 
@@ -120,7 +120,7 @@ tawk does not transcribe anything, and tawk-mcp keeps finished transcripts in me
 
 ```mermaid
 flowchart LR
-    MCP(["tawk-mcp<br/>transcribes"]) -->|set_transcript| CTL["clients/control<br/>control_ops_transcripts"]
+    MCP(["corvus-tawk-mcp<br/>transcribes"]) -->|set_transcript| CTL["clients/control<br/>control_ops_transcripts"]
     CTL --> TM["TranscriptManager"]
     TM --> EN["transcript_validator<br/>transcript_choice"]
     TM --> ST["ITranscriptStore<br/>sqlite_transcript_store"]
@@ -136,7 +136,7 @@ flowchart LR
     CARD["contact_panel<br/>This chat"] --> PREFS
 ```
 
-Changed in 0.14.3 and tawk-mcp 0.10.3, the same day, with two agent sessions connected: a voice note goes to the agent running the newest transcriber; an agent that hands back no summaries is passed over; a request for a summary says plainly that it is the user's own, since an agent had held one back to ask for a go-ahead; and English alone is switched on as a voice note language to begin with.
+Changed in 0.14.3 and corvus-tawk-mcp 0.10.3, the same day, with two agent sessions connected: a voice note goes to the agent running the newest transcriber; an agent that hands back no summaries is passed over; a request for a summary says plainly that it is the user's own, since an agent had held one back to ask for a go-ahead; and English alone is switched on as a voice note language to begin with.
 
 Changed in 0.14.2, the same day, after the first transcripts on real chats: a transcript is shown whole (the line limit and `transcript_lines` are gone); the languages a voice note may be in are chosen from a list of switches, for every chat under Settings, Chats (Afrikaans and English to begin with) and for one chat on its contact card; the transcriber works out which is spoken and writes the note once, in it, preferring the other language over English when both are heard, so that a mixed note is not turned into an English translation; and the transcripts written before were dropped by migration 20 to be written again.
 
@@ -170,13 +170,13 @@ Changed in 0.14.2, the same day, after the first transcripts on real chats: a tr
 | Operation | Arguments | Answer | Notes |
 |---|---|---|---|
 | `set_transcript` | `message_id`, `language`, `text`, `model` | `{}` | Changes only this computer and sends nothing to WhatsApp, so it is not asked about. It needs no more than `read`, like `download_media`, and the chat must be one the client may use. It does not count against the write rate, since a transcriber working through a busy chat would use up the allowance for sends; each one is in the automation log. A locked or soft-locked chat is refused as not found |
-| `get_transcript` | `message_id` | The stored transcripts | Lets tawk-mcp answer after a restart without transcribing again |
+| `get_transcript` | `message_id` | The stored transcripts | Lets corvus-tawk-mcp answer after a restart without transcribing again |
 
 A chat whose Transcribe voice notes switch is off answers `set_transcript` with a new error, `transcripts_off`. `get_chat_info` gains `"transcribe": false` for such a chat, and the `message` and `media_ready` events carry the same field, so a transcriber knows before it starts. An agent cannot change either per-chat choice: they are set on the contact card only.
 
-`hello` answers with the protocol number and tawk's version today, and nothing about what this tawk can do. Its result gains a `features` list of names, with `transcripts` as the first. tawk-mcp sends `set_transcript` only when it sees that name, so an older tawk is left alone, and a client that does not know the field ignores it.
+`hello` answers with the protocol number and tawk's version today, and nothing about what this tawk can do. Its result gains a `features` list of names, with `transcripts` as the first. corvus-tawk-mcp sends `set_transcript` only when it sees that name, so an older tawk is left alone, and a client that does not know the field ignores it.
 
-### In tawk-mcp
+### In corvus-tawk-mcp
 
 | Layer | Type | Job |
 |---|---|---|
@@ -187,7 +187,7 @@ A chat whose Transcribe voice notes switch is off answers `set_transcript` with 
 | Clients | `AutoTranscriptionSink` | Skips a voice note whose event says `"transcribe": false` |
 | Host | `TawkMcpComposition` | Binds the two new types |
 
-tawk-mcp still writes no transcript to disk and none to a log.
+corvus-tawk-mcp still writes no transcript to disk and none to a log.
 
 ### Work, in order
 
@@ -195,14 +195,14 @@ tawk-mcp still writes no transcript to disk and none to a log.
 2. The four engines and `TranscriptManager`, with `transcript_policy_test` (every pairing of the setting and a chat's choice) and `transcript_manager_test`.
 3. The control operations, the error and the new field, with cases in `control_protocol_test` and `control_accounts_test` (a transcript for one account is not seen from another, and one for a chat switched off is refused).
 4. `transcript_view`, `TranscriptSource` and `tui_transcripts`; the card's two rows; the setting, the key, the command and the menu entry; `transcript_view_test` for wrapping, the line limit and the off switches.
-5. tawk-mcp's handoff, sink and refusal.
+5. corvus-tawk-mcp's handoff, sink and refusal.
 6. MANUAL, CONFIGURATION, CONTROL, ARCHITECTURE, SECURITY (the words of voice notes are now kept in the database) and RELEASE_NOTES, with a redrawn picture of a conversation.
 
 ### Risks
 
 | Risk | Answer |
 |---|---|
-| A transcriber ignores a chat's switch | tawk refuses the transcript, so nothing is kept or shown. What the transcriber told its own model is outside tawk's reach, which is why tawk-mcp refuses before reading the audio |
+| A transcriber ignores a chat's switch | tawk refuses the transcript, so nothing is kept or shown. What the transcriber told its own model is outside tawk's reach, which is why corvus-tawk-mcp refuses before reading the audio |
 | An agent writes a false transcript | It is shown in grey italics under a voice note's play line, never as the sender's typed words; `source` records which client wrote it; the operation reaches only chats that client may read |
 | Hostile text in a transcript | Same limits and control character handling as message text, and no formatting applied |
 | The conversation jumps when the switch is flipped | The view keeps the message at the top of the screen as its anchor and lays out again from it |
@@ -218,7 +218,7 @@ Built on 2026-10-10 in tawk 0.18.0: backups that detect tampering and the passph
 | A lock that asks for the passphrase | After idle minutes, or on Ctrl+L, tawk shows nothing until the passphrase is typed | Engines: `idle_lock_policy`. Contracts: `IPassphraseCheck`. Clients: `lock_screen` widget | Only offered when the database is encrypted, since otherwise there is no secret to check against. The screensaver stays as it is |
 | The login protected at rest | A copied `auth/` folder is useless without the system keychain | Contracts: `ISecretStore`. Infrastructure: `keychain_secret_store` (macOS), `libsecret_secret_store` (Linux), `no_secret_store`. Bridge: the whatsmeow device store wrapped so its key material is sealed with a key from the secret store | Needs a short trial first: the pure Go SQLite driver cannot encrypt, so the sealing has to happen in the store wrapper |
 | The media cache encrypted | Downloaded photos and voice notes are unreadable on a stolen disk | Contracts: `IMediaVault` (seal a finished download, open one to a private temporary file). Infrastructure: `openssl_media_vault`, `plain_media_vault` | Opening a file in another program needs a plain copy for as long as that program runs; the vault removes it afterwards. Off by default |
-| Releases that can be checked | `install.sh` and `tawk --update` refuse a download whose signature does not match | Contracts: `IReleaseVerifier`. Infrastructure: `minisign_release_verifier`. The public key is compiled in | Releases must be tagged and signed, which changes how a version is published |
+| Releases that can be checked | `install.sh` and `corvus-tawk --update` refuse a download whose signature does not match | Contracts: `IReleaseVerifier`. Infrastructure: `minisign_release_verifier`. The public key is compiled in | Releases must be tagged and signed, which changes how a version is published |
 | Parsers kept in a box | A crafted PDF or video cannot read your files or reach the network | Contracts: `IProcessSandbox`. Infrastructure: `sandbox_exec_sandbox` (macOS), `bwrap_sandbox` (Linux), `no_sandbox`. `poppler_document_pages`, `ffmpeg_video_poster` and the camera get one injected | `--doctor` says which sandbox is in use |
 
 ## 3. Running without a window
@@ -227,7 +227,7 @@ Built on 2026-10-10 in tawk 0.17.0: system notifications, quiet hours, and menti
 
 | Feature | What the user gets | New parts | Notes |
 |---|---|---|---|
-| A headless tawk | `tawk --daemon` keeps accounts connected, sends what was scheduled and serves agents with no terminal open | Clients: `clients/headless` (`headless_app`), a third client beside `tui` and `control` that runs the managers' ticks and the frame hook. Contracts: `IInstanceHandover`. Infrastructure: `socket_instance_handover` | One tawk still owns the data folder at a time. Starting the terminal client asks the daemon to hand over and stop, and quitting can start it again. A terminal client that attaches to a running daemon would need a protocol for the whole screen and is not planned |
+| A headless tawk | `corvus-tawk --daemon` keeps accounts connected, sends what was scheduled and serves agents with no terminal open | Clients: `clients/headless` (`headless_app`), a third client beside `tui` and `control` that runs the managers' ticks and the frame hook. Contracts: `IInstanceHandover`. Infrastructure: `socket_instance_handover` | One tawk still owns the data folder at a time. Starting the terminal client asks the daemon to hand over and stop, and quitting can start it again. A terminal client that attaches to a running daemon would need a protocol for the whole screen and is not planned |
 | Requests that wait while nobody is there | A write asked for while headless is kept, not declined | Contracts: `IApprovalStore`. Resource access: `sqlite_approval_store`. Clients: `stored_approval_prompt`, an `IApprovalPrompt` the headless client uses | The request shows in the Agentic tab when the terminal client next opens, or goes to the phone (section 8). Each keeps its expiry |
 | Notifications from the system | A banner when tawk's tab is not in view | Infrastructure: `osc_notifier` (OSC 9, 99 and 777), `desktop_notifier` (terminal-notifier, notify-send, a Windows toast through WSL). Both are `INotifier` and join the composite | `show_preview` decides whether the text is in the banner. INTENT's "notifications inside the terminal" gains this line |
 | Quiet hours | Do not disturb by the clock, with a different rule at weekends | Core: `QuietHours`. Engines: `quiet_hours_policy`, asked by `notification_policy` | Mentions still follow `mention_notifications` |
@@ -333,12 +333,12 @@ What it never does: deletes, blocks, settings, profile changes, a first message 
 | Clients, control | `composite_approval_prompt` | An `IApprovalPrompt` that offers a request to the Agentic tab and, after the wait, to the owner's chat. Whichever answers first wins |
 | Clients, control | `control_ops_owner` | The `owner_message` event, sent only to the session marked as answering the phone in the Agents list |
 
-In tawk-mcp, an `owner_message` reaches the agent through the Claude Code channel as the owner speaking, outside the untrusted fence, and the server instructions say that only this event carries the owner's words. With no agent connected, tawk answers in the chat with one fixed line saying so.
+In corvus-tawk-mcp, an `owner_message` reaches the agent through the Claude Code channel as the owner speaking, outside the untrusted fence, and the server instructions say that only this event carries the owner's words. With no agent connected, tawk answers in the chat with one fixed line saying so.
 
 
 ### The owner's chat: as built
 
-Built on 2026-10-10 in tawk 0.15.0 and tawk-mcp 0.11.0, and the rules below were moved into the documents then. What differs from the design above:
+Built on 2026-10-10 in tawk 0.15.0 and corvus-tawk-mcp 0.11.0, and the rules below were moved into the documents then. What differs from the design above:
 
 - There is no `composite_approval_prompt`. The control client keeps the one list of waiting requests, and `control_owner.c` puts each to you on WhatsApp and feeds your answer back through the same path an answer in tawk takes.
 - There is one `OwnerChatManager` for all accounts, not one per account, since there is one owner's chat.
@@ -372,32 +372,32 @@ The one exception is an agent's answers to you in the owner's chat, which reach 
 - **The owner's chat trusts every device linked to your number.** tawk tells your messages from its own by what it sent, and does not check which device a message came from. Anyone holding your unlocked phone, or at another device linked to that number, can instruct a connected agent and answer its requests, within the limits above. That is the reach WhatsApp already gives them over your account. Remove a device you do not trust from Linked devices, and leave the owner's chat unnamed if this matters to you.
 - **What you write in the owner's chat goes to the agent's model.** Like anything an agent reads, it leaves your computer for the service that runs the model.
 
-**tawk-mcp INTENT.md, In scope**
+**corvus-tawk-mcp INTENT.md, In scope**
 
 - Passing on what you write in the owner's chat, when you have named one in tawk, as your own words, and letting the agent answer you there.
 
-**tawk-mcp INTENT.md, Boundary rules, added to "Only you instruct the agent"**
+**corvus-tawk-mcp INTENT.md, Boundary rules, added to "Only you instruct the agent"**
 
-The one exception is the owner's chat: tawk decides which messages there are yours and hands them over as a separate event, and tawk-mcp passes that event on outside the fenced text. tawk-mcp never decides this itself, and never treats a message as yours because of what it says.
+The one exception is the owner's chat: tawk decides which messages there are yours and hands them over as a separate event, and corvus-tawk-mcp passes that event on outside the fenced text. corvus-tawk-mcp never decides this itself, and never treats a message as yours because of what it says.
 
-**tawk-mcp SECURITY.md, Who might attack**
+**corvus-tawk-mcp SECURITY.md, Who might attack**
 
 | Someone who messages you, posing as you | Write text that claims to come from the owner | Have the model take it as an instruction |
 
-**tawk-mcp SECURITY.md, Controls**
+**corvus-tawk-mcp SECURITY.md, Controls**
 
-| The owner's words arrive only as tawk's `owner_message` event, never from inside fenced text | tawk and tawk-mcp | Someone posing as you |
+| The owner's words arrive only as tawk's `owner_message` event, never from inside fenced text | tawk and corvus-tawk-mcp | Someone posing as you |
 
-**tawk-mcp SECURITY.md, a section before Memory**
+**corvus-tawk-mcp SECURITY.md, a section before Memory**
 
 ## The owner's chat
 
 When you name an owner's chat in tawk, what you write there reaches the agent as your words. This is the one place where text from WhatsApp is an instruction.
 
-- tawk decides which messages are yours and sends each as an `owner_message` event. tawk-mcp cannot name the chat, and never promotes an ordinary message to an instruction, whatever it says.
+- tawk decides which messages are yours and sends each as an `owner_message` event. corvus-tawk-mcp cannot name the chat, and never promotes an ordinary message to an instruction, whatever it says.
 - The event is passed on outside the untrusted fence and marked as the owner's. Everything else, including messages in the same chat that tawk did not mark, stays fenced.
 - The server instructions tell the model that only this event carries the owner's words, and that a message claiming to be from the owner inside fenced text is an attack.
-- The agent's answers in that chat are sent without an approval, by tawk's rule, and only there. tawk-mcp has no tool that sends unasked to any other chat.
+- The agent's answers in that chat are sent without an approval, by tawk's rule, and only there. corvus-tawk-mcp has no tool that sends unasked to any other chat.
 - What you ask for from WhatsApp is carried out under the same rules as anything else the agent does: a send to another chat still waits for you, and destructive operations still need their two confirmations at the computer.
 - tawk does not check which of your devices wrote a message, so anyone at a device linked to your number can instruct the agent. See tawk's SECURITY.md.
 
@@ -428,9 +428,9 @@ Older messages: a long message that comes onto the screen without a summary is a
 
 The asking is a first, small piece of [the owner's chat](#the-owners-chat): tawk sends to your own chat and reads one kind of answer there. It tells its own messages from yours by what they are (a bare number is yours), which is the inference that section relies on.
 
-Changed in 0.14.1, the same day, after the first try on real chats: every message is summarised by default (`tldr_min_chars` 0), a summary shows only when it is shorter than its message, and tawk asks only an agent that says it can do the work (`features` in the client's hello), since a session still running an older tawk-mcp had been handed the requests and ignored them. The question goes to the "message yourself" chat of the account the chat is in.
+Changed in 0.14.1, the same day, after the first try on real chats: every message is summarised by default (`tldr_min_chars` 0), a summary shows only when it is shorter than its message, and tawk asks only an agent that says it can do the work (`features` in the client's hello), since a session still running an older corvus-tawk-mcp had been handed the requests and ignored them. The question goes to the "message yourself" chat of the account the chat is in.
 
-Changed in 0.21.0, after a day of watching it on real chats: with `tldr_min_chars` at 0 tawk asked for a summary of every message, including ones that could never have a shorter one ("lol"), and an agent that left those unanswered was asked again after 90 seconds and on every restart, then passed over. Two changes. A floor (`tldr_floor_chars`, 40, configurable) keeps such messages from being asked for at all, composed with the length you chose in one pure function in the summary policy. And an agent can answer with `decline_summary` (`too_short`, `nothing_to_say`, `other`): tawk keeps that in its own table, so it survives a restart and is forgotten when the message is edited, and it counts as an answer so the agent is not passed over for it. Advertised as `summary_decline` in `hello`; tawk-mcp 0.14.0 has the tool.
+Changed in 0.21.0, after a day of watching it on real chats: with `tldr_min_chars` at 0 tawk asked for a summary of every message, including ones that could never have a shorter one ("lol"), and an agent that left those unanswered was asked again after 90 seconds and on every restart, then passed over. Two changes. A floor (`tldr_floor_chars`, 40, configurable) keeps such messages from being asked for at all, composed with the length you chose in one pure function in the summary policy. And an agent can answer with `decline_summary` (`too_short`, `nothing_to_say`, `other`): tawk keeps that in its own table, so it survives a restart and is forgotten when the message is edited, and it counts as an answer so the agent is not passed over for it. Advertised as `summary_decline` in `hello`; corvus-tawk-mcp 0.14.0 has the tool.
 
 ### Parts by layer
 
@@ -443,16 +443,16 @@ Changed in 0.21.0, after a day of watching it on real chats: with `tldr_min_char
 | Managers | `SummaryManager`, per account | Keeps what is handed over and answers what to show |
 | Clients, control | `control_ops_summaries`; `"tldr":true` on `chat_info` and on the `message` event of a long message in such a chat | So a summariser knows which messages to do |
 | Clients, tui | `SummarySource`, `summary_view` (the fold line and the summary rows), the fold state per message in `MessageView`, the contact card row | The dropdown opens and closes one message |
-| tawk-mcp | `SummaryWantedEvent`, read from tawk and passed on as a channel event of type `summary_wanted` to one session; `SummaryRequestText` (what the agent is told, outside the fenced message); `ISummaryManager` and the `set_summary` tool; `TranscriptWantedEvent`, which `AutoTranscriptionSink` treats as a voice note that just arrived | Two channel-side events were added because the feature needed them |
+| corvus-tawk-mcp | `SummaryWantedEvent`, read from tawk and passed on as a channel event of type `summary_wanted` to one session; `SummaryRequestText` (what the agent is told, outside the fenced message); `ISummaryManager` and the `set_summary` tool; `TranscriptWantedEvent`, which `AutoTranscriptionSink` treats as a voice note that just arrived | Two channel-side events were added because the feature needed them |
 | Not built | A summary for your own messages, a summary in the chat list preview, and summarising a whole chat at once | The last was declined |
 
-## 9. tawk-mcp
+## 9. corvus-tawk-mcp
 
-tawk-mcp is the C# server agents connect to. It has 86 tools, fenced untrusted text, a two-step confirmation through MCP elicitation, and memory for voices, contacts and knowledge. Its layers are the same as tawk's under other names: `Tawk.Mcp.Clients` (tools, prompts, resources, sinks), `Managers`, `Engines`, `ResourceAccess`, `Core`, and `Host` as the composition root, the only place an interface is bound.
+corvus-tawk-mcp is the C# server agents connect to. It has 86 tools, fenced untrusted text, a two-step confirmation through MCP elicitation, and memory for voices, contacts and knowledge. Its layers are the same as tawk's under other names: `Tawk.Mcp.Clients` (tools, prompts, resources, sinks), `Managers`, `Engines`, `ResourceAccess`, `Core`, and `Host` as the composition root, the only place an interface is bound.
 
 ### Keeping up with the protocol
 
-The MCP specification of 28 July 2026 changed the ground tawk-mcp stands on. It is pinned to the `ModelContextProtocol` package at 2.2.0.
+The MCP specification of 28 July 2026 changed the ground corvus-tawk-mcp stands on. It is pinned to the `ModelContextProtocol` package at 2.2.0.
 
 | Change | Why it matters here | New parts |
 |---|---|---|
@@ -477,9 +477,9 @@ Each tawk feature above that agents should reach gets a control operation in taw
 | Starred and pinned messages | `list_starred`, `star_message`, `pin_message` | Manage |
 | Quiet hours | Shown by `get_settings` | Read |
 | Awaiting reply | `awaiting_replies`, beside `due_follow_ups` | Read |
-| Chats agents may not read, masking, view once | Nothing to add: tawk refuses or masks before tawk-mcp sees anything | None |
+| Chats agents may not read, masking, view once | Nothing to add: tawk refuses or masks before corvus-tawk-mcp sees anything | None |
 
-Each feature adds its name to the `features` list `hello` gains in section 1. tawk-mcp lists a tool only when the tawk it is talking to can carry it out, so the two programs can be updated in either order.
+Each feature adds its name to the `features` list `hello` gains in section 1. corvus-tawk-mcp lists a tool only when the tawk it is talking to can carry it out, so the two programs can be updated in either order.
 
 ### Doing more for the owner
 
@@ -501,7 +501,7 @@ The known attack on a WhatsApp MCP server (Invariant Labs, 2025) used a second, 
 | Chat text carried out in a send | A send whose text repeats long stretches of what the session read from a different chat is marked high risk, so no allowance covers it and tawk says why | Engines: `LeakCheck` over word shingles. Core: `ReadFingerprint`. Held in memory per session as hashes, never as text. tawk's `ApprovalRequest` gains a reason line |
 | Text hidden from the eye | Zero-width and direction-changing characters and very long runs of spaces are removed from fenced text, and a draft that contains them is flagged in tawk's queue | Engines: `HiddenTextRule`, used by the fence and by the send path |
 | One session reading everything | A budget per session of chats and messages read per hour; past it, reads are refused until the owner allows more in tawk | Engines: `ReadBudget`. The limit is a tawk setting agents cannot change |
-| One token for every client | A token per client with its own ceiling (read only for a status bar, for example), each listed and revocable | Core: `ClientToken`. ResourceAccess: `ITokenStore` over the existing token file's folder. Host: `tawk-mcp tokens` |
+| One token for every client | A token per client with its own ceiling (read only for a status bar, for example), each listed and revocable | Core: `ClientToken`. ResourceAccess: `ITokenStore` over the existing token file's folder. Host: `corvus-tawk-mcp tokens` |
 | A token read from disk | The token kept in the system keychain where there is one | ResourceAccess: `KeychainTokenStore`, `FileTokenStore` |
 | Poisoned memory | Covered by the reviewed memory and the history above; stored text keeps being handed over as information, never as instruction | None beyond those |
 
@@ -509,14 +509,14 @@ The known attack on a WhatsApp MCP server (Invariant Labs, 2025) used a second, 
 
 | Feature | What the owner gets | New parts |
 |---|---|---|
-| A setup check | `tawk-mcp doctor`: the socket, tawk's version and what it can do, the token, the model files, the service | Host: `DoctorCommand`, beside `FetchModelCommand` |
-| Versions that agree | tawk-mcp reads what tawk can do from `hello` and says plainly when a tool needs a newer tawk | ResourceAccess: `TawkCapabilities`. Today the only signal is tawk's version number, which is how 0.12.0's `presence` operation is matched to tawk-mcp 0.8.0's `get_online_status` |
+| A setup check | `corvus-tawk-mcp doctor`: the socket, tawk's version and what it can do, the token, the model files, the service | Host: `DoctorCommand`, beside `FetchModelCommand` |
+| Versions that agree | corvus-tawk-mcp reads what tawk can do from `hello` and says plainly when a tool needs a newer tawk | ResourceAccess: `TawkCapabilities`. Today the only signal is tawk's version number, which is how 0.12.0's `presence` operation is matched to corvus-tawk-mcp 0.8.0's `get_online_status` |
 
 ## Order and size
 
 | Order | Step | Size | Depends on |
 |---|---|---|---|
-| 1 | Transcripts in the conversation, with tawk-mcp's handoff | Small | Nothing |
+| 1 | Transcripts in the conversation, with corvus-tawk-mcp's handoff | Small | Nothing |
 | 2 | Authenticated backups, the passphrase lock | Small | Nothing |
 | 3 | System notifications, quiet hours, mentions only | Small | Nothing |
 | 4 | Strict mode, chats agents may not read, masking | Small | Nothing |
@@ -529,7 +529,7 @@ The known attack on a WhatsApp MCP server (Invariant Labs, 2025) used a second, 
 | 11 | Keymap, switcher, split view, plain mode | Large for the keymap, small for the rest | Nothing |
 | 12 | Login in the keychain, media vault, signed releases, sandbox | Medium each, after a trial | A trial of the device store wrapper |
 
-tawk-mcp's own steps run beside these and do not wait for them, except where a tool needs its tawk feature.
+corvus-tawk-mcp's own steps run beside these and do not wait for them, except where a tool needs its tawk feature.
 
 | Order | Step | Size | Depends on |
 |---|---|---|---|
@@ -543,7 +543,7 @@ tawk-mcp's own steps run beside these and do not wait for them, except where a t
 | H | Tools for each tawk feature | Small each | The tawk step that adds the feature |
 | I | MCP Apps cards | Medium | C, and a client that draws them |
 
-Each step is its own branch from `main` and its own pull request. tawk builds with `make` free of warnings and `make test` passing; tawk-mcp with `dotnet build TawkMcp.slnx -warnaserror` and `dotnet test TawkMcp.slnx`.
+Each step is its own branch from `main` and its own pull request. tawk builds with `make` free of warnings and `make test` passing; corvus-tawk-mcp with `dotnet build TawkMcp.slnx -warnaserror` and `dotnet test TawkMcp.slnx`.
 
 ## Open questions
 
@@ -554,18 +554,18 @@ Each step is its own branch from `main` and its own pull request. tawk builds wi
 - **Stored requests.** Today a request nobody answers is declined. A headless tawk keeps them, which is a change to a security rule and needs its own expiry.
 - **Signed releases.** They need a signing key kept somewhere other than the repository.
 - **Without the terminal.** The owner's chat is most useful while tawk runs headless (step 6). It also works with the terminal open.
-- **The leak check and tawk-mcp's intent.** It keeps hashes of what a session read, in memory only and for that session. INTENT.md says tawk-mcp keeps no copy of chats; a hash is not a copy, but the line should say so.
+- **The leak check and corvus-tawk-mcp's intent.** It keeps hashes of what a session read, in memory only and for that session. INTENT.md says corvus-tawk-mcp keeps no copy of chats; a hash is not a copy, but the line should say so.
 
 ## How it is checked
 
-1. `make` with no warnings and `make test` after every tawk step; `dotnet build TawkMcp.slnx -warnaserror` and `dotnet test TawkMcp.slnx` after every tawk-mcp step.
-2. Step 1: with tawk-mcp connected and automatic transcription on, send a voice note to the account. Its words appear under it. Turn the setting off and they go; set that chat's card to *always* and they are back in that chat alone; set it to *never* with the setting on and they are hidden in that chat alone. Alt+T steps the same row and the view does not move. Switch Transcribe voice notes off on the card and send another voice note: it is not transcribed, an agent asking for it is refused, and nothing new is stored, while the earlier voice notes in that chat keep their transcripts on screen. Restart tawk: the earlier transcript is still there. Delete the message: its row in `transcripts` is gone. Soft-lock the chat: the transcript is veiled. An agent on another account cannot write to it.
+1. `make` with no warnings and `make test` after every tawk step; `dotnet build TawkMcp.slnx -warnaserror` and `dotnet test TawkMcp.slnx` after every corvus-tawk-mcp step.
+2. Step 1: with corvus-tawk-mcp connected and automatic transcription on, send a voice note to the account. Its words appear under it. Turn the setting off and they go; set that chat's card to *always* and they are back in that chat alone; set it to *never* with the setting on and they are hidden in that chat alone. Alt+T steps the same row and the view does not move. Switch Transcribe voice notes off on the card and send another voice note: it is not transcribed, an agent asking for it is refused, and nothing new is stored, while the earlier voice notes in that chat keep their transcripts on screen. Restart tawk: the earlier transcript is still there. Delete the message: its row in `transcripts` is gone. Soft-lock the chat: the transcript is veiled. An agent on another account cannot write to it.
 3. Upgrade a copy of a real database through migration 18 and compare row counts and the integrity check.
 4. Every protocol step is tried on both backends, or the manual says which backend lacks it.
-5. Every step that changes what agents can do adds its row to the threat model in [SECURITY.md](../../SECURITY.md), and in tawk-mcp's SECURITY.md where it applies.
+5. Every step that changes what agents can do adds its row to the threat model in [SECURITY.md](../../SECURITY.md), and in corvus-tawk-mcp's SECURITY.md where it applies.
 6. The owner's chat: write to yourself from the phone and the agent receives it as the owner, and its answer appears in the same chat from your number with nothing waiting in the queue. The answer is not read back as an instruction. The same words forwarded, or in another chat, arrive fenced as data, and an agent's send to any other chat still waits for you. Answer a card with 👍 and the message goes; answer an expired card, or a second time, and nothing happens. Ask from the phone for a delete and it is refused.
 7. The leak check: read one chat, ask for a send to another that quotes it at length, and confirm tawk shows the request as high risk with its reason. A short quote, and a reply inside the same chat, are not flagged.
-8. An older tawk with a newer tawk-mcp, and the other way round: tools the pair cannot carry out are not listed, and nothing fails.
+8. An older tawk with a newer corvus-tawk-mcp, and the other way round: tools the pair cannot carry out are not listed, and nothing fails.
 
 ## Not in this plan
 
@@ -574,6 +574,6 @@ Each step is its own branch from `main` and its own pull request. tawk builds wi
 - Bulk or business messaging.
 - tawk transcribing by itself. The store and the display take a transcript from whoever hands one over, so this could be added later without changing them.
 - Translating or summarising inside tawk with a model of its own.
-- tawk-mcp talking to WhatsApp directly, storing messages, or choosing a model. Its INTENT.md rules these out and nothing here changes that.
+- corvus-tawk-mcp talking to WhatsApp directly, storing messages, or choosing a model. Its INTENT.md rules these out and nothing here changes that.
 - Searching chats by meaning. It would need the text of messages kept in an index, which neither program's intent allows today.
-- Serving tawk-mcp beyond this computer, and the OAuth work that would need.
+- Serving corvus-tawk-mcp beyond this computer, and the OAuth work that would need.
