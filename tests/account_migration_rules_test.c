@@ -120,13 +120,13 @@ static void test_manifest(void) {
     str_copy(a.jid, sizeof(a.jid), "27609742113@s.whatsapp.net");
     str_copy(a.name, sizeof(a.name), "Logan");
     a.colour = 3;
-    str_copy(a.media_dir, sizeof(a.media_dir), "/home/logan/.cache/tawk/media");
+    str_copy(a.media_dir, sizeof(a.media_dir), "/home/logan/.cache/corvus/tawk/media");
     a.has_media = 1;
     char text[1500];
     CHECK(account_package_manifest_format(&a, text, sizeof(text)) == 0, "a manifest is written");
     CHECK(account_package_manifest_parse(text, &b) == 0, "and read back");
     CHECK(b.schema_version == 27 && b.account_id == 2 && b.colour == 3 && b.has_media && !strcmp(b.label, "Personal") &&
-              !strcmp(b.jid, "27609742113@s.whatsapp.net") && !strcmp(b.media_dir, "/home/logan/.cache/tawk/media"),
+              !strcmp(b.jid, "27609742113@s.whatsapp.net") && !strcmp(b.media_dir, "/home/logan/.cache/corvus/tawk/media"),
           "with everything in it");
     CHECK(account_package_manifest_parse("format=7\n", &b) != 0, "a format from the future is refused");
     CHECK(account_package_manifest_parse("nothing here", &b) != 0, "text that is no manifest is refused");

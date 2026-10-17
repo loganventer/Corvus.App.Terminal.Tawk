@@ -29,7 +29,7 @@ static void test_which_files_are_sounds(void) {
     CHECK(!sound_name_is_playable("wav"), "a name without an extension is not");
 
     char label[64];
-    sound_name_label("/usr/share/tawk/sounds/bong.wav", label, sizeof(label));
+    sound_name_label("/usr/share/corvus-tawk/sounds/bong.wav", label, sizeof(label));
     CHECK(strcmp(label, "bong") == 0, "the label drops folder and extension");
     sound_name_label("plain", label, sizeof(label));
     CHECK(strcmp(label, "plain") == 0, "a bare name stays as it is");
