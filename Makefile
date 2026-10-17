@@ -287,9 +287,17 @@ TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_
          $(BUILD)/tests/voice_note_details_test \
          $(BUILD)/tests/sound_picker_test
 
+# The tests run with HOME and the XDG folders inside build/, so the defaults
+# they use (media, logs, the control socket) never touch your own corvus/tawk.
+TEST_HOME := $(CURDIR)/$(BUILD)/test-home
+
 test: $(TESTS)
 	$(call say,Running tests)
-	$(Q)for t in $(TESTS); do $$t || exit 1; done
+	$(Q)rm -rf $(TEST_HOME) && mkdir -p $(TEST_HOME)/runtime && chmod 0700 $(TEST_HOME) $(TEST_HOME)/runtime
+	$(Q)for t in $(TESTS); do \
+	  HOME=$(TEST_HOME) XDG_CONFIG_HOME=$(TEST_HOME)/.config XDG_DATA_HOME=$(TEST_HOME)/.local/share \
+	  XDG_STATE_HOME=$(TEST_HOME)/.local/state XDG_CACHE_HOME=$(TEST_HOME)/.cache XDG_RUNTIME_DIR=$(TEST_HOME)/runtime \
+	  CORVUS_TAWK_CONTROL_SOCKET= $$t || exit 1; done
 
 $(BUILD)/tests/pty_idle_action_test: $(BUILD)/tests/pty_idle_action_test.o $(BUILD)/src/infrastructure/pty_idle_action.o $(BUILD)/src/utilities/log.o
 	$(call step,LD,$@)
