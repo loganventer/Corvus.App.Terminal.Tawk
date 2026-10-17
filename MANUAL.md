@@ -1018,7 +1018,7 @@ To make your own, copy any file from `/usr/local/share/corvus-tawk/themes/` into
 
 ## Screensaver
 
-The screensaver runs a command full screen over tawk, `matrix-clock` by default. It starts after a set number of idle minutes (5 by default), or straight away with Ctrl+L, `/screensaver`, `/lock` or Settings, Screensaver, Start screensaver now. Any key or mouse movement stops it and returns to tawk exactly as you left it. tawk keeps receiving messages meanwhile, updates the tab title, and can stop the screensaver when a message arrives. It does not start by itself while you are recording or linking a phone.
+The screensaver runs a command full screen over tawk, `corvus-matrix-clock` by default. It starts after a set number of idle minutes (5 by default), or straight away with Ctrl+L, `/screensaver`, `/lock` or Settings, Screensaver, Start screensaver now. Any key or mouse movement stops it and returns to tawk exactly as you left it. tawk keeps receiving messages meanwhile, updates the tab title, and can stop the screensaver when a message arrives. It does not start by itself while you are recording or linking a phone.
 
 The command can be anything that draws in a terminal (for example `cmatrix`, `pipes.sh` or `asciiquarium`). It runs in its own pseudo-terminal the size of the window. It is only run when the config file belongs to you and nobody else can write to it.
 

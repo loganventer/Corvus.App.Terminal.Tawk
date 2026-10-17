@@ -97,7 +97,7 @@ flowchart LR
 
 ## Deliberate trade-offs
 
-- **The screensaver command runs through `/bin/sh -c`.** This is what makes `matrix-clock --seconds` or a pipeline work. It only happens when the config file is yours and private, the same trust you give your shell's rc file.
+- **The screensaver command runs through `/bin/sh -c`.** This is what makes `corvus-matrix-clock --seconds` or a pipeline work. It only happens when the config file is yours and private, the same trust you give your shell's rc file.
 - **The owner's chat trusts every device linked to your number.** tawk tells your messages from its own by what it sent, and does not check which device a message came from. Anyone holding your unlocked phone, or at another device linked to that number, can instruct a connected agent and answer its requests, within the limits above. That is the reach WhatsApp already gives them over your account. Remove a device you do not trust from Linked devices, and leave the owner's chat unnamed if this matters to you.
 - **What you write in the owner's chat goes to the agent's model.** Like anything an agent reads, it leaves your computer for the service that runs the model.
 - **A request's card repeats its words in your own chat.** The text an agent wants to send is copied into your "message yourself" chat so that you can judge it from the phone, and stays in that chat's history on WhatsApp.

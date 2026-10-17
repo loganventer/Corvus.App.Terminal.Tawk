@@ -109,7 +109,7 @@ Use **Windows Terminal** 1.22 or later: it draws photos and PDFs as real pixels 
 - **Settings panel:** nested menus like the Android app, saved to `~/.config/corvus/tawk/config.ini` as you change them.
 - **Start-up splash:** an animated logo while tawk connects; any key skips it, and the Startup splash setting under Appearance turns it off.
 - **60 themes** as JSON files with live preview; add your own in `~/.config/corvus/tawk/themes/`.
-- **Screensaver:** runs a command such as `matrix-clock` over tawk after a few idle minutes or on demand (Ctrl+L); any key or click brings tawk back.
+- **Screensaver:** runs a command such as `corvus-matrix-clock` over tawk after a few idle minutes or on demand (Ctrl+L); any key or click brings tawk back.
 - **Photos and videos from your camera:** click ➕ in the input and choose Take a photo, or type `/camera`, for a live viewfinder: Space or Enter takes a photo, V records a video with sound (up to 3 minutes), and you check it before it is attached (Enter uses it, R retakes). The same viewfinder takes a new profile photo or the picture for a status (macOS, Linux).
 - **Keyboard and mouse:** slash commands with suggestions (`/help`), Shift+Enter or Alt+Enter for a new line, Option as Alt on a Mac, a right-click menu on messages (reply, react, copy, edit, save, delete), click chats and media, drag chats into and out of the Pinned group, scroll, drag the divider to resize, collapse the chat list with Ctrl+B. The layout reflows when the window is resized.
 - **Setup check:** `corvus-tawk --doctor` checks the terminal, files, backend, voice note and media tools, the PDF page tools and the screensaver command, and says what to install.
