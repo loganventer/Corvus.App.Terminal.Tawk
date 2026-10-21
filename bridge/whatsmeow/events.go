@@ -142,6 +142,12 @@ func (s *Session) onEvent(raw any) {
 		s.emitClosed("outdated", "WhatsApp rejected this client version; update tawk.")
 	case *events.ConnectFailure:
 		s.emitClosed("error", "WhatsApp refused the connection: "+evt.Reason.String())
+	case *events.PairPasskeyRequest:
+		// tawk cannot answer a WebAuthn challenge, so say why linking stops
+		// instead of leaving the scanned QR code waiting for nothing.
+		s.emit(map[string]any{"evt": "error", "detail": "WhatsApp asked to confirm this link with a passkey. tawk cannot do passkey confirmation yet, so this link cannot finish."})
+	case *events.PairPasskeyError:
+		s.emit(map[string]any{"evt": "error", "detail": "Passkey confirmation failed: " + evt.Error.Error()})
 	case *events.PushName:
 		s.emit(map[string]any{"evt": "contact", "jid": s.phoneJID(evt.JID), "push_name": evt.NewPushName})
 	case *events.Contact:
