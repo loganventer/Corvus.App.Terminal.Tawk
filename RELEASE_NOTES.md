@@ -4,6 +4,14 @@ What changed in each version of tawk, newest first. `corvus-tawk --update` shows
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.33.1 (2026-10-21)
+
+Linking a new account says why it stops when WhatsApp asks for a passkey.
+
+- **When WhatsApp asks to confirm a new link with a passkey**, tawk now says so: passkey confirmation is not supported yet, so the link cannot finish. Before, the scanned QR code waited with no message.
+- **A failed passkey step** shows its reason as a pairing error.
+- The database is unchanged (still version 27).
+
 ## 0.33.0 (2026-10-21)
 
 Who reacted to a message in a group is one click away.
