@@ -278,6 +278,8 @@ sequenceDiagram
 
 Your own reaction is stored at once so the bubble updates without waiting for the network; an empty emoji removes it. Reactions are kept one per sender per message, and each bubble shows a short summary on its meta line, on the side facing the middle of the conversation: on the left under your messages and on the right under everyone else's, with the time and ticks at the other end. An incoming `edit` replaces the text and marks the message edited; an `edit` with `deleted` true clears the text and marks the message deleted, so it shows as "This message was deleted".
 
+In a group, a click on the reactions chip on a bubble (or Who reacted in the message menu) opens the list of who made them. While drawing, `message_view` notes the columns the chip took on each screen row, so `message_view_hit_reactions` can tell a click on the chip from one on the bubble. The dialog holds only the message id; at each draw `tui_render.c` asks `messaging_manager_message_reactions` for the people, which reads `IReactionStore`, writes your own as "You" and gives the others their display names, and the `reaction_grouping` engine puts them in order (the emoji most people used first). Reactions that arrive while it is open show up at the next draw.
+
 Deleting a message starts from the Delete key on a selected message or Delete… in the message menu:
 
 ```mermaid

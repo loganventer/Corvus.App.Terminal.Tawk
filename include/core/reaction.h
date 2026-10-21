@@ -5,6 +5,7 @@
 typedef struct Reaction {
     char sender[128];
     char emoji[32];
+    char name[128];     /* display name, filled by the messaging manager */
 } Reaction;
 
 #endif

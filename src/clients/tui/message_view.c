@@ -602,6 +602,18 @@ static int is_placed(const MessageView *v, int message) {
     return 0;
 }
 
+/* The columns the reactions chip takes on the bubble's bottom edge, from `x` (the bubble's left): the same
+ * place for drawing it and for finding a click. Empty when the message has no reactions. */
+static void reaction_chip_span(const MessageRow *row, const Message *m, int x, const char *chip, int *x0, int *x1) {
+    *x0 = *x1 = 0;
+    if (row->kind != MESSAGE_ROW_EDGE_BOTTOM || !m->reactions[0]) return;
+    int cols = utf8_columns(chip);
+    if (cols > row->width - 2) cols = row->width - 2;
+    if (cols <= 0) return;
+    if (m->from_me) { *x0 = x + 1; *x1 = *x0 + cols; }
+    else { *x1 = x + row->width - 1; *x0 = *x1 - cols; }
+}
+
 static void draw_row(const MessageView *v, const MessageRow *row, int y, UiRect r, const Message *m, int selected,
                      const MessageViewContext *ctx) {
     int bubble = conv(m->from_me ? THEME_SLOT_BUBBLE_ME : THEME_SLOT_BUBBLE_THEM);
@@ -635,8 +647,9 @@ static void draw_row(const MessageView *v, const MessageRow *row, int y, UiRect 
                 snprintf(chip, sizeof(chip), " %s ", m->reactions);
                 /* In the bubble's own colours, so it reads as part of it in every theme. */
                 int attr = conv(m->from_me ? THEME_SLOT_BUBBLE_ME : THEME_SLOT_BUBBLE_THEM) | ATTR_BOLD;
-                if (m->from_me) tui_text(y, x + 1, row->width - 2, chip, attr);
-                else tui_text_right(y, x + row->width - 1, row->width - 2, chip, attr);
+                int x0, x1;
+                reaction_chip_span(row, m, x, chip, &x0, &x1);
+                if (x1 > x0) tui_text(y, x0, x1 - x0, chip, attr);
             }
             return;
         }
@@ -763,7 +776,7 @@ static void draw_row(const MessageView *v, const MessageRow *row, int y, UiRect 
             break;
         case MESSAGE_ROW_TEXT:
             if (m->deleted) {
-                tui_text_n(y, x + 1, room, DELETED_TEXT + row->offset, row->length, bubble | ATTR_DIM);
+                tui_text_n(y, x + 1, room, &DELETED_TEXT[row->offset], row->length, bubble | ATTR_DIM);
             } else if (row->message < v->styled_count && v->styled[row->message].text) {
                 styled_text_view_draw(y, x + 1, room, &v->styled[row->message], row->offset, row->length, bubble,
                                       tui_palette_bubble_accent_attr(m->from_me));
@@ -807,7 +820,11 @@ static void restore_held(MessageView *v, int body_h, const Message *msgs, int co
 void message_view_render(MessageView *v, UiRect r, const Message *msgs, int count, const MessageViewContext *ctx) {
     v->last_rect = r;
     tui_fill(r, conv(THEME_SLOT_CHAT));
-    for (int i = 0; i < MESSAGE_VIEW_MAX_SCREEN_ROWS; i++) { v->screen_rows[i] = -1; v->screen_quote[i] = 0; }
+    for (int i = 0; i < MESSAGE_VIEW_MAX_SCREEN_ROWS; i++) {
+        v->screen_rows[i] = -1;
+        v->screen_quote[i] = 0;
+        v->screen_chip_x0[i] = v->screen_chip_x1[i] = 0;
+    }
     v->placement_count = 0;
     if (r.h < 2 || r.w < 8) return;
 
@@ -886,6 +903,14 @@ void message_view_render(MessageView *v, UiRect r, const Message *msgs, int coun
             v->screen_quote[k] = row->kind == MESSAGE_ROW_QUOTE;
             v->screen_x0[k] = (short)(body.x + row->x);
             v->screen_x1[k] = (short)(body.x + row->x + row->width);
+            if (!ctx->veiled) {
+                char chip[128];
+                int x0, x1;
+                snprintf(chip, sizeof(chip), " %s ", msgs[row->message].reactions);
+                reaction_chip_span(row, &msgs[row->message], body.x + row->x, chip, &x0, &x1);
+                v->screen_chip_x0[k] = (short)x0;
+                v->screen_chip_x1[k] = (short)x1;
+            }
         }
     }
     v->drawn = 1;
@@ -951,6 +976,13 @@ int message_view_hit_quote(MessageView *v, int y, int x) {
     int index = message_view_hit(v, y, x);
     int k = y - v->last_rect.y - v->header_rows;
     return index >= 0 && k >= 0 && k < MESSAGE_VIEW_MAX_SCREEN_ROWS && v->screen_quote[k] ? index : -1;
+}
+
+int message_view_hit_reactions(MessageView *v, int y, int x) {
+    int index = message_view_hit(v, y, x);
+    int k = y - v->last_rect.y - v->header_rows;
+    if (index < 0 || k < 0 || k >= MESSAGE_VIEW_MAX_SCREEN_ROWS) return -1;
+    return x >= v->screen_chip_x0[k] && x < v->screen_chip_x1[k] ? index : -1;
 }
 
 int message_view_hit_portrait(const MessageView *v, int y, int x) { return ui_rect_contains(v->portrait_rect, y, x); }

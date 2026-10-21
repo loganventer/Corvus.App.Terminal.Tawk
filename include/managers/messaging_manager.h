@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "core/reaction.h"
 #include "core/receipt.h"
 #include "core/auth_state.h"
 #include "core/chat.h"
@@ -161,6 +162,8 @@ void           messaging_manager_display_name(MessagingManager *mgr, const char 
  * name holds `ref`. Up to `max`; returns how many. */
 int            messaging_manager_find_contacts(MessagingManager *mgr, const char *ref, Contact *out, int max);
 /* Who received, read and played a message you sent, with their names; returns how many. */
+/* Who reacted to a message and how, with display names filled in; returns how many were written. */
+int            messaging_manager_message_reactions(MessagingManager *mgr, const char *message_id, Reaction *out, int max);
 int            messaging_manager_message_receipts(MessagingManager *mgr, const char *message_id, Receipt *out, int max);
 
 /* Login */

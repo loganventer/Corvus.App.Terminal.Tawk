@@ -202,7 +202,7 @@ On a Mac the Option key types characters (Option+L types `¬`) unless the termin
 
 With that set, every Alt shortcut in this manual works with Option.
 
-Popups (message menu, chat options, reaction palette, emoji picker, search, file picker, theme picker, reader, profile, status dialogs and settings) take the keys while they are open. Arrow keys move, Enter chooses and Esc closes each of them.
+Popups (message menu, chat options, reaction palette, who reacted, emoji picker, search, file picker, theme picker, reader, profile, status dialogs and settings) take the keys while they are open. Arrow keys move, Enter chooses and Esc closes each of them.
 
 <a id="Slash commands"></a>
 
@@ -534,6 +534,7 @@ Right-click a message, or select it and press Alt+M. The menu lists the actions 
 |---|---|
 | ↩ Reply | Any message that was not deleted |
 | 😀 React | Any message that was not deleted |
+| 👥 Who reacted | A message in a group that has reactions: who reacted and with what |
 | ✏ Edit | Your own text messages that were sent in the last 15 minutes |
 | 📋 Copy text | Any message with text |
 | ↪ Forward… | Text, photos, videos, voice notes, documents and stickers that were not deleted |
@@ -597,6 +598,8 @@ When someone mentions you, the chat's badge in the list shows `@` before the unr
 **Replying.** Select a message and press Alt+Q, choose Reply from the message menu, or type `/reply` to answer the last message you received. The line above the input shows `↩ Replying to Name: text`. Type and send as usual; Esc cancels the reply.
 
 **Reacting.** Press Alt+E on a message, choose React from the menu, or type `/react`. A palette offers 👍 ❤️ 😂 😮 😢 🙏, ✕ to remove your reaction and ➕ more for the full emoji picker. Move with ← → and press Enter, press 1 to 8 to choose directly, or click. `/react 🎉` reacts straight away. Each person has one reaction per message; the bubble's bottom edge lists up to four, most used first, with a count when more than one person chose the same emoji.
+
+**Who reacted.** In a group, click the reactions on a bubble, or choose 👥 Who reacted from the menu, to see the people behind them. The list shows a line a person with their emoji, the emoji most people used first, and the title counts them (`Reactions 5 · 👍 3  ❤ 2`). ↑ ↓, Home, End and the wheel scroll; Esc, ← or a click outside closes it. In a one-to-one chat the reactions are the other person's or yours, so a click on them does what a click on the message does.
 
 ![The reaction palette under a message](docs/images/reactions.png)
 

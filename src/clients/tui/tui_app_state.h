@@ -42,6 +42,7 @@
 #include "core/mention_pick.h"
 #include "clients/tui/message_view.h"
 #include "clients/tui/reaction_palette.h"
+#include "clients/tui/reactions_dialog.h"
 #include "clients/tui/scheduled_list_dialog.h"
 #include "clients/tui/search_overlay.h"
 #include "clients/tui/settings_panel.h"
@@ -76,6 +77,7 @@ struct TuiApp {
     char                tone_jid[128];
     SearchOverlay       search;
     ReactionPalette     palette;
+    ReactionsDialog     reactions;            /* who reacted to a message in a group */
     EmojiPicker         emoji_picker;
     MessageMenu         message_menu;
     ChatOptionsMenu     options;
@@ -228,6 +230,8 @@ int  tui_app_load_older(TuiApp *app);
 void tui_app_go_to_quote(TuiApp *app, int index);
 void tui_app_apply_message_action(TuiApp *app);
 void tui_app_open_reactions(TuiApp *app, int index);
+/* Lists who reacted to a message in the open group chat, and with what. */
+void tui_app_show_reactions(TuiApp *app, int index);
 /* Full emoji picker: insert at the caret, or react to message_id. */
 void tui_app_open_emoji(TuiApp *app, EmojiPickerPurpose purpose, const char *message_id, const char *query);
 void tui_app_emoji_chosen(TuiApp *app);

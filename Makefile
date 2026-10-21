@@ -8,7 +8,7 @@ APP_DIR    ?= corvus/tawk
 # The command's name before the Corvus rename, installed as a symlink to $(APP)
 # that says it is deprecated. LEGACY= (empty) installs no symlink.
 LEGACY     ?= tawk
-VERSION    ?= 0.32.0
+VERSION    ?= 0.33.0
 # The commit this build comes from, so `corvus-tawk --update` can tell whether it is current.
 COMMIT     ?= $(shell git rev-parse HEAD 2>/dev/null)
 
@@ -94,7 +94,10 @@ DEFINES  := -D_GNU_SOURCE -D_DEFAULT_SOURCE -D_XOPEN_SOURCE_EXTENDED \
             -DAPP_NAME=\"$(APP)\" -DAPP_DIR=\"$(APP_DIR)\" -DAPP_VERSION=\"$(VERSION)\" -DAPP_COMMIT=\"$(COMMIT)\" -DAPP_SHARE_DIR=\"$(SHAREDIR)\" -DAPP_LIB_DIR=\"$(LIBDIR)\"
 CFLAGS   ?= -O2 -g
 CFLAGS   += $(CSTD) $(WARN) $(HARDEN) $(DEFINES) -Iinclude -Ivendor/cjson -Ivendor/stb $(NCURSES_CFLAGS) $(SQLITE_CFLAGS)
-LDFLAGS  += -pie
+# macOS links position-independent executables by default and clang warns when asked for it again.
+ifneq ($(UNAME_S),Darwin)
+  LDFLAGS += -pie
+endif
 LDLIBS   := $(NCURSES_LIBS) $(SQLITE_LIBS) -lpthread -lm
 
 ifeq ($(UNAME_S),Linux)
@@ -270,6 +273,7 @@ TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_
          $(BUILD)/tests/presence_event_test \
          $(BUILD)/tests/transcript_test \
          $(BUILD)/tests/summary_test \
+         $(BUILD)/tests/reactions_dialog_test \
          $(BUILD)/tests/owner_chat_test \
          $(BUILD)/tests/agent_rules_test \
          $(BUILD)/tests/lock_test \
@@ -381,6 +385,10 @@ $(BUILD)/tests/schedule_test: $(BUILD)/tests/schedule_test.o $(filter-out $(BUIL
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
 $(BUILD)/tests/composer_words_test: $(BUILD)/tests/composer_words_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
+	$(call step,LD,$@)
+	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
+
+$(BUILD)/tests/reactions_dialog_test: $(BUILD)/tests/reactions_dialog_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
 	$(call step,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 

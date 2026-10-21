@@ -56,7 +56,7 @@ static int use_pixel_images(TuiApp *app, const Settings *s, int beside_contact) 
     messaging_manager_health(app->deps.messaging, &health);
     int typing_command = app->composer.length && app->composer.text[0] == L'/';
     return !((app->contact.open && !beside_contact) || app->reader.open || app->theme_picker.open || app->search.open || app->message_menu.open ||
-             app->emoji_picker.open || app->options.open || app->attach_menu.open || app->camera_view.open || app->message_info.open || app->palette.open ||
+             app->emoji_picker.open || app->options.open || app->attach_menu.open || app->camera_view.open || app->message_info.open || app->palette.open || app->reactions.open ||
              app->file_picker.open || app->settings_panel.open || profile_dialogs_is_open(&app->profile) ||
              app->status_composer.open || status_feed_dialogs_is_open(&app->feed) || app->forward_picker.open || app->self_chats.open || app->voice_languages.open || app->scheduled_list.open || app->agents.open ||
              app->accounts_dialog.open || app->send_accounts.open || health.show_overlay || typing_command);
@@ -303,6 +303,10 @@ void tui_render_frame(TuiApp *app, int64_t now) {
         message_info_panel_render(&app->message_info, l->body, receipts, count, s->use_24h_clock);
     } else if (app->palette.open) {
         reaction_palette_render(&app->palette, l->chat);
+    } else if (app->reactions.open) {
+        Reaction who[REACTION_GROUPING_MAX];
+        int count = messaging_manager_message_reactions(app->deps.messaging, app->reactions.message_id, who, REACTION_GROUPING_MAX);
+        reactions_dialog_render(&app->reactions, l->chat, who, count);
     } else if (app->file_picker.open) {
         file_picker_render(&app->file_picker, center);
     } else if (profile_dialogs_is_open(&app->profile) && !login) {
@@ -349,7 +353,7 @@ void tui_render_frame(TuiApp *app, int64_t now) {
      * the terminal's cursor state when it actually changes (no flicker). */
     TextCaret where = { 0, 0, 0 };
     if (call || app->confirm.open || app->contact.open || app->viewer.open || app->reader.open || app->theme_picker.open || app->message_menu.open ||
-        app->options.open || app->attach_menu.open || app->camera_view.open || app->message_info.open || app->palette.open ||
+        app->options.open || app->attach_menu.open || app->camera_view.open || app->message_info.open || app->palette.open || app->reactions.open ||
         app->file_picker.open) {
         where.visible = 0;
     } else if (app->agents.open) {

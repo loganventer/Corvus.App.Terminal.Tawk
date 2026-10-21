@@ -4,6 +4,15 @@ What changed in each version of tawk, newest first. `corvus-tawk --update` shows
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.33.0 (2026-10-21)
+
+Who reacted to a message in a group is one click away.
+
+- **Click the reactions on a bubble in a group chat** to see who reacted and with what: a list with a line a person, the emoji most people used first, and the counts in the title. Up and down, Home, End and the wheel scroll it; Esc, ← or a click outside closes it.
+- **Who reacted** is also in the message menu, for a message in a group that has reactions, for anyone who prefers the menu to the click.
+- Builds on macOS no longer warn about `-pie`, and the `-Wstring-plus-int` warning in the message view is gone.
+- The database is unchanged (still version 27).
+
 ## 0.32.0 (2026-10-17)
 
 tawk joins the Corvus family: it is now Corvus Tawk, the command is `corvus-tawk`, and its folders move under `corvus/tawk`. Nothing about WhatsApp changes, and your linked device stays linked once your files are copied across.

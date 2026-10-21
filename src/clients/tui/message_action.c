@@ -14,6 +14,7 @@ static const char *const LABELS[MESSAGE_ACTION_COUNT] = {
     "\xF0\x9F\x92\xBE  Save to Downloads",
     "\xE2\x86\xA5  Go to quoted message",
     "\xE2\x84\xB9  Message info",
+    "\xF0\x9F\x91\xA5  Who reacted",
     "\xF0\x9F\x97\x91  Delete\xE2\x80\xA6",
     "\xF0\x9F\x97\x91  Delete for me",
     "\xF0\x9F\x97\x91  Delete for everyone",
