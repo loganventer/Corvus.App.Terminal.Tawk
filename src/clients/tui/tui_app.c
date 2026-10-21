@@ -444,6 +444,7 @@ void tui_app_open_message_menu(TuiApp *app, int index, int y, int x) {
     enabled[MESSAGE_ACTION_SAVE] = !m->deleted && message_type_is_openable(m->type);
     enabled[MESSAGE_ACTION_GOTO_QUOTE] = !m->deleted && m->quoted_id[0];
     enabled[MESSAGE_ACTION_INFO] = m->from_me && !m->deleted;
+    enabled[MESSAGE_ACTION_REACTIONS] = !m->deleted && m->reactions[0] && chat_jid_is_group(m->chat_jid);
     enabled[MESSAGE_ACTION_DELETE] = 1;
     app->message_view.selected = index;
     message_menu_open(&app->message_menu, index, y, x, enabled);
@@ -525,6 +526,7 @@ void tui_app_apply_message_action(TuiApp *app) {
             break;
         case MESSAGE_ACTION_SAVE: tui_app_save_message(app, index); break;
         case MESSAGE_ACTION_GOTO_QUOTE: tui_app_go_to_quote(app, index); break;
+        case MESSAGE_ACTION_REACTIONS: tui_app_show_reactions(app, index); break;
         case MESSAGE_ACTION_INFO: message_info_panel_open(&app->message_info, m, chat_jid_is_group(m->chat_jid)); break;
         case MESSAGE_ACTION_DELETE_FOR_ME:
         case MESSAGE_ACTION_DELETE_FOR_EVERYONE: {
@@ -542,6 +544,13 @@ void tui_app_apply_message_action(TuiApp *app) {
         }
         default: break;
     }
+}
+
+void tui_app_show_reactions(TuiApp *app, int index) {
+    const Message *m = message_at(app, index);
+    if (!m || m->deleted || !m->reactions[0] || !chat_jid_is_group(m->chat_jid)) return;
+    reactions_dialog_open(&app->reactions, m->id);
+    app->dirty = 1;
 }
 
 void tui_app_open_reactions(TuiApp *app, int index) {

@@ -27,6 +27,8 @@ typedef struct MessageView {
     unsigned char screen_quote[MESSAGE_VIEW_MAX_SCREEN_ROWS];  /* the row is a quote strip */
     short       screen_x0[MESSAGE_VIEW_MAX_SCREEN_ROWS];     /* the bubble's columns on that row */
     short       screen_x1[MESSAGE_VIEW_MAX_SCREEN_ROWS];
+    short       screen_chip_x0[MESSAGE_VIEW_MAX_SCREEN_ROWS];  /* the reactions chip on that row, or x0 == x1 */
+    short       screen_chip_x1[MESSAGE_VIEW_MAX_SCREEN_ROWS];
     UiRect      last_rect;
     UiRect      newer_button;    /* "↓ newer" badge, clickable when scrolled up */
     ImagePlacement placements[MESSAGE_VIEW_MAX_PLACEMENTS];   /* photos left blank for pixel images */
@@ -79,6 +81,8 @@ void message_view_toggle_summary(MessageView *view, const char *message_id);
 int  message_view_hit(MessageView *view, int y, int x);
 /* The message whose quote strip is under (y, x), or -1. */
 int  message_view_hit_quote(MessageView *view, int y, int x);
+/* The message whose reactions chip (the emoji on the bubble's edge) is under (y, x), or -1. */
+int  message_view_hit_reactions(MessageView *view, int y, int x);
 /* True when (y, x) is on the title bar portrait, or on the name. */
 int  message_view_hit_portrait(const MessageView *view, int y, int x);
 int  message_view_hit_title(const MessageView *view, int y, int x);

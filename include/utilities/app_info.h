@@ -24,7 +24,7 @@
 #define APP_LEGACY_NAME "tawk"
 
 #ifndef APP_VERSION
-#define APP_VERSION "0.32.0"
+#define APP_VERSION "0.33.0"
 #endif
 
 /* The git commit of this build ("" when built outside a checkout). */

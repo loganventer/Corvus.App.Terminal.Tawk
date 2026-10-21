@@ -262,6 +262,11 @@ static int handle_overlays_key(TuiApp *app, int is_key, int ch) {
         if (reaction_palette_key(&app->palette, is_key, ch) == POPUP_CHOSEN) tui_app_reaction_chosen(app);
         return 1;
     }
+    if (app->reactions.open) {
+        reactions_dialog_key(&app->reactions, is_key, ch);
+        app->dirty = 1;
+        return 1;
+    }
     if (app->file_picker.open) {
         if (file_picker_key(&app->file_picker, is_key, ch) == FILE_PICKER_PICKED) tui_app_file_picked(app, app->file_picker.picked);
         return 1;
@@ -398,6 +403,12 @@ static int handle_overlays_mouse(TuiApp *app, const MEVENT *ev, int wheel, int p
     }
     if (app->palette.open) {
         if (press && reaction_palette_click(&app->palette, y, x) == POPUP_CHOSEN) tui_app_reaction_chosen(app);
+        return 1;
+    }
+    if (app->reactions.open) {
+        if (wheel) reactions_dialog_wheel(&app->reactions, wheel);
+        else if (press) reactions_dialog_click(&app->reactions, y, x);
+        app->dirty = 1;
         return 1;
     }
     if (app->file_picker.open) {
@@ -543,6 +554,12 @@ static void handle_mouse_event(TuiApp *app, MEVENT ev) {
         } else if (press) {
             int quoted = message_view_hit_quote(&app->message_view, ev.y, ev.x);
             if (quoted >= 0) { tui_app_go_to_quote(app, quoted); return; }     /* a click on a quote jumps to it */
+            int reacted = message_view_hit_reactions(&app->message_view, ev.y, ev.x);
+            if (reacted >= 0 && chat_jid_is_group(messaging_manager_open_jid(app->deps.messaging))) {
+                app->message_view.selected = reacted;      /* a click on the reactions lists who made them */
+                tui_app_show_reactions(app, reacted);
+                return;
+            }
             int idx = message_view_hit(&app->message_view, ev.y, ev.x);
             if (idx >= 0) {
                 app->message_view.selected = idx;

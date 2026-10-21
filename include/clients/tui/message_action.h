@@ -15,6 +15,7 @@ typedef enum MessageAction {
     MESSAGE_ACTION_SAVE,                 /* copy the file to the Downloads folder */
     MESSAGE_ACTION_GOTO_QUOTE,           /* scroll to the message a reply quotes */
     MESSAGE_ACTION_INFO,                 /* who received and read a message you sent */
+    MESSAGE_ACTION_REACTIONS,            /* who reacted to a message in a group, and with what */
     MESSAGE_ACTION_DELETE,               /* opens the choice below */
     MESSAGE_ACTION_DELETE_FOR_ME,
     MESSAGE_ACTION_DELETE_FOR_EVERYONE,

@@ -211,6 +211,16 @@ static void clear_tally(MessagingManager *m, const char *jid) {
     }
 }
 
+int messaging_manager_message_reactions(MessagingManager *m, const char *message_id, Reaction *out, int max) {
+    if (!message_id || !message_id[0] || max <= 0) return 0;
+    int n = m->deps.reactions->list(m->deps.reactions, message_id, out, max);
+    for (int i = 0; i < n; i++) {
+        if (m->user_jid[0] && strcmp(out[i].sender, m->user_jid) == 0) str_copy(out[i].name, sizeof(out[i].name), "You");
+        else messaging_manager_display_name(m, out[i].sender, out[i].name, sizeof(out[i].name));
+    }
+    return n;
+}
+
 int messaging_manager_message_receipts(MessagingManager *m, const char *message_id, Receipt *out, int max) {
     if (!message_id || !message_id[0] || max <= 0) return 0;
     int n = m->deps.receipts->list(m->deps.receipts, message_id, out, max);

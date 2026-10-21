@@ -301,6 +301,8 @@ The TUI is split into widgets that each draw one part of the screen and turn key
 | `scheduled_list_dialog` | `/scheduled`: every message waiting to be sent later, soonest first, with Send now, Change time (a `text_field` for the new time) and Cancel; `tui_scheduling.c` carries them out through `SchedulingManager` and, each pass of the loop, sends what is due through the messaging manager |
 | `chat_picker` | Choosing up to five chats to forward a message to: a `text_field` search, the matching chats (through `chat_match`) with ticks, Space to tick, Enter to send; `tui_forward.c` hands the choice to `messaging_manager_forward` |
 | `reaction_palette` | Quick reactions with "remove" and "more" |
+| `reactions_dialog` | Who reacted to a message in a group: a line a person with their emoji, the title counting each emoji. `message_view` records where the reactions chip is drawn (`message_view_hit_reactions`), so a click on it opens the dialog; `tui_app_show_reactions` hands it the reactions `messaging_manager_message_reactions` reads through `IReactionStore`, names filled in |
+| `reaction_grouping` (engine) | The order of that list (the emoji most people used first, ties by first appearance, people in the order given) and the emoji with their counts |
 | `emoji_picker` | Searchable, tabbed emoji grid over an `IEmojiCatalog` |
 | `chat_options_menu` | Per-chat options (`chat_option` entries) |
 | `theme_picker_overlay` | Per-chat theme chooser with live preview |
