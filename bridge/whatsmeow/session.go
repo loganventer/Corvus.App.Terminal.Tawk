@@ -226,6 +226,10 @@ func (s *Session) ensureClient() error {
 	// Reconnection policy (exponential backoff, circuit breaker) lives in
 	// the C messaging manager, so the library must not retry by itself.
 	client.EnableAutoReconnect = false
+	// What other devices changed before this one was linked arrives as its first app state
+	// sync, and the library reports those changes only when asked: a chat read on the phone
+	// would otherwise stay unread here.
+	client.EmitAppStateEventsOnFullSync = true
 	client.AddEventHandler(s.onEvent)
 	s.client = client
 	return nil

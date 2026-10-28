@@ -4,6 +4,14 @@ What changed in each version of tawk, newest first. `corvus-tawk --update` shows
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.35.1 (2026-10-28)
+
+Chats read on another device while tawk was closed, or before this device was linked, are no longer unread here.
+
+- **tawk now catches up with your other devices each time it connects.** Before, it only heard about a chat read elsewhere when WhatsApp pushed the news while tawk was open, so a chat read on the phone while tawk was closed stayed unread, and so did everything read before a new device was linked. Now each connect fetches what changed, and a new device reads the whole of it the first time.
+- Only read marks are taken from that first sync. Archived chats, deleted chats and messages, and contact names from it are left as they were.
+- The database is unchanged (still version 27).
+
 ## 0.35.0 (2026-10-28)
 
 A chat you read on another device stops being unread here.
