@@ -8,7 +8,7 @@ APP_DIR    ?= corvus/tawk
 # The command's name before the Corvus rename, installed as a symlink to $(APP)
 # that says it is deprecated. LEGACY= (empty) installs no symlink.
 LEGACY     ?= tawk
-VERSION    ?= 0.35.0
+VERSION    ?= 0.35.1
 # The commit this build comes from, so `corvus-tawk --update` can tell whether it is current.
 COMMIT     ?= $(shell git rev-parse HEAD 2>/dev/null)
 

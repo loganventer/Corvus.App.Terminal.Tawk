@@ -62,12 +62,21 @@ func (s *Session) onEvent(raw any) {
 	case *events.Picture:
 		s.emit(map[string]any{"evt": "picture_changed", "jid": s.phoneJID(evt.JID)})
 	case *events.DeleteChat:
+		if evt.FromFullSync {
+			break // a first sync replays old changes; only a read mark is wanted from it
+		}
 		s.emit(map[string]any{"evt": "chat_removed", "jid": s.phoneJID(evt.JID)})
 	case *events.DeleteForMe:
+		if evt.FromFullSync {
+			break // a first sync replays old changes; only a read mark is wanted from it
+		}
 		if isSafeID(evt.MessageID) {
 			s.emit(map[string]any{"evt": "removed", "id": evt.MessageID, "chat": s.phoneJID(evt.ChatJID)})
 		}
 	case *events.Archive:
+		if evt.FromFullSync {
+			break // a first sync replays old changes; only a read mark is wanted from it
+		}
 		if evt.Action != nil {
 			s.emit(map[string]any{"evt": "chat", "jid": s.phoneJID(evt.JID), "unread": -1, "archived": evt.Action.GetArchived()})
 		}
@@ -121,6 +130,7 @@ func (s *Session) onEvent(raw any) {
 			s.emitStoredAliases()
 			s.syncDirectory()
 			s.publishBlocklist()
+			s.syncAppState()
 		}()
 	case *events.Disconnected:
 		s.emitClosed("closed", "The connection to WhatsApp dropped.")
@@ -156,6 +166,9 @@ func (s *Session) onEvent(raw any) {
 	case *events.PushName:
 		s.emit(map[string]any{"evt": "contact", "jid": s.phoneJID(evt.JID), "push_name": evt.NewPushName})
 	case *events.Contact:
+		if evt.FromFullSync {
+			break // a first sync replays old changes; only a read mark is wanted from it
+		}
 		if evt.Action != nil {
 			s.emit(map[string]any{"evt": "contact", "jid": s.phoneJID(evt.JID), "name": evt.Action.GetFullName()})
 		}
