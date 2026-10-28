@@ -4,6 +4,14 @@ What changed in each version of tawk, newest first. `corvus-tawk --update` shows
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.34.0 (2026-10-28)
+
+Web addresses in messages can be clicked.
+
+- **Click a web address** in a message to open it in your browser. Addresses are now underlined and in the bubble's accent colour. An address that wraps over several lines opens from any of them, and the title and site line of a link card open the card's address.
+- **Only `http://` and `https://` addresses open**, so a message cannot start anything else. When there is no browser to start, tawk says so.
+- The database is unchanged (still version 27).
+
 ## 0.33.1 (2026-10-21)
 
 Linking a new account says why it stops when WhatsApp asks for a passkey.

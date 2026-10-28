@@ -1,4 +1,5 @@
 #include "clients/tui/message_view.h"
+#include "clients/tui/message_links.h"
 #include "clients/tui/portrait_view.h"
 #include "clients/tui/status_colour.h"
 #include "clients/tui/styled_text_view.h"
@@ -817,6 +818,38 @@ static void restore_held(MessageView *v, int body_h, const Message *msgs, int co
     }
 }
 
+/* The web addresses on a row: drawn in the bubble's accent colour and underlined, and kept so a click on one can
+ * open it. A message's text shows its addresses wherever they fall; a link card's title and site line open its own. */
+static void mark_urls(MessageView *v, const MessageRow *row, int y, UiRect body, const Message *m) {
+    int room = row->width - 2;
+    int x = body.x + row->x + 1;
+    MessageUrlSpan found[MESSAGE_VIEW_MAX_URL_SPANS];
+    int n = 0;
+    char site[160];
+    switch (row->kind) {
+        case MESSAGE_ROW_TEXT:
+            if (!m->deleted) n = message_links_in_text_row(shown_text(v, row->message, m), row->offset, row->length, x, room, found, MESSAGE_VIEW_MAX_URL_SPANS);
+            break;
+        case MESSAGE_ROW_LINK_TITLE:
+            if (m->link) n = message_links_on_card_row(m->link->url, m->link->title, x, room, found);
+            break;
+        case MESSAGE_ROW_LINK_SITE:
+            if (m->link) {
+                site_of(m->link->url, site, sizeof(site));
+                n = message_links_on_card_row(m->link->url, site, x, room, found);
+            }
+            break;
+        default:
+            return;
+    }
+    int attr = tui_palette_bubble_accent_attr(m->from_me);
+    for (int i = 0; i < n && v->url_span_count < MESSAGE_VIEW_MAX_URL_SPANS; i++) {
+        found[i].y = y;
+        mvchgat(y, found[i].x0, found[i].x1 - found[i].x0, (attr_t)((attr & ~A_COLOR) | A_UNDERLINE), (short)PAIR_NUMBER(attr), NULL);
+        v->url_spans[v->url_span_count++] = found[i];
+    }
+}
+
 void message_view_render(MessageView *v, UiRect r, const Message *msgs, int count, const MessageViewContext *ctx) {
     v->last_rect = r;
     tui_fill(r, conv(THEME_SLOT_CHAT));
@@ -826,6 +859,7 @@ void message_view_render(MessageView *v, UiRect r, const Message *msgs, int coun
         v->screen_chip_x0[i] = v->screen_chip_x1[i] = 0;
     }
     v->placement_count = 0;
+    v->url_span_count = 0;
     if (r.h < 2 || r.w < 8) return;
 
     /* Title bar: portrait, chat name, and under it the about text or member count. */
@@ -898,6 +932,7 @@ void message_view_render(MessageView *v, UiRect r, const Message *msgs, int coun
         const MessageRow *row = &v->rows[i];
         if (is_scheduled_row(row->kind)) { draw_scheduled_row(row, body.y + k, body, ctx); continue; }
         draw_row(v, row, body.y + k, body, &msgs[row->message], ctx->focused && row->message == v->selected, ctx);
+        if (!ctx->veiled) mark_urls(v, row, body.y + k, body, &msgs[row->message]);
         if (k < MESSAGE_VIEW_MAX_SCREEN_ROWS && is_body_row(row->kind)) {
             v->screen_rows[k] = row->message;
             v->screen_quote[k] = row->kind == MESSAGE_ROW_QUOTE;
@@ -983,6 +1018,16 @@ int message_view_hit_reactions(MessageView *v, int y, int x) {
     int k = y - v->last_rect.y - v->header_rows;
     if (index < 0 || k < 0 || k >= MESSAGE_VIEW_MAX_SCREEN_ROWS) return -1;
     return x >= v->screen_chip_x0[k] && x < v->screen_chip_x1[k] ? index : -1;
+}
+
+int message_view_hit_url(const MessageView *v, int y, int x, char *url, size_t size) {
+    for (int i = 0; i < v->url_span_count; i++) {
+        const MessageUrlSpan *span = &v->url_spans[i];
+        if (span->y != y || x < span->x0 || x >= span->x1) continue;
+        str_copy(url, size, span->url);
+        return 0;
+    }
+    return -1;
 }
 
 int message_view_hit_portrait(const MessageView *v, int y, int x) { return ui_rect_contains(v->portrait_rect, y, x); }

@@ -1070,6 +1070,11 @@ int tui_app_show_message(TuiApp *app, const char *id) {
     return 0;
 }
 
+void tui_app_open_url(TuiApp *app, const char *url) {
+    IUrlOpener *opener = app->deps.url_opener;
+    if (!opener || opener->open(opener, url) != 0) tui_app_toast(app, "No browser is available to open this link", 1);
+}
+
 /* Jumps from a reply to the message it quotes. */
 void tui_app_go_to_quote(TuiApp *app, int index) {
     const Message *m = message_at(app, index);

@@ -268,6 +268,7 @@ Commands that act on "this chat" need an open chat.
 - Click a photo or video to open it in the [photo viewer](#the-photo-viewer); click a document or voice note to open or play it.
 - Right-click a message for the message menu. Clicks count only on the bubble itself: clicking beside a photo, document or download does nothing.
 - Click a quote at the top of a reply to jump to the message it quotes.
+- Click a web address (`http://` or `https://`) in a message, or the title or site line of a link card, to open it in your browser. Addresses are underlined and in the bubble's accent colour. A long address that wraps over several lines opens from any of them. Only web addresses open; tawk starts your system's default browser (`open` on a Mac, `xdg-open` or `gio` on Linux, `wslview` or `explorer.exe` on WSL, `cygstart` on MSYS2) and says so when none is available.
 - Click the picture in the conversation title bar to see it full size, and the name to open the [contact details](#contact-details).
 - Scroll the conversation with the wheel. Scrolling past the oldest message loads older ones.
 - Click the `↓ newer` badge at the bottom right of the conversation to jump to the newest message. It appears whenever you have scrolled up.
