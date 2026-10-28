@@ -41,6 +41,7 @@
 #include "resource_access/folder_sound_catalog.h"
 #include "infrastructure/system_clipboard_image.h"
 #include "infrastructure/system_media_opener.h"
+#include "infrastructure/system_url_opener.h"
 #include "infrastructure/authenticated_file_cipher.h"
 #include "infrastructure/openssl_file_cipher.h"
 #include "infrastructure/tar_archive.h"
@@ -541,6 +542,7 @@ int main(int argc, char **argv) {
     ISoundCatalog *sound_catalog = folder_sound_catalog_create(bundled_sounds, user_sounds);
     IAudioRecorder *recorder = pipeline_audio_recorder_create(audio);
     IMediaOpener *opener = system_media_opener_create(s);
+    IUrlOpener *url_opener = system_url_opener_create();
     IIdleAction *screensaver = pty_idle_action_create();
     ITerminalTitle *title = osc_terminal_title_create();
     IClipboard *clipboard = osc52_clipboard_create();
@@ -606,7 +608,7 @@ int main(int argc, char **argv) {
     TuiAppDeps tdeps = {
         .messaging = active->messaging, .profiles = active->profiles, .calls = active->calls, .media = media,
         .settings = settings_mgr, .screensaver = screensaver, .sound_player = sound_player, .sounds = sound_catalog, .emoji = emoji,
-        .clipboard = clipboard, .video_posters = posters, .document_pages = pages, .clipboard_image = clipboard_image,
+        .clipboard = clipboard, .video_posters = posters, .document_pages = pages, .clipboard_image = clipboard_image, .url_opener = url_opener,
         .notifier = notifier, .blink = &blink, .title = &flasher,
         .backend_name = active->backend_name, .audio_backend_name = audio->name(audio), .user_theme_dir = user_themes,
         .sixel_supported = terminal_graphics_sixel(), .cell_width_px = cell_w, .cell_height_px = cell_h,
@@ -647,6 +649,7 @@ int main(int argc, char **argv) {
     clipboard_image->destroy(clipboard_image);
     screensaver->destroy(screensaver);
     opener->destroy(opener);
+    if (url_opener) url_opener->destroy(url_opener);
     recorder->destroy(recorder);
     if (camera) camera->destroy(camera);
     sound_player->destroy(sound_player);

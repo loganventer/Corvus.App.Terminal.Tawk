@@ -17,6 +17,7 @@
 #include "contracts/i_idle_action.h"
 #include "contracts/i_notifier.h"
 #include "contracts/i_sound_catalog.h"
+#include "contracts/i_url_opener.h"
 #include "contracts/i_video_poster.h"
 #include "managers/account_manager.h"
 #include "managers/automation_manager.h"
@@ -52,6 +53,7 @@ typedef struct TuiAppDeps {
     IVideoPoster          *video_posters;
     IDocumentPages        *document_pages;
     IClipboardImage       *clipboard_image;
+    IUrlOpener            *url_opener;            /* opens a web address in the browser; may be NULL */
     INotifier             *notifier;
     BlinkState            *blink;
     TitleFlasher          *title;

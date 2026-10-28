@@ -13,10 +13,9 @@ static int stops_url(unsigned char c) {
     return c <= ' ' || c == '<' || c == '>' || c == '"';
 }
 
-int url_find_first(const char *text, char *out, size_t out_size) {
-    if (out && out_size) out[0] = '\0';
-    if (!text || !out || out_size == 0) return -1;
-    for (const char *p = text; *p; p++) {
+int url_find_next(const char *text, size_t from, size_t *begin, size_t *end) {
+    if (!text || !begin || !end || from > strlen(text)) return -1;
+    for (const char *p = text + from; *p; p++) {
         size_t scheme = 0;
         if (strncasecmp(p, "https://", 8) == 0) scheme = 8;
         else if (strncasecmp(p, "http://", 7) == 0) scheme = 7;
@@ -25,10 +24,20 @@ int url_find_first(const char *text, char *out, size_t out_size) {
         while (p[len] && !stops_url((unsigned char)p[len])) len++;
         while (len > scheme && trailing_punctuation(p[len - 1])) len--;
         if (len == scheme) continue;                  /* "https://" alone */
-        if (len >= out_size) return -1;
-        memcpy(out, p, len);
-        out[len] = '\0';
+        *begin = (size_t)(p - text);
+        *end = *begin + len;
         return 0;
     }
     return -1;
+}
+
+int url_find_first(const char *text, char *out, size_t out_size) {
+    if (out && out_size) out[0] = '\0';
+    if (!text || !out || out_size == 0) return -1;
+    size_t begin, end;
+    if (url_find_next(text, 0, &begin, &end) != 0) return -1;
+    if (end - begin >= out_size) return -1;
+    memcpy(out, text + begin, end - begin);
+    out[end - begin] = '\0';
+    return 0;
 }

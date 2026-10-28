@@ -3,6 +3,7 @@
 
 #include "clients/tui/image_placement.h"
 #include "clients/tui/message_row.h"
+#include "clients/tui/message_url_span.h"
 #include "clients/tui/message_view_context.h"
 #include "clients/tui/quoted_status.h"
 #include "clients/tui/summary_view.h"
@@ -14,6 +15,7 @@
 #define MESSAGE_VIEW_MAX_SCREEN_ROWS 512
 #define MESSAGE_VIEW_MAX_PLACEMENTS  16
 #define MESSAGE_VIEW_MAX_UNFOLDED    32
+#define MESSAGE_VIEW_MAX_URL_SPANS   48
 
 /* The conversation pane: bubbles, day separators, media and voice notes. */
 typedef struct MessageView {
@@ -29,6 +31,8 @@ typedef struct MessageView {
     short       screen_x1[MESSAGE_VIEW_MAX_SCREEN_ROWS];
     short       screen_chip_x0[MESSAGE_VIEW_MAX_SCREEN_ROWS];  /* the reactions chip on that row, or x0 == x1 */
     short       screen_chip_x1[MESSAGE_VIEW_MAX_SCREEN_ROWS];
+    MessageUrlSpan url_spans[MESSAGE_VIEW_MAX_URL_SPANS];   /* the web addresses on screen at the last render */
+    int         url_span_count;
     UiRect      last_rect;
     UiRect      newer_button;    /* "↓ newer" badge, clickable when scrolled up */
     ImagePlacement placements[MESSAGE_VIEW_MAX_PLACEMENTS];   /* photos left blank for pixel images */
@@ -83,6 +87,8 @@ int  message_view_hit(MessageView *view, int y, int x);
 int  message_view_hit_quote(MessageView *view, int y, int x);
 /* The message whose reactions chip (the emoji on the bubble's edge) is under (y, x), or -1. */
 int  message_view_hit_reactions(MessageView *view, int y, int x);
+/* Copies the web address under (y, x) to `url` and returns 0, or returns -1 when there is none. */
+int  message_view_hit_url(const MessageView *view, int y, int x, char *url, size_t size);
 /* True when (y, x) is on the title bar portrait, or on the name. */
 int  message_view_hit_portrait(const MessageView *view, int y, int x);
 int  message_view_hit_title(const MessageView *view, int y, int x);

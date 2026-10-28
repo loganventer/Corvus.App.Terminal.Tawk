@@ -120,7 +120,7 @@ flowchart TD
     end
     subgraph Infrastructure
         AU["IAudioBackend · IAudioPlayer ·<br/>IAudioRecorder · ICamera"]
-        OS["IMediaOpener · IIdleAction · ITerminalTitle ·<br/>IClipboard · IClipboardImage · IVideoPoster ·<br/>IDocumentPages · INotifier · INetworkMonitor"]
+        OS["IMediaOpener · IUrlOpener · IIdleAction · ITerminalTitle ·<br/>IClipboard · IClipboardImage · IVideoPoster ·<br/>IDocumentPages · INotifier · INetworkMonitor"]
     end
     TUI --> W & CMD
     TUI --> MM & PM & AM & STM & SFM & CM & MD & SM
@@ -182,6 +182,7 @@ flowchart TD
 | `IAudioRecorder` | `pipeline_audio_recorder` (backend capture piped into ffmpeg) |
 | `ICamera` | `ffmpeg_camera` (a live preview of raw frames from ffmpeg, a snapped JPEG, or an MP4 recorded with sound) |
 | `IMediaOpener` | `system_media_opener` |
+| `IUrlOpener` | `system_url_opener` (opens only `http://` and `https://` addresses; both openers share `app_launcher`, which picks the platform's default program) |
 | `IIdleAction` | `pty_idle_action` (screensaver in a pseudo-terminal) |
 | `ITerminalTitle` | `osc_terminal_title` |
 | `IClipboard` | `osc52_clipboard` (writes the OSC 52 sequence to `/dev/tty`) |
@@ -377,6 +378,7 @@ flowchart LR
         CAM["ffmpeg_camera<br/>ICamera"]
         NET["ifaddrs_network_monitor<br/>INetworkMonitor"]
         OPEN["system_media_opener<br/>IMediaOpener"]
+        URLOPEN["system_url_opener<br/>IUrlOpener"]
         IDLE["pty_idle_action<br/>IIdleAction, screensaver"]
         TITLE["osc_terminal_title<br/>ITerminalTitle"]
         CLIP["osc52_clipboard<br/>IClipboard"]

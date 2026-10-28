@@ -552,6 +552,8 @@ static void handle_mouse_event(TuiApp *app, MEVENT ev) {
         } else if (press && message_view_hit_title(&app->message_view, ev.y, ev.x)) {
             tui_app_open_contact(app, messaging_manager_open_jid(app->deps.messaging));
         } else if (press) {
+            char url[MESSAGE_URL_MAX];
+            if (message_view_hit_url(&app->message_view, ev.y, ev.x, url, sizeof(url)) == 0) { tui_app_open_url(app, url); return; }
             int quoted = message_view_hit_quote(&app->message_view, ev.y, ev.x);
             if (quoted >= 0) { tui_app_go_to_quote(app, quoted); return; }     /* a click on a quote jumps to it */
             int reacted = message_view_hit_reactions(&app->message_view, ev.y, ev.x);

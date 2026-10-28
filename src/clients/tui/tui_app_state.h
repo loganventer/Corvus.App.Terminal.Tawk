@@ -228,6 +228,8 @@ void tui_app_show_latest(TuiApp *app);
 /* Loads an older page of the open chat, keeping the screen and the selection where they are. */
 int  tui_app_load_older(TuiApp *app);
 void tui_app_go_to_quote(TuiApp *app, int index);
+/* Opens a web address from a message in the browser; says so when there is none. */
+void tui_app_open_url(TuiApp *app, const char *url);
 void tui_app_apply_message_action(TuiApp *app);
 void tui_app_open_reactions(TuiApp *app, int index);
 /* Lists who reacted to a message in the open group chat, and with what. */
