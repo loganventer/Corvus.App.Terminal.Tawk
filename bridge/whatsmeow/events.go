@@ -71,6 +71,11 @@ func (s *Session) onEvent(raw any) {
 		if evt.Action != nil {
 			s.emit(map[string]any{"evt": "chat", "jid": s.phoneJID(evt.JID), "unread": -1, "archived": evt.Action.GetArchived()})
 		}
+	case *events.MarkChatAsRead:
+		// Another device, the phone or another tawk, read the chat: tell tawk how far.
+		if evt.Action != nil && evt.Action.GetRead() {
+			s.emit(map[string]any{"evt": "chat_read", "jid": s.phoneJID(evt.JID), "ts": readUpTo(evt)})
+		}
 	case *events.HistorySync:
 		go s.emitHistory(evt)
 	case *events.Receipt:

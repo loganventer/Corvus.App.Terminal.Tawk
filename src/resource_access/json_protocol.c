@@ -305,6 +305,11 @@ int json_protocol_decode(const char *line, Event *e) {
         e->type = EVENT_CHAT_REMOVED;
         chat_init(&e->chat, get_str(j, "jid"));
         ok = e->chat.jid[0] != '\0';
+    } else if (!strcmp(evt, "chat_read")) {
+        e->type = EVENT_CHAT_READ;
+        chat_init(&e->chat, get_str(j, "jid"));
+        e->at = (int64_t)get_num(j, "ts", 0);
+        ok = e->chat.jid[0] != '\0' && e->at > 0;
     } else if (!strcmp(evt, "removed")) {
         e->type = EVENT_MESSAGE_REMOVED;
         copy_line(e->message.id, sizeof(e->message.id), get_str(j, "id"));

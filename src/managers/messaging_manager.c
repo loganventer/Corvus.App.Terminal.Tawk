@@ -554,6 +554,7 @@ static void normalise(MessagingManager *m, Event *e) {
             canonical_mentions(m, &e->message);
             break;
         case EVENT_CHAT_REMOVED:
+        case EVENT_CHAT_READ:
         case EVENT_CHAT_UPDATE:    canonical(m, e->chat.jid, sizeof(e->chat.jid)); break;
         case EVENT_CONTACT_UPDATE: canonical(m, e->contact.jid, sizeof(e->contact.jid)); break;
         case EVENT_MESSAGE_REMOVED:
@@ -648,6 +649,7 @@ static const char *event_chat(const Event *e) {
         case EVENT_MESSAGE_EDIT:
         case EVENT_MESSAGE_REMOVED: return e->message.chat_jid;
         case EVENT_CHAT_REMOVED:    return e->chat.jid;
+        case EVENT_CHAT_READ:
         case EVENT_CHAT_UPDATE:
         case EVENT_REACTION:
         case EVENT_TYPING:
@@ -657,6 +659,29 @@ static const char *event_chat(const Event *e) {
 }
 
 static void forget_chat(MessagingManager *m, const char *jid, ManagerChanges *ch);
+
+/* How many incoming messages are searched for ones newer than a read mark, beyond the unread count: your own
+ * messages in between do not count as unread but take room in the newest ones. */
+#define READ_MARK_SEARCH_EXTRA 200
+
+/* Another device (the phone, or another tawk) read the chat up to e->at. What came in after that is still
+ * unread here, so the count is rebuilt from the messages and not simply cleared. No receipts go out: that
+ * device sent them. */
+static void on_chat_read(MessagingManager *m, const Event *e) {
+    Chat chat;
+    if (m->deps.chats->get(m->deps.chats, e->chat.jid, &chat) != 0 || chat.unread <= 0) return;
+    int still_unread = 0;
+    Message *recent = NULL;
+    int count = 0;
+    if (m->deps.messages->recent(m->deps.messages, e->chat.jid, chat.unread + READ_MARK_SEARCH_EXTRA, &recent, &count) == 0) {
+        for (int i = 0; i < count; i++) if (!recent[i].from_me && recent[i].timestamp > e->at) still_unread++;
+        message_array_free(recent, count);
+    }
+    if (still_unread > chat.unread) still_unread = chat.unread;
+    if (still_unread == chat.unread) return;
+    m->deps.chats->set_unread(m->deps.chats, e->chat.jid, still_unread);
+    m->chats_dirty = 1;
+}
 
 /* Statuses arrive as messages on status@broadcast. They go to the status
  * feed (through the observer) and never become a chat, a notification or
@@ -736,6 +761,9 @@ static void handle_event(MessagingManager *m, Event *e, ManagerChanges *ch) {
         case EVENT_CHAT_UPDATE:
             m->deps.chats->upsert(m->deps.chats, &e->chat);
             m->chats_dirty = 1;
+            break;
+        case EVENT_CHAT_READ:
+            on_chat_read(m, e);
             break;
         case EVENT_CONTACT_UPDATE:
             m->deps.contacts->upsert(m->deps.contacts, &e->contact);
