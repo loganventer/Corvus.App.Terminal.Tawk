@@ -20,6 +20,7 @@ typedef enum EventType {
     EVENT_MESSAGE_EDIT,     /* message.id, message.chat_jid, message.text, message.deleted */
     EVENT_MESSAGE_REMOVED,  /* message.id, message.chat_jid: deleted for me on another device */
     EVENT_CHAT_REMOVED,     /* chat.jid: the whole chat was deleted on another device */
+    EVENT_CHAT_READ,        /* chat.jid, at: another device read the chat up to this time (epoch seconds) */
     EVENT_PROFILE,          /* profile: details of a contact or group */
     EVENT_PICTURE,          /* jid, path (empty with none), full, none */
     EVENT_PICTURE_CHANGED,  /* jid: its profile picture changed */

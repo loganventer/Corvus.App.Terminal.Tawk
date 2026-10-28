@@ -4,6 +4,15 @@ What changed in each version of tawk, newest first. `corvus-tawk --update` shows
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.35.0 (2026-10-28)
+
+A chat you read on another device stops being unread here.
+
+- **Read your chats on the phone, or in another tawk linked to the same WhatsApp account, and the unread count here follows.** Before, tawk cleared the chat on your other devices when you opened it, but never the other way round. Now the count falls to the messages that arrived after the other device read the chat, so a newer message stays unread. No read receipts go out from this tawk for it: that device already sent them.
+- **A chat marked unread on another device is not copied yet.**
+- This is the whatsmeow backend. The Node backend has no such event and keeps passing on the unread counts WhatsApp gives it.
+- The database is unchanged (still version 27).
+
 ## 0.34.0 (2026-10-28)
 
 Web addresses in messages can be clicked.

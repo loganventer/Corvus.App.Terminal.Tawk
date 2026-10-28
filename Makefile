@@ -8,7 +8,7 @@ APP_DIR    ?= corvus/tawk
 # The command's name before the Corvus rename, installed as a symlink to $(APP)
 # that says it is deprecated. LEGACY= (empty) installs no symlink.
 LEGACY     ?= tawk
-VERSION    ?= 0.34.0
+VERSION    ?= 0.35.0
 # The commit this build comes from, so `corvus-tawk --update` can tell whether it is current.
 COMMIT     ?= $(shell git rev-parse HEAD 2>/dev/null)
 
@@ -290,7 +290,8 @@ TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_
          $(BUILD)/tests/account_migration_rules_test $(BUILD)/tests/account_migration_test \
          $(BUILD)/tests/voice_note_details_test \
          $(BUILD)/tests/sound_picker_test \
-         $(BUILD)/tests/message_links_test
+         $(BUILD)/tests/message_links_test \
+         $(BUILD)/tests/chat_read_elsewhere_test
 
 # The tests run with HOME and the XDG folders inside build/, so the defaults
 # they use (media, logs, the control socket) never touch your own corvus/tawk.
@@ -326,6 +327,10 @@ $(BUILD)/tests/account_migration_test: $(BUILD)/tests/account_migration_test.o $
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
 $(BUILD)/tests/voice_note_details_test: $(BUILD)/tests/voice_note_details_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
+	$(call step,LD,$@)
+	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
+
+$(BUILD)/tests/chat_read_elsewhere_test: $(BUILD)/tests/chat_read_elsewhere_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
 	$(call step,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 

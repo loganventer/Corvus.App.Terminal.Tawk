@@ -7,6 +7,7 @@ import (
 	"go.mau.fi/whatsmeow/appstate"
 	"go.mau.fi/whatsmeow/proto/waCommon"
 	"go.mau.fi/whatsmeow/types"
+	"go.mau.fi/whatsmeow/types/events"
 )
 
 // markRead marks a chat as read on WhatsApp. Read receipts go to the
@@ -96,3 +97,12 @@ func (s *Session) sendReadMark(ctx context.Context, chat types.JID, last *ReadIt
 }
 
 func strPtr(v string) *string { return &v }
+
+// readUpTo is the time of the newest message another device had read when it marked
+// the chat read, in epoch seconds: the range it names, or when the mark was made.
+func readUpTo(evt *events.MarkChatAsRead) int64 {
+	if last := evt.Action.GetMessageRange().GetLastMessageTimestamp(); last > 0 {
+		return last
+	}
+	return evt.Timestamp.Unix()
+}
