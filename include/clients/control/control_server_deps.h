@@ -5,6 +5,7 @@
 #include "contracts/i_approval_prompt.h"
 #include "managers/account_roster_manager.h"
 #include "contracts/i_control_transport.h"
+#include "contracts/i_sound_catalog.h"
 #include "managers/account_manager.h"
 #include "managers/automation_manager.h"
 #include "managers/call_manager.h"
@@ -45,6 +46,7 @@ typedef struct ControlServerDeps {
     LabelManager       *labels;           /* your labels on chats; NULL when this tawk keeps none */
     ReminderManager    *reminders;        /* chats put aside; NULL when this tawk keeps none */
     OwnerChatManager   *owner;            /* the owner's chat; NULL when this tawk has none */
+    ISoundCatalog      *sounds;           /* notification sounds an agent may pick from; NULL when there are none */
 } ControlServerDeps;
 
 #endif

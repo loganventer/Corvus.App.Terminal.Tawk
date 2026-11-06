@@ -241,7 +241,7 @@ Type a command at the start of the input. Suggestions appear above the input as 
 | `/archive` | | Move this chat to Archived |
 | `/unarchive` | | Move this chat back to the chats |
 | `/theme` | `[id\|default]` | Theme for this chat; without an argument the theme picker opens, `default` returns to the app theme |
-| `/tone` | `[name\|file\|none\|default]` | Notification sound for this chat: the name of a bundled or own sound such as `bong`, or a file; without an argument the file picker opens |
+| `/tone` | `[name\|file\|none\|default]` | Notification sound for this chat: the name of a bundled or own sound such as `bong`, or a file; without an argument the file picker opens. An agent can set it too, with tawk's approval, but only to a sound by name, `none` or the default: never a file |
 | `/dnd` | | Toggle do not disturb |
 | `/screensaver` | | Start the screensaver now |
 | `/lock` | | Start the screensaver now |

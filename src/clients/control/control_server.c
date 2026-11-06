@@ -51,6 +51,7 @@ static const ControlOpEntry OPS[] = {
     { "awaiting_replies",       control_op_awaiting_replies, 1 },
     { "set_chat",               control_op_set_chat, 0 },
     { "set_chat_theme",         control_op_set_chat_theme, 0 },
+    { "set_chat_tone",          control_op_set_chat_tone, 0 },
     { "clear_chat",             control_op_clear_chat, 0 },
     { "delete_chat",            control_op_delete_chat, 0 },
     { "export_chat",            control_op_export_chat, 0 },
@@ -71,6 +72,7 @@ static const ControlOpEntry OPS[] = {
     { "get_settings",           control_op_get_settings, 1 },
     { "set_setting",            control_op_set_setting, 0 },
     { "list_themes",            control_op_list_themes, 1 },
+    { "list_sounds",            control_op_list_sounds, 1 },
     { "app_status",             control_op_app_status, 1 },
     { "describe",               control_op_describe, 1 },
     { "list_accounts",          control_op_list_accounts, 1 },
@@ -279,6 +281,7 @@ static void hello(ControlServer *s, ControlSession *session, const ControlReques
     if (s->deps.reminders) cJSON_AddItemToArray(features, cJSON_CreateString("reminders"));
     cJSON_AddItemToArray(features, cJSON_CreateString("awaiting_replies"));
     cJSON_AddItemToArray(features, cJSON_CreateString("send_file"));
+    if (s->deps.sounds) cJSON_AddItemToArray(features, cJSON_CreateString("chat_tones"));
     if (s->deps.directory && s->deps.roster) {              /* this tawk serves each request from the account it names */
         cJSON_AddBoolToObject(r, "multi_account", 1);
         cJSON_AddItemToObject(r, "accounts", control_accounts_json(s));

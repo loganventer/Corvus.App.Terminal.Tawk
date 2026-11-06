@@ -156,6 +156,7 @@ void control_op_download_media(ControlServer *server, ControlSession *session, c
 /* control_ops_chats.c */
 void control_op_set_chat(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_set_chat_theme(ControlServer *server, ControlSession *session, const ControlRequest *req);
+void control_op_set_chat_tone(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_clear_chat(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_delete_chat(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_export_chat(ControlServer *server, ControlSession *session, const ControlRequest *req);
@@ -180,6 +181,7 @@ void control_op_remove_profile_photo(ControlServer *server, ControlSession *sess
 void control_op_get_settings(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_set_setting(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_list_themes(ControlServer *server, ControlSession *session, const ControlRequest *req);
+void control_op_list_sounds(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_app_status(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_describe(ControlServer *server, ControlSession *session, const ControlRequest *req);
 void control_op_reconnect(ControlServer *server, ControlSession *session, const ControlRequest *req);

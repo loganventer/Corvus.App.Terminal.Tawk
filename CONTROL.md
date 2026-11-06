@@ -111,10 +111,13 @@ A chat in answers:
   "muted": false,
   "pinned": true,
   "archived": false,
+  "tone": "",
   "last_ts": 1790000000,
   "preview": "See you at 6"
 }
 ```
+
+`tone` is the chat's notification sound: `""` for the app's sound, `"none"` for silence, or the sound's name. Never its file.
 
 A message:
 
@@ -174,11 +177,11 @@ Result:
   "access": "read",
   "account": {"jid": "27830000000@s.whatsapp.net", "name": "Logan"},
   "connected": true,
-  "features": ["transcripts", "summaries", "summary_decline", "owner_chat", "labels", "reminders", "awaiting_replies"]
+  "features": ["transcripts", "summaries", "summary_decline", "owner_chat", "labels", "reminders", "awaiting_replies", "chat_tones"]
 }
 ```
 
-`access` is `read`, `send`, `manage` or `admin`. `features` names what this tawk can do beyond the first shape of the protocol, so a client offers only what will work; a tawk from before 0.13.0 sends no such list. `transcripts` means `set_transcript` and `get_transcript` are there (0.13.0), and `summaries` means `set_summary`, `get_summary` and the `summary_wanted` event are (0.14.0). `summary_decline` means `decline_summary` is there too (0.21.0), and `send_file` means `send_file` is (0.22.0).
+`access` is `read`, `send`, `manage` or `admin`. `features` names what this tawk can do beyond the first shape of the protocol, so a client offers only what will work; a tawk from before 0.13.0 sends no such list. `transcripts` means `set_transcript` and `get_transcript` are there (0.13.0), and `summaries` means `set_summary`, `get_summary` and the `summary_wanted` event are (0.14.0). `summary_decline` means `decline_summary` is there too (0.21.0), and `send_file` means `send_file` is (0.22.0). `chat_tones` means `list_sounds` and `set_chat_tone` are there (0.36.0).
 
 <a id="Reading"></a>
 
@@ -364,6 +367,7 @@ Chats:
 | --- | --- | --- |
 | `set_chat` | `chat`, and any of `muted` (`false`, `true` for always, or seconds), `pinned`, `archived` (bools), `locked` (only `true`: hides the chat behind the soft lock, which also hides it from clients) | `{"chat":chat}` |
 | `set_chat_theme` | `chat`, `theme` (a theme id, or `""` for the app theme) | `{}` |
+| `set_chat_tone` | `chat`, `tone` (a sound id from `list_sounds`, `"none"` for silence, or `""` for the app sound) | `{}`; a file path is refused: only you can give a chat a file of your own, in tawk |
 | `clear_chat` | `chat` | `{}`; removes its messages from this computer |
 | `delete_chat` | `chat` | `{}`; deletes the chat here and on your phone |
 | `export_chat` | `chat`, `with_media` (bool) | `{"path":"…"}`, a folder in your downloads folder |
@@ -398,6 +402,7 @@ Your profile and the app:
 | `get_settings` | none | `{"settings":[{"section","key","label","help","kind","value","choices","min","max","changeable"}]}`; a read |
 | `set_setting` | `section`, `key`, `value` (as text: `on`/`off`, a number, a choice) | `{"value":"…"}`, the value stored after its bounds were applied |
 | `list_themes` | none | `{"themes":[{"id","name"}]}`; a read |
+| `list_sounds` | none | `{"sounds":[{"id"}],"current":"…"}`, the `.wav` and `.ogg` files of tawk's sound folders by name, and the app's sound; a read |
 | `app_status` | none | `{"tawk","backend","connected","state","detail","ringing"}`; a read |
 | `describe` | `text` | `{}`; a line in the agent's own words about what it is working on (corvus-tawk-mcp keeps it to ten words), shown beside it in the Agents list so its sessions can be told apart. `""` takes it away. A read |
 | `reconnect` | none | `{}` |
@@ -438,7 +443,7 @@ Chats that are locked, hidden or outside `chats` never produce notifications.
 → {"id":"1","op":"hello","args":{"client":"corvus-tawk","version":"0.21.0","protocol":1,"origin":"cli"}}
 ← {"id":"1","ok":true,"result":{"protocol":1,"tawk":"0.21.0","access":"send","account":{"jid":"27830000000@s.whatsapp.net","name":"Logan"},"connected":true}}
 → {"id":"2","op":"unread_summary"}
-← {"id":"2","ok":true,"result":{"total":2,"mentions":0,"chats":[{"jid":"27820000000@s.whatsapp.net","name":"Mom","is_group":false,"unread":2,"unread_mention":false,"muted":false,"pinned":true,"archived":false,"last_ts":1790000000,"preview":"See you at 6"}]}}
+← {"id":"2","ok":true,"result":{"total":2,"mentions":0,"chats":[{"jid":"27820000000@s.whatsapp.net","name":"Mom","is_group":false,"unread":2,"unread_mention":false,"muted":false,"pinned":true,"archived":false,"tone":"","last_ts":1790000000,"preview":"See you at 6"}]}}
 → {"id":"3","op":"send_message","args":{"chat":"Mom","text":"On my way"}}
 ← {"id":"3","ok":true,"result":{"id":"3EB0D41C22"}}
 ```
