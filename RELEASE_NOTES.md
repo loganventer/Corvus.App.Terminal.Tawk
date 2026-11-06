@@ -4,6 +4,15 @@ What changed in each version of tawk, newest first. `corvus-tawk --update` shows
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.36.0 (2026-11-06)
+
+Agents can give a chat its own notification sound.
+
+- **Two new control operations, `list_sounds` and `set_chat_tone`.** An agent lists the sounds in tawk's sound folders and gives a chat one of them, silence, or the app's sound again. You are asked first, as for a chat's theme.
+- **An agent names a sound, never a file.** A path is refused, so only you can point a chat at a sound file of your own, with `/tone` or the chat options.
+- **A chat in control answers now says its tone**, by the sound's name.
+- The database is unchanged (still version 27).
+
 ## 0.35.1 (2026-10-28)
 
 Chats read on another device while tawk was closed, or before this device was linked, are no longer unread here.

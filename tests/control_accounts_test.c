@@ -671,7 +671,7 @@ int main(void) {
     if (stand_in) fclose(stand_in);
     ControlServerDeps control_deps = { &transport, approval_queue_prompt(queue), worlds[0].messaging, NULL, worlds[0].scheduling, NULL,
                                        automation, settings_mgr, NULL, NULL, NULL, "test", socket_path, &directory, roster,
-                                       worlds[0].transcripts, NULL, NULL, NULL, NULL };
+                                       worlds[0].transcripts, NULL, NULL, NULL, NULL, NULL };
     server = control_server_create(&control_deps);
     tick();
     tick();

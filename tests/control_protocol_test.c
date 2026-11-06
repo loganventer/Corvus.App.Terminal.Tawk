@@ -26,6 +26,7 @@
 #include "resource_access/sqlite_transcript_store.h"
 #include "resource_access/ini_settings_store.h"
 #include "resource_access/json_theme_repository.h"
+#include "resource_access/folder_sound_catalog.h"
 #include "resource_access/sqlite_automation_log.h"
 #include "resource_access/sqlite_chat_store.h"
 #include "resource_access/sqlite_contact_store.h"
@@ -1797,6 +1798,67 @@ static void test_owner_chat(void) {
     settings_manager_apply(settings_mgr, &s);
 }
 
+static ISoundCatalog *sounds;
+
+static const char *tone_of(const char *jid) {
+    int n = 0;
+    const Chat *all = messaging_manager_chats(mm, &n);
+    for (int i = 0; i < n; i++) if (!strcmp(all[i].jid, jid)) return all[i].tone;
+    return NULL;
+}
+
+static void test_chat_tone(void) {
+    for (int c = 1; c < next_conn; c++) inbox[inbox_count++] = (ControlInbound){ CONTROL_INBOUND_CLOSED, c, NULL };
+    tick();
+    while (approval_queue_at(queue, 0)) answer_first(0, NULL, 0);
+    int agent = next_conn++;
+    inbox[inbox_count++] = (ControlInbound){ CONTROL_INBOUND_OPENED, agent, NULL };
+    say(agent, "{\"id\":\"h\",\"op\":\"hello\",\"args\":{\"client\":\"helper\",\"protocol\":1,\"origin\":\"mcp\"}}");
+    cJSON *hello = reply("h");
+    CHECK(has_feature(result(hello), "chat_tones"), "hello names chat tones when tawk has sounds");
+    cJSON_Delete(hello);
+    Settings s = *settings_manager_current(settings_mgr);
+    str_copy(s.automation_access, sizeof(s.automation_access), "manage");
+    settings_manager_apply(settings_mgr, &s);
+
+    say(agent, "{\"id\":\"n1\",\"op\":\"list_sounds\",\"args\":{}}");
+    CHECK(said("n1", "\"id\":\"ding\"") && !said("n1", ".wav"), "the sounds are listed by name, without their files");
+
+    say(agent, "{\"id\":\"n2\",\"op\":\"set_chat_tone\",\"args\":{\"chat\":\"Mom\",\"tone\":\"ding\"}}");
+    const ApprovalRequest *asked = approval_queue_at(queue, 0);
+    CHECK(asked && strstr(asked->action, "give it the ding tone"), "giving a chat a tone is a managing write: you are asked, in plain words");
+    answer_first(1, NULL, 0);
+    const char *tone = tone_of(MOM);
+    CHECK(said("n2", "\"result\"") && tone && strstr(tone, "/ding.wav"), "allowed, the chat keeps the catalog's file for it");
+    say(agent, "{\"id\":\"n3\",\"op\":\"chat_info\",\"args\":{\"chat\":\"Mom\"}}");
+    CHECK(said("n3", "\"tone\":\"ding\"") && !said("n3", "ding.wav"), "the chat shows its tone by name, never by path");
+
+    say(agent, "{\"id\":\"n4\",\"op\":\"set_chat_tone\",\"args\":{\"chat\":\"Mom\",\"tone\":\"none\"}}");
+    asked = approval_queue_at(queue, 0);
+    CHECK(asked && strstr(asked->action, "make it silent"), "silence is asked about too");
+    answer_first(1, NULL, 0);
+    tone = tone_of(MOM);
+    CHECK(tone && !strcmp(tone, "none"), "and the chat goes quiet");
+
+    say(agent, "{\"id\":\"n5\",\"op\":\"set_chat_tone\",\"args\":{\"chat\":\"Mom\",\"tone\":\"\"}}");
+    answer_first(1, NULL, 0);
+    tone = tone_of(MOM);
+    CHECK(tone && !tone[0], "an empty tone gives it the app's sound again");
+
+    say(agent, "{\"id\":\"n6\",\"op\":\"set_chat_tone\",\"args\":{\"chat\":\"Mom\",\"tone\":\"/etc/passwd\"}}");
+    cJSON *r = reply("n6");
+    CHECK(r && !strcmp(error_code(r), "not_found") && approval_queue_at(queue, 0) == NULL, "a file path is not a sound an agent may name");
+    cJSON_Delete(r);
+    say(agent, "{\"id\":\"n7\",\"op\":\"set_chat_tone\",\"args\":{\"chat\":\"Mom\",\"tone\":\"trumpet\"}}");
+    r = reply("n7");
+    CHECK(r && !strcmp(error_code(r), "not_found"), "nor is a sound that is not there");
+    cJSON_Delete(r);
+    say(agent, "{\"id\":\"n8\",\"op\":\"set_chat_tone\",\"args\":{\"chat\":\"Mom\"}}");
+    r = reply("n8");
+    CHECK(r && !strcmp(error_code(r), "bad_request"), "and the tone must be given");
+    cJSON_Delete(r);
+}
+
 int main(void) {
     char dir[] = "/tmp/tawk-control-XXXXXX";
     if (!mkdtemp(dir)) return 1;
@@ -1805,6 +1867,13 @@ int main(void) {
     snprintf(config, sizeof(config), "%s/config.ini", dir);
     sqlite3 *db = sqlite_database_open(db_path, NULL);
     if (!db) return 1;
+
+    char sound_dir[600], sound_file[700], cmd_sounds[800];
+    snprintf(sound_dir, sizeof(sound_dir), "%s/sounds", dir);
+    snprintf(sound_file, sizeof(sound_file), "%s/ding.wav", sound_dir);
+    snprintf(cmd_sounds, sizeof(cmd_sounds), "mkdir -p '%s' && : > '%s'", sound_dir, sound_file);
+    if (system(cmd_sounds) != 0) return 1;
+    sounds = folder_sound_catalog_create(sound_dir, dir);
 
     ISettingsStore *store = ini_settings_store_create(config);
     IThemeRepository *themes = json_theme_repository_create("themes", dir);
@@ -1877,7 +1946,7 @@ int main(void) {
     OwnerChatManagerDeps owner_deps = { sent_ids, settings_manager_current(settings_mgr) };
     OwnerChatManager *owner = owner_chat_manager_create(&owner_deps);
     ControlServerDeps control_deps = { &transport, approval_queue_prompt(queue), mm, NULL, scheduling, NULL, automation,
-                                       settings_mgr, NULL, NULL, NULL, "test", "/tmp/unused.sock", NULL, NULL, transcripts, summaries, labels, reminders, owner };
+                                       settings_mgr, NULL, NULL, NULL, "test", "/tmp/unused.sock", NULL, NULL, transcripts, summaries, labels, reminders, owner, sounds };
     server = control_server_create(&control_deps);
 
 
@@ -1902,6 +1971,7 @@ int main(void) {
     test_someone_with_no_chat_yet();
     test_agent_rules();
     test_chat_tools();
+    test_chat_tone();
     test_owner_chat();                              /* before the rate is used up */
     test_rate();
     test_tldr();
@@ -1930,6 +2000,7 @@ int main(void) {
     sqlite_database_close(db);
     settings_manager_destroy(settings_mgr);
     themes->destroy(themes);
+    sounds->destroy(sounds);
     store->destroy(store);
     char cmd[700];
     snprintf(cmd, sizeof(cmd), "rm -rf '%s'", dir);

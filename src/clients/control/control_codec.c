@@ -1,5 +1,6 @@
 #include "clients/control/control_codec.h"
 #include "engines/played_time.h"
+#include "engines/sound_name.h"
 #include "utilities/str_util.h"
 
 #include <stdlib.h>
@@ -34,6 +35,10 @@ cJSON *control_codec_chat(const Chat *c) {
     cJSON_AddBoolToObject(o, "muted", c->is_muted);
     cJSON_AddBoolToObject(o, "pinned", c->is_pinned);
     cJSON_AddBoolToObject(o, "archived", c->is_archived > 0);
+    char tone[64] = "";
+    if (!strcmp(c->tone, "none")) str_copy(tone, sizeof(tone), "none");
+    else if (c->tone[0]) sound_name_label(c->tone, tone, sizeof(tone));
+    cJSON_AddStringToObject(o, "tone", tone);   /* a sound's name, never its path */
     cJSON_AddNumberToObject(o, "last_ts", (double)c->last_ts);
     cJSON_AddStringToObject(o, "preview", c->preview);
     return o;
