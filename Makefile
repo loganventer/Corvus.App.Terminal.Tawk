@@ -292,7 +292,8 @@ TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_
          $(BUILD)/tests/sound_picker_test \
          $(BUILD)/tests/message_links_test \
          $(BUILD)/tests/chat_read_elsewhere_test \
-         $(BUILD)/tests/unlock_purpose_test
+         $(BUILD)/tests/unlock_purpose_test \
+         $(BUILD)/tests/private_chat_test
 
 # The tests run with HOME and the XDG folders inside build/, so the defaults
 # they use (media, logs, the control socket) never touch your own corvus/tawk.
@@ -492,6 +493,10 @@ $(BUILD)/tests/unified_chat_list_test: $(BUILD)/tests/unified_chat_list_test.o $
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
 $(BUILD)/tests/unlock_purpose_test: $(BUILD)/tests/unlock_purpose_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
+	$(call step,LD,$@)
+	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
+
+$(BUILD)/tests/private_chat_test: $(BUILD)/tests/private_chat_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
 	$(call step,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
