@@ -36,7 +36,7 @@ Your files (created with owner-only permissions, folders 0700 and files 0600):
 | `~/.config/corvus/tawk/config.ini` | Settings | Yes, defaults are written again |
 | `~/.config/corvus/tawk/themes/` | Your own themes | Yes |
 | `~/.config/corvus/tawk/sounds/` | Your own notification sounds (WAV or OGG), listed beside the bundled ones in Settings, Notifications, Sound | Yes |
-| `~/.local/share/corvus/tawk/tawk.db` | Chats, messages, contacts, reactions, per-chat preferences (drafts, mutes, tones, chat themes, soft locks), profiles (about text, business and group details, which picture files belong to whom, the block list) and statuses (kept for `status_keep_days`) | Yes, history syncs again after linking, but local preferences are lost |
+| `~/.local/share/corvus/tawk/tawk.db` | Chats, messages, contacts, reactions, per-chat preferences (drafts, mutes, tones, chat themes, which chats are private), the lock password for private chats (stored only as a salted hash, and left out of account export and import), profiles (about text, business and group details, which picture files belong to whom, the block list) and statuses (kept for `status_keep_days`) | Yes, history syncs again after linking, but local preferences and the lock password are lost |
 | `~/.local/share/corvus/tawk/tawk.db.pre-v10` (and later versions) | A copy of the database as it was before tawk upgraded it, kept once so a failed or unwanted upgrade can be undone by hand. Encrypted when the database is. `corvus-tawk --encrypt` offers to remove unencrypted ones | Yes, once the upgraded tawk works |
 | `~/.local/share/corvus/tawk/tawk.lock` | Held while tawk runs, so only one tawk uses the data folder at a time (and `--encrypt`, `--decrypt` and `--change-passphrase` wait for it to quit) | Yes, when no tawk is running |
 | `*.before-restore-<date>-<time>` beside the database, config, themes, media and login | What `corvus-tawk --restore` replaced, kept in case you want it back | Yes, once the restored data is fine |
@@ -80,7 +80,7 @@ Use another file with `corvus-tawk --config /path/to/config.ini`.
 
 Settings marked "restart required" apply the next time tawk starts. Everything else applies immediately. Numbers in brackets are the allowed range; values outside it are clamped.
 
-Some preferences are set per chat: mutes, pins, archiving, the notification tone, the chat theme, the draft and the soft lock. They are set from the chat options (Alt+O) or with slash commands and are kept in the chat database. The soft lock is local to tawk and never sent to WhatsApp.
+Some preferences are set per chat: mutes, pins, archiving, the notification tone, the chat theme, the draft and whether the chat is private. They are set from the chat options (Alt+O) or with slash commands and are kept in the chat database. Whether a chat is private is local to tawk and never sent to WhatsApp.
 
 <a id="appearance"></a>
 
@@ -121,7 +121,7 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `tldr_floor_chars` | `40` | A message shorter than this is never sent to an agent for a summary, whatever `tldr_from_chars` says: a summary of so few words could not be shorter than the message. 0 to 500; 0 turns the floor off |
 | `awaiting_days` | `3` | Days a message of yours goes unanswered before its chat shows under `/filter awaiting` (1 to 60) |
 | `tldr_back_days` | `30` | How many days back a TL;DR chat's older long messages are summarised by themselves, newest first. 0 to 365; 0 summarises only what you look at |
-| `reopen_last_chat` | `true` | When tawk starts, open the chat that was open when it last quit. Skipped when that chat was deleted or is in Locked chats |
+| `reopen_last_chat` | `true` | When tawk starts, open the chat that was open when it last quit. Skipped when that chat was deleted, is in Locked chats or is private |
 | `last_chat` | empty | The chat open when tawk last ran; kept up to date as you open chats and not shown in the settings panel |
 | `recent_emoji` | `👍 ❤️ 😂 😮 😢 🙏` | Space-separated, most recent first; kept up to date by the emoji picker (up to 24) and not shown in the settings panel |
 | `status_keep_days` | `30` | How long tawk keeps statuses (1 to 365 days). WhatsApp shows a status for a day; after that it moves to the Status archive until this many days have passed. 1 keeps no archive. While the archive is on and `auto_download` is set, a status's photo or video is fetched when it arrives (up to `auto_download_max_mb`), since WhatsApp's copy does not last |
@@ -176,6 +176,7 @@ Some preferences are set per chat: mutes, pins, archiving, the notification tone
 | `enabled` | `true` | Run a command after a period of inactivity |
 | `idle_minutes` | `5` | Inactivity before the screensaver starts (1 to 240) |
 | `lock_minutes` | `0` | With encrypted chats: minutes without a key before tawk locks itself until their passphrase is typed (0 to 240). 0 locks only on Ctrl+L or `/lock`. An agent cannot change it |
+| `private_touch_id` | `true` | Open a private chat with [Touch ID](https://en.wikipedia.org/wiki/Touch_ID) where the Mac has it; the lock password always works too. Change the lock password with `/lockpassword`. An agent cannot change it |
 | `command` | `corvus-matrix-clock` | Shell command to run; any key stops it. Ctrl+L, `/screensaver` and `/lock` start it at once |
 | `wake_on_message` | `true` | Stop the screensaver when a message arrives |
 
@@ -200,7 +201,7 @@ What other programs reaching tawk through its control socket may do: corvus-tawk
 |---|---|---|
 | `control_socket` | `off` | Listen on the control socket. Turning it on in the settings panel explains the risks first |
 | `access` | `read` | `read`, `send`, `manage` or `admin`: see the manual. Programs acting for a model are asked about every write; with `admin`, one holding the admin token may answer its own sends in the chats in `self_approval_chats` |
-| `chats` | empty | Chats they may use, by name or number, comma-separated; empty means every chat except locked and soft-locked ones |
+| `chats` | empty | Chats they may use, by name or number, comma-separated; empty means every chat except those in WhatsApp's Locked folder, and those hidden from agents with the per-chat agent rule `hidden`; private chats are included |
 | `confirm_cli` | `off` | Your own shell commands ask before sending too |
 | `writes_per_minute` | `5` | Writes allowed per minute (1 to 60) |
 | `ai_disclaimer` | `off` | Add a line under messages a program acting for a model sends, schedules or answers a status with, saying an AI wrote them |
@@ -362,7 +363,7 @@ The screensaver command runs through `/bin/sh -c` so that pipes and arguments wo
 
 ## Ctrl+Shift+L in Windows Terminal
 
-Ctrl+Shift+L soft-locks the selected or open chat. To tell it apart from Ctrl+L (the screensaver), tawk asks the terminal to report modified keys in the xterm "modifyOtherKeys" form (`CSI > 4;1 m` at start-up, turned off again on exit) and recognises both `CSI 27;<mods>;<key>~` and `CSI <key>;<mods> u`. Terminals that do not report the combination distinctly send plain Ctrl+L instead. Alt+L, `/softlock` and the chat options do the same job in any terminal.
+Ctrl+Shift+L makes the selected or open chat private, or public again. To tell it apart from Ctrl+L (the screensaver), tawk asks the terminal to report modified keys in the xterm "modifyOtherKeys" form (`CSI > 4;1 m` at start-up, turned off again on exit) and recognises both `CSI 27;<mods>;<key>~` and `CSI <key>;<mods> u`. Terminals that do not report the combination distinctly send plain Ctrl+L instead. Alt+L, `/private` and the chat options do the same job in any terminal.
 
 Windows Terminal does not report Ctrl+Shift+L distinctly. To make it work there, open Settings, Open JSON file, and add this entry to the `actions` list, so the terminal sends the sequence tawk recognises:
 

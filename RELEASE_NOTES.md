@@ -4,6 +4,19 @@ What changed in each version of tawk, newest first. `corvus-tawk --update` shows
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.37.0 (2026-11-12)
+
+Private chats replace soft lock: a private chat opens only after Touch ID or a lock password.
+
+- **Make a chat private** with Alt+L (Option+L on a Mac), `/private`, "Make private" in the chat options, or Private on its contact card. The first time, tawk asks you to set a lock password, typed twice. Every soft-locked chat is now private.
+- **Opening a private chat asks for Touch ID** on a Mac that has it, or for the lock password on every computer. Nothing of the chat loads and no read receipts go out until it passes. Wrong passwords make you wait longer each time.
+- **It locks again** as soon as you open another chat, and when the screensaver starts, tawk locks, you switch account or you quit. A chat merged across accounts unlocks and locks as one.
+- **While it is locked** the chat list shows its name with a lock and "Private", the conversation shows only shapes, and its picture, about text, typing and online status stay hidden. tawk's search leaves it out, and exporting it or making it public asks again every time.
+- **`/lockpassword` changes the lock password.** Touch ID is accepted first, so it also replaces a forgotten one. A new setting, Touch ID for private chats (`private_touch_id`), is on by default.
+- **Agents now see private chats**, but cannot make a chat private or public: `set_chat` refuses `locked`. To keep a chat from agents, set its agent rule to hidden. Use corvus-tawk-mcp 0.18.0 or later, which no longer sends `locked`.
+- Private is a screen gate, not encryption: see SECURITY.md. The lock password stays on this computer when an account is exported.
+- The database is upgraded to version 28, with a copy of the old one kept as `tawk.db.pre-v28`.
+
 ## 0.36.0 (2026-11-06)
 
 Agents can give a chat its own notification sound.

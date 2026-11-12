@@ -16,7 +16,7 @@
 - [Loading older messages](#Loading%20older%20messages)
 - [One chat per person](#One%20chat%20per%20person)
 - [Search](#Search)
-- [Soft lock](#Soft%20lock)
+- [Private chats](#Private%20chats)
 - [The chat list](#The%20chat%20list)
 - [Profiles and portraits](#Profiles%20and%20portraits)
 - [Contact details](#Contact%20details)
@@ -329,7 +329,7 @@ The scheduling manager never sends anything itself. Each pass of the loop, while
 
 While you type in a chat, tawk sends `typing` with `composing` (repeated at most every 7 seconds while you keep typing) and `paused` once you stop for a while, send, switch chats or go idle. Recording a voice note sends `recording`. Nothing is sent when "Share typing" is off.
 
-Incoming `typing` events are kept per chat and sender and expire after 8 seconds unless refreshed, so a lost `paused` never leaves a chat stuck on "typing…". The chat list preview shows the notice, and in the open chat `typing_indicator` draws it as a small bubble on the last row of the conversation, just above the input, with three dots lit one after another (a step every 300 ms, which keeps the event loop redrawing while someone types). A soft-locked chat shows neither.
+Incoming `typing` events are kept per chat and sender and expire after 8 seconds unless refreshed, so a lost `paused` never leaves a chat stuck on "typing…". The chat list preview shows the notice, and in the open chat `typing_indicator` draws it as a small bubble on the last row of the conversation, just above the input, with three dots lit one after another (a step every 300 ms, which keeps the event loop redrawing while someone types). A locked private chat shows neither.
 
 WhatsApp delivers typing notices only to devices that are online and subscribed to the contact. tawk sends `presence` available after connecting while "Appear online" is on and you are active, and unavailable after two minutes without input, while the screensaver runs and on exit. It sends `subscribe` for a one-to-one chat when you open it and again after each reconnect.
 
@@ -386,24 +386,39 @@ WhatsApp may address the same person by phone number or by a hidden LID. Both ba
 
 ## Search
 
-Message text is indexed by an SQLite FTS5 table that database triggers keep in step with every insert, edit and delete. A query is split into words, each word is quoted and made a prefix term, and the matches are returned newest first. `messaging_manager_search` then drops every result from a soft-locked chat. Choosing a result opens the chat and selects the message.
+Message text is indexed by an SQLite FTS5 table that database triggers keep in step with every insert, edit and delete. A query is split into words, each word is quoted and made a prefix term, and the matches are returned newest first. `messaging_manager_search` takes an `include_private` argument: with 0 it drops every result from a private chat. The TUI asks with 0 and then adds the hits of the one chat that is unlocked, using `private_chat_policy_tui_searchable`; the control socket asks with 1, so agents see private chats like any other. Choosing a result opens the chat (through the guard, if it is locked) and selects the message.
 
-<a id="Soft lock"></a>
+<a id="Private chats"></a>
 
-## Soft lock
+## Private chats
 
-A soft lock keeps a chat's conversation off the screen, for example while someone can see your terminal. Ctrl+Shift+L (where the terminal reports it, see [CONFIGURATION](CONFIGURATION.md#Ctrl+Shift+L%20in%20Windows%20Terminal)) and Alt+L toggle it for the chat selected in the list when the list has focus, and for the open chat otherwise; `/softlock` toggles the open chat and the chat options their own chat. `messaging_manager_toggle_soft_lock` stores the new state through `IChatStore.set_soft_locked` in the `soft_locked` column (database version 5), so it survives restarts. It is local to tawk and never sent to WhatsApp.
+A private chat keeps its conversation off the screen until [Touch ID](https://en.wikipedia.org/wiki/Touch_ID) or the lock password says it may be shown, for example while someone can see your terminal. It is a screen gate, not encryption: see [SECURITY](SECURITY.md).
 
-While a chat is soft-locked:
+**Whether a chat is private.** `messaging_manager_set_private` stores the flag through `IChatStore.set_private` in the `is_private` column of `chats`. It is local to tawk and never sent to WhatsApp. Database version 5 added the column as `soft_locked`; version 28 renamed it `is_private`, so every chat that had it set became private, and created `lock_secret`. The usual `tawk.db.pre-v28` copy is kept before the upgrade.
 
-- The conversation is drawn by `text_veil` as soft shaded bands of `░` and `▒` in place of names, text, meta lines and pictures, keeping the shape of each bubble. Pictures become bands too and no Sixel images are placed. The title bar shows 🙈 before the chat name.
-- The chat list shows 🙈 before the name and "Soft-locked" instead of the last message, the typing notice or a draft, and a `?` badge instead of the portrait.
-- The title bar shows 🙈 before the name, and neither the profile picture nor the summary line.
-- The contact panel shows a badge instead of the picture, and the full size picture cannot be opened.
-- Search leaves out its messages.
-- Locking the open chat clears the message selection and closes the viewer.
+**The pieces.** One rule is kept in one place: `private_chat_policy` answers `veiled` (private and not unlocked), `needs_unlock` (which purpose asks, and when) and `tui_searchable`, and rendering, search and export all ask it. `private_chat_session` holds the single unlocked chat and its merged peers, one per account it is on; it keeps state and does no I/O. `PrivateChatGuard` in the TUI sits between the screen and the chat: it holds the request (open, make public, export, change the password), asks, and returns it only when the check has passed, so nothing is carried out without a pass. `PrivacyManager` is the one object for the whole computer, not per account: it sets and checks the lock password and asks Touch ID, through `ILockSecretStore` and `IBiometricAuthenticator` and the `private_touch_id` setting. `tui_private.c` is the glue that raises the requests from keys, commands, the chat options and the contact card, and carries them out.
 
-Notifications, unread counts and sending work as usual.
+**Making private and public.** Alt+L (Option+L on a Mac), Ctrl+Shift+L (where the terminal reports it, see [CONFIGURATION](CONFIGURATION.md#Ctrl+Shift+L%20in%20Windows%20Terminal)), `/private`, "Make private" or "Make public" in the chat options, and the contact card action "Private: on/off" all end in `tui_app_set_private`. The chat list acts on the selected chat when it has focus, and every other place on the open chat. With no lock password stored, making a chat private first opens `lock_password_dialog`, which asks for the password twice (`lock_password_rule`: at least 4 characters, at most 256 bytes). With one stored it happens at once and the chat is locked. Making a chat public always asks first, even when it is unlocked.
+
+**Asking.** `private_chat_policy_needs_unlock` takes an `UnlockPurpose`: opening asks only while the chat is locked, making it public and exporting ask every time, and changing the password always asks. `PrivateChatGuard` raises `private_unlock_dialog` for it. Where Touch ID is available (`privacy_manager_biometrics_available`: the setting is on, the build has it, the Mac has it) `IBiometricAuthenticator.begin` puts up the system sheet with the purpose's reason ("open a private chat", which never names the chat) and a "Use tawk password" button. It is asynchronous, so the screen keeps drawing: `private_chat_guard_tick` calls `poll` once a frame and gets a `BiometricResult`. Tab, the fallback button or a finger that is not recognised moves the dialog to the password. Over [SSH](https://en.wikipedia.org/wiki/Secure_Shell) (`SSH_CONNECTION` or `SSH_TTY` set) Touch ID is not offered, because the sheet would appear on the Mac's own screen, so the password is asked at once. The password is typed into a `masked_field` (also used by `lock_screen`), which draws one `*` per character.
+
+**The password.** `lock_password_hasher` stores it as a [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2)-HMAC-[SHA-256](https://en.wikipedia.org/wiki/SHA-2) hash with 600 000 iterations, a 16-byte random salt from `secure_random` and the label "tawk chat lock", in the one-row table `lock_secret` (`id` 1, `salt`, `iterations`, `hash`) through `ILockSecretStore` (`sqlite_lock_secret_store`). The table belongs to this computer: `table_catalog` classes it as left behind, so account export and import skip it. Passphrases handed to `PrivacyManager` are wiped before it returns. `privacy_manager_check_password` slows wrong tries down with `idle_lock_policy_wait_ms`: the first two cost nothing, the third waits 1 second, and each later one doubles it up to a minute. The count lives only as long as tawk runs. `/lockpassword` asks for Touch ID or the current password and then the new one twice, so Touch ID also recovers a forgotten password.
+
+**Locking again.** `private_chat_guard_leave` locks the unlocked chat when another chat opens, unless the other chat is one of its merged peers; `private_chat_guard_relock_all` locks everything when the screensaver starts, when tawk locks, when you switch account and when tawk quits. `reopen_last_chat` skips a private chat at start-up.
+
+While a chat is veiled:
+
+- The conversation is drawn by `text_veil` as soft shaded bands of `░` and `▒` in place of names, text, meta lines and pictures, keeping the shape of each bubble. Pictures become bands too and no Sixel images are placed. Transcripts and TL;DR summaries are veiled the same way. Nothing of the chat is loaded and no read receipts are sent until the check passes.
+- The chat list shows 🔒 before the name and "Private" instead of the last message, the typing notice or a draft, and a `?` badge instead of the portrait.
+- The tab title shows 🔒 instead of the name (`tab_chat_name`), and the title bar shows neither a subtitle nor the profile picture.
+- The contact panel shows the name, "🔒 Private in tawk" and "Open the chat to see more", and no picture, about text or group description; the full size picture cannot be opened.
+- Search leaves out its messages, and exporting asks first.
+
+Once unlocked the chat shows normally and the 🔒 stays before its name. Notifications, unread counts and sending work as usual. TL;DR summaries and voice note transcription never run for a private chat.
+
+**Agents.** The control socket does not hide private chats: `list_chats`, `read_messages` and search include them. What keeps a chat from agents is the per-chat agent rule "hidden", WhatsApp's Locked folder and the `chats` automation setting. `set_chat` refuses any `locked` argument, so only you can make a chat private or public.
+
+**Touch ID in the build.** `touch_id_authenticator` (`src/infrastructure/touch_id_authenticator.m`, Objective-C) is compiled on macOS unless `make BIOMETRICS=0` is given; elsewhere `no_biometric_authenticator` is used. `main.c` wires the lock secret store, the authenticator and `PrivacyManager` into `TuiAppDeps.privacy`.
 
 <a id="The chat list"></a>
 
@@ -483,14 +498,14 @@ The full size view is the image viewer in portrait mode. It shows the preview at
 
 ## Contact details
 
-Clicking the name in the title bar, Alt+I (the chat selected in the list when the list has focus, otherwise the open chat), `/info` and Contact info… in the chat options open `contact_panel` over the right of the conversation pane. Opening it asks WhatsApp for the details again. The panel shows the picture, the name, the phone number or the group's member count, notes such as blocked, under a soft lock, muted, pinned and the chat theme, then the about text and business details (verified name, category, address, email) or the group description, who created it and when, and the members with admins marked. Until the first answer arrives it says it is asking WhatsApp. The details scroll with the wheel, PgUp and PgDn; the actions stay at the bottom, chosen with ↑ ↓ and Enter or a click. Esc, q or a click outside closes it, and a click on the picture opens the full size view.
+Clicking the name in the title bar, Alt+I (the chat selected in the list when the list has focus, otherwise the open chat), `/info` and Contact info… in the chat options open `contact_panel` over the right of the conversation pane. Opening it asks WhatsApp for the details again. The panel shows the picture, the name, the phone number or the group's member count, notes such as blocked, private, muted, pinned and the chat theme, then the about text and business details (verified name, category, address, email) or the group description, who created it and when, and the members with admins marked. Until the first answer arrives it says it is asking WhatsApp. The details scroll with the wheel, PgUp and PgDn; the actions stay at the bottom, chosen with ↑ ↓ and Enter or a click. Esc, q or a click outside closes it, and a click on the picture opens the full size view.
 
 | Action | What happens |
 |---|---|
 | View profile picture | The full size view |
 | Search messages | Closes the panel and opens search |
 | Chat options | Closes the panel and opens the chat options |
-| Soft-lock chat, or Show chat | Toggles the soft lock |
+| Private: on, or Private: off | Makes the chat private or public, through the guard when a password or Touch ID is needed |
 | Export chat, Export chat with media | Writes the chat to the downloads folder, see below |
 | Block, or Unblock | Chats with one person only, not groups. Block asks first in a `ConfirmDialog`; Unblock acts at once |
 | Clear chat… | Asks first in a flashing `ConfirmDialog`, then `messaging_manager_clear_chat` |
@@ -754,7 +769,7 @@ sequenceDiagram
     Note over T: the next frame draws the words under the play line
 ```
 
-What shows is decided when a frame is drawn: `transcript_display_policy` takes the "Voice note transcripts" setting and the chat's own choice from `chat_prefs`, and the conversation is handed a `TranscriptSource` or none. Hiding transcripts therefore removes nothing. Whether a chat is transcribed at all is `transcription_policy`: the chat's switch, and never a locked or soft-locked chat; it is asked when a transcript arrives, and tawk tells the transcriber beforehand so that no audio is read for nothing. A voice note you scroll to that has no transcript is put on a short waiting list by `TranscriptManager` and told to one agent as `transcript_wanted`, once while tawk runs. Two triggers on `messages` remove a message's transcripts when it is deleted.
+What shows is decided when a frame is drawn: `transcript_display_policy` takes the "Voice note transcripts" setting and the chat's own choice from `chat_prefs`, and the conversation is handed a `TranscriptSource` or none. Hiding transcripts therefore removes nothing. Whether a chat is transcribed at all is `transcription_policy`: the chat's switch, and never a private chat; it is asked when a transcript arrives, and tawk tells the transcriber beforehand so that no audio is read for nothing. A voice note you scroll to that has no transcript is put on a short waiting list by `TranscriptManager` and told to one agent as `transcript_wanted`, once while tawk runs. Two triggers on `messages` remove a message's transcripts when it is deleted.
 
 <a id="TL;DR summaries"></a>
 

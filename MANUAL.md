@@ -14,7 +14,7 @@ The screenshots in this manual were taken from tawk running on a demo account wi
   - [Typing and online status](#Typing%20and%20online%20status)
 - [Finding your way in a long list](#Finding%20your%20way%20in%20a%20long%20list)
 - [Chat options](#Chat%20options)
-- [Soft lock](#Soft%20lock)
+- [Private chats](#Private%20chats)
 - [Contact details](#Contact%20details)
 - [Deleting chats and messages](#Deleting%20chats%20and%20messages)
 - [Messages and media](#Messages%20and%20media)
@@ -119,7 +119,7 @@ Global:
 | Ctrl+D | Toggle do not disturb |
 | Alt+I | [Contact details](#contact-details) of the selected chat in the list, otherwise of the open chat |
 | Ctrl+L | Start the screensaver |
-| Ctrl+Shift+L or Alt+L | Soft-lock the open or selected chat (blur it), or show it again; see [Soft lock](#soft-lock) |
+| Ctrl+Shift+L or Alt+L | Make the open or selected chat private, or public again; a private chat opens only with [Touch ID](https://en.wikipedia.org/wiki/Touch_ID) or the lock password (see [Private chats](#private-chats)) |
 | Alt+T | Show voice note transcripts in the open chat: as the setting says, always, never; see [Voice notes](#voice-notes) |
 | PgUp / PgDn | Scroll the conversation (PgUp loads older messages at the top) |
 | F2 | Settings |
@@ -137,7 +137,7 @@ Chat list:
 | Esc or ← | Clear the search, or leave a folder and return to the chats |
 | / | Open an empty search bar |
 | Enter, ← or → on a group header | Fold or unfold the Pinned or Chats group |
-| Alt+O | Chat options (mute, pin, archive, theme, tone, soft lock, delete, draft) |
+| Alt+O | Chat options (mute, pin, archive, theme, tone, private, delete, draft) |
 | Alt+M | Mute or unmute the chat |
 | Alt+P | Pin or unpin the chat |
 | Alt+A | Archive the chat, or move it back to the chats |
@@ -245,7 +245,8 @@ Type a command at the start of the input. Suggestions appear above the input as 
 | `/dnd` | | Toggle do not disturb |
 | `/screensaver` | | Start the screensaver now |
 | `/lock` | | Start the screensaver now |
-| `/softlock` | | Blur this chat, or show it again |
+| `/private` | | Make this chat private, or public again (see [Private chats](#private-chats)) |
+| `/lockpassword` | | Change the lock password for private chats; Touch ID or the current password comes first |
 | `/transcripts` | | Show voice note transcripts in this chat: as the setting says, always or never (the same as Alt+T; see [Voice notes](#voice-notes)) |
 | `/clear` | | Clear the input, the attachment, the reply and this chat's draft |
 | `/settings` | | Open settings |
@@ -320,7 +321,7 @@ Archived and locked chats live in their own folders and never appear among the r
 
 Opening a chat marks it read on your phone as well, unless read receipts are turned off.
 
-When tawk starts it opens the chat you had open when it last quit, so you can carry on where you left off. A chat deleted since, or one in Locked chats, is skipped. Turn this off with Settings, Chats, Reopen last chat (`reopen_last_chat`).
+When tawk starts it opens the chat you had open when it last quit, so you can carry on where you left off. A chat deleted since, one in Locked chats, or a private chat is skipped. Turn this off with Settings, Chats, Reopen last chat (`reopen_last_chat`).
 
 Each chat keeps its own draft. Whatever you have typed stays with the chat when you switch to another one or quit, and comes back when you return. `/clear` or the chat options remove it.
 
@@ -330,7 +331,7 @@ Each chat keeps its own draft. Whatever you have typed stays with the chat when 
 
 While you type in a chat, tawk tells the other person you are typing, and while you record a voice note it shows you as recording audio. When someone types to you, their chat's preview shows "typing…" (or "Name is typing…" in a group, or "recording audio…"), and in the open chat a small bubble on the last row, just above the input, says the same with three dots that light up in turn, as on the phone. Both directions can be turned off: "Share typing" (`share_typing`) stops tawk sending your state, and "Appear online" (`appear_online`) stops tawk showing you as online. WhatsApp only delivers other people's typing notices while you appear online. tawk shows you offline after two minutes without input, while the screensaver runs, and when it quits.
 
-Under the name of an open one-to-one chat, tawk says "online" when the other person is on WhatsApp, and otherwise when they were last seen: "last seen today at 14:32", "last seen yesterday at 9:10", a weekday within the week, or a date. The line appears a moment after you open the chat and follows them as they come and go. It needs "Appear online" on, since WhatsApp only tells you about others while you show as online yourself, and it shows only what the person shares: someone who hides their last seen shows "online" or nothing, and then their about text stays in that place as before. Groups have no online status, and a soft-locked chat shows none. "Show online status" (`show_online`) turns the line off.
+Under the name of an open one-to-one chat, tawk says "online" when the other person is on WhatsApp, and otherwise when they were last seen: "last seen today at 14:32", "last seen yesterday at 9:10", a weekday within the week, or a date. The line appears a moment after you open the chat and follows them as they come and go. It needs "Appear online" on, since WhatsApp only tells you about others while you show as online yourself, and it shows only what the person shares: someone who hides their last seen shows "online" or nothing, and then their about text stays in that place as before. Groups have no online status, and a locked private chat shows none. "Show online status" (`show_online`) turns the line off.
 
 Agents are not told who is online unless you switch on "Push online status" under Settings, Automation, Agent events. With it on, an agent that listens hears when the person in a chat you opened comes online or leaves, for the chats it may use.
 
@@ -387,27 +388,61 @@ Press Alt+O on a chat in the list or in the conversation, or right-click a chat.
 | Notification tone: none | No sound for this chat (other alerts still apply) |
 | Notification tone: default | Go back to the sound in Settings, Notifications |
 | Clear draft | Shown when the chat has an unsent draft |
-| Soft-lock chat / Show chat | Blur the conversation (see [Soft lock](#soft-lock)) |
+| Make private / Make public | Make the chat private, or public again (see [Private chats](#private-chats)) |
 | Contact info… | Open the [contact details](#contact-details) |
 | Delete chat… | Delete the whole chat everywhere, after a confirmation (see below) |
 
 Mutes, pins, archiving from tawk, tones and chat themes are kept on this computer and are not sent to your phone.
 
-<a id="Soft lock"></a>
+<a id="Private chats"></a>
 
-## Soft lock
+## Private chats
 
-A soft lock hides a chat from people looking over your shoulder. Press **Ctrl+Shift+L** (or **Alt+L**, which works in every terminal, and Option+L on a Mac; see [Alt shortcuts on a Mac](#alt-shortcuts-on-a-mac)), type `/softlock`, or choose "Soft-lock chat" in the chat options. In the chat list it acts on the selected chat, elsewhere on the open one.
+A private chat opens only after you prove it is you: with [Touch ID](https://en.wikipedia.org/wiki/Touch_ID) on a Mac that has it, or with tawk's own lock password, which works everywhere. On Linux, in WSL and in builds made with `BIOMETRICS=0` there is only the password. Use it for chats you do not want seen by whoever sits down at your terminal, or looks over your shoulder.
 
-![A soft-locked chat: the conversation is drawn as shaded shapes](docs/images/softlock.png)
+![A locked private chat: the row and the conversation are drawn as shaded shapes](docs/images/private-chat.png)
 
-While a chat is soft-locked:
+**Making a chat private.** Press **Alt+L** (Option+L on a Mac, or **Ctrl+Shift+L** where your terminal reports it; see [Alt shortcuts on a Mac](#alt-shortcuts-on-a-mac)), type `/private`, choose "Make private" in the chat options, or choose "Private: on" on the contact card. In the chat list it acts on the selected chat, elsewhere on the open one. The first time, when no lock password is set yet, tawk asks for one in a "Set a lock password" window: type it twice. It must be at least 4 characters and at most 256 bytes. Once a password is set, making a chat private happens at once, and the chat locks at once.
 
-- its conversation is drawn as shaded shapes where the text, names, times and pictures were;
-- the chat list shows 🙈 in front of its name and "Soft-locked" instead of the last message or typing;
-- search leaves its messages out, and the tab title shows 🙈 instead of its name.
+![Set a lock password: two masked fields](docs/images/private-lock-password.png)
 
-The lock is saved, so the chat is still hidden after tawk restarts. It is not a password: anyone at the keyboard can show the chat again with the same key. Notifications and unread counts still work.
+**Making it public again.** "Make public", Alt+L again, or `/private` again. This always asks for Touch ID or the password first, even when the chat is unlocked at that moment.
+
+**Opening a private chat.** From the list, from search results or from any jump, tawk first shows a window headed "To open a private chat". On a Mac with Touch ID it says "Touch ID…" and the system's own Touch ID sheet appears, with a "Use tawk password" button. Press **Tab** in tawk's window, or the button, to use the password instead.
+
+![The unlock window waiting for Touch ID](docs/images/private-unlock.png)
+
+Without Touch ID, or after Tab, the button or a finger that was not recognised, the window asks "Type the lock password" and shows one `*` for each character you type.
+
+![The unlock window asking for the lock password](docs/images/private-password.png)
+
+A wrong password says "Wrong password". The first two wrong tries cost nothing; after that each try makes you wait longer, starting at 1 second and doubling up to a minute ("Wrong password. Try again in 5 s"). The count starts again when tawk restarts. Esc cancels and leaves the chat locked. Until the check passes, nothing of the chat is loaded and no read receipts are sent.
+
+Over [SSH](https://en.wikipedia.org/wiki/Secure_Shell) (when `SSH_CONNECTION` or `SSH_TTY` is set) tawk does not offer Touch ID, because the sheet would appear on the Mac's own screen instead of in your terminal. The password is asked at once.
+
+**When it locks again.** Only one private chat is unlocked at a time. It locks again when you open another chat, when the screensaver starts, when tawk locks (Ctrl+L or `/lock` with [encrypted chats](#encrypting-your-chats)), when you switch account, and when tawk quits. A chat merged across accounts is unlocked on every account it is on, together. tawk never reopens a private chat by itself at start-up, whatever "Reopen last chat" says.
+
+**What a locked private chat shows.**
+
+- The chat list shows 🔒 in front of the name and "Private" instead of the last message, typing or draft, with a `?` badge in place of the picture.
+- The conversation shows only the shapes of the messages, as shaded bands. Voice note transcripts and TL;DR summaries are drawn the same way.
+- There is no subtitle (no online status, last seen or about text), no typing notice, and the profile picture viewer refuses to open.
+- The tab title shows 🔒 instead of the name.
+- The contact card shows the name, "🔒 Private in tawk" and "Open the chat to see more".
+
+Once the chat is unlocked it shows normally; only the 🔒 before its name stays. Notifications and unread counts work as before.
+
+**Search and export.** tawk's own search leaves out the messages of locked private chats, and includes those of the one that is unlocked. Exporting a private chat from its contact card asks for Touch ID or the password every time, even when the chat is open and unlocked, and writes nothing until it passes.
+
+**Summaries and transcripts.** TL;DR summaries and voice note transcription never run for a private chat.
+
+**The lock password.** Type `/lockpassword` to change it. tawk asks for Touch ID or the current password first, then for the new one twice ("Change the lock password"). Because Touch ID is accepted, Touch ID also gets you back in if you forget the password. There is no settings row for the password itself. The row "Touch ID for private chats" (`private_touch_id`, in Settings, Screensaver) turns Touch ID on or off; the password always works. An agent cannot change that setting.
+
+The password belongs to this computer. It is stored as a salted hash, not as text, and account export and import leave it behind. A private chat moved to another computer stays private there; on a computer with no lock password yet, opening it asks you to set one (or to use Touch ID there).
+
+**Agents.** Agents connected to tawk see private chats like any other chat: they can list, read and search them. What keeps a chat from agents is the per-chat agent rule "hidden", WhatsApp's Locked folder, and the `chats` setting under Automation. An agent can never make a chat private or public; only you can, in tawk.
+
+Private is a screen gate, not encryption. Read [SECURITY](SECURITY.md) for what it does and does not protect.
 
 Windows Terminal sends Ctrl+Shift+L the same way as Ctrl+L, so tawk cannot tell them apart there. Alt+L always works; to use Ctrl+Shift+L, add this action to Windows Terminal's settings.json (Settings, Open JSON file):
 
@@ -433,14 +468,14 @@ Press **Alt+I**, type `/info`, click the chat's name in the title bar, or choose
 
 </td></tr><tr><td>A person</td><td>A group</td></tr></table>
 
-For a person it shows the picture, name, phone number and about text, and for a business account its verified name, category, address and email. For a group it shows the description, who created it and when, and every member, with admins marked. Notes such as blocked, muted, pinned, soft-locked or a chat theme appear under the name. The details scroll with the wheel, PgUp and PgDn; the actions stay at the bottom, chosen with ↑ ↓ and Enter or a click. Esc, q or a click outside closes the panel.
+For a person it shows the picture, name, phone number and about text, and for a business account its verified name, category, address and email. For a group it shows the description, who created it and when, and every member, with admins marked. Notes such as blocked, muted, pinned, private or a chat theme appear under the name. A private chat that is still locked shows only its name, "🔒 Private in tawk" and "Open the chat to see more": no picture, about text or group description. The details scroll with the wheel, PgUp and PgDn; the actions stay at the bottom, chosen with ↑ ↓ and Enter or a click. Esc, q or a click outside closes the panel.
 
 | Action | Effect |
 |---|---|
 | View profile picture | Opens the picture full size and square (click the picture in the panel or the title bar for the same); Esc closes it |
 | Search messages | Opens search |
 | Chat options | Opens the chat options for this chat |
-| Soft-lock chat / Show chat | See [Soft lock](#soft-lock) |
+| Private: on / Private: off | Makes the chat private or public (see [Private chats](#private-chats)) |
 | Export chat | Writes the chat as `tawk chat with NAME.txt` to your Downloads folder, in the same format as WhatsApp's own export |
 | Export chat with media | The same, in a folder `tawk chat with NAME` together with every downloaded photo, video, voice note and file |
 | Block / Unblock | People only. Blocking asks first; a blocked contact can no longer call you or send you messages, on any of your devices |
@@ -731,7 +766,7 @@ Three things decide what you see:
 
 With several agents connected, a voice note goes to the one running the newest corvus-tawk-mcp. Older voice notes are filled in as you look at them. While "Transcribe voice notes as they arrive" is on, a voice note from someone else that comes onto the screen without a transcript is handed to the transcriber, and its words appear when they are ready. tawk does not go through a whole chat by itself: only what you scroll to. A voice note WhatsApp no longer holds cannot be fetched, and stays as it is.
 
-Hiding transcripts removes nothing, and "Show transcript" in the message menu works whether they are shown or not. A transcript is removed with its message: when you delete it, when the sender deletes it for everyone, and when you clear or delete the chat. A soft-locked chat shows the shape of a transcript only, and takes no new ones while it is locked.
+Hiding transcripts removes nothing, and "Show transcript" in the message menu works whether they are shown or not. A transcript is removed with its message: when you delete it, when the sender deletes it for everyone, and when you clear or delete the chat. A private chat never has voice notes transcribed, and while it is locked it shows only the shape of a transcript.
 
 To send one, open a chat and press **Ctrl+R** (or type `/voice`). The line above the input turns into a blinking `● REC 0:07` counter, and the other person sees that you are recording audio. Press **Enter** to send or **Esc** to discard. Recordings shorter than about a second are discarded, and recording stops and sends at the maximum length (5 minutes by default).
 
@@ -749,7 +784,7 @@ Some chats are full of long messages. Put one in TL;DR mode and each long messag
 
 A message that has no summary yet shows in full, as it always did, and changes to its summary when one arrives. Older messages are filled in too: when you switch TL;DR on for a chat, and the first time you open such a chat after starting tawk, its messages of the last 30 days (Settings, Chats, TL;DR back, `tldr_back_days`) are handed to the agent, newest first, a few at a time. Anything older is summarised when you scroll to it. Set the days to 0 to have only what you look at summarised. Voice notes and pictures are never summarised; a voice note has its transcript.
 
-**Who writes the summaries.** tawk has no model of its own. A connected agent's model writes them: tawk tells the agent which message waits, and the agent hands the summary back. So TL;DR needs [Agent access](#automation-and-mcp) on and an agent connected that can write summaries (corvus-tawk-mcp 0.10.0 or later, started so that it takes channel events), and the text of that chat's messages goes to the service that runs that agent's model without you asking each time. A chat agents may not see, and a locked or soft-locked chat, is never summarised.
+**Who writes the summaries.** tawk has no model of its own. A connected agent's model writes them: tawk tells the agent which message waits, and the agent hands the summary back. So TL;DR needs [Agent access](#automation-and-mcp) on and an agent connected that can write summaries (corvus-tawk-mcp 0.10.0 or later, started so that it takes channel events), and the text of that chat's messages goes to the service that runs that agent's model without you asking each time. A chat agents may not see, and a private chat, is never summarised.
 
 **Which agent.** In the Agentic tab's Agents list, select an agent and press **d** to make it your default agent; it is marked `★ DEFAULT`, and pressing d on it again takes the choice back. tawk remembers the choice by the agent's label, so it holds when that agent connects again. Then:
 
@@ -862,7 +897,7 @@ When a message arrives in a chat that is not open, tawk can:
 - ring the terminal bell (Windows Terminal flashes the taskbar),
 - flash the screen.
 
-The tab title follows what is going on, like `🟢 tawk · Mom · 💬 3  📷 1`. It names the open chat and, while something is happening, says what with a spinning braille glyph in front: `⠼ Loading older messages · Dev team`, `⠹ Connecting…`, `Recording 0:07`. While someone types to you the tab moves like the typing dots in a chat: ✍️ and 💬 take turns in front and the dots after `Jan is typing` count up and start again. It follows the open chat first and otherwise any chat where someone is typing (`Mom is typing`, or `Dev team: Jan is typing` for a group); soft-locked chats are left out. Unread counts per type follow at the end and alternate with `✉ 3 new` while new messages wait. The leading symbol shows the status: 🟢 online, 🟡 connecting, 🔴 unavailable, 🔗 not linked, 🔕 do not disturb, 🔴REC recording, 🎧 playing. In Windows Terminal the tab also shows a spinning progress ring while reconnecting and a red one while retries are paused.
+The tab title follows what is going on, like `🟢 tawk · Mom · 💬 3  📷 1`. It names the open chat and, while something is happening, says what with a spinning braille glyph in front: `⠼ Loading older messages · Dev team`, `⠹ Connecting…`, `Recording 0:07`. While someone types to you the tab moves like the typing dots in a chat: ✍️ and 💬 take turns in front and the dots after `Jan is typing` count up and start again. It follows the open chat first and otherwise any chat where someone is typing (`Mom is typing`, or `Dev team: Jan is typing` for a group); locked private chats are left out. Unread counts per type follow at the end and alternate with `✉ 3 new` while new messages wait. The leading symbol shows the status: 🟢 online, 🟡 connecting, 🔴 unavailable, 🔗 not linked, 🔕 do not disturb, 🔴REC recording, 🎧 playing. In Windows Terminal the tab also shows a spinning progress ring while reconnecting and a red one while retries are paused.
 
 **Choosing the sound.** tawk comes with nine short sounds in its `sounds` folder (`/usr/local/share/corvus-tawk/sounds/`, or `~/.local/share/corvus-tawk/sounds/` when installed under your home): `notify` (the default), `bong`, `pluck`, `glass`, `drop`, `open`, `question`, `rise` and `confirm`. Settings, Notifications, Sound, **Choose sound** lists them (0.31.0): moving through the list plays each one, Enter keeps it and Esc leaves the sound you had. Give one chat its own with `/tone` and a name, such as `/tone bong`, or with no argument for the file picker. Any WAV or OGG file of your own works too: put it in `~/.config/corvus/tawk/sounds/` and it appears in the list (a file there with a bundled name replaces the bundled one), or type its path into **Sound file**, which is still there for a file kept anywhere else.
 
@@ -1096,7 +1131,7 @@ Press F2, click ⚙ or type `/settings`. The panel is a set of menus:
 | 🔔 Notifications | Alerts, Sound, Visual submenus, test buttons |
 | 🎨 Appearance | Theme picker; Layout with chat list style, space between chats, sidebar width and start collapsed, clock, photo previews, profile pictures, mouse and the startup splash |
 | 🖼 Media | Photos and videos, Voice notes |
-| 🌙 Screensaver | On/off, idle minutes, command, wake on message, start now |
+| 🌙 Screensaver | On/off, lock after minutes, Touch ID for private chats, idle minutes, command, wake on message, start now |
 | 🔌 Connection | Status, reconnect, backend, resilience |
 | 🤖 Automation | Agent access (MCP) on or off with its current state, what agents may do, which chats, whether your shell commands ask too, writes per minute, and a summary of what it needs and the risks |
 | ⚙ Advanced | Config file location, data folder, log level, Clear logs (asks first) |
@@ -1380,7 +1415,7 @@ Open Settings (F2), 🤖 Automation, and switch on **Agent access (MCP)**. tawk 
 
 - **What it needs:** tawk running with the switch on, and corvus-tawk-mcp added to your MCP client (see [corvus-tawk-mcp](#corvus-tawk-mcp)) or a tawk shell command.
 - **The risks:** chat text an agent reads goes to the service its model runs on; a message someone sends you can try to steer the agent (prompt injection); anything you allow goes out as you.
-- **The guards:** reads never change anything; every send or change waits for your answer in the Agentic tab; deletes and blocks need a yes in the agent's app and a Y in tawk; locked and soft-locked chats are never shown; everything is logged; and an agent can never change these settings or any setting that runs a program.
+- **The guards:** reads never change anything; every send or change waits for your answer in the Agentic tab; deletes and blocks need a yes in the agent's app and a Y in tawk; chats in WhatsApp's Locked folder, and chats you hide from agents with the agent rule "hidden", are never shown, while private chats are shown like any other; everything is logged; and an agent can never change these settings or any setting that runs a program.
 
 The same submenu sets how far agents may go:
 
@@ -1625,7 +1660,7 @@ Each line is marked ✓ (fine), `!` (optional, with a hint such as `sudo apt ins
 | Profile pictures show as initials | The terminal does not support Sixel, and chat-list badges are too small for block pictures; use a Sixel terminal such as iTerm2 3.5+ or WezTerm, or set `image_mode = sixel` in the `[appearance]` section of the config file if yours supports it |
 | Boxes or emoji look wrong | Use a UTF-8 locale (`locale` should show UTF-8) and a font with emoji, such as Cascadia Code in Windows Terminal |
 | No photo previews | Previews need 256 colours (`TERM=xterm-256color`); check Settings, Appearance, Layout, Photo previews |
-| Ctrl+Shift+L starts the screensaver instead of soft-locking | Your terminal sends it like Ctrl+L; use Alt+L, or add the Windows Terminal action shown under [Soft lock](#soft-lock) |
+| Ctrl+Shift+L starts the screensaver instead of making the chat private | Your terminal sends it like Ctrl+L; use Alt+L, or add the Windows Terminal action shown under [Private chats](#private-chats) |
 | PDFs show a blank page | Install poppler (`sudo apt install poppler-utils`); `corvus-tawk --doctor` checks for it |
 | Alt+V says there is no picture | Copy the picture again; check `corvus-tawk --doctor` lists a clipboard tool (install `wl-clipboard` or `xclip`) |
 | Photos show as garbage text or not at all | The terminal does not support Sixel; set `image_mode = blocks` in the `[appearance]` section of the config file |
