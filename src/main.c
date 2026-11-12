@@ -18,6 +18,7 @@
 #include "resource_access/sqlite_account_roster_reader.h"
 #include "resource_access/sqlite_sent_id_log.h"
 #include "resource_access/sqlite_label_store.h"
+#include "resource_access/sqlite_lock_secret_store.h"
 #include "resource_access/sqlite_reminder_store.h"
 #include "managers/label_manager.h"
 #include "managers/reminder_manager.h"
@@ -29,6 +30,7 @@
 #include "infrastructure/ffmpeg_video_poster.h"
 #include "infrastructure/ifaddrs_network_monitor.h"
 #include "infrastructure/media_cache_janitor.h"
+#include "infrastructure/no_biometric_authenticator.h"
 #include "infrastructure/osc52_clipboard.h"
 #include "infrastructure/osc_terminal_title.h"
 #include "infrastructure/pipeline_audio_recorder.h"
@@ -50,11 +52,13 @@
 #include "infrastructure/stored_passphrase_prompt.h"
 #include "infrastructure/terminal_passphrase_prompt.h"
 #include "infrastructure/terminal_graphics.h"
+#include "infrastructure/touch_id_authenticator.h"
 #include "managers/account_manager.h"
 #include "managers/account_roster_manager.h"
 #include "managers/automation_manager.h"
 #include "managers/media_manager.h"
 #include "managers/messaging_manager.h"
+#include "managers/privacy_manager.h"
 #include "managers/account_export_manager.h"
 #include "managers/account_import_manager.h"
 #include "managers/backup_manager.h"
@@ -102,6 +106,7 @@
 #include "utilities/log.h"
 #include "utilities/instance_lock.h"
 #include "utilities/path_util.h"
+#include "utilities/platform.h"
 #include "utilities/str_util.h"
 
 #include <locale.h>
@@ -602,6 +607,15 @@ int main(int argc, char **argv) {
     ICamera *camera = ffmpeg_camera_create();
     MediaManagerDeps media_deps = { opener, voice_player, recorder, camera, audio, s };
     MediaManager *media = media_manager_create(&media_deps);
+    /* Private chats: the lock password is kept for the whole computer, and Touch ID is used where the Mac has it. */
+    ILockSecretStore *lock_secrets = sqlite_lock_secret_store_create(db);
+#ifdef APP_WITH_BIOMETRICS
+    IBiometricAuthenticator *biometrics = platform_is_macos() ? touch_id_authenticator_create() : no_biometric_authenticator_create();
+#else
+    IBiometricAuthenticator *biometrics = no_biometric_authenticator_create();
+#endif
+    PrivacyManagerDeps privacy_deps = { lock_secrets, biometrics, s };
+    PrivacyManager *privacy = privacy_manager_create(&privacy_deps);
 
     /* Client */
     int cell_w, cell_h;
@@ -619,7 +633,7 @@ int main(int argc, char **argv) {
         .automation = automation, .approvals = approvals, .frame_hook = control ? control_server_frame_hook(control) : NULL,
         .directory = directory, .roster = roster, .active_account = active->id,
         .transcripts = active->transcripts, .summaries = active->summaries,
-        .crypt = crypt, .labels = labels, .reminders = reminders,
+        .crypt = crypt, .labels = labels, .reminders = reminders, .privacy = privacy,
     };
     TuiApp *tui = tui_app_create(&tdeps);
     int exit_code = tui ? tui_app_run(tui) : 1;
@@ -627,6 +641,9 @@ int main(int argc, char **argv) {
     /* Teardown, reverse order. Closing the queue first unblocks a backend
      * that is waiting on back-pressure so it can shut down. */
     tui_app_destroy(tui);
+    privacy_manager_destroy(privacy);
+    if (biometrics) biometrics->destroy(biometrics);
+    if (lock_secrets) lock_secrets->destroy(lock_secrets);
     control_server_destroy(control);
     label_manager_destroy(labels);
     if (label_store) label_store->destroy(label_store);
