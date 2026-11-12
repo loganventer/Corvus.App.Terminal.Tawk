@@ -350,9 +350,21 @@ static const Migration MIGRATIONS[] = {
       /* An account moved here from another computer waits for the number it came from: whoever links
        * to it later must be that number, or its chats would end up on another person's WhatsApp. */
       "ALTER TABLE accounts ADD COLUMN expected_jid TEXT NOT NULL DEFAULT '';" },
+    { 28,
+      /* Soft lock becomes private: a chat that was soft-locked is now private, and opens only after
+       * Touch ID or the lock password. */
+      "ALTER TABLE chats RENAME COLUMN soft_locked TO is_private;" },
+    { 28,
+      /* The lock password for private chats, as a salted PBKDF2 hash: one row, or none until it is set.
+       * It belongs to this computer and never goes with an exported account. */
+      "CREATE TABLE lock_secret ("
+      "  id INTEGER PRIMARY KEY CHECK (id = 1),"
+      "  salt BLOB NOT NULL,"
+      "  iterations INTEGER NOT NULL,"
+      "  hash BLOB NOT NULL);" },
 };
 
-#define LATEST_VERSION 27
+#define LATEST_VERSION 28
 
 static int user_version(sqlite3 *db) {
     sqlite3_stmt *st = NULL;

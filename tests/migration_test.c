@@ -16,7 +16,7 @@ static int failures = 0;
 
 #define CHECK(cond, what) do { if (!(cond)) { fprintf(stderr, "FAIL: %s\n", what); failures++; } } while (0)
 
-#define LATEST 27
+#define LATEST 28
 
 static int scalar(sqlite3 *db, const char *sql) {
     sqlite3_stmt *st = NULL;
