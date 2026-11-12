@@ -1103,6 +1103,7 @@ void tui_app_open_help(TuiApp *app) {
                  "  F2                  settings\n"
                  "  Ctrl+Q              quit\n\n"
                  "  In the chat list:   type to search  Alt+O options  Alt+M mute  Alt+P pin  Alt+A archive\n"
+                 "  Alt+L               make the chat private or public; /lockpassword changes the lock password\n"
                  "  On a message:       Alt+Q reply  Alt+E react  Alt+Shift+E edit  Alt+M menu  Alt+R retry\n"
                  "                      Enter opens photos, videos and long messages; typing writes in the input\n"
                  "  In the input:       Enter send  Alt+Enter new line  \xE2\x86\x91\xE2\x86\x93 move between lines\n"

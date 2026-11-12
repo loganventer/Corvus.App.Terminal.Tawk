@@ -238,6 +238,7 @@ static const MenuNode KEYS[] = {
     TEXT("/               slash commands in the input (/help lists them)"),
     TEXT("type            search the chat list by name"),
     TEXT("Alt+O/M/P/A     chat options, mute, pin, archive (chat list)"),
+    TEXT("Alt+L           make the chat private or public (/lockpassword sets the password)"),
     TEXT("Alt+Q/E/M       reply, react, menu (selected message)"),
     TEXT("Alt+Shift+E     edit your message"),
     TEXT("Up (empty input) edit your last message, when it is the newest"),

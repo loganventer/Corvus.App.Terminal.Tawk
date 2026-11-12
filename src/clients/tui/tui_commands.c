@@ -147,7 +147,7 @@ static void cmd_info(TuiApp *app, const char *args) {
     tui_app_open_contact(app, jid);
 }
 
-static void cmd_softlock(TuiApp *app, const char *args) {
+static void cmd_private(TuiApp *app, const char *args) {
     (void)args;
     tui_app_toggle_private(app, messaging_manager_open_jid(app->deps.messaging));
 }
@@ -226,7 +226,7 @@ static const SlashCommand COMMANDS[] = {
     { "dnd",         "",                     "toggle do not disturb",           cmd_dnd },
     { "screensaver", "",                     "start the screensaver now",       cmd_screensaver },
     { "lock",        "",                     "lock until the passphrase is typed (encrypted chats), else the screensaver", cmd_lock },
-    { "softlock",    "",                     "blur this chat, or show it again", cmd_softlock },
+    { "private",     "",                     "make this chat private (Touch ID or the lock password opens it), or public again", cmd_private },
     { "transcripts", "",                     "show voice note transcripts in this chat: as the setting says, always, never", cmd_transcripts },
     { "info",        "",                     "contact or group details",        cmd_info },
     { "profile",     "",                     "your name, about and photo",      cmd_profile },
