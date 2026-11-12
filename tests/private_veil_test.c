@@ -16,6 +16,27 @@ static int failures;
 #define DIARY "27820000001@s.whatsapp.net"
 #define MOM   "27820000002@s.whatsapp.net"
 
+static void save(Harness *h, const char *id, const char *jid, const char *text, int64_t ts) {
+    Message m;
+    message_init(&m);
+    str_copy(m.id, sizeof(m.id), id);
+    str_copy(m.chat_jid, sizeof(m.chat_jid), jid);
+    m.timestamp = ts;
+    message_set_text(&m, text);
+    h->accounts[0].messages->save(h->accounts[0].messages, &m);
+    message_dispose(&m);
+}
+
+static int search_finds(Harness *h, const char *query, const char *id) {
+    Message *hits = NULL;
+    int n = 0;
+    tui_app_private_search(h->app, query, 50, &hits, &n);
+    int yes = 0;
+    for (int i = 0; i < n; i++) if (!strcmp(hits[i].id, id)) yes = 1;
+    message_array_free(hits, n);
+    return yes;
+}
+
 static int pane_veiled(Harness *h) {
     return tui_app_private_veiled(h->app, messaging_manager_open_chat_info(h->app->deps.messaging));
 }
@@ -87,8 +108,13 @@ int main(void) {
     chat_subtitle_text(settings_manager_current(h.settings), open, pane_veiled(&h), "about text", 0, out, sizeof(out));
     CHECK(!strcmp(out, "about text"), "and its subtitle shows again");
 
+    save(&h, "D1", DIARY, "the braai was lovely", 200);
+    save(&h, "M1", MOM, "braai on Sunday?", 100);
+    CHECK(search_finds(&h, "braai", "D1") && search_finds(&h, "braai", "M1"), "tawk's search lists an unlocked private chat's messages");
+
     tui_app_private_relock(h.app);
     CHECK(pane_veiled(&h), "locking it again veils it again");
+    CHECK(!search_finds(&h, "braai", "D1") && search_finds(&h, "braai", "M1"), "and a locked one's are left out of search");
     tui_app_show_portrait(h.app, DIARY);
     CHECK(!h.app->viewer.open, "and its picture cannot be opened full size");
 

@@ -7,6 +7,7 @@
 #include "utilities/clock_util.h"
 #include "utilities/str_util.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 static AccountId seen_through(const TuiApp *app, const Chat *chat) {
@@ -84,6 +85,42 @@ int tui_app_private_gate_export(TuiApp *app, const char *jid, int with_media) {
     r.with_media = with_media;
     tui_app_request_private(app, &r);
     return 1;
+}
+
+static int newest_first(const void *a, const void *b) {
+    int64_t x = ((const Message *)a)->timestamp, y = ((const Message *)b)->timestamp;
+    return x < y ? 1 : x > y ? -1 : 0;
+}
+
+int tui_app_private_search(TuiApp *app, const char *query, int limit, Message **out, int *count) {
+    *out = NULL;
+    *count = 0;
+    MessagingManager *mm = app->deps.messaging;
+    if (messaging_manager_search(mm, query, limit, 0, out, count) != 0) return -1;
+    if (app->privacy.session.count == 0) return 0;
+    /* The unlocked chat's messages may be searched too: they are asked for with private chats, and only its are kept. */
+    Message *more = NULL;
+    int found = 0;
+    if (messaging_manager_search(mm, query, limit, 1, &more, &found) != 0 || !more) return 0;
+    if (found == 0) { free(more); return 0; }
+    Message *all = realloc(*out, sizeof(Message) * (size_t)(*count + found));
+    if (!all) { message_array_free(more, found); return 0; }
+    *out = all;
+    for (int i = 0; i < found; i++) {
+        const Chat *chat = find_chat(app, more[i].chat_jid);
+        if (chat && chat->is_private && private_chat_policy_tui_searchable(chat, app->deps.active_account, &app->privacy.session)) {
+            all[(*count)++] = more[i];                       /* moved, not copied: it is not disposed below */
+        } else {
+            message_dispose(&more[i]);
+        }
+    }
+    free(more);
+    qsort(all, (size_t)*count, sizeof(Message), newest_first);
+    if (*count > limit) {
+        for (int i = limit; i < *count; i++) message_dispose(&all[i]);
+        *count = limit;
+    }
+    return 0;
 }
 
 void tui_app_leave_private(TuiApp *app, AccountId account, const char *jid) {

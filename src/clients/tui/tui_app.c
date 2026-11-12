@@ -990,7 +990,7 @@ void tui_app_open_search(TuiApp *app, const char *query) {
 void tui_app_run_search(TuiApp *app) {
     Message *results = NULL;
     int count = 0;
-    if (app->search.query[0]) messaging_manager_search(app->deps.messaging, app->search.query, 100, 0, &results, &count);
+    if (app->search.query[0]) tui_app_private_search(app, app->search.query, 100, &results, &count);
     search_overlay_set_results(&app->search, results, count);
 }
 

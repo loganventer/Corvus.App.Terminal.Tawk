@@ -279,6 +279,8 @@ void tui_app_export_chat(TuiApp *app, const char *jid, int with_media);
 void tui_app_export_chat_now(TuiApp *app, const char *jid, int with_media);
 /* 1 when exporting `jid` must wait for an unlock, which is then asked for. */
 int  tui_app_private_gate_export(TuiApp *app, const char *jid, int with_media);
+/* tawk's own search: private chats are left out, except the one that is unlocked. Caller frees with message_array_free. */
+int  tui_app_private_search(TuiApp *app, const char *query, int limit, Message **out, int *count);
 /* Every private chat locks again, and any unlock being asked for is dropped: on the screensaver, the app lock, an account switch and quit. */
 void tui_app_private_relock(TuiApp *app);
 /* Opens a chat without asking. Only for one that needs no unlock, or that the guard let through. */
