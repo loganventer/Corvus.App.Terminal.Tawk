@@ -19,8 +19,10 @@
 #include "clients/tui/confirm_dialog.h"
 #include "clients/tui/footer_bar.h"
 #include "clients/tui/header_bar.h"
+#include "clients/tui/lock_password_dialog.h"
 #include "clients/tui/mention_suggestions.h"
 #include "clients/tui/message_view.h"
+#include "clients/tui/private_unlock_dialog.h"
 #include "clients/tui/profile_dialogs.h"
 #include "clients/tui/scheduled_list_dialog.h"
 #include "clients/tui/settings_panel.h"
@@ -567,7 +569,46 @@ static void conversation_scene(void) {
     draw_chat(INPUT_HINTS);
     message_view_render(&view, chat_area(), msgs, n, &ctx);
     save("scheduled-bubble");
+
+    /* The same group made private and locked: its row and its conversation are veiled shapes, nothing to read. */
+    Chat *dev = NULL;
+    for (int i = 0; i < s_chat_count; i++) if (!strcmp(s_chats[i].jid, "120363000000000001@g.us")) dev = &s_chats[i];
+    if (dev) dev->is_private = 1;
+    ctx.scheduled = NULL;
+    ctx.scheduled_count = 0;
+    ctx.veiled = 1;
+    ctx.title = "\xF0\x9F\x94\x92 Dev team";
+    ctx.subtitle = "";
+    message_view_init(&view);
+    draw_chat(INPUT_HINTS);
+    message_view_render(&view, chat_area(), msgs, n, &ctx);
+    save("private-chat");
     for (int i = 0; i < n; i++) message_dispose(&msgs[i]);
+
+    /* Opening it: Touch ID first, then the lock password; neither shows anything of the chat. */
+    PrivateUnlockDialog unlock;
+    private_unlock_dialog_open(&unlock, UNLOCK_FOR_OPEN, 1);
+    draw_app(LIST_HINTS);
+    private_unlock_dialog_render(&unlock, body(), 0);
+    save("private-unlock");
+    private_unlock_dialog_show_password(&unlock);
+    for (const char *c = "correct horse"; *c; c++) private_unlock_dialog_key(&unlock, 0, (unsigned char)*c, 0);
+    draw_app(LIST_HINTS);
+    private_unlock_dialog_render(&unlock, body(), 0);
+    save("private-password");
+    private_unlock_dialog_close(&unlock);
+
+    /* The first time a chat is made private, the lock password is set. */
+    LockPasswordDialog set;
+    lock_password_dialog_open(&set, 1);
+    for (const char *c = "correct horse"; *c; c++) lock_password_dialog_key(&set, 0, (unsigned char)*c);
+    lock_password_dialog_key(&set, 0, '\t');
+    for (const char *c = "correct"; *c; c++) lock_password_dialog_key(&set, 0, (unsigned char)*c);
+    draw_app(LIST_HINTS);
+    lock_password_dialog_render(&set, body());
+    save("private-lock-password");
+    lock_password_dialog_close(&set);
+    if (dev) dev->is_private = 0;
 }
 
 static void chat_title(void *ctx, const char *jid, char *out, size_t size) {
@@ -761,8 +802,10 @@ static void agents_scenes(void) {
     status.cli_sessions = 1;
     status.waiting = approval_queue_count(q);
     str_copy(status.socket_path, sizeof(status.socket_path), "/run/user/1000/corvus/tawk/control.sock");
-    status.sessions[0] = (AutomationSession){ 3, "corvus-tawk-mcp", CONTROL_ORIGIN_MCP, (int64_t)time(NULL) - 95 * 60, 38, 2, 0 };
-    status.sessions[1] = (AutomationSession){ 5, "tawk", CONTROL_ORIGIN_CLI, (int64_t)time(NULL) - 3 * 60, 1, 0, 0 };
+    status.sessions[0] = (AutomationSession){ .conn = 3, .client = "corvus-tawk-mcp", .origin = CONTROL_ORIGIN_MCP,
+                                              .since = (int64_t)time(NULL) - 95 * 60, .requests = 38, .allowances = 2 };
+    status.sessions[1] = (AutomationSession){ .conn = 5, .client = "tawk", .origin = CONTROL_ORIGIN_CLI,
+                                              .since = (int64_t)time(NULL) - 3 * 60, .requests = 1 };
     status.session_count = 2;
 
     AutomationEntry log[] = {
@@ -876,7 +919,8 @@ static void settings_scene(IThemeRepository *themes, const int *path, int depth,
     s_shown_settings.automation_push_read = 1;
     s_shown_settings.automation_push_reactions = 1;
     str_copy(s_shown_settings.automation_access, sizeof(s_shown_settings.automation_access), "admin");
-    SettingsPanelHost host = { themes, shown_settings, shown_apply, shown_themes, shown_preview, shown_action, shown_info };
+    SettingsPanelHost host = { .ctx = themes, .settings = shown_settings, .apply = shown_apply, .themes = shown_themes,
+                               .preview_theme = shown_preview, .run_action = shown_action, .info = shown_info };
     static SettingsPanel panel;
     settings_panel_init(&panel, host);
     settings_panel_open(&panel);
