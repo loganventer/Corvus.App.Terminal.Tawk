@@ -27,21 +27,21 @@ int main(void) {
 
     LockScreen l;
     memset(&l, 0, sizeof(l));
-    CHECK(lock_screen_key(&l, 0, 'a', 0) == LOCK_KEY_NONE && l.length == 0, "an unlocked screen takes no keys");
+    CHECK(lock_screen_key(&l, 0, 'a', 0) == LOCK_KEY_NONE && l.field.length == 0, "an unlocked screen takes no keys");
     lock_screen_lock(&l);
     CHECK(l.locked && lock_screen_key(&l, 0, '\n', 0) == LOCK_KEY_CHANGED, "Enter on an empty field checks nothing");
     type(&l, "hunter2");
-    CHECK(l.length == 7 && lock_screen_key(&l, 1, KEY_BACKSPACE, 0) == LOCK_KEY_CHANGED && l.length == 6, "typing fills the field and backspace takes one off");
-    CHECK(lock_screen_key(&l, 1, KEY_UP, 0) == LOCK_KEY_NONE && lock_screen_key(&l, 0, 3, 0) == LOCK_KEY_NONE && l.length == 6 && l.locked,
+    CHECK(l.field.length == 7 && lock_screen_key(&l, 1, KEY_BACKSPACE, 0) == LOCK_KEY_CHANGED && l.field.length == 6, "typing fills the field and backspace takes one off");
+    CHECK(lock_screen_key(&l, 1, KEY_UP, 0) == LOCK_KEY_NONE && lock_screen_key(&l, 0, 3, 0) == LOCK_KEY_NONE && l.field.length == 6 && l.locked,
           "arrows and control keys do nothing: there is no way round it");
     lock_screen_key(&l, 0, 0xE9, 0);                        /* é */
-    CHECK(l.length == 8 && (unsigned char)l.typed[6] == 0xC3 && (unsigned char)l.typed[7] == 0xA9, "a letter beyond ASCII is kept as UTF-8");
+    CHECK(l.field.length == 8 && (unsigned char)l.field.text[6] == 0xC3 && (unsigned char)l.field.text[7] == 0xA9, "a letter beyond ASCII is kept as UTF-8");
     lock_screen_key(&l, 1, KEY_BACKSPACE, 0);
-    CHECK(l.length == 6, "and goes in one backspace");
+    CHECK(l.field.length == 6, "and goes in one backspace");
     CHECK(lock_screen_key(&l, 0, '\r', 0) == LOCK_KEY_SUBMIT, "Enter with text asks for it to be checked");
     Passphrase p;
     lock_screen_take(&l, &p);
-    CHECK(p.length == 6 && !strcmp(p.text, "hunter") && l.length == 0 && l.typed[0] == '\0' && l.typed[3] == '\0', "what was typed is handed over and wiped from the field");
+    CHECK(p.length == 6 && !strcmp(p.text, "hunter") && l.field.length == 0 && l.field.text[0] == '\0' && l.field.text[3] == '\0', "what was typed is handed over and wiped from the field");
     lock_screen_wrong(&l, 1000);
     lock_screen_wrong(&l, 1000);
     CHECK(l.locked && l.failed == 2 && l.retry_at_ms == 1000, "a wrong passphrase leaves it locked");
@@ -50,10 +50,10 @@ int main(void) {
     CHECK(l.retry_at_ms == 2000 && lock_screen_key(&l, 0, '\n', 1500) == LOCK_KEY_CHANGED && lock_screen_key(&l, 0, '\n', 2000) == LOCK_KEY_SUBMIT,
           "after the third, Enter is not taken until the wait is over");
     lock_screen_unlock(&l);
-    CHECK(!l.locked && l.length == 0 && l.failed == 0, "the right one unlocks and forgets the count");
+    CHECK(!l.locked && l.field.length == 0 && l.failed == 0, "the right one unlocks and forgets the count");
     lock_screen_lock(&l);
     for (int i = 0; i < PASSPHRASE_MAX + 50; i++) lock_screen_key(&l, 0, 'a', 0);
-    CHECK(l.length == PASSPHRASE_MAX, "the field holds a passphrase and no more");
+    CHECK(l.field.length == PASSPHRASE_MAX, "the field holds a passphrase and no more");
 
     int found = 0, changeable = 1;
     for (int i = 0; i < settings_schema_count(); i++) {

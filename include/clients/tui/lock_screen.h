@@ -3,14 +3,14 @@
 
 #include <stdint.h>
 
+#include "clients/tui/masked_field.h"
 #include "core/passphrase.h"
 
 /* The screen that hides everything until the passphrase of your chats is
  * typed. It draws nothing of tawk: no chat, no name, no count. */
 typedef struct LockScreen {
     int     locked;
-    char    typed[PASSPHRASE_MAX + 1];
-    int     length;
+    MaskedField field;       /* what is being typed */
     int     failed;          /* wrong tries since it locked */
     int64_t retry_at_ms;     /* no try is taken before this */
 } LockScreen;
