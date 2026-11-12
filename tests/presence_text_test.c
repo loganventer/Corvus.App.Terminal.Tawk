@@ -40,7 +40,7 @@ static void test_text(void) {
 
 static int subtitle(const Settings *s, const Chat *c, const char *want) {
     char out[96] = "x";
-    chat_subtitle_text(s, c, "Hey there! I am using WhatsApp.", NOW, out, sizeof(out));
+    chat_subtitle_text(s, c, c && c->is_private, "Hey there! I am using WhatsApp.", NOW, out, sizeof(out));
     if (strcmp(out, want) != 0) fprintf(stderr, "  got \"%s\", wanted \"%s\"\n", out, want);
     return strcmp(out, want) == 0;
 }
@@ -65,13 +65,13 @@ static void test_subtitle(void) {
     CHECK(subtitle(&s, &mom, "Hey there! I am using WhatsApp."), "switched off, it is the about text again");
     s.show_online = 1;
     mom.is_private = 1;
-    CHECK(subtitle(&s, &mom, ""), "a soft-locked chat shows nothing at all");
+    CHECK(subtitle(&s, &mom, ""), "a locked private chat shows nothing at all");
     Chat family;
     chat_init(&family, "120363000000000001@g.us");
     family.presence = PRESENCE_ONLINE;
     CHECK(subtitle(&s, &family, "Hey there! I am using WhatsApp."), "a group is never online");
     char out[8] = "x";
-    chat_subtitle_text(&s, NULL, "about", NOW, out, sizeof(out));
+    chat_subtitle_text(&s, NULL, 0, "about", NOW, out, sizeof(out));
     CHECK(out[0] == '\0', "no chat, no line");
 }
 

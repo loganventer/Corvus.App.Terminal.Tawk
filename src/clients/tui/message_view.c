@@ -675,7 +675,7 @@ static void draw_row(const MessageView *v, const MessageRow *row, int y, UiRect 
     tui_fill((UiRect){ y, x, 1, row->width }, bubble);
     if (selected && x > r.x) tui_text(y, x - 1, 1, "\xE2\x96\x8C", conv(THEME_SLOT_ACCENT) | ATTR_BOLD);
     int room = row->width - 2;
-    if (ctx->veiled) {                                  /* soft lock: shapes only */
+    if (ctx->veiled) {                                  /* a locked private chat: shapes only */
         int veil = bubble | ATTR_DIM;
         switch (row->kind) {
             case MESSAGE_ROW_SENDER: text_veil_text(y, x + 1, room, m->sender_name, strlen(m->sender_name), veil); break;

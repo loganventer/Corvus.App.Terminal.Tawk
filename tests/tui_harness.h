@@ -91,7 +91,7 @@ static void harness_account(Harness *h, int i) {
 }
 
 /* A chat on account `index` (0 or 1), private or not. */
-static void harness_chat(Harness *h, int index, const char *jid, const char *name, int is_private) {
+static inline void harness_chat(Harness *h, int index, const char *jid, const char *name, int is_private) {
     HarnessAccount *a = &h->accounts[index];
     Chat c;
     chat_init(&c, jid);
@@ -138,10 +138,10 @@ static int harness_open(Harness *h, int touch_id, const char *password) {
     return h->app ? 0 : -1;
 }
 
-static const char *harness_open_jid(Harness *h) { return messaging_manager_open_jid(h->app->deps.messaging); }
+static inline const char *harness_open_jid(Harness *h) { return messaging_manager_open_jid(h->app->deps.messaging); }
 
 /* Types `text` and Enter into whatever private chat dialog is up. */
-static void harness_type(Harness *h, const char *text) {
+static inline void harness_type(Harness *h, const char *text) {
     for (const char *p = text; *p; p++) tui_app_private_key(h->app, 0, (unsigned char)*p);
     tui_app_private_key(h->app, 0, '\r');
 }
