@@ -271,6 +271,8 @@ void tui_app_set_private(TuiApp *app, const char *jid, int on);
 void tui_app_toggle_private(TuiApp *app, const char *jid);
 /* The same for the chat selected in the list, else the open one (Alt+L). */
 void tui_app_toggle_private_here(TuiApp *app);
+/* /lockpassword: Touch ID or the current password, then a new one typed twice. Touch ID also recovers a forgotten password. */
+void tui_app_change_lock_password(TuiApp *app);
 /* Every private chat locks again, and any unlock being asked for is dropped: on the screensaver, the app lock, an account switch and quit. */
 void tui_app_private_relock(TuiApp *app);
 /* Opens a chat without asking. Only for one that needs no unlock, or that the guard let through. */

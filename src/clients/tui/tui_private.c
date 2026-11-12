@@ -136,6 +136,11 @@ void tui_app_toggle_private_here(TuiApp *app) {
     tui_app_toggle_private(app, jid);
 }
 
+void tui_app_change_lock_password(TuiApp *app) {
+    PrivateRequest r = request_for(PRIVATE_ACTION_CHANGE_PASSWORD, app->deps.active_account, "");
+    tui_app_request_private(app, &r);
+}
+
 /* The change goes to every account the chat is on; a chat made private locks at once. */
 static void apply_private(TuiApp *app, const PrivateRequest *done, int on) {
     messaging_manager_set_private(app->deps.messaging, done->jid, on);
@@ -156,7 +161,7 @@ static void carry_out(TuiApp *app, const PrivateRequest *done) {
     case PRIVATE_ACTION_MAKE_PRIVATE:    apply_private(app, done, 1); break;
     case PRIVATE_ACTION_MAKE_PUBLIC:     apply_private(app, done, 0); break;
     case PRIVATE_ACTION_EXPORT:          break;
-    case PRIVATE_ACTION_CHANGE_PASSWORD: tui_app_toast(app, "\xF0\x9F\x94\x92 Lock password set", 0); break;
+    case PRIVATE_ACTION_CHANGE_PASSWORD: tui_app_toast(app, "\xF0\x9F\x94\x92 The lock password for private chats is set", 0); break;
     }
     app->dirty = 1;
 }
