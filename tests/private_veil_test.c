@@ -2,6 +2,12 @@
  * subtitle and, with the messages, its transcripts and TL;DR), as it is
  * once unlocked, and veiled again when it locks. */
 #include "clients/tui/chat_subtitle.h"
+#include "clients/tui/contact_panel.h"
+#include "clients/tui/tui_palette.h"
+#include "core/contact_profile.h"
+
+#include <locale.h>
+#include <ncurses.h>
 #include "tui_harness.h"
 
 static int failures;
@@ -14,7 +20,51 @@ static int pane_veiled(Harness *h) {
     return tui_app_private_veiled(h->app, messaging_manager_open_chat_info(h->app->deps.messaging));
 }
 
+static int on_screen(const char *words) {
+    char line[512];
+    for (int row = 0; row < LINES; row++) {
+        if (mvinnstr(row, 0, line, sizeof(line) - 1) == ERR) continue;
+        if (strstr(line, words)) return 1;
+    }
+    return 0;
+}
+
+/* The contact card of a locked private chat shows its name and nothing of its person. */
+static void contact_card(void) {
+    setlocale(LC_ALL, "");
+    FILE *out = fopen("/dev/null", "w"), *in = fopen("/dev/null", "r");
+    SCREEN *screen = out && in ? newterm("xterm-256color", out, in) : NULL;
+    if (!screen) { printf("FAIL: a screen to draw on\n"); failures++; return; }
+    tui_palette_init();
+    resizeterm(40, 100);
+    Chat c;
+    chat_init(&c, DIARY);
+    str_copy(c.name, sizeof(c.name), "Diary");
+    c.is_private = 1;
+    ContactProfile pr;
+    contact_profile_init(&pr, DIARY);
+    str_copy(pr.about, sizeof(pr.about), "Secret about words");
+    ContactPanel panel;
+    memset(&panel, 0, sizeof(panel));
+    contact_panel_open(&panel, &c, 0);
+    UiRect area = { 0, 0, 40, 100 };
+    panel.veiled = 1;
+    erase();
+    contact_panel_render(&panel, area, &c, &pr, NULL, NULL, NULL, NULL, 0, NULL);
+    CHECK(on_screen("Diary") && !on_screen("Secret about words"), "a locked private chat's card shows no about text");
+    panel.veiled = 0;
+    erase();
+    contact_panel_render(&panel, area, &c, &pr, NULL, NULL, NULL, NULL, 0, NULL);
+    CHECK(on_screen("Secret about words"), "an unlocked one's does");
+    contact_profile_dispose(&pr);
+    endwin();
+    delscreen(screen);
+    fclose(out);
+    fclose(in);
+}
+
 int main(void) {
+    contact_card();
     Harness h;
     if (harness_open(&h, 0, "letmein") != 0) { printf("FAIL: the harness opens\n"); return 1; }
     harness_chat(&h, 0, DIARY, "Diary", 0);
@@ -39,6 +89,8 @@ int main(void) {
 
     tui_app_private_relock(h.app);
     CHECK(pane_veiled(&h), "locking it again veils it again");
+    tui_app_show_portrait(h.app, DIARY);
+    CHECK(!h.app->viewer.open, "and its picture cannot be opened full size");
 
     harness_close(&h);
     if (failures) { printf("%d failure(s)\n", failures); return 1; }

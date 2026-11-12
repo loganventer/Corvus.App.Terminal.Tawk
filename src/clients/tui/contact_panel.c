@@ -188,16 +188,17 @@ static void day_of(int64_t ts, char *out, size_t size) {
     strftime(out, size, "%d %B %Y", &tm);
 }
 
-static void build_details(const Chat *c, const ContactProfile *pr, int cols,
+static void build_details(const Chat *c, const ContactProfile *pr, int veiled, int cols,
                           const char *(*member_name)(void *, const char *), void *names_ctx) {
     s_count = 0;
     char buf[400];
     if (pr && pr->blocked) add(LINE_WARN, "\xF0\x9F\x9A\xAB You blocked this contact");
-    if (c->is_private) add(LINE_DIM, "\xF0\x9F\x99\x88 Soft-locked in tawk");
+    if (c->is_private) add(LINE_DIM, "\xF0\x9F\x94\x92 Private in tawk");
     if (c->is_muted) add(LINE_DIM, "\xF0\x9F\x94\x95 Muted");
     if (c->is_pinned) add(LINE_DIM, "\xF0\x9F\x93\x8C Pinned");
     if (c->theme[0]) { snprintf(buf, sizeof(buf), "\xF0\x9F\x8E\xA8 Theme: %s", c->theme); add(LINE_DIM, buf); }
     if (s_count) add(LINE_TEXT, "");
+    if (veiled) { add(LINE_DIM, "Open the chat to see more"); return; }   /* nothing of its person while it is locked */
     if (!pr) { add(LINE_DIM, "Asking WhatsApp for the details\xE2\x80\xA6"); return; }
     if (!c->is_group) {
         add(LINE_HEADING, "About");
@@ -262,7 +263,7 @@ int contact_panel_render(ContactPanel *p, UiRect area, const Chat *c, const Cont
     int prow = box.h >= 30 ? 6 : 4;
     UiRect pic = { in.y + 2, in.x + (in.w - prow * 2) / 2, prow, prow * 2 };
     p->portrait_rect = pic;
-    int placed = portrait_draw(pic, c->jid, c->name, c->is_private ? NULL : picture, thumbs, pixel_images, placement);
+    int placed = portrait_draw(pic, c->jid, c->name, p->veiled ? NULL : picture, thumbs, pixel_images, placement);
     int y = pic.y + pic.h + 1;
     tui_text_center(y++, in.x, in.w, c->name, base | ATTR_BOLD);
     char sub[160];
@@ -275,7 +276,7 @@ int contact_panel_render(ContactPanel *p, UiRect area, const Chat *c, const Cont
 
     /* Actions at the bottom; details scroll in between. */
     int actions_top = box.y + box.h - p->action_count - 1;
-    build_details(c, pr, in.w, member_name, names_ctx);
+    build_details(c, pr, p->veiled, in.w, member_name, names_ctx);
     p->detail_lines = s_count;
     int room = actions_top - 1 - y;
     if (p->scroll > s_count - room) p->scroll = s_count - room;

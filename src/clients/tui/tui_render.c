@@ -257,6 +257,7 @@ void tui_render_frame(TuiApp *app, int64_t now) {
         } else {
             ContactProfile profile;
             int known = profile_manager_details(app->deps.profiles, who->jid, 0, &profile) == 0;
+            app->contact.veiled = tui_app_private_veiled(app, who);
             contact_pixels = contact_panel_render(&app->contact, l->chat, who, known ? &profile : NULL,
                                                   profile_manager_picture(app->deps.profiles, who->jid), tui_app_member_name, app,
                                                   app->thumbs, pixel_mode(app, s), &contact_image);

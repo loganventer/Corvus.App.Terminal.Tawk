@@ -39,6 +39,7 @@ typedef struct ContactPanel {
     char          labels[160];
     char          reminder[96];
     char          voice_languages[96];
+    int           veiled;              /* a locked private chat: no picture, no about text, no description */
 } ContactPanel;
 
 void          contact_panel_open(ContactPanel *panel, const Chat *chat, int blocked);
