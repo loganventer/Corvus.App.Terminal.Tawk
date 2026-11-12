@@ -23,6 +23,7 @@ const char *lock_password_problem_text(LockPasswordProblem problem) {
     case LOCK_PASSWORD_TOO_SHORT: return "Use at least 4 characters";
     case LOCK_PASSWORD_TOO_LONG:  return "That is too long; use at most 256 bytes";
     case LOCK_PASSWORD_MISMATCH:  return "The two passwords are not the same";
+    case LOCK_PASSWORD_NOT_SAVED: return "The password could not be saved; see the log";
     }
     return "";
 }

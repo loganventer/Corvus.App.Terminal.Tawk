@@ -56,7 +56,7 @@ static void rule(void) {
     CHECK(lock_password_rule_check(&four, &other) == LOCK_PASSWORD_MISMATCH, "the two must be the same");
     CHECK(lock_password_rule_check(&four, &four) == LOCK_PASSWORD_OK, "four characters typed twice are fine");
     CHECK(lock_password_rule_check(&multibyte, &multibyte) == LOCK_PASSWORD_OK, "four letters beyond ASCII are fine too");
-    for (int p = LOCK_PASSWORD_EMPTY; p <= LOCK_PASSWORD_MISMATCH; p++)
+    for (int p = LOCK_PASSWORD_EMPTY; p <= LOCK_PASSWORD_NOT_SAVED; p++)
         CHECK(lock_password_problem_text((LockPasswordProblem)p)[0] != '\0', "every problem has words for the dialog");
     CHECK(lock_password_problem_text(LOCK_PASSWORD_OK)[0] == '\0', "and no problem says nothing");
 }

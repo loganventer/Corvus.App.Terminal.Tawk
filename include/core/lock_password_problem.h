@@ -7,7 +7,8 @@ typedef enum {
     LOCK_PASSWORD_EMPTY,       /* nothing was typed */
     LOCK_PASSWORD_TOO_SHORT,   /* fewer than four characters */
     LOCK_PASSWORD_TOO_LONG,    /* more than PASSPHRASE_MAX bytes */
-    LOCK_PASSWORD_MISMATCH     /* the confirmation differs */
+    LOCK_PASSWORD_MISMATCH,    /* the confirmation differs */
+    LOCK_PASSWORD_NOT_SAVED    /* it was fine, but this computer could not keep it */
 } LockPasswordProblem;
 
 #endif
