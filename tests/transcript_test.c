@@ -103,7 +103,7 @@ static void test_engines(void) {
     CHECK(!transcription_policy_allows(&chat, &prefs), "not once you switched it off");
     prefs.transcribe_off = 0;
     chat.is_private = 1;
-    CHECK(!transcription_policy_allows(&chat, &prefs), "never a soft-locked chat");
+    CHECK(!transcription_policy_allows(&chat, &prefs), "never a private chat");
     chat.is_private = 0;
     chat.is_locked = 1;
     CHECK(!transcription_policy_allows(&chat, &prefs) && !transcription_policy_allows(NULL, &prefs), "never a locked one, or none");
@@ -264,7 +264,7 @@ static void test_manager(sqlite3 *db) {
           transcript_manager_save(mgr, &b, &mom, "af", "Nuwe stemnota", "", "corvus-tawk-mcp", 0) == TRANSCRIPT_SAVED, "and it can be switched on again");
     mom.is_private = 1;
     CHECK(transcript_manager_save(mgr, &b, &mom, "en", "New voice note", "", "corvus-tawk-mcp", 0) == TRANSCRIPT_OFF && transcript_manager_transcribe_chosen(mgr, MOM),
-          "a soft-locked chat takes none, whatever was chosen");
+          "a private chat takes none, whatever was chosen");
     mom.is_private = 0;
 
     /* older voice notes that are looked at wait for a transcript, once each */
@@ -428,7 +428,7 @@ static void test_conversation(void) {
     ctx.transcripts = &source;
     ctx.veiled = 1;
     message_view_render(&view, rect, msgs, 2, &ctx);
-    CHECK(!on_screen("alpha bravo"), "a soft-locked chat shows its shape, never its words");
+    CHECK(!on_screen("alpha bravo"), "a private chat shows its shape, never its words");
 
     message_view_dispose(&view);
     message_dispose(&msgs[0]);

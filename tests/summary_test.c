@@ -72,7 +72,7 @@ static void test_engines(void) {
     CHECK(!summary_policy_wants(&chat, &prefs, &longer, 300), "nor a deleted message");
     longer.deleted = 0;
     chat.is_private = 1;
-    CHECK(!summary_policy_allows(&chat, &prefs), "never a soft-locked chat");
+    CHECK(!summary_policy_allows(&chat, &prefs), "never a private chat");
     chat.is_private = 0;
     chat.is_locked = 1;
     CHECK(!summary_policy_allows(&chat, &prefs) && !summary_policy_allows(NULL, &prefs), "never a locked one, or none");
@@ -252,7 +252,7 @@ static void test_store_and_manager(sqlite3 *db) {
     CHECK(summary_manager_requeue(mgr, "U1") == 1, "and its count starts again");
     while (summary_manager_next_wanted(mgr, id, sizeof(id))) summary_manager_drop_wanted(mgr);
     mom.is_private = 1;
-    CHECK(summary_manager_save(mgr, &a, &mom, "x", "", "") == SUMMARY_OFF, "a soft-locked chat takes none");
+    CHECK(summary_manager_save(mgr, &a, &mom, "x", "", "") == SUMMARY_OFF, "a private chat takes none");
     CHECK(summary_manager_decline(mgr, &d, &mom, "other", "") == SUMMARY_DECLINE_OFF, "and no answer that one needs none");
     mom.is_private = 0;
 
@@ -387,7 +387,7 @@ static void test_conversation(void) {
     erase();
     ctx.veiled = 1;
     message_view_render(&view, rect, msgs, 2, &ctx);
-    CHECK(!on_screen("Parents evening") && !on_screen("finalwords"), "a soft-locked chat shows neither");
+    CHECK(!on_screen("Parents evening") && !on_screen("finalwords"), "a private chat shows neither");
 
     message_view_dispose(&view);
     message_dispose(&msgs[0]);
