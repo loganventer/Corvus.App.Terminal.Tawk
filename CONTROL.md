@@ -79,9 +79,9 @@ A notification, sent without a request:
 | `bad_token` | `confirm` was given a token that is unknown, used, expired or from another connection, or `approve` was given the wrong admin token. |
 | `draft_exists` | `draft_message` found a draft already waiting in that chat. |
 | `unsupported` | The backend in use cannot do it (posting a status needs whatsmeow). |
-| `tldr_off` | `set_summary` or `decline_summary` named a message in a chat that is not in TL;DR mode: you did not switch it on on its contact card, or the chat is soft-locked. |
-| `transcripts_off` | `set_transcript` named a voice note in a chat whose voice notes are not transcribed: you switched that off on its contact card, or the chat is soft-locked. |
-| `not_found` | No visible chat or message matches. Locked and hidden chats are reported as not found. |
+| `tldr_off` | `set_summary` or `decline_summary` named a message in a chat that is not in TL;DR mode: you did not switch it on on its contact card, or the chat is private (a private chat is never summarised). |
+| `transcripts_off` | `set_transcript` named a voice note in a chat whose voice notes are not transcribed: you switched that off on its contact card, or the chat is private (a private chat is never transcribed). |
+| `not_found` | No visible chat or message matches. A chat in WhatsApp's Locked folder or hidden from agents is reported as not found. Private chats are visible like any other. |
 | `ambiguous` | A chat name matches more than one chat. `error.candidates` lists them as `{"jid","name"}`. |
 | `declined` | You declined the request in tawk. |
 | `timed_out` | Nobody answered in time: 5 minutes for most requests, 2 for HIGH risk ones. The request was declined. |
@@ -214,7 +214,7 @@ tawk transcribes nothing. A transcriber hands the words of a voice note over, ta
 
 `replace` (a boolean, optional) makes the transcript take the place of every one the message has, in whatever language: a voice note written out again. Without it only the transcript in the same language is replaced.
 
-`set_transcript` changes only this computer and sends nothing to WhatsApp, so it is not asked about, needs no more than `read`, and does not count against `writes_per_minute`; each one is written to the automation log. It is answered `bad_request` for anything that is not a voice note or other audio, `not_found` for a message in a chat the client may not see (a locked or soft-locked one included), and `transcripts_off` for a chat whose voice notes are not transcribed. Control characters in the text are replaced, and the text is shown as plain text, never formatted. A client cannot change a chat's transcript choices: they are set on its contact card.
+`set_transcript` changes only this computer and sends nothing to WhatsApp, so it is not asked about, needs no more than `read`, and does not count against `writes_per_minute`; each one is written to the automation log. It is answered `bad_request` for anything that is not a voice note or other audio, `not_found` for a message in a chat the client may not see (one in WhatsApp's Locked folder or hidden from agents, for example), and `transcripts_off` for a chat whose voice notes are not transcribed. Control characters in the text are replaced, and the text is shown as plain text, never formatted. A client cannot change a chat's transcript choices: they are set on its contact card.
 
 <a id="TL;DR summaries"></a>
 
@@ -365,7 +365,7 @@ Chats:
 
 | Operation | Arguments | Result |
 | --- | --- | --- |
-| `set_chat` | `chat`, and any of `muted` (`false`, `true` for always, or seconds), `pinned`, `archived` (bools), `locked` (only `true`: hides the chat behind the soft lock, which also hides it from clients) | `{"chat":chat}` |
+| `set_chat` | `chat`, and any of `muted` (`false`, `true` for always, or seconds), `pinned`, `archived` (bools). `locked` is refused: a call that has a `locked` argument, true or false, is answered `not_allowed` with the message "Only you can make a chat private or public, in tawk", and nothing else in that call is applied. Private chats are visible to clients like any other; only you can make a chat private or public, in tawk | `{"chat":chat}` |
 | `set_chat_theme` | `chat`, `theme` (a theme id, or `""` for the app theme) | `{}` |
 | `set_chat_tone` | `chat`, `tone` (a sound id from `list_sounds`, `"none"` for silence, or `""` for the app sound) | `{}`; a file path is refused: only you can give a chat a file of your own, in tawk |
 | `clear_chat` | `chat` | `{}`; removes its messages from this computer |

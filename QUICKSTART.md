@@ -99,11 +99,11 @@ If something does not work, run `corvus-tawk --doctor`. It checks the terminal, 
 - On a message, **Alt+Q** replies, **Alt+E** reacts and **Alt+M** opens the message menu (or right-click it). Typing anywhere else writes in the input; typing in the chat list searches it.
 - Click a photo, video or PDF to see it full size inside tawk; ← → browse (and turn the pages of a PDF), ↑ ↓ move to other media, Esc closes.
 - **Delete** on a selected message deletes it for you or, for your own recent messages, for everyone. The message menu also has **Save to Downloads**.
-- **Alt+O** opens a chat's options: mute, pin, archive, soft lock, its own theme or notification tone.
+- **Alt+O** opens a chat's options: mute, pin, archive, make private, its own theme or notification tone.
 - Click your name in the header (or type **/profile**) to change your name, about text or photo.
 - **⭕** in the header (or **/statuses**) shows your contacts' statuses; the number next to it counts people with statuses you have not seen. **+** left of the clock (or **/status**) posts your own: text, photo, video or link. Posting needs the whatsmeow backend.
 - Click a chat's name in the title bar (or press **Alt+I**, or type **/info**) for its details: about text, group members, block, clear, delete or export the chat. Click its picture to see it full size.
-- **Alt+L** (Option+L on a Mac, or **Ctrl+Shift+L** where the terminal reports it) soft-locks a chat: its conversation is blurred until you press it again.
+- **Alt+L** (Option+L on a Mac, or **Ctrl+Shift+L** where the terminal reports it) makes a chat private: its conversation is drawn as shaded shapes until you open it with [Touch ID](https://en.wikipedia.org/wiki/Touch_ID) (on a Mac) or tawk's lock password. The first time, tawk asks you to set the password.
 - **Shift+Enter** (or Alt+Enter) starts a new line in a message; Enter sends it. Ctrl, Alt or Shift with ← and → steps through what you typed a word at a time.
 - Pinned chats have their own group at the top of the list. Enter on a group header, or ← and →, folds and unfolds it.
 - **Ctrl+R** records a voice note in the open chat; Enter sends it.

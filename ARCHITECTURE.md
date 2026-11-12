@@ -29,13 +29,13 @@ tawk is one C11 program arranged in [iDesign](https://www.idesign.net/) layers. 
 |---|---|---|---|
 | Composition | `composition` | Builds one account's components and owns the set of running accounts. Part of the composition root | Everything, as `main.c` does |
 | Client | `clients/tui`, `clients/control`, `clients/cli` | `tui`: the ncurses UI (widgets, input, slash commands, layout, the settings panel, the Chats and Agentic tabs). `control`: the control socket client that serves corvus-tawk-mcp and the shell commands ([CONTROL](CONTROL.md)). `cli`: the `--doctor` setup check, the `--update` installer, `--encrypt`, `--decrypt` and `--change-passphrase`, `--backup` and `--restore`, the start-up passphrase prompt, and `corvus-tawk send`, `tail`, `unread` and `status-line` | Managers, and the contracts the composition root hands it |
-| Managers | `managers` | Use cases: messaging and connection supervision, profiles and profile pictures, your own profile, posting statuses, the status feed, messages scheduled for later, incoming calls, media, settings, encrypting the database, encrypted backups, voice note transcripts and TL;DR summaries (keeping what is handed over, and each chat's choices about them), the rules and log for agents (automation), plus the composite event observer that hands backend events to the managers that listen for them | Engines, contracts |
-| Engines | `engines` | Business rules with no I/O: backoff, circuit breaker, notification policy, chat visibility, idle tracking, message ids, media type detection, emoticon conversion, network fingerprints and change detection, profile field and status post validation, finding a URL in text, the status background palette, matching chats against a search, reading when a scheduled message should go, the backup manifest and which archive members a restore accepts, and for agents: the automation policy (who sees which chats, which writes are asked about, which settings stay out of reach, risk, and which of its own requests a client may answer with access admin), the hourly quota for those, resolving a chat named by an agent, the rate limiter and confirmation tokens; and for transcripts and TL;DR: what may be kept (`transcript_validator`, `summary_validator`), what shows and what is transcribed or summarised (`transcript_display_policy`, `transcription_policy`, `summary_policy`, `transcript_choice`), which agent writes summaries (`summariser_choice`) and the question about that (`agent_question`) | Core, utilities |
-| Resource access | `resource_access` | SQLite stores (messages, chats, contacts, reactions, receipts, JID aliases, profiles, statuses, scheduled messages, the automation log, transcripts, summaries), database encryption with SQLCipher (`sqlite_database_crypt`, `sqlite_key`), the caching decorators, INI settings store, JSON theme repository, TSV emoji catalog, the text chat exporter, WhatsApp gateways, the JSON protocol codec | Core, utilities |
-| Infrastructure | `infrastructure` | Operating-system integration: audio backends and players, recorder, media opener, screensaver, terminal title, OSC 52 clipboard, clipboard pictures, video frames (ffmpeg), the camera (ffmpeg), PDF pages (poppler), the network monitor (getifaddrs), the terminal passphrase prompt, tar archives and openssl file encryption for backups, the control socket's listening end and the shell commands' calling end (Unix domain sockets), notifiers, media cache janitor | Core, utilities |
+| Managers | `managers` | Use cases: messaging and connection supervision, profiles and profile pictures, your own profile, posting statuses, the status feed, messages scheduled for later, incoming calls, media, settings, encrypting the database, encrypted backups, the lock password and [Touch ID](https://en.wikipedia.org/wiki/Touch_ID) for private chats (`PrivacyManager`), voice note transcripts and TL;DR summaries (keeping what is handed over, and each chat's choices about them), the rules and log for agents (automation), plus the composite event observer that hands backend events to the managers that listen for them | Engines, contracts |
+| Engines | `engines` | Business rules with no I/O: backoff, circuit breaker, notification policy, chat visibility, idle tracking, message ids, media type detection, emoticon conversion, network fingerprints and change detection, profile field and status post validation, finding a URL in text, the status background palette, matching chats against a search, reading when a scheduled message should go, the backup manifest and which archive members a restore accepts, private chats (`private_chat_policy`: what is veiled, what asks first, what search may list; `private_chat_session`: the one unlocked chat and its merged peers; `lock_password_hasher`; `lock_password_rule`), and for agents: the automation policy (who sees which chats, which writes are asked about, which settings stay out of reach, risk, and which of its own requests a client may answer with access admin), the hourly quota for those, resolving a chat named by an agent, the rate limiter and confirmation tokens; and for transcripts and TL;DR: what may be kept (`transcript_validator`, `summary_validator`), what shows and what is transcribed or summarised (`transcript_display_policy`, `transcription_policy`, `summary_policy`, `transcript_choice`), which agent writes summaries (`summariser_choice`) and the question about that (`agent_question`) | Core, utilities |
+| Resource access | `resource_access` | SQLite stores (messages, chats, contacts, reactions, receipts, JID aliases, profiles, statuses, scheduled messages, the automation log, transcripts, summaries, the lock password), database encryption with SQLCipher (`sqlite_database_crypt`, `sqlite_key`), the caching decorators, INI settings store, JSON theme repository, TSV emoji catalog, the text chat exporter, WhatsApp gateways, the JSON protocol codec | Core, utilities |
+| Infrastructure | `infrastructure` | Operating-system integration: audio backends and players, recorder, media opener, screensaver, terminal title, OSC 52 clipboard, clipboard pictures, video frames (ffmpeg), the camera (ffmpeg), PDF pages (poppler), the network monitor (getifaddrs), the terminal passphrase prompt, tar archives and openssl file encryption for backups, Touch ID (`touch_id_authenticator`, written in [Objective-C](https://en.wikipedia.org/wiki/Objective-C), or `no_biometric_authenticator`), the control socket's listening end and the shell commands' calling end (Unix domain sockets), notifiers, media cache janitor | Core, utilities |
 | Contracts | `contracts` | Interfaces between layers | Core |
-| Core | `core` | Domain types: Message, Chat, Contact, ContactProfile, IncomingCall, Receipt, StatusUpdate, StatusPost, Event, Settings, Theme, Emoji and their enums, plus small value types such as QuoteRef, ReactionTarget, HistoryAnchor, DeleteRequest and TypingState, and helpers such as `message_file_name` (a safe file name for saving a message's file) and the shared icons in `icon_glyphs.h` | Utilities |
-| Utilities | `utilities` | Cross-cutting helpers: logging, paths, UTF-8, event queue, LRU cache, processes (`process_capture` runs a tool and collects its output), base64, JPEG and PNG decoding (vendored stb_image), directory listing, `file_copy` (a copy that never replaces anything), `outgoing_media` (copies a file to send into `media/outgoing/`), `file_settled` (a file another program has finished writing), `instance_lock` (one tawk per data folder), `process_quiet` (runs a tool silently, handing it a secret over a pipe) and `tree_copy` (copies or removes a folder without following links) | Nothing above |
+| Core | `core` | Domain types: Message, Chat, Contact, ContactProfile, IncomingCall, Receipt, StatusUpdate, StatusPost, Event, Settings, Theme, Emoji and their enums, plus small value types such as QuoteRef, ReactionTarget, HistoryAnchor, DeleteRequest and TypingState, the private chat types LockVerifier, BiometricResult, UnlockPurpose, LockPasswordProblem, PrivacyCheck and UnlockedChat, and helpers such as `message_file_name` (a safe file name for saving a message's file) and the shared icons in `icon_glyphs.h` | Utilities |
+| Utilities | `utilities` | Cross-cutting helpers: logging, paths, UTF-8, event queue, LRU cache, processes (`process_capture` runs a tool and collects its output), base64, JPEG and PNG decoding (vendored stb_image), directory listing, `file_copy` (a copy that never replaces anything), `outgoing_media` (copies a file to send into `media/outgoing/`), `file_settled` (a file another program has finished writing), `instance_lock` (one tawk per data folder), `process_quiet` (runs a tool silently, handing it a secret over a pipe) `tree_copy` (copies or removes a folder without following links) and `secure_random` (random bytes from `arc4random_buf` on macOS and BSD, `getrandom` on Linux, `/dev/urandom` elsewhere; the lock password's salt and backups use it) | Nothing above |
 
 ```mermaid
 flowchart TD
@@ -97,6 +97,7 @@ flowchart TD
     end
     subgraph Managers
         MM["MessagingManager<br/>events, chats, sending, export, supervision"]
+        PRV["PrivacyManager<br/>lock password, Touch ID"]
         OBS["composite_event_observer<br/>IEventObserver"]
         PM["ProfileManager<br/>details, pictures, block list"]
         AM["AccountManager<br/>your name, about, photo"]
@@ -123,7 +124,7 @@ flowchart TD
         OS["IMediaOpener · IUrlOpener · IIdleAction · ITerminalTitle ·<br/>IClipboard · IClipboardImage · IVideoPoster ·<br/>IDocumentPages · INotifier · INetworkMonitor"]
     end
     TUI --> W & CMD
-    TUI --> MM & PM & AM & STM & SFM & CM & MD & SM
+    TUI --> MM & PM & AM & STM & SFM & CM & MD & SM & PRV
     TUI -->|emoji, clipboard, screensaver,<br/>video frames, PDF pages| CFG & OS
     TUI -.->|emoticons as you type| E
     DOC -->|reads| CFG & AU
@@ -155,6 +156,7 @@ flowchart TD
 | `IStatusLiker` | Handed out by `sidecar_gateway_status_liker` only (`like`, the private heart on someone's status); whatsmeow has none, so the messaging manager gets `NULL` and sends a like as a ❤️ reply to the status |
 | `IMessageStore` | `sqlite_message_store`, decorated by `caching_message_store` |
 | `IChatStore` | `sqlite_chat_store` |
+| `ILockSecretStore` | `sqlite_lock_secret_store` (`load`, `save` and `clear` for the lock password's [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2)-HMAC-[SHA-256](https://en.wikipedia.org/wiki/SHA-2) hash, its salt and iteration count, in the one-row `lock_secret` table) |
 | `IContactStore` | `sqlite_contact_store`, decorated by `caching_contact_store` |
 | `IReactionStore` | `sqlite_reaction_store` (one reaction per sender per message, summarised as "👍 2  ❤ 1") |
 | `IReceiptStore` | `sqlite_receipt_store` (who received, read and played each message you sent, and when, for Message info) |
@@ -184,6 +186,7 @@ flowchart TD
 | `IMediaOpener` | `system_media_opener` |
 | `IUrlOpener` | `system_url_opener` (opens only `http://` and `https://` addresses; both openers share `app_launcher`, which picks the platform's default program) |
 | `IIdleAction` | `pty_idle_action` (screensaver in a pseudo-terminal) |
+| `IBiometricAuthenticator` | `touch_id_authenticator` ([macOS](https://en.wikipedia.org/wiki/MacOS), `src/infrastructure/touch_id_authenticator.m`) and `no_biometric_authenticator`. `available`, `begin(reason)`, `poll` (a `BiometricResult`), `cancel` and `destroy`; asynchronous, so the screen keeps drawing while the Touch ID sheet is up |
 | `ITerminalTitle` | `osc_terminal_title` |
 | `IClipboard` | `osc52_clipboard` (writes the OSC 52 sequence to `/dev/tty`) |
 | `IClipboardImage` | `system_clipboard_image` (reads a picture with wl-paste, xclip, pngpaste or PowerShell) |
@@ -285,7 +288,7 @@ The TUI is split into widgets that each draw one part of the screen and turn key
 |---|---|
 | `header_bar` | Menu toggle, app name, DND, unread tally, the ⭕ status circle with how many people have unseen statuses, the + that posts a status, clock, connection emoji, your name (which opens your profile), gear |
 | `chat_list_view` | Detailed or compact chat list with Archived and Locked folder entries, foldable Pinned and Chats groups, adjustable spacing, a name filter, an accent bar on the open chat, and portraits in the detailed style |
-| `message_view` | Bubbles, meta lines, quotes, thumbnails, day separators, the `↓ newer` badge, and a title bar that grows to two rows with a portrait and a summary line; a soft-locked chat is drawn as shaded shapes through `text_veil` |
+| `message_view` | Bubbles, meta lines, quotes, thumbnails, day separators, the `↓ newer` badge, and a title bar that grows to two rows with a portrait and a summary line; a veiled private chat is drawn as shaded shapes through `text_veil` |
 | `portrait_view` | A contact's or group's picture in any box: a round Sixel placement, half blocks when the box is at least four rows high, otherwise an initials badge with rounded corners in a colour picked from the JID. It gets pictures through a `PortraitSource` and never calls the profile manager itself |
 | `contact_panel`, `contact_action` | Contact or group details over the right of the conversation pane (picture, number, about text, business details, group description, creator and members) above a list of actions |
 | `incoming_call_view` | The ringing call: a pulsing box with the caller's portrait and name, Decline and Answer on phone |
@@ -310,6 +313,13 @@ The TUI is split into widgets that each draw one part of the screen and turn key
 | `search_overlay` | Full-text search across chats |
 | `file_picker` | Attachment and tone file chooser |
 | `attach_menu`, `camera_view` | The composer's + menu (take a photo or choose a file), and the live camera picture with the photo or video taken to review; a `CameraPurpose` says whether the result is attached, becomes your profile photo or goes to the status composer |
+| `masked_field` | A one-line field that shows one `*` per character, never the text, and wipes itself once its text is handed over; `lock_screen`, `private_unlock_dialog` and `lock_password_dialog` use it |
+| `private_unlock_dialog` | "To open a private chat": the Touch ID state (Tab uses the lock password, Esc cancels) and the password state (a masked field, "Wrong password" and the wait before the next try) |
+| `lock_password_dialog` | "Set a lock password" and "Change the lock password": the new password typed twice, checked by `lock_password_rule` |
+| `private_chat_guard` | Asks Touch ID or the password, holds the request until it passes and carries nothing out without a pass; keeps which chat is unlocked through `private_chat_session` |
+| `tui_private.c` | The glue: raises requests from keys, commands, chat options and the contact card, and carries them out once the guard says so |
+| `tab_chat_name` | The chat name for the terminal tab title, which is 🔒 for a locked private chat |
+| `private_chat_policy` (engine) | The one place that says whether a chat is veiled, whether a purpose asks first and whether tawk's own search may list its messages; render, search and export all ask it |
 | `confirm_dialog` | A yes-or-no question with Cancel selected first; a dangerous one flashes its border and warning |
 | `profile_dialogs` | Your own profile as one popup, composed of `profile_view_dialog` (photo, name, about, number), `profile_text_dialog` (name or about editor with a character count) and `profile_photo_menu` (a file, the camera, the clipboard, full size, remove) |
 | `status_composer_dialog` | Tabs for text, photo, video and link statuses, the words or caption, the file, the background colour, and Post |
@@ -322,7 +332,7 @@ The TUI is split into widgets that each draw one part of the screen and turn key
 | `media_picture`, `thumbnail_cache` | The best picture for a photo, video or PDF (`MediaSources` supplies video frames and PDF pages), decoded into an LRU and drawn with half blocks through `color_pair_cache` |
 | `chat_toggle_dialog`, `toggle_switch` | A list of chats with a switch each and one for all, saved as a setting (the chats an admin agent may answer in by itself); the switch is also how on and off values are drawn in the Settings panel and the Permissions view |
 | `sixel_overlay`, `sixel_image_cache` | Real pixels written after curses updates the screen; portraits are cut to a circle with `sixel_encode_masked` |
-| `text_veil` | Soft shaded bands in place of text or pictures, keeping the shape of a soft-locked conversation |
+| `text_veil` | Soft shaded bands in place of text or pictures, keeping the shape of a locked private conversation |
 | `text_caret` | Where the field that takes typing wants the blinking bar cursor |
 | `escape_sequence` | Reads bracketed-paste starts and modified keys such as Ctrl+Shift+L and Shift+Enter after an Esc; `tui_input.c` turns Shift+Enter and Alt+Enter into the new-line key `TUI_KEY_NEWLINE` |
 | `mac_option_keys` | On macOS, the Alt shortcut a character typed with Option stands for (`¬` is Alt+L), on a US layout |
@@ -339,6 +349,8 @@ Slash commands live in `tui_commands.c` as a table of name, argument hint, help 
 ## Composition root
 
 `src/main.c` reads the settings, creates every concrete component in dependency order, injects them through their contracts, runs the client, and destroys everything in reverse. Nothing else knows which implementation is in use. Swapping the WhatsApp backend, the audio system or the storage engine is a change to this one file.
+
+Private chats are wired here too: `main.c` creates `sqlite_lock_secret_store` and the authenticator (`touch_id_authenticator` when the build has `APP_WITH_BIOMETRICS` and it runs on macOS, otherwise `no_biometric_authenticator`) and hands both, with the settings, to one `PrivacyManager` for the whole computer, which goes to the client as `TuiAppDeps.privacy`. `BIOMETRICS` is a Makefile switch: it is 1 by default on macOS and forced to 0 elsewhere, `make BIOMETRICS=0` leaves Touch ID out, and with it on `src/infrastructure/touch_id_authenticator.m` (Objective-C, ARC) is compiled and Foundation and LocalAuthentication are linked. `make help` lists it.
 
 ```mermaid
 flowchart LR
@@ -500,7 +512,7 @@ Neither backend retries anything. They report `connection` events with a reason,
 
 ## Storage
 
-SQLite in WAL mode holds the tables `messages`, `chats`, `contacts`, `reactions`, `message_receipts`, `jid_aliases`, `profiles`, `statuses`, `scheduled_messages`, `automation_log`, `accounts`, `chat_prefs`, `transcripts` and `summaries`, plus the FTS5 index `messages_fts` over message text. All statements use bound parameters. Upserts merge rather than overwrite: an empty name never replaces a known one, older timestamps never replace newer ones, message status only moves forward, and local preferences (pinned, muted, tone, draft, chat theme, soft lock) are never touched by sync. A message deleted for everyone keeps its row with `deleted` set; a message deleted for me is removed with `DELETE`, and the FTS5 trigger drops it from the index. `caching_message_store` keeps the latest page of recently opened chats in an LRU and invalidates a chat whenever anything in it changes; `caching_contact_store` caches display-name lookups. `recent` grows its result as rows arrive instead of reserving room for the whole limit, so a chat export, which asks for every message, costs only what the chat holds.
+SQLite in WAL mode holds the tables `messages`, `chats`, `contacts`, `reactions`, `message_receipts`, `jid_aliases`, `profiles`, `statuses`, `scheduled_messages`, `automation_log`, `accounts`, `chat_prefs`, `transcripts`, `summaries` and `lock_secret` (the lock password's hash, one row, left out of account export), plus the FTS5 index `messages_fts` over message text. All statements use bound parameters. Upserts merge rather than overwrite: an empty name never replaces a known one, older timestamps never replace newer ones, message status only moves forward, and local preferences (pinned, muted, tone, draft, chat theme, private) are never touched by sync. A message deleted for everyone keeps its row with `deleted` set; a message deleted for me is removed with `DELETE`, and the FTS5 trigger drops it from the index. `caching_message_store` keeps the latest page of recently opened chats in an LRU and invalidates a chat whenever anything in it changes; `caching_contact_store` caches display-name lookups. `recent` grows its result as rows arrive instead of reserving room for the whole limit, so a chat export, which asks for every message, costs only what the chat holds.
 
 The `profiles` table keeps what WhatsApp says about a contact or group. `save_details` writes the about text, business and group fields and `fetched_at`, but never the picture columns or `blocked`; `set_picture` records a downloaded file (or `picture_none`); `forget_picture` clears both picture paths when the picture changed; and `set_blocklist` clears every `blocked` flag and sets it again for each JID in the list, in one transaction. Group members are stored in `participants` as one `jid<TAB>admin` line per member.
 
@@ -514,7 +526,7 @@ The schema is versioned with `PRAGMA user_version`. `sqlite_database.c` creates 
 | 2 | `jid_aliases` (LID to phone number) and an index on message senders |
 | 3 | Replies (`quoted_id`, `quoted_sender`, `quoted_text`) and inline previews (`thumbnail`) on messages; folders (`is_archived`, `is_locked`), timed mutes (`muted_until`, where -1 means always), `tone`, `draft` and `theme` on chats; the `reactions` table; the `messages_fts` index with triggers that keep it in step with `messages` |
 | 4 | `edited` and `deleted` on messages |
-| 5 | `soft_locked` on chats |
+| 5 | `soft_locked` on chats (renamed `is_private` in version 28) |
 | 6 | The `profiles` table: `jid`, `about`, `verified_name`, `is_business`, `business_category`, `business_address`, `business_email`, `is_group`, `group_subject`, `group_description`, `group_owner`, `group_created`, `participant_count`, `participants`, `picture`, `picture_full`, `picture_none`, `blocked` and `fetched_at` |
 | 7 | No new columns: stored chat previews switch to the new photo and sticker icons (📷, 🔖) |
 | 8 | The `message_receipts` table: `message_id`, `jid`, `delivered_at`, `read_at` and `played_at`, keyed by message and recipient |
@@ -535,8 +547,11 @@ The schema is versioned with `PRAGMA user_version`. `sqlite_database.c` creates 
 | 23 | `agent_rule` on `chat_prefs` (what agents may do in one chat: as the account says, always ask, read only, hidden) |
 | 24 | `alerts` on `chat_prefs` (which of a chat's messages alert you: all, or only a mention) |
 | 25 | The `chat_labels` table (`jid`, `label`) and the `chat_reminders` table (`jid`, `due_at`, `created_at`): your own labels on chats, and the chats put aside until a time or until their person writes |
+| 26 | The `summary_declines` table: `account_id`, `message_id`, `reason`, `source` and `created_at`, for messages an agent declined to summarise |
+| 27 | `expected_jid` on `accounts`: the number an account moved here from another computer waits for |
+| 28 | `chats.soft_locked` is renamed `is_private` (every chat that had it set becomes private), and the one-row `lock_secret` table is created: `id` (always 1), `salt`, `iterations` and `hash` |
 
-Before the first migration of an upgrade runs, the database is copied to `tawk.db.pre-v<N>` (once, 0600), so a failed upgrade can be rolled back by hand. The schema after version 25 is below (the account column that version 17 put in every key is left out of the older tables for room). The tables declare no foreign keys; the relationships are by value (a message's `chat_jid` matches a chat's `jid`, a reaction's or receipt's `message_id` matches a message's `id`, a status's `author_jid` matches a contact's `jid`, a profile's `jid` matches a chat's or contact's `jid`, and an alias maps a LID to the phone number JID used everywhere else). `messages_fts` is an external-content FTS5 table over `messages.text`, keyed by the message `rowid` and kept in step by the triggers `messages_fts_ai`, `messages_fts_ad` and `messages_fts_au`.
+Before the first migration of an upgrade runs, the database is copied to `tawk.db.pre-v<N>` (once, 0600), so a failed upgrade can be rolled back by hand. The schema after version 28 is below (the account column that version 17 put in every key is left out of the older tables for room). The tables declare no foreign keys; the relationships are by value (a message's `chat_jid` matches a chat's `jid`, a reaction's or receipt's `message_id` matches a message's `id`, a status's `author_jid` matches a contact's `jid`, a profile's `jid` matches a chat's or contact's `jid`, and an alias maps a LID to the phone number JID used everywhere else). `messages_fts` is an external-content FTS5 table over `messages.text`, keyed by the message `rowid` and kept in step by the triggers `messages_fts_ai`, `messages_fts_ad` and `messages_fts_au`.
 
 ```mermaid
 erDiagram
@@ -569,7 +584,7 @@ erDiagram
         TEXT tone "v3"
         TEXT draft "v3"
         TEXT theme "v3"
-        INTEGER soft_locked "v5"
+        INTEGER is_private "v5, renamed in v28"
         INTEGER unread_mention "v10"
     }
     messages {
@@ -675,6 +690,12 @@ erDiagram
         INTEGER transcribe_off "v18"
         INTEGER tldr "v19"
         TEXT voice_languages "v20: 'af,en', or '' for the setting's"
+    }
+    lock_secret {
+        INTEGER id PK "v28, always 1"
+        BLOB salt
+        INTEGER iterations
+        BLOB hash "PBKDF2-HMAC-SHA256"
     }
     jid_aliases {
         TEXT alias PK "the LID"

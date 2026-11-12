@@ -37,7 +37,7 @@ reactions, edits, deleting for you or for everyone, full-text search,
 an emoji picker with emoticons turned into emoji as you type, profile
 pictures, contact and group details, blocking, chat export, a prompt for
 incoming voice calls (declined in tawk or answered on the phone),
-per-chat themes and tones, soft-locked chats, editing your own name, about
+per-chat themes and tones, private chats opened with Touch ID or a lock password, editing your own name, about
 text and photo, viewing statuses (kept in an archive for
 \fBstatus_keep_days\fR) and posting them (whatsmeow only), photos and videos
 from the camera, slash commands and an idle screensaver. It reconnects
@@ -185,19 +185,24 @@ In the input, step through what you typed a word at a time. With the up and
 down arrows, go to its start or its end.
 .TP
 .B Alt+L\fR or \fBCtrl+Shift+L
-Soft-lock the selected or open chat, or show it again (also \fB/softlock\fR).
-The conversation is drawn as shaded shapes until it is shown again.
-Ctrl+Shift+L works only where the terminal reports it apart from Ctrl+L.
+Make the selected or open chat private, or public again (also \fB/private\fR).
+A private chat opens only after Touch ID (https://en.wikipedia.org/wiki/Touch_ID,
+on a Mac that has it) or tawk's own lock password. Until then its row and
+conversation are drawn as shaded shapes. The first time, tawk asks for a new
+lock password, typed twice. Making a chat public asks for Touch ID or the
+password first. \fB/lockpassword\fR changes the lock password (Touch ID or
+the current password first). Option+L on a Mac. Ctrl+Shift+L works only where the terminal
+reports it apart from Ctrl+L.
 .TP
 .B Alt+O
-Chat options: mute, pin, archive, soft lock, chat theme, notification tone,
+Chat options: mute, pin, archive, make private or public, chat theme, notification tone,
 contact info.
 .TP
 .B Alt+I
 Contact or group details for the selected or open chat (also \fB/info\fR, or
 click the name in the title bar): about text, business details, group
 description and members, and actions to view the profile picture, search,
-soft lock, export the chat with or without media, block or unblock, clear
+private on or off, export the chat with or without media, block or unblock, clear
 the chat on this computer, or delete it. Block, clear and delete ask first.
 Click the portrait in the title bar to see the picture full size.
 .TP
@@ -244,7 +249,8 @@ in the input line for the list of slash commands, such as
 .BR /mute ,
 .BR /theme ,
 .BR /tone ,
-.BR /softlock ,
+.BR /private ,
+.BR /lockpassword ,
 .BR /transcripts ,
 .BR /info ,
 .B /profile
