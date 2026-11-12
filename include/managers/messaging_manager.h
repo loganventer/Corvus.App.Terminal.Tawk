@@ -106,8 +106,10 @@ char          *messaging_manager_load_draft(MessagingManager *mgr, const char *j
 int            messaging_manager_offer_draft(MessagingManager *mgr, const char *jid, const char *text);
 /* Hands the screen the last offered draft once; the caller frees it. */
 char          *messaging_manager_take_offered_draft(MessagingManager *mgr, char *jid_out, size_t size);
-/* Full-text search across chats, newest first. Caller frees with message_array_free. */
-int            messaging_manager_search(MessagingManager *mgr, const char *query, int limit, Message **out, int *count);
+/* Full-text search across chats, newest first. Private chats' messages are
+ * left out unless include_private is set: tawk's own search leaves them out,
+ * agents see them. Caller frees with message_array_free. */
+int            messaging_manager_search(MessagingManager *mgr, const char *query, int limit, int include_private, Message **out, int *count);
 /* Loads older messages of the open chat: first from the database; when it
  * has none, asks the phone. Returns 1 when more messages were loaded now. */
 int            messaging_manager_load_older(MessagingManager *mgr);
@@ -127,7 +129,8 @@ void           messaging_manager_mute_until(MessagingManager *mgr, const char *j
 void           messaging_manager_set_tone(MessagingManager *mgr, const char *jid, const char *tone);
 void           messaging_manager_set_archived(MessagingManager *mgr, const char *jid, int archived);
 /* Soft-locks a chat (its conversation is blurred) or unlocks it; returns the new state. */
-int            messaging_manager_toggle_soft_lock(MessagingManager *mgr, const char *jid);
+/* Makes a chat private (on) or public. Only you decide this, in tawk. */
+void           messaging_manager_set_private(MessagingManager *mgr, const char *jid, int on);
 /* Deletes a whole chat here and on your other devices and phone. Permanent. */
 int            messaging_manager_delete_chat(MessagingManager *mgr, const char *jid);
 /* Deletes the chat's messages on this computer, keeping the chat. */

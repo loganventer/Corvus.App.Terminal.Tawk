@@ -900,7 +900,11 @@ void tui_app_toggle_soft_lock(TuiApp *app, const char *jid) {
     if (!jid || !jid[0]) { tui_app_toast(app, "Select or open a chat first", 1); return; }
     char copy[128];
     str_copy(copy, sizeof(copy), jid);
-    int locked = messaging_manager_toggle_soft_lock(app->deps.messaging, copy);
+    int locked = 0;
+    int count = 0;
+    const Chat *chats = messaging_manager_chats(app->deps.messaging, &count);
+    for (int i = 0; i < count; i++) if (strcmp(chats[i].jid, copy) == 0) locked = !chats[i].is_private;
+    messaging_manager_set_private(app->deps.messaging, copy, locked);
     if (locked && strcmp(messaging_manager_open_jid(app->deps.messaging), copy) == 0) {
         app->message_view.selected = -1;
         if (app->viewer.open) image_viewer_close(&app->viewer);
@@ -1002,7 +1006,7 @@ void tui_app_open_search(TuiApp *app, const char *query) {
 void tui_app_run_search(TuiApp *app) {
     Message *results = NULL;
     int count = 0;
-    if (app->search.query[0]) messaging_manager_search(app->deps.messaging, app->search.query, 100, &results, &count);
+    if (app->search.query[0]) messaging_manager_search(app->deps.messaging, app->search.query, 100, 0, &results, &count);
     search_overlay_set_results(&app->search, results, count);
 }
 

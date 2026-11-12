@@ -1,8 +1,17 @@
 /* Message search works with and without SQLite's FTS5 (Ubuntu's SQLCipher
  * has none), messages still save without it, and the index catches up once
  * FTS5 is there again. */
+#include "core/settings.h"
+#include "managers/messaging_manager.h"
+#include "resource_access/sqlite_chat_store.h"
+#include "resource_access/sqlite_contact_store.h"
 #include "resource_access/sqlite_database.h"
+#include "resource_access/sqlite_jid_alias_store.h"
 #include "resource_access/sqlite_message_store.h"
+#include "resource_access/sqlite_reaction_store.h"
+#include "resource_access/sqlite_receipt_store.h"
+#include "resource_access/text_chat_exporter.h"
+#include "utilities/event_queue.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,7 +51,76 @@ static int hits_for(IMessageStore *s, const char *query) {
     return n;
 }
 
+static int fake_ok(IMessageGateway *g) { (void)g; return 0; }
+static void fake_notify(INotifier *n, const Notification *note) { (void)n; (void)note; }
+
+static int manager_finds(MessagingManager *m, const char *query, int include_private, const char *id) {
+    Message *hits = NULL;
+    int n = 0;
+    messaging_manager_search(m, query, 50, include_private, &hits, &n);
+    int yes = 0;
+    for (int i = 0; i < n; i++) if (strcmp(hits[i].id, id) == 0) yes = 1;
+    message_array_free(hits, n);
+    return yes;
+}
+
+/* tawk's own search leaves a private chat out; agents ask with include_private and see it. */
+static void private_search(void) {
+    char path[] = "/tmp/tawk-private-search-XXXXXX";
+    int fd = mkstemp(path);
+    if (fd < 0) { perror("mkstemp"); failures++; return; }
+    close(fd);
+    unlink(path);
+    sqlite3 *db = sqlite_database_open(path, NULL);
+    if (!db) { failures++; return; }
+    Settings settings;
+    settings_set_defaults(&settings);
+    IMessageGateway gw;
+    memset(&gw, 0, sizeof(gw));
+    gw.start = fake_ok;
+    gw.connect = fake_ok;
+    INotifier notifier = { NULL, fake_notify, NULL };
+    EventQueue *events = event_queue_create(16);
+    IMessageStore *messages = sqlite_message_store_create(db, ACCOUNT_ID_FIRST);
+    IChatStore *chats = sqlite_chat_store_create(db, ACCOUNT_ID_FIRST);
+    IContactStore *contacts = sqlite_contact_store_create(db, ACCOUNT_ID_FIRST);
+    IJidAliasStore *aliases = sqlite_jid_alias_store_create(db, ACCOUNT_ID_FIRST);
+    IReactionStore *reactions = sqlite_reaction_store_create(db, ACCOUNT_ID_FIRST);
+    IReceiptStore *receipts = sqlite_receipt_store_create(db, ACCOUNT_ID_FIRST);
+    IChatExporter *exporter = text_chat_exporter_create();
+    MessagingManagerDeps deps = { &gw, messages, chats, contacts, aliases, reactions, receipts, &notifier, events,
+                                  &settings, NULL, exporter, NULL, NULL, ACCOUNT_ID_FIRST, NULL, NULL, NULL, NULL };
+    MessagingManager *m = messaging_manager_create(&deps);
+    Chat c;
+    chat_init(&c, "27820000000@s.whatsapp.net");
+    snprintf(c.name, sizeof(c.name), "Someone");
+    chats->upsert(chats, &c);
+    save(messages, "P", "the secret braai", 300);
+
+    messaging_manager_set_private(m, "27820000000@s.whatsapp.net", 0);
+    CHECK(manager_finds(m, "secret", 0, "P"), "a public chat's message is found by tawk's search");
+    messaging_manager_set_private(m, "27820000000@s.whatsapp.net", 1);
+    CHECK(!manager_finds(m, "secret", 0, "P"), "a private chat's message is not, with include_private off");
+    CHECK(manager_finds(m, "secret", 1, "P"), "and is, with include_private on, as agents ask");
+
+    messaging_manager_destroy(m);
+    event_queue_close(events);
+    event_queue_destroy(events);
+    exporter->destroy(exporter);
+    receipts->destroy(receipts);
+    reactions->destroy(reactions);
+    aliases->destroy(aliases);
+    contacts->destroy(contacts);
+    chats->destroy(chats);
+    messages->destroy(messages);
+    sqlite_database_close(db);
+    char side[600];
+    const char *suffixes[] = { "", "-wal", "-shm", NULL };
+    for (int i = 0; suffixes[i]; i++) { snprintf(side, sizeof(side), "%s%s", path, suffixes[i]); unlink(side); }
+}
+
 int main(void) {
+    private_search();
     char path[] = "/tmp/tawk-search-test-XXXXXX";
     int fd = mkstemp(path);
     if (fd < 0) { perror("mkstemp"); return 1; }

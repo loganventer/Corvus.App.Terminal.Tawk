@@ -1434,10 +1434,9 @@ static int chat_is_private(const MessagingManager *m, const char *jid) {
     return 0;
 }
 
-/* Soft-locked chats stay hidden in search results too. */
-int messaging_manager_search(MessagingManager *m, const char *query, int limit, Message **out, int *count) {
+int messaging_manager_search(MessagingManager *m, const char *query, int limit, int include_private, Message **out, int *count) {
     int rc = m->deps.messages->search(m->deps.messages, query, limit, out, count);
-    if (rc != 0 || !*out) return rc;
+    if (rc != 0 || !*out || include_private) return rc;
     int kept = 0;
     for (int i = 0; i < *count; i++) {
         if (chat_is_private(m, (*out)[i].chat_jid)) { message_dispose(&(*out)[i]); continue; }
@@ -1529,12 +1528,10 @@ int messaging_manager_export_chat(MessagingManager *m, const char *jid, const ch
     return rc;
 }
 
-int messaging_manager_toggle_soft_lock(MessagingManager *m, const char *jid) {
-    int locked = 0;
-    for (int i = 0; i < m->chat_count; i++) if (strcmp(m->chats[i].jid, jid) == 0) locked = m->chats[i].is_private;
-    m->deps.chats->set_private(m->deps.chats, jid, !locked);
+void messaging_manager_set_private(MessagingManager *m, const char *jid, int on) {
+    if (!jid || !jid[0]) return;
+    m->deps.chats->set_private(m->deps.chats, jid, on ? 1 : 0);
     rebuild_chats(m);
-    return !locked;
 }
 
 void messaging_manager_set_archived(MessagingManager *m, const char *jid, int archived) {

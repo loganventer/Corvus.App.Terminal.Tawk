@@ -81,7 +81,7 @@ void control_op_search_messages(ControlServer *s, ControlSession *session, const
     Message *items = NULL;
     int count = 0;
     /* Ask for more than needed: hits in chats the client may not see are dropped. */
-    if (messaging_manager_search(s->deps.messaging, query, limit * 4, &items, &count) != 0) {
+    if (messaging_manager_search(s->deps.messaging, query, limit * 4, 1, &items, &count) != 0) {
         control_fail(s, session->conn, req->id, "failed", "Search failed");
         return;
     }
