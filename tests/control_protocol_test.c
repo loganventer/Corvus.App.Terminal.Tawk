@@ -56,6 +56,7 @@ static int failures = 0;
 #define WORK   "120363000000000001@g.us"
 #define SECRET "27820000002@s.whatsapp.net"
 #define HIDDEN "27820000003@s.whatsapp.net"
+#define PRIVATE "27820000019@s.whatsapp.net"
 
 /* ---- a socket that is only memory ----------------------------------------- */
 
@@ -263,7 +264,8 @@ static void test_handshake_and_reads(void) {
     const cJSON *list = cJSON_GetObjectItemCaseSensitive(result(r), "chats");
     char *text = cJSON_PrintUnformatted(list);
     CHECK(text && strstr(text, "Mom") && strstr(text, "Work"), "visible chats are listed");
-    CHECK(text && !strstr(text, SECRET) && !strstr(text, HIDDEN), "locked and soft-locked chats never are");
+    CHECK(text && !strstr(text, SECRET) && !strstr(text, HIDDEN), "locked chats and chats hidden from agents never are");
+    CHECK(text && strstr(text, PRIVATE), "a private chat is listed like any other");
     free(text);
     cJSON_Delete(r);
 
@@ -289,6 +291,12 @@ static void test_handshake_and_reads(void) {
     say(conn, "{\"id\":\"8\",\"op\":\"read_messages\",\"args\":{\"chat\":\"Secret\"}}");
     r = reply("8");
     CHECK(r && !strcmp(error_code(r), "not_found"), "a locked chat cannot be read by name");
+    cJSON_Delete(r);
+    add_message("PV1", PRIVATE, "Dear diary", 1, 1790000160);
+    say(conn, "{\"id\":\"8p\",\"op\":\"read_messages\",\"args\":{\"chat\":\"Diary\"}}");
+    r = reply("8p");
+    CHECK(r && !error_code(r)[0] && cJSON_GetArraySize(cJSON_GetObjectItemCaseSensitive(result(r), "messages")) == 1,
+          "a private chat's messages can be read by agents");
     cJSON_Delete(r);
 
     Settings s = *settings_manager_current(settings_mgr);
@@ -1131,7 +1139,7 @@ static void test_online_status(void) {
     clear_outbox();
     push_presence(SECRET, "online", 0);
     push_presence(HIDDEN, "online", 0);
-    CHECK(!saw_event("presence"), "nothing is said about a locked or soft-locked chat");
+    CHECK(!saw_event("presence"), "nothing is said about a locked chat or one hidden from agents");
     Settings narrowed = push;
     str_copy(narrowed.automation_chats, sizeof(narrowed.automation_chats), "Work");
     settings_manager_apply(settings_mgr, &narrowed);
@@ -1203,7 +1211,7 @@ static void test_online_lookup(void) {
     cJSON_Delete(r);
     say(agent, "{\"id\":\"p8\",\"op\":\"presence\",\"args\":{\"chat\":\"" HIDDEN "\"}}");
     r = reply("p8");
-    CHECK(r && error_code(r)[0] && watched == 0, "nor is a soft-locked one");
+    CHECK(r && error_code(r)[0] && watched == 0, "nor is one hidden from agents");
     cJSON_Delete(r);
     Settings narrowed = on;
     str_copy(narrowed.automation_chats, sizeof(narrowed.automation_chats), "Work");
@@ -1290,7 +1298,7 @@ static void test_transcripts(void) {
     cJSON_Delete(r);
     say(conn, "{\"id\":\"t6\",\"op\":\"set_transcript\",\"args\":{\"message_id\":\"VH\",\"text\":\"hidden words\"}}");
     r = reply("t6");
-    CHECK(r && !strcmp(error_code(r), "not_found"), "nor a soft-locked chat's");
+    CHECK(r && !strcmp(error_code(r), "not_found"), "nor the messages of a chat hidden from agents");
     cJSON_Delete(r);
     say(conn, "{\"id\":\"t7\",\"op\":\"get_transcript\",\"args\":{\"message_id\":\"VS\"}}");
     r = reply("t7");
@@ -1915,7 +1923,8 @@ int main(void) {
     add_chat(WORK, "Work", 0, 0);
     add_chat(SECRET, "Secret", 1, 0);
     add_chat(HIDDEN, "Hidden", 0, 0);
-    chats->set_private(chats, HIDDEN, 1);
+    add_chat(PRIVATE, "Diary", 0, 0);
+    chats->set_private(chats, PRIVATE, 1);
     add_message("M0", MOM, "Morning", 0, 1790000000);
     add_message("M1", MOM, "See you at 6", 0, 1790000100);
     add_message("M2", MOM, "Bring bread", 0, 1790000150);
@@ -1929,6 +1938,7 @@ int main(void) {
     IChatPrefsStore *chat_prefs = sqlite_chat_prefs_store_create(db);
     AutomationManagerDeps automation_deps = { log, settings_manager_current(settings_mgr), &admin_tokens, sqlite_chat_prefs_store_agents(chat_prefs) };
     automation = automation_manager_create(&automation_deps);
+    automation_manager_set_chat_rule(automation, HIDDEN, CHAT_AGENT_HIDDEN);   /* kept from agents by its rule */
     queue = approval_queue_create();
     ITranscriptStore *transcript_store = sqlite_transcript_store_create(db, ACCOUNT_ID_FIRST);
     TranscriptManagerDeps transcript_deps = { transcript_store, chat_prefs, sqlite_chat_prefs_store_transcripts(chat_prefs),

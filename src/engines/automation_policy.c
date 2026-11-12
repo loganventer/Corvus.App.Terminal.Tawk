@@ -40,7 +40,7 @@ static int listed(const char *list, const Chat *c) {
 }
 
 int automation_policy_chat_allowed(const Settings *s, const Chat *c) {
-    if (!c || chat_visibility_hidden(c->jid) || !chat_match_searchable(c, 0) || c->is_private) return 0;
+    if (!c || chat_visibility_hidden(c->jid) || !chat_match_searchable(c, 0)) return 0;
     const char *list = s->automation_chats;
     while (isspace((unsigned char)*list)) list++;
     return *list ? listed(list, c) : 1;

@@ -325,7 +325,8 @@ TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_
          $(BUILD)/tests/private_migration_test \
          $(BUILD)/tests/lock_password_test \
          $(BUILD)/tests/biometric_authenticator_test \
-         $(BUILD)/tests/privacy_manager_test
+         $(BUILD)/tests/privacy_manager_test \
+         $(BUILD)/tests/private_agents_test
 
 # The tests run with HOME and the XDG folders inside build/, so the defaults
 # they use (media, logs, the control socket) never touch your own corvus/tawk.
@@ -545,6 +546,10 @@ $(BUILD)/tests/biometric_authenticator_test: $(BUILD)/tests/biometric_authentica
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
 $(BUILD)/tests/privacy_manager_test: $(BUILD)/tests/privacy_manager_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
+	$(call step,LD,$@)
+	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
+
+$(BUILD)/tests/private_agents_test: $(BUILD)/tests/private_agents_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
 	$(call step,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
