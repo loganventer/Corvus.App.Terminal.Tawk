@@ -3,6 +3,11 @@
 #include "core/passphrase.h"
 #include "engines/lock_password_hasher.h"
 #include "engines/lock_password_rule.h"
+#include "resource_access/sqlite_database.h"
+#include "resource_access/sqlite_lock_secret_store.h"
+
+#include <stdlib.h>
+#include <unistd.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -56,10 +61,41 @@ static void rule(void) {
     CHECK(lock_password_problem_text(LOCK_PASSWORD_OK)[0] == '\0', "and no problem says nothing");
 }
 
+static void store(void) {
+    char dir[] = "/tmp/tawk-lock-secret-XXXXXX";
+    if (!mkdtemp(dir)) { printf("FAIL: mkdtemp\n"); failures++; return; }
+    char path[256];
+    snprintf(path, sizeof(path), "%s/tawk.db", dir);
+    sqlite3 *db = sqlite_database_open(path, NULL);
+    ILockSecretStore *s = db ? sqlite_lock_secret_store_create(db) : NULL;
+    CHECK(s != NULL, "the store opens");
+    if (s) {
+        LockVerifier got, first, second;
+        CHECK(s->load(s, &got) == 0, "there is no lock password at first");
+        memset(&first, 0, sizeof(first));
+        memset(first.salt, 0x11, sizeof(first.salt));
+        memset(first.hash, 0x22, sizeof(first.hash));
+        first.iterations = 600000;
+        second = first;
+        memset(second.salt, 0x33, sizeof(second.salt));
+        second.iterations = 700000;
+        CHECK(s->save(s, &first) == 0 && s->load(s, &got) == 1 && !memcmp(&got, &first, sizeof(got)), "what is saved loads back as it was");
+        CHECK(s->save(s, &second) == 0 && s->load(s, &got) == 1 && !memcmp(&got, &second, sizeof(got)), "a second save replaces the first");
+        CHECK(s->clear(s) == 0 && s->load(s, &got) == 0, "and clearing it leaves none");
+        s->destroy(s);
+    }
+    sqlite_database_close(db);
+    unlink(path);
+    char cmd[128];
+    snprintf(cmd, sizeof(cmd), "rm -rf %s", dir);
+    if (system(cmd) != 0) printf("could not remove %s\n", dir);
+}
+
 int main(void) {
     hasher();
     rule();
+    store();
     if (failures) { printf("%d failure(s)\n", failures); return 1; }
-    printf("ok: the lock password is checked when it is set, kept as a salted hash and matched against it\n");
+    printf("ok: the lock password is checked when it is set, kept as a salted hash on this computer and matched against it\n");
     return 0;
 }
