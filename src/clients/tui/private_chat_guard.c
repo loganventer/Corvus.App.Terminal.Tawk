@@ -61,14 +61,14 @@ static void ask_password(PrivateChatGuard *g) {
     }
 }
 
-PrivateGuardOutcome private_chat_guard_request(PrivateChatGuard *g, const PrivateRequest *request, int64_t now_ms) {
+PrivateGuardOutcome private_chat_guard_request(PrivateChatGuard *g, const PrivateRequest *request, int64_t now_ms, PrivateRequest *done) {
     (void)now_ms;
     drop(g);
     g->pending = *request;
     g->has_pending = 1;
     int has_password = privacy_manager_has_password(g->privacy);
     if (request->action == PRIVATE_ACTION_MAKE_PRIVATE) {
-        if (has_password) return pass(g, NULL);
+        if (has_password) return pass(g, done);
         lock_password_dialog_open(&g->password, 1);
         return PRIVATE_GUARD_WAITING;
     }

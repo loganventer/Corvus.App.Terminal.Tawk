@@ -28,11 +28,11 @@ typedef struct PrivateChatGuard {
 void                private_chat_guard_init(PrivateChatGuard *guard, PrivacyManager *privacy);
 /* A dialog is up and takes the keys. */
 int                 private_chat_guard_busy(const PrivateChatGuard *guard);
-/* Asks for what `request` needs. DONE when it may be carried out at once
- * (making a chat private with a password already set); otherwise WAITING
- * while a dialog is up. Opening, exporting and making public are asked
- * only when the caller found they need it. */
-PrivateGuardOutcome private_chat_guard_request(PrivateChatGuard *guard, const PrivateRequest *request, int64_t now_ms);
+/* Asks for what `request` needs. DONE, with `*done` the request, when it
+ * may be carried out at once (making a chat private with a password already
+ * set); otherwise WAITING while a dialog is up. Opening, exporting and
+ * making public are asked only when the caller found they need it. */
+PrivateGuardOutcome private_chat_guard_request(PrivateChatGuard *guard, const PrivateRequest *request, int64_t now_ms, PrivateRequest *done);
 /* Once a frame: follows the Touch ID sheet. On DONE `*done` is the request to carry out. */
 PrivateGuardOutcome private_chat_guard_tick(PrivateChatGuard *guard, int64_t now_ms, PrivateRequest *done);
 /* A key while busy. On DONE `*done` is the request to carry out. */

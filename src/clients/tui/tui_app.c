@@ -908,35 +908,6 @@ void tui_app_open_chat_options(TuiApp *app, const char *jid) {
     }
 }
 
-/* Soft lock: the chat's conversation is blurred until shown again. */
-void tui_app_toggle_soft_lock(TuiApp *app, const char *jid) {
-    if (!jid || !jid[0]) { tui_app_toast(app, "Select or open a chat first", 1); return; }
-    char copy[128];
-    str_copy(copy, sizeof(copy), jid);
-    int locked = 0;
-    int count = 0;
-    const Chat *chats = messaging_manager_chats(app->deps.messaging, &count);
-    for (int i = 0; i < count; i++) if (strcmp(chats[i].jid, copy) == 0) locked = !chats[i].is_private;
-    messaging_manager_set_private(app->deps.messaging, copy, locked);
-    if (locked && strcmp(messaging_manager_open_jid(app->deps.messaging), copy) == 0) {
-        app->message_view.selected = -1;
-        if (app->viewer.open) image_viewer_close(&app->viewer);
-    }
-    tui_app_toast(app, locked ? "\xF0\x9F\x99\x88 Soft-locked" : "\xF0\x9F\x91\x80 Shown", 0);
-    sixel_overlay_invalidate(&app->sixel_overlay);
-    app->dirty = 1;
-}
-
-/* The chat a soft-lock key acts on: the one selected in the list, else the open one. */
-void tui_app_toggle_soft_lock_here(TuiApp *app) {
-    const char *jid = messaging_manager_open_jid(app->deps.messaging);
-    if (app->focus == TUI_FOCUS_CHATS) {
-        const char *selected = tui_app_take_selected(app);
-        if (selected) jid = selected;
-    }
-    tui_app_toggle_soft_lock(app, jid);
-}
-
 void tui_app_apply_chat_option(TuiApp *app) {
     MessagingManager *mm = app->deps.messaging;
     const char *jid = app->options.jid;
@@ -959,7 +930,7 @@ void tui_app_apply_chat_option(TuiApp *app) {
         case CHAT_OPTION_TONE_NONE:    messaging_manager_set_tone(mm, jid, "none"); tui_app_toast(app, "No sound for this chat", 0); break;
         case CHAT_OPTION_TONE_DEFAULT: messaging_manager_set_tone(mm, jid, ""); tui_app_toast(app, "Default tone", 0); break;
         case CHAT_OPTION_SOFT_LOCK:
-        case CHAT_OPTION_SOFT_UNLOCK: tui_app_toggle_soft_lock(app, jid); break;
+        case CHAT_OPTION_SOFT_UNLOCK: tui_app_toggle_private(app, jid); break;
         case CHAT_OPTION_INFO: tui_app_open_contact(app, jid); break;
         case CHAT_OPTION_DELETE_CHAT: {
             char question[200];
@@ -1298,7 +1269,7 @@ void tui_app_contact_action(TuiApp *app) {
         case CONTACT_ACTION_VOICE_LANGUAGES: tui_app_open_voice_languages(app, jid); break;
         case CONTACT_ACTION_SEARCH:     app->contact.open = 0; tui_app_open_search(app, ""); break;
         case CONTACT_ACTION_OPTIONS:    app->contact.open = 0; tui_app_open_chat_options(app, jid); break;
-        case CONTACT_ACTION_SOFT_LOCK:  tui_app_toggle_soft_lock(app, jid); break;
+        case CONTACT_ACTION_SOFT_LOCK:  tui_app_toggle_private(app, jid); break;
         case CONTACT_ACTION_EXPORT:     export_chat(app, jid, 0); break;
         case CONTACT_ACTION_EXPORT_MEDIA: export_chat(app, jid, 1); break;
         case CONTACT_ACTION_UNBLOCK:

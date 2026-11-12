@@ -210,14 +210,12 @@ void tui_app_open_camera(TuiApp *app);
 void tui_app_save_folding(TuiApp *app);
 /* What a key in the camera view asked for: snap, use, retake or cancel. */
 void tui_app_camera_action(TuiApp *app, CameraViewAction action);
-void tui_app_toggle_soft_lock(TuiApp *app, const char *jid);
 void tui_app_confirmed(TuiApp *app);
 void tui_app_call_choice(TuiApp *app, IncomingCallChoice choice);
 void tui_app_open_contact(TuiApp *app, const char *jid);
 void tui_app_contact_action(TuiApp *app);
 void tui_app_show_portrait(TuiApp *app, const char *jid);
 const char *tui_app_member_name(void *app, const char *jid);
-void tui_app_toggle_soft_lock_here(TuiApp *app);
 void tui_app_start_reply(TuiApp *app, int index);
 void tui_app_cancel_reply(TuiApp *app);
 void tui_app_start_edit(TuiApp *app, int index);
@@ -266,6 +264,13 @@ int  tui_app_private_gate_open(TuiApp *app, const char *jid);
 int  tui_app_private_gate_row(TuiApp *app, const Chat *row);
 /* Another chat is opening: an unlocked private chat that is not it locks again. */
 void tui_app_leave_private(TuiApp *app, AccountId account, const char *jid);
+/* Makes a chat private (asking for a first lock password when there is none) or public (asking for an unlock first),
+ * on every account a merged chat is on. */
+void tui_app_set_private(TuiApp *app, const char *jid, int on);
+/* Makes the chat private if it is not, public if it is. */
+void tui_app_toggle_private(TuiApp *app, const char *jid);
+/* The same for the chat selected in the list, else the open one (Alt+L). */
+void tui_app_toggle_private_here(TuiApp *app);
 /* Every private chat locks again, and any unlock being asked for is dropped: on the screensaver, the app lock, an account switch and quit. */
 void tui_app_private_relock(TuiApp *app);
 /* Opens a chat without asking. Only for one that needs no unlock, or that the guard let through. */

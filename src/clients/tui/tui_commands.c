@@ -149,7 +149,7 @@ static void cmd_info(TuiApp *app, const char *args) {
 
 static void cmd_softlock(TuiApp *app, const char *args) {
     (void)args;
-    tui_app_toggle_soft_lock(app, messaging_manager_open_jid(app->deps.messaging));
+    tui_app_toggle_private(app, messaging_manager_open_jid(app->deps.messaging));
 }
 
 static void cmd_transcripts(TuiApp *app, const char *args) {

@@ -99,12 +99,62 @@ static void open_unlocked(TuiApp *app, const PrivateRequest *done) {
     if (!strcmp(row.jid, jid)) tui_app_open_peers(app, &row);
 }
 
+/* The chat list row of `jid` as seen through `account`, which says which accounts a merged chat is on. */
+static const Chat *row_of(TuiApp *app, AccountId account, const char *jid) {
+    int count = 0;
+    const Chat *rows = tui_app_chat_rows(app, &count);
+    for (int i = 0; i < count; i++) {
+        if (strcmp(rows[i].jid, jid) != 0) continue;
+        if (rows[i].account == ACCOUNT_ID_NONE || rows[i].account == account || (rows[i].accounts & (rows[i].accounts - 1))) return &rows[i];
+    }
+    return NULL;
+}
+
+void tui_app_set_private(TuiApp *app, const char *jid, int on) {
+    if (!jid || !jid[0]) { tui_app_toast(app, "Select or open a chat first", 1); return; }
+    char copy[128];
+    str_copy(copy, sizeof(copy), jid);
+    const Chat *chat = find_chat(app, copy);
+    if (!chat || (chat->is_private != 0) == (on != 0)) return;
+    PrivateRequest r = request_for(on ? PRIVATE_ACTION_MAKE_PRIVATE : PRIVATE_ACTION_MAKE_PUBLIC, app->deps.active_account, copy);
+    const Chat *row = row_of(app, app->deps.active_account, copy);
+    if (row) add_peers(app, row, &r);
+    tui_app_request_private(app, &r);
+}
+
+void tui_app_toggle_private(TuiApp *app, const char *jid) {
+    const Chat *chat = jid && jid[0] ? find_chat(app, jid) : NULL;
+    tui_app_set_private(app, jid, chat ? !chat->is_private : 1);
+}
+
+void tui_app_toggle_private_here(TuiApp *app) {
+    const char *jid = messaging_manager_open_jid(app->deps.messaging);
+    if (app->focus == TUI_FOCUS_CHATS) {
+        const char *selected = tui_app_take_selected(app);
+        if (selected) jid = selected;
+    }
+    tui_app_toggle_private(app, jid);
+}
+
+/* The change goes to every account the chat is on; a chat made private locks at once. */
+static void apply_private(TuiApp *app, const PrivateRequest *done, int on) {
+    messaging_manager_set_private(app->deps.messaging, done->jid, on);
+    IAccountDirectory *dir = app->deps.directory;
+    for (int i = 0; dir && i < done->peer_count; i++) {
+        const AccountServices *sv = dir->find(dir, done->peers[i].account);
+        if (sv) messaging_manager_set_private(sv->messaging, done->peers[i].jid, on);
+    }
+    if (on) tui_app_private_relock(app);
+    app->chat_rows_stale = 1;
+    tui_app_toast(app, on ? "\xF0\x9F\x94\x92 Private: it opens with Touch ID or the lock password" : "Public again", 0);
+}
+
 /* What passed is carried out. Nothing reaches here without the guard's DONE. */
 static void carry_out(TuiApp *app, const PrivateRequest *done) {
     switch (done->action) {
     case PRIVATE_ACTION_OPEN:            open_unlocked(app, done); break;
-    case PRIVATE_ACTION_MAKE_PRIVATE:    break;
-    case PRIVATE_ACTION_MAKE_PUBLIC:     break;
+    case PRIVATE_ACTION_MAKE_PRIVATE:    apply_private(app, done, 1); break;
+    case PRIVATE_ACTION_MAKE_PUBLIC:     apply_private(app, done, 0); break;
     case PRIVATE_ACTION_EXPORT:          break;
     case PRIVATE_ACTION_CHANGE_PASSWORD: tui_app_toast(app, "\xF0\x9F\x94\x92 Lock password set", 0); break;
     }
@@ -119,7 +169,7 @@ static void follow(TuiApp *app, PrivateGuardOutcome outcome, const PrivateReques
 void tui_app_request_private(TuiApp *app, const PrivateRequest *request) {
     PrivateRequest done;
     memset(&done, 0, sizeof(done));
-    follow(app, private_chat_guard_request(&app->privacy, request, clock_now_ms()), &done);
+    follow(app, private_chat_guard_request(&app->privacy, request, clock_now_ms(), &done), &done);
 }
 
 void tui_app_private_tick(TuiApp *app, int64_t now_ms) {

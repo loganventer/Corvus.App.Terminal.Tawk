@@ -34,7 +34,7 @@ static void touch_id_passes(void) {
     private_chat_guard_init(&g, p.manager);
     PrivateRequest r = open_request(), done;
     memset(&done, 0, sizeof(done));
-    CHECK(private_chat_guard_request(&g, &r, 0) == PRIVATE_GUARD_WAITING && p.touch.begun == 1 && private_chat_guard_busy(&g),
+    CHECK(private_chat_guard_request(&g, &r, 0, &done) == PRIVATE_GUARD_WAITING && p.touch.begun == 1 && private_chat_guard_busy(&g),
           "opening a private chat puts Touch ID up and opens nothing yet");
     CHECK(private_chat_guard_tick(&g, 16, &done) == PRIVATE_GUARD_WAITING && !private_chat_session_is_unlocked(&g.session, 1, A),
           "while the sheet is up nothing is unlocked");
@@ -54,7 +54,7 @@ static void fallback_then_password(void) {
     PrivateChatGuard g;
     private_chat_guard_init(&g, p.manager);
     PrivateRequest r = open_request(), done;
-    private_chat_guard_request(&g, &r, 0);
+    private_chat_guard_request(&g, &r, 0, &done);
     p.touch.next = BIOMETRIC_FALLBACK;
     CHECK(private_chat_guard_tick(&g, 16, &done) == PRIVATE_GUARD_WAITING && g.unlock.state == PRIVATE_UNLOCK_PASSWORD,
           "'Use tawk password' moves to the password");
@@ -68,11 +68,11 @@ static void fallback_then_password(void) {
 
     private_chat_guard_relock_all(&g);
     p.touch.available = 0;
-    CHECK(private_chat_guard_request(&g, &r, 40) == PRIVATE_GUARD_WAITING && g.unlock.state == PRIVATE_UNLOCK_PASSWORD && p.touch.begun == 1,
+    CHECK(private_chat_guard_request(&g, &r, 40, &done) == PRIVATE_GUARD_WAITING && g.unlock.state == PRIVATE_UNLOCK_PASSWORD && p.touch.begun == 1,
           "without Touch ID the password is asked at once");
     p.touch.available = 1;
     private_chat_guard_relock_all(&g);
-    private_chat_guard_request(&g, &r, 50);
+    private_chat_guard_request(&g, &r, 50, &done);
     CHECK(private_chat_guard_key(&g, 0, '\t', 50, &done) == PRIVATE_GUARD_WAITING && g.unlock.state == PRIVATE_UNLOCK_PASSWORD && p.touch.cancelled >= 1,
           "Tab takes the sheet down and asks for the password");
     fake_privacy_dispose(&p);
@@ -85,14 +85,14 @@ static void esc_and_cancel(void) {
     private_chat_guard_init(&g, p.manager);
     PrivateRequest r = open_request(), done;
     memset(&done, 0, sizeof(done));
-    private_chat_guard_request(&g, &r, 0);
+    private_chat_guard_request(&g, &r, 0, &done);
     CHECK(private_chat_guard_key(&g, 0, 27, 10, &done) == PRIVATE_GUARD_CANCELLED && !private_chat_guard_busy(&g) &&
           !private_chat_session_is_unlocked(&g.session, 1, A) && p.touch.cancelled == 1, "Esc leaves it locked and takes the sheet down");
-    private_chat_guard_request(&g, &r, 20);
+    private_chat_guard_request(&g, &r, 20, &done);
     p.touch.next = BIOMETRIC_CANCELLED;
     CHECK(private_chat_guard_tick(&g, 30, &done) == PRIVATE_GUARD_CANCELLED && !private_chat_session_is_unlocked(&g.session, 1, A),
           "Cancel on the sheet does the same");
-    private_chat_guard_request(&g, &r, 40);
+    private_chat_guard_request(&g, &r, 40, &done);
     p.touch.next = BIOMETRIC_FALLBACK;
     private_chat_guard_tick(&g, 50, &done);
     type(&g, "letme", 60, &done);

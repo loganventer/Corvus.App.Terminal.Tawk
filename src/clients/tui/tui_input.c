@@ -917,7 +917,7 @@ void tui_input_dispatch(TuiApp *app, int is_key, int ch) {
             int ctrl = seq.mods & ESCAPE_MOD_CTRL;
             shift = shift_key(seq.mods);
             if (ctrl && shift && (seq.code == 'l' || seq.code == 'L') && !tui_app_show_login(app)) {
-                tui_app_toggle_soft_lock_here(app);
+                tui_app_toggle_private_here(app);
                 return;
             }
             /* Any other modified key goes on as the key curses would have seen. */
@@ -962,7 +962,7 @@ void tui_input_dispatch(TuiApp *app, int is_key, int ch) {
         return;
     }
     if (alt && !is_key && (ch == 'v' || ch == 'V') && !tui_app_show_login(app)) { tui_app_paste_image(app); return; }
-    if (alt && !is_key && (ch == 'l' || ch == 'L') && !tui_app_show_login(app)) { tui_app_toggle_soft_lock_here(app); return; }
+    if (alt && !is_key && (ch == 'l' || ch == 'L') && !tui_app_show_login(app)) { tui_app_toggle_private_here(app); return; }
     if (alt && !is_key && (ch == 't' || ch == 'T') && !tui_app_show_login(app)) {
         tui_app_step_show_transcripts(app, messaging_manager_open_jid(app->deps.messaging));
         return;
