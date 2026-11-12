@@ -21,7 +21,7 @@ const char *summary_view_head(int folded);
 void        summary_view_draw_head(int folded, int y, int x, int room, int attr);
 /* One wrapped line of the summary. */
 void        summary_view_draw_line(const SummaryView *view, int y, int x, int room, size_t offset, size_t length, int attr);
-/* The same row for a soft-locked chat: its shape only. */
+/* The same row for a locked private chat: its shape only. */
 void        summary_view_draw_veiled(const SummaryView *view, int y, int x, int room, size_t offset, size_t length, int attr);
 
 #endif

@@ -14,8 +14,8 @@ static const char *const LABELS[CHAT_OPTION_COUNT] = {
     "\xF0\x9F\x94\x87  Notification tone: none",
     "\xF0\x9F\x8E\xB5  Notification tone: default",
     "\xE2\x9C\x8F  Clear draft",
-    "\xF0\x9F\x99\x88  Soft-lock chat (blur it)",
-    "\xF0\x9F\x91\x80  Show chat (remove soft lock)",
+    "\xF0\x9F\x94\x92  Make private (Touch ID or password to open)",
+    "\xF0\x9F\x94\x93  Make public",
     "\xF0\x9F\x97\x91  Delete chat\xE2\x80\xA6",
     "\xE2\x84\xB9  Contact info\xE2\x80\xA6",
 };

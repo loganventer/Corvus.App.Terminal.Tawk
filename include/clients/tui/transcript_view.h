@@ -24,7 +24,7 @@ void transcript_view_dispose(TranscriptView *view);
 int  transcript_view_wrap(const TranscriptView *view, int cols, TextLine **wrapped);
 /* One wrapped line, dimmed and in italics over `attr` (the bubble's colours). */
 void transcript_view_draw_line(const TranscriptView *view, int y, int x, int room, size_t offset, size_t length, int attr);
-/* The same row for a soft-locked chat: its shape only. */
+/* The same row for a locked private chat: its shape only. */
 void transcript_view_draw_veiled(const TranscriptView *view, int y, int x, int room, size_t offset, size_t length, int attr);
 
 #endif

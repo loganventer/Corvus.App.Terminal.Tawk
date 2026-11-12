@@ -929,8 +929,8 @@ void tui_app_apply_chat_option(TuiApp *app) {
             break;
         case CHAT_OPTION_TONE_NONE:    messaging_manager_set_tone(mm, jid, "none"); tui_app_toast(app, "No sound for this chat", 0); break;
         case CHAT_OPTION_TONE_DEFAULT: messaging_manager_set_tone(mm, jid, ""); tui_app_toast(app, "Default tone", 0); break;
-        case CHAT_OPTION_SOFT_LOCK:
-        case CHAT_OPTION_SOFT_UNLOCK: tui_app_toggle_private(app, jid); break;
+        case CHAT_OPTION_MAKE_PRIVATE: tui_app_set_private(app, jid, 1); break;
+        case CHAT_OPTION_MAKE_PUBLIC:  tui_app_set_private(app, jid, 0); break;
         case CHAT_OPTION_INFO: tui_app_open_contact(app, jid); break;
         case CHAT_OPTION_DELETE_CHAT: {
             char question[200];
@@ -1269,7 +1269,7 @@ void tui_app_contact_action(TuiApp *app) {
         case CONTACT_ACTION_VOICE_LANGUAGES: tui_app_open_voice_languages(app, jid); break;
         case CONTACT_ACTION_SEARCH:     app->contact.open = 0; tui_app_open_search(app, ""); break;
         case CONTACT_ACTION_OPTIONS:    app->contact.open = 0; tui_app_open_chat_options(app, jid); break;
-        case CONTACT_ACTION_SOFT_LOCK:  tui_app_toggle_private(app, jid); break;
+        case CONTACT_ACTION_PRIVATE:    tui_app_toggle_private(app, jid); break;
         case CONTACT_ACTION_EXPORT:     export_chat(app, jid, 0); break;
         case CONTACT_ACTION_EXPORT_MEDIA: export_chat(app, jid, 1); break;
         case CONTACT_ACTION_UNBLOCK:

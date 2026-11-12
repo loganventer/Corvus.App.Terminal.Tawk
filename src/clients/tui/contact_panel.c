@@ -49,7 +49,7 @@ void contact_panel_open(ContactPanel *p, const Chat *chat, int blocked) {
     a[n++] = CONTACT_ACTION_VIEW_PHOTO;
     a[n++] = CONTACT_ACTION_SEARCH;
     a[n++] = CONTACT_ACTION_OPTIONS;
-    a[n++] = CONTACT_ACTION_SOFT_LOCK;
+    a[n++] = CONTACT_ACTION_PRIVATE;
     a[n++] = CONTACT_ACTION_EXPORT;
     a[n++] = CONTACT_ACTION_EXPORT_MEDIA;
     if (!chat->is_group) a[n++] = blocked ? CONTACT_ACTION_UNBLOCK : CONTACT_ACTION_BLOCK;
@@ -297,7 +297,7 @@ int contact_panel_render(ContactPanel *p, UiRect area, const Chat *c, const Cont
                  : danger ? tui_palette_attr(THEME_SLOT_WARN) : base;
         tui_fill((UiRect){ actions_top + i, in.x, 1, in.w }, i == p->selected ? attr : base);
         const char *label = contact_action_label(a);
-        if (a == CONTACT_ACTION_SOFT_LOCK && c->is_private) label = "\xF0\x9F\x91\x80  Show chat (remove soft lock)";
+        if (a == CONTACT_ACTION_PRIVATE) label = c->is_private ? "\xF0\x9F\x94\x92  Private: on" : "\xF0\x9F\x94\x93  Private: off";
         char with_value[260];
         const char *value = pref_value(p, a);
         if (value) {

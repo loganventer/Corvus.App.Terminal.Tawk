@@ -10,7 +10,7 @@
 /* The dim line under the name of the open chat. For one person it says
  * "online" or when they were last seen, when that is known and the setting
  * allows; otherwise it is `summary` (their about text, a group's member
- * count). A soft-locked chat shows nothing. */
+ * count). A locked private chat (veiled) shows nothing. */
 void chat_subtitle_text(const Settings *settings, const Chat *chat, int veiled, const char *summary, int64_t now, char *out, size_t size);
 
 #endif

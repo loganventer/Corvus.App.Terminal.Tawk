@@ -23,7 +23,7 @@ void chat_options_menu_open(ChatOptionsMenu *m, const Chat *c) {
     add(m, strcmp(c->tone, "none") == 0 ? CHAT_OPTION_TONE_DEFAULT : CHAT_OPTION_TONE_NONE);
     if (c->tone[0] && strcmp(c->tone, "none") != 0) add(m, CHAT_OPTION_TONE_DEFAULT);
     if (c->has_draft) add(m, CHAT_OPTION_CLEAR_DRAFT);
-    add(m, c->is_private ? CHAT_OPTION_SOFT_UNLOCK : CHAT_OPTION_SOFT_LOCK);
+    add(m, c->is_private ? CHAT_OPTION_MAKE_PUBLIC : CHAT_OPTION_MAKE_PRIVATE);
     add(m, CHAT_OPTION_INFO);
     add(m, CHAT_OPTION_DELETE_CHAT);
     m->open = 1;

@@ -26,7 +26,7 @@ typedef struct MessageViewContext {
     const MediaSources *media;          /* video frames and PDF pages; may be NULL */
     int                 pixel_images;   /* leave fully visible photos blank for a pixel (Sixel) image */
     int                 portrait_pixels;/* the same for the title bar portrait, which popups beside it leave uncovered */
-    int                 veiled;         /* soft-locked chat: draw the shape of messages, not their content */
+    int                 veiled;         /* a locked private chat: draw the shape of messages, not their content */
     /* Title bar portrait: shown when `jid` is set; `portrait` is a picture path or NULL (initials). */
     const char         *jid;
     const char         *portrait;
