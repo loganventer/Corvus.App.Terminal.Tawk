@@ -25,6 +25,7 @@
 #include "managers/label_manager.h"
 #include "managers/reminder_manager.h"
 #include "managers/media_manager.h"
+#include "managers/privacy_manager.h"
 #include "managers/messaging_manager.h"
 #include "managers/call_manager.h"
 #include "managers/profile_manager.h"
@@ -82,6 +83,7 @@ typedef struct TuiAppDeps {
     AccountId              active_account;
     TranscriptManager     *transcripts;           /* voice note transcripts and your choices about them; may be NULL */
     SummaryManager        *summaries;             /* TL;DR summaries and which chats are in that mode; may be NULL */
+    PrivacyManager        *privacy;               /* the lock password and Touch ID for private chats, for the whole computer */
 } TuiAppDeps;
 
 #endif

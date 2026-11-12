@@ -1701,6 +1701,7 @@ TuiApp *tui_app_create(const TuiAppDeps *deps) {
     app->status_source = (StatusSource){ app, status_through_feed };
     tui_app_init_transcripts(app);
     tui_app_init_summaries(app);
+    private_chat_guard_init(&app->privacy, app->deps.privacy);
     app->focus = TUI_FOCUS_CHATS;
     app->last_auth = AUTH_STATE_STARTING;
     app->caret_visible = -1;
@@ -1801,6 +1802,7 @@ int tui_app_run(TuiApp *app) {
         update_tab(app, now);
         tui_app_reminders_tick(app, now);
         tui_app_lock_tick(app, now);
+        tui_app_private_tick(app, now);
         if (!tui_app_locked(app)) maybe_screensaver(app);
         follow_camera(app, now);
         if (app->splash.active) {

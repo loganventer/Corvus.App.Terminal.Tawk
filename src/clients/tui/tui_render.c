@@ -331,9 +331,13 @@ void tui_render_frame(TuiApp *app, int64_t now) {
         popup = 0;
     }
 
-    /* A confirmation sits above everything, including settings; a ringing call above that. */
+    /* A confirmation sits above everything, including settings; a private chat's unlock above that; a ringing call above both. */
     if (app->confirm.open) {
         confirm_dialog_render(&app->confirm, l->body, now);
+        popup = 1;
+    }
+    if (private_chat_guard_busy(&app->privacy)) {
+        tui_app_private_render(app, l->body);
         popup = 1;
     }
     const IncomingCall *call = login ? NULL : call_manager_ringing(app->deps.calls);

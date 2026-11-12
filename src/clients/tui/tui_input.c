@@ -177,6 +177,7 @@ static int handle_overlays_key(TuiApp *app, int is_key, int ch) {
         if (choice != INCOMING_CALL_NONE) { tui_app_call_choice(app, choice); return 1; }
         return 1;
     }
+    if (tui_app_private_key(app, is_key, ch)) return 1;             /* Touch ID or the lock password: nothing else gets a key */
     if (app->confirm.open) {
         if (confirm_dialog_key(&app->confirm, is_key, ch) == POPUP_CHOSEN) tui_app_confirmed(app);
         app->dirty = 1;

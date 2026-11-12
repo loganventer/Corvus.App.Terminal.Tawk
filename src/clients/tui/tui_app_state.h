@@ -9,6 +9,7 @@
 #include "core/chat_filter_kind.h"
 #include "core/chat_label.h"
 #include "clients/tui/lock_screen.h"
+#include "clients/tui/private_chat_guard.h"
 #include "clients/tui/chat_list_view.h"
 #include "clients/tui/unified_chat_list.h"
 #include "clients/tui/accounts_dialog.h"
@@ -165,6 +166,7 @@ struct TuiApp {
     int64_t             awaiting_at_ms;
     int64_t             reminders_checked_ms;
     LockScreen          lock;                 /* everything is hidden until the passphrase is typed */
+    PrivateChatGuard    privacy;              /* which private chat is unlocked, and what is being asked for one */
     int                 running;
     int                 active;
     int                 dragging_divider;
@@ -248,6 +250,16 @@ void tui_app_run_search(TuiApp *app);
 void tui_app_choose_search_result(TuiApp *app);
 void tui_app_open_help(TuiApp *app);
 void tui_app_start_screensaver(TuiApp *app);
+/* tui_private.c: private chats, opened only after Touch ID or the lock password. */
+/* The chat is drawn veiled: private and not unlocked. */
+int  tui_app_private_veiled(const TuiApp *app, const Chat *chat);
+/* Asks for what `request` needs and carries it out once it passes. */
+void tui_app_request_private(TuiApp *app, const PrivateRequest *request);
+void tui_app_private_tick(TuiApp *app, int64_t now_ms);
+/* 1 when a private chat dialog is up and took the key. */
+int  tui_app_private_key(TuiApp *app, int is_key, int ch);
+void tui_app_private_render(TuiApp *app, UiRect area);
+
 /* tui_lock.c: locks tawk until the passphrase of your chats is typed. tui_app_lock returns 0 where there is no lock (the chats are not encrypted). */
 int  tui_app_locked(const TuiApp *app);
 int  tui_app_lock(TuiApp *app);
