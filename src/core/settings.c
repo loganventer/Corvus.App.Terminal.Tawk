@@ -67,6 +67,7 @@ void settings_set_defaults(Settings *s) {
     s->voice_max_seconds = 300;
 
     s->screensaver = 1;
+    s->private_touch_id = 1;
     s->idle_minutes = 5;
     str_copy(s->screensaver_command, sizeof(s->screensaver_command), "corvus-matrix-clock");
     s->wake_on_message = 1;

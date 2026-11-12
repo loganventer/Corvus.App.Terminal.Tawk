@@ -62,6 +62,17 @@ int main(void) {
     }
     CHECK(found && !changeable, "an agent cannot change when tawk locks");
 
+    found = 0;
+    changeable = 1;
+    for (int i = 0; i < settings_schema_count(); i++) {
+        const SettingField *f = settings_schema_at(i);
+        if (strcmp(f->key, "private_touch_id") == 0) { found = 1; changeable = automation_policy_setting_changeable(f); }
+    }
+    CHECK(found && !changeable, "an agent cannot change how a private chat opens");
+    Settings defaults;
+    settings_set_defaults(&defaults);
+    CHECK(defaults.private_touch_id == 1, "Touch ID for private chats is on unless you turn it off");
+
     if (failures) { printf("%d failure(s)\n", failures); return 1; }
     printf("ok: the passphrase lock\n");
     return 0;

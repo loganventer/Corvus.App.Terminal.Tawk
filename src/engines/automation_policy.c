@@ -121,6 +121,7 @@ int automation_policy_setting_changeable(const SettingField *f) {
         "data_dir", "media_dir", "download_dir", "attach_dir", "sound_file",          /* folders and files */
         "backend", "log_level", "last_chat", "recent_emoji",
         "lock_minutes",                                                               /* an agent does not unlock your screen */
+        "private_touch_id",                                                           /* nor change how a private chat opens */
         NULL
     };
     if (!f || f->category == SETTING_CATEGORY_AUTOMATION || f->category == SETTING_CATEGORY_ADVANCED) return 0;
