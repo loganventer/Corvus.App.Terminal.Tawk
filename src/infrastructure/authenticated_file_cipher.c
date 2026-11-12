@@ -1,4 +1,5 @@
 #include "infrastructure/authenticated_file_cipher.h"
+#include "utilities/secure_random.h"
 #include "utilities/sha256.h"
 
 #include <fcntl.h>
@@ -21,19 +22,6 @@ static void mac_key(const Passphrase *p, const uint8_t salt[SALT_SIZE], uint8_t 
     memcpy(salted, KEY_NOTE, sizeof(KEY_NOTE) - 1);
     memcpy(salted + sizeof(KEY_NOTE) - 1, salt, SALT_SIZE);
     pbkdf2_hmac_sha256(p->text, p->length, salted, sizeof(salted), ITERATIONS, key, SHA256_SIZE);
-}
-
-static int random_bytes(uint8_t *out, size_t len) {
-    int fd = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
-    if (fd < 0) return -1;
-    size_t got = 0;
-    while (got < len) {
-        ssize_t n = read(fd, out + got, len - got);
-        if (n <= 0) break;
-        got += (size_t)n;
-    }
-    close(fd);
-    return got == len ? 0 : -1;
 }
 
 /* Feeds the rest of `in` to the tag, copying it to `out` when one is given. */
@@ -60,7 +48,7 @@ static int auth_encrypt(IFileCipher *self, const char *in, const char *out, cons
     FILE *from = fopen(body, "rb");
     int fd = open(out, O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_NOFOLLOW, 0600);
     FILE *to = fd >= 0 ? fdopen(fd, "wb") : NULL;
-    if (from && to && random_bytes(salt, sizeof(salt)) == 0) {
+    if (from && to && secure_random_bytes(salt, sizeof(salt)) == 0) {
         mac_key(p, salt, key);
         HmacSha256 mac;
         hmac_sha256_init(&mac, key, sizeof(key));
