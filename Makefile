@@ -111,8 +111,30 @@ else
   PLATFORM := $(UNAME_S)
 endif
 
+# Touch ID for private chats, through macOS LocalAuthentication. It is on by
+# default on macOS; BIOMETRICS=0 leaves it out, and elsewhere it is always
+# out, so no Objective-C is compiled there. Private chats then open with the
+# lock password alone.
+ifeq ($(UNAME_S),Darwin)
+  BIOMETRICS ?= 1
+else
+  override BIOMETRICS := 0
+endif
+ifeq ($(BIOMETRICS),1)
+  CFLAGS   += -DAPP_WITH_BIOMETRICS
+  OBJC_SRC := $(shell find src -name '*.m')
+  LDLIBS   += -framework Foundation -framework LocalAuthentication
+  BIOMETRICS_TEXT := Touch ID for private chats (LocalAuthentication)
+else
+  OBJC_SRC :=
+  BIOMETRICS_TEXT := no Touch ID: private chats open with the lock password
+endif
+# Objective-C gets the same flags with automatic reference counting; blocks,
+# which LocalAuthentication answers with, are not ISO C, so -Wpedantic is dropped.
+OBJCFLAGS = $(filter-out -Wpedantic,$(CFLAGS)) -fobjc-arc
+
 SRC      := $(shell find src -name '*.c') vendor/cjson/cJSON.c
-OBJ      := $(patsubst %.c,$(BUILD)/%.o,$(SRC))
+OBJ      := $(patsubst %.c,$(BUILD)/%.o,$(SRC)) $(patsubst %.m,$(BUILD)/%.o,$(OBJC_SRC))
 DEP      := $(OBJ:.o=.d)
 
 WM_LIB   := $(BUILD)/bridge/libtawkwm.a
@@ -150,6 +172,7 @@ config:
 	@printf '  %-11s %s\n' "sqlite"    "$(SQLITE_VER)"
 	@printf '  %-11s %s\n' "backend"   "$(BACKEND_TEXT)"
 	@printf '  %-11s %s\n' "sidecar"   "$(SIDECAR_TEXT)"
+	@printf '  %-11s %s\n' "touch id"  "$(BIOMETRICS_TEXT)"
 	@printf '  %-11s %s\n' "prefix"    "$(PREFIX)"
 	@printf '  %-11s %s\n' "output"    "$(if $(filter 1,$(V)),full commands (V=1),short (make V=1 shows full commands))"
 	@command -v ffmpeg >/dev/null 2>&1 || printf '$(C_WARN)!!$(C_OFF)  %s\n' "ffmpeg not found: voice notes will not record or play until it is installed"
@@ -169,6 +192,11 @@ $(BUILD)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(call step,CC,$<)
 	$(Q)$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+
+$(BUILD)/%.o: %.m
+	@mkdir -p $(dir $@)
+	$(call step,OBJC,$<)
+	$(Q)$(CC) $(OBJCFLAGS) -MMD -MP -c $< -o $@
 
 bridge: $(WM_LIB)
 
@@ -589,6 +617,7 @@ help:
 	  "  DESTDIR=DIR          stage the install under DIR (for packaging)" \
 	  "  WHATSMEOW=0          leave out the in-process backend (no Go needed)" \
 	  "  SQLCIPHER=0          build without database encryption even when SQLCipher is installed" \
+	  "  BIOMETRICS=0         build without Touch ID for private chats (it is only ever built on macOS)" \
 	  "  APP=NAME             build under another command name (default corvus-tawk)" \
 	  "  APP_DIR=PATH         per-user folders under each XDG base (default corvus/tawk)" \
 	  "  LEGACY=NAME          old command name installed as a deprecated symlink (default tawk; empty for none)" \
