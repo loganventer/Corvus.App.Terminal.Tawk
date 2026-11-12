@@ -151,6 +151,8 @@ void tui_render_frame(TuiApp *app, int64_t now) {
             app->chat_list.portraits = s->portraits ? &app->portraits : NULL;
             app->chat_list.thumbs = app->thumbs;
             app->chat_list.pixel_images = portrait_pixels;
+            app->chat_list.private_session = &app->privacy.session;
+            app->chat_list.active_account = app->deps.active_account;
             chat_list_view_render(&app->chat_list, l->sidebar, chats, count, app->focus == TUI_FOCUS_CHATS,
                                   s->use_24h_clock, app->deps.blink, now);
             tui_vline(l->divider.y, l->divider.x, l->divider.h,

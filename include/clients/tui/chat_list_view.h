@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#include "engines/private_chat_session.h"
 #include "clients/tui/account_badge.h"
 #include "clients/tui/blink_state.h"
 #include "clients/tui/chat_folder.h"
@@ -54,6 +55,9 @@ typedef struct ChatListView {
     int           hidden_count;
     char          narrowed[64];
     int           widen_asked;
+    /* Private chats: which one is unlocked, and the account a row with none of its own belongs to. */
+    const PrivateChatSession *private_session;
+    AccountId     active_account;
     ChatListEntry entries[CHAT_LIST_MAX_ENTRIES];
     int           entry_count;
 } ChatListView;

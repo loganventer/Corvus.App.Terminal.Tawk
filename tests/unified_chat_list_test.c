@@ -4,6 +4,7 @@
 #include "clients/tui/blink_state.h"
 #include "clients/tui/unified_chat_list.h"
 #include "engines/chat_merge_policy.h"
+#include "engines/private_chat_policy.h"
 #include "engines/reply_account_policy.h"
 #include "utilities/str_util.h"
 
@@ -151,6 +152,34 @@ static void test_list(void) {
 }
 
 /* A new message blinks the row of the account it reached. */
+/* A merged chat private on either account is private, veiled until it is unlocked, which unlocks every side of it. */
+static void test_private(void) {
+    Chat main_chats[] = { chat(MOM, "Mom", 100, 0) };
+    Chat work_chats[] = { chat(MOM, "Mother", 400, 0) };
+    work_chats[0].is_private = 1;
+    ChatSource sources[] = { { MAIN, main_chats, 1 }, { WORK, work_chats, 1 } };
+    UnifiedChatRules rules = { ACCOUNT_ID_NONE, 1, MAIN, prefs, NULL };
+    UnifiedChatList list;
+    unified_chat_list_init(&list);
+    memset(&s_mom, 0, sizeof(s_mom));
+    unified_chat_list_build(&list, sources, 2, &rules);
+    const Chat *mom = row(&list, MOM, ACCOUNT_ID_NONE);
+    PrivateChatSession session;
+    memset(&session, 0, sizeof(session));
+    CHECK(mom && mom->is_private && mom->accounts == 3u, "a chat private on one account is a private merged row");
+    CHECK(mom && private_chat_policy_veiled(mom, mom->account, &session), "veiled while locked");
+    private_chat_session_unlock(&session, MAIN, MOM);
+    private_chat_session_add_peer(&session, WORK, MOM);
+    CHECK(mom && !private_chat_policy_veiled(mom, mom->account, &session), "and plain once it is unlocked with its peers");
+    s_mom.send_account = WORK;
+    unified_chat_list_build(&list, sources, 2, &rules);
+    mom = row(&list, MOM, ACCOUNT_ID_NONE);
+    CHECK(mom && mom->account == WORK && !private_chat_policy_veiled(mom, mom->account, &session), "whichever account the row sends through");
+    private_chat_session_relock_all(&session);
+    CHECK(mom && private_chat_policy_veiled(mom, mom->account, &session), "and veiled again once it locks");
+    unified_chat_list_free(&list);
+}
+
 static void test_blink(void) {
     BlinkState blink = { "mom@s.whatsapp.net", 2, 10000 };
     CHECK(blink_state_on_row(&blink, "mom@s.whatsapp.net", 2, 0), "the row of the account the message reached blinks");
@@ -164,6 +193,7 @@ static void test_blink(void) {
 int main(void) {
     test_policies();
     test_list();
+    test_private();
     test_blink();
     if (failures == 0) printf("ok: several accounts' chats are listed together, a contact on more than one merges or stays apart as chosen, and the right account sends\n");
     return failures != 0;
