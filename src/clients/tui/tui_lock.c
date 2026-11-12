@@ -18,6 +18,7 @@ int tui_app_lock(TuiApp *app) {
     if (!idle_lock_policy_available(encrypted(app))) return 0;
     if (!app->lock.locked) {
         lock_screen_lock(&app->lock);
+        tui_app_private_relock(app);                         /* behind the app lock a private chat locks too */
         app->contact.open = 0;                               /* nothing is left open behind it */
         clearok(curscr, TRUE);
     }

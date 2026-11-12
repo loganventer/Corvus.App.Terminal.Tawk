@@ -67,8 +67,26 @@ int tui_app_private_gate_row(TuiApp *app, const Chat *row) {
     return 1;
 }
 
+/* Nothing of a chat that just locked stays on screen: no selected message, no picture. */
+static void forget_unlocked(TuiApp *app) {
+    app->message_view.selected = -1;
+    if (app->viewer.open) image_viewer_close(&app->viewer);
+    app->contact.open = 0;
+    sixel_overlay_invalidate(&app->sixel_overlay);
+    app->dirty = 1;
+}
+
 void tui_app_leave_private(TuiApp *app, AccountId account, const char *jid) {
+    int had = app->privacy.session.count > 0;
     private_chat_guard_leave(&app->privacy, account, jid);
+    if (had && app->privacy.session.count == 0) forget_unlocked(app);
+}
+
+void tui_app_private_relock(TuiApp *app) {
+    int had = app->privacy.session.count > 0 || private_chat_guard_busy(&app->privacy);
+    private_chat_guard_relock_all(&app->privacy);
+    memset(&app->private_row, 0, sizeof(app->private_row));
+    if (had) forget_unlocked(app);
 }
 
 /* The chat passed: open it, and its other accounts' sides when it came from a merged row. */

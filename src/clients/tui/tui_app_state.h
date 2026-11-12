@@ -266,6 +266,8 @@ int  tui_app_private_gate_open(TuiApp *app, const char *jid);
 int  tui_app_private_gate_row(TuiApp *app, const Chat *row);
 /* Another chat is opening: an unlocked private chat that is not it locks again. */
 void tui_app_leave_private(TuiApp *app, AccountId account, const char *jid);
+/* Every private chat locks again, and any unlock being asked for is dropped: on the screensaver, the app lock, an account switch and quit. */
+void tui_app_private_relock(TuiApp *app);
 /* Opens a chat without asking. Only for one that needs no unlock, or that the guard let through. */
 void tui_app_open_chat_now(TuiApp *app, const char *jid, int unfold);
 

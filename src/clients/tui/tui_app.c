@@ -214,6 +214,7 @@ int tui_app_use_account(TuiApp *app, AccountId account) {
     app->contact.open = 0;
     /* An account out of view has no chat open: its unread counts run again. */
     messaging_manager_open_chat(app->deps.messaging, "");
+    tui_app_private_relock(app);                            /* and no private chat stays unlocked across the switch */
 
     tui_app_close_peers(app);
     tui_app_take_services(app, sv);
@@ -1488,6 +1489,7 @@ static void run_screensaver(TuiApp *app) {
     const Settings *s = settings(app);
     if (!s->screensaver_command[0]) { tui_app_toast(app, "No screensaver command is set (Settings, Screensaver)", 1); return; }
     if (!s->config_trusted) { tui_app_toast(app, "The config file is writable by others; the screensaver command is disabled", 1); return; }
+    tui_app_private_relock(app);                      /* a private chat does not stay open behind the screensaver */
     set_active(app, 0);
     def_prog_mode();
     terminal_modes(0, 0);
@@ -1835,6 +1837,7 @@ int tui_app_run(TuiApp *app) {
     }
 
     save_draft(app);
+    tui_app_private_relock(app);                            /* nothing stays unlocked once tawk quits */
     messaging_manager_set_active(app->deps.messaging, 0);
     tui_app_accounts_set_active(app, 0);
     terminal_modes(0, 0);
