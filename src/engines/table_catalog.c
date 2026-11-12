@@ -20,6 +20,7 @@ static const TableRule RULES[] = {
     { "chat_reminders",     TABLE_SCOPE_BY_JID,      "jid" },
     { "scheduled_messages", TABLE_SCOPE_LEFT_BEHIND, NULL },
     { "automation_log",     TABLE_SCOPE_LEFT_BEHIND, NULL },
+    { "lock_secret",        TABLE_SCOPE_LEFT_BEHIND, NULL },   /* the lock password belongs to this computer */
     { "accounts",           TABLE_SCOPE_GLOBAL,      NULL },
 };
 

@@ -23,6 +23,7 @@ static void test_catalog(void) {
     CHECK(table_catalog_scope("messages") == TABLE_SCOPE_ACCOUNT, "messages travel with their account");
     CHECK(table_catalog_scope("chat_labels") == TABLE_SCOPE_BY_JID, "labels follow the account's chats");
     CHECK(table_catalog_scope("scheduled_messages") == TABLE_SCOPE_LEFT_BEHIND, "messages waiting for a time stay behind");
+    CHECK(table_catalog_scope("lock_secret") == TABLE_SCOPE_LEFT_BEHIND, "the lock password for private chats stays on this computer");
     CHECK(table_catalog_scope("messages_fts_data") == TABLE_SCOPE_GLOBAL && table_catalog_scope("sqlite_sequence") == TABLE_SCOPE_GLOBAL,
           "the search index and SQLite's own tables are rebuilt, not carried");
     CHECK(table_catalog_scope("a_new_table") == TABLE_SCOPE_UNKNOWN, "a table nobody decided about is unknown");
