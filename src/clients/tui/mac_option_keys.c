@@ -8,7 +8,7 @@ typedef struct OptionKey {
 
 /* Option+E and Option+I are dead keys and never arrive on their own. */
 static const OptionKey KEYS[] = {
-    { 0x00AC, 'l', 0 },   /* ¬ soft lock */
+    { 0x00AC, 'l', 0 },   /* ¬ private */
     { 0x221A, 'v', 0 },   /* √ paste a picture */
     { 0x00AE, 'r', 0 },   /* ® retry a failed message */
     { 0x00B4, 'E', 0 },   /* ´ (Shift+Option+E) edit */
