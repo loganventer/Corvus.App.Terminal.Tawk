@@ -1,4 +1,5 @@
 #include "tui_app_state.h"
+#include "clients/tui/tab_chat_name.h"
 
 #include "clients/tui/color_pair_cache.h"
 #include "clients/tui/escape_sequence.h"
@@ -1251,7 +1252,7 @@ void tui_app_open_contact(TuiApp *app, const char *jid) {
 
 void tui_app_show_portrait(TuiApp *app, const char *jid) {
     const Chat *chat = chat_by_jid(app, jid);
-    if (!chat || chat->is_private) return;
+    if (!chat || tui_app_private_veiled(app, chat)) return;     /* a locked private chat shows no picture */
     const char *full = profile_manager_full_picture(app->deps.profiles, jid);
     const char *preview = profile_manager_picture(app->deps.profiles, jid);
     if (!full && !preview) { tui_app_toast(app, "No profile picture", 1); return; }
@@ -1552,13 +1553,13 @@ static void apply_changes(TuiApp *app, const ManagerChanges *ch) {
 }
 
 /* Someone typing in a chat that is not open ("Jan is typing" or "Jan is
- * typing in Dev team"), leaving out soft-locked chats. */
+ * typing in Dev team"), leaving out locked private chats. */
 static int typing_elsewhere(TuiApp *app, char *out, size_t size) {
     int count = 0;
     const Chat *chats = messaging_manager_chats(app->deps.messaging, &count);
     for (int i = 0; i < count; i++) {
         const Chat *c = &chats[i];
-        if (!c->typing[0] || c->is_private) continue;
+        if (!c->typing[0] || tui_app_private_veiled(app, c)) continue;
         if (strncmp(c->typing, "typing", 6) == 0) snprintf(out, size, "%s is typing", c->name);
         else if (strncmp(c->typing, "recording", 9) == 0) snprintf(out, size, "%s is recording audio", c->name);
         else {
@@ -1579,9 +1580,9 @@ static void update_tab(TuiApp *app, int64_t now) {
     ConnectionHealth health;
     messaging_manager_health(mm, &health);
     AuthState auth = messaging_manager_auth_state(mm);
-    /* What is happening now, for the title; a soft-locked chat stays anonymous. */
+    /* What is happening now, for the title; a locked private chat stays anonymous. */
     const Chat *chat = messaging_manager_open_chat_info(mm);
-    int hidden = chat && chat->is_private;
+    int hidden = tui_app_private_veiled(app, chat);
     char activity[256] = "";
     int busy = 0, typing = 0;
     if (media_manager_is_recording(app->deps.media)) {
@@ -1605,7 +1606,7 @@ static void update_tab(TuiApp *app, int64_t now) {
     }
     if (tui_app_locked(app)) { hidden = 1; activity[0] = '\0'; typing = 0; }     /* the tab says nothing about a locked tawk's chats */
     TabStatus st = {
-        .chat_name = chat ? (hidden ? "\xF0\x9F\x99\x88" : chat->name) : "",
+        .chat_name = tab_chat_name(chat, hidden),
         .activity = activity,
         .busy = busy,
         .typing = typing,
@@ -1625,7 +1626,7 @@ static void update_tab(TuiApp *app, int64_t now) {
 
 static int someone_typing(TuiApp *app) {
     const Chat *c = messaging_manager_open_chat_info(app->deps.messaging);
-    return c && c->typing[0] && !c->is_private;
+    return c && c->typing[0] && !tui_app_private_veiled(app, c);
 }
 
 /* Animations that need regular frames: blink, recording counter, title flash,

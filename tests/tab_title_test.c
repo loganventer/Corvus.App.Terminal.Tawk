@@ -1,4 +1,5 @@
 /* The terminal tab title: what it says, and that its spinner is safe to send to any terminal. */
+#include "clients/tui/tab_chat_name.h"
 #include "clients/tui/title_flasher.h"
 #include "utilities/plain_title.h"
 #include "utilities/str_util.h"
@@ -53,6 +54,17 @@ int main(void) {
     }
     CHECK(unsafe == 0, "no spinner frame holds a byte a terminal could read as a control code");
     CHECK(frames > 3, "the spinner moves while something is under way");
+
+    Chat diary;
+    chat_init(&diary, "27820000001@s.whatsapp.net");
+    str_copy(diary.name, sizeof(diary.name), "Secret Diary");
+    diary.is_private = 1;
+    TabStatus veiled = { .user_name = "Logan", .tally = &tally, .chat_name = tab_chat_name(&diary, 1), .activity = "" };
+    title_flasher_tick(&flasher, 4100, &veiled, &settings);
+    CHECK(!strstr(shown, "Secret Diary"), "a locked private chat's name never reaches the terminal title");
+    TabStatus opened = { .user_name = "Logan", .tally = &tally, .chat_name = tab_chat_name(&diary, 0), .activity = "" };
+    title_flasher_tick(&flasher, 4200, &opened, &settings);
+    CHECK(strstr(shown, "Secret Diary") != NULL, "an unlocked one's does");
 
     int before = writes;
     TabStatus idle = { .user_name = "Logan", .tally = &tally, .chat_name = "", .activity = "" };
