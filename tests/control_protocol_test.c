@@ -661,6 +661,28 @@ static void test_admin_answers_its_own(void) {
     cJSON_Delete(r);
     answer_first(0, NULL, 0);
 
+    /* Only you make a chat private or public: locked is refused whatever it says, and nothing else in the call is done. */
+    Chat before, after;
+    chats->get(chats, WORK, &before);
+    int waiting = approval_queue_count(queue);
+    const char *tries[] = { "{\"id\":\"lk1\",\"op\":\"set_chat\",\"args\":{\"chat\":\"Work\",\"locked\":true,\"pinned\":true}}",
+                            "{\"id\":\"lk2\",\"op\":\"set_chat\",\"args\":{\"chat\":\"Diary\",\"locked\":false,\"archived\":true}}" };
+    const char *ids[] = { "lk1", "lk2" };
+    for (int i = 0; i < 2; i++) {
+        say(conn, tries[i]);
+        r = reply(ids[i]);
+        const cJSON *message = cJSON_GetObjectItemCaseSensitive(cJSON_GetObjectItemCaseSensitive(r, "error"), "message");
+        CHECK(r && !strcmp(error_code(r), "not_allowed") && cJSON_IsString(message) &&
+              !strcmp(message->valuestring, "Only you can make a chat private or public, in tawk"),
+              i == 0 ? "set_chat with locked true is refused, saying only you decide" : "and so is locked false");
+        cJSON_Delete(r);
+    }
+    Chat diary;
+    chats->get(chats, WORK, &after);
+    chats->get(chats, PRIVATE, &diary);
+    CHECK(approval_queue_count(queue) == waiting && !after.is_private && after.is_pinned == before.is_pinned && diary.is_private && diary.is_archived <= 0,
+          "nothing waits for you and neither chat is changed");
+
     set_automation("admin", "", 2);
     say(conn, "{\"id\":\"a4\",\"op\":\"send_message\",\"args\":{\"chat\":\"Mom\",\"text\":\"three\"}}");
     approve(conn, "p7", "a4", token);

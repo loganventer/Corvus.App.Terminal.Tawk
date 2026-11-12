@@ -45,10 +45,6 @@ static cJSON *do_set_chat(ControlServer *s, const ControlPending *p, ControlFail
     const cJSON *archived = cJSON_GetObjectItemCaseSensitive(p->args, "archived");
     if (cJSON_IsBool(archived)) messaging_manager_set_archived(mm, p->chat_jid, cJSON_IsTrue(archived));
     c = current(s, p->chat_jid);
-    if (c && cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(p->args, "locked")) && !c->is_private) {
-        messaging_manager_set_private(mm, p->chat_jid, 1);
-    }
-    c = current(s, p->chat_jid);
     if (!c) { str_copy(f->why, sizeof(f->why), "The chat is gone"); return NULL; }
     cJSON *r = cJSON_CreateObject();
     if (automation_manager_chat_allowed(s->deps.automation, c)) cJSON_AddItemToObject(r, "chat", control_chat_json(s, p->origin, c));
@@ -61,6 +57,11 @@ static void append(char *out, size_t size, const char *part) {
 }
 
 void control_op_set_chat(ControlServer *s, ControlSession *session, const ControlRequest *req) {
+    /* Whether a chat is private is yours alone to say: the whole call is refused, so nothing else in it is done either. */
+    if (cJSON_GetObjectItemCaseSensitive(req->args, "locked")) {
+        control_fail(s, session->conn, req->id, "not_allowed", "Only you can make a chat private or public, in tawk");
+        return;
+    }
     Chat chat;
     if (resolve(s, session, req, &chat) != 0) return;
     ControlPending p;
@@ -85,19 +86,9 @@ void control_op_set_chat(ControlServer *s, ControlSession *session, const Contro
         cJSON_AddBoolToObject(p.args, flags[i], cJSON_IsTrue(v));
         append(action, sizeof(action), cJSON_IsTrue(v) ? yes[i] : no[i]);
     }
-    const cJSON *locked = cJSON_GetObjectItemCaseSensitive(req->args, "locked");
-    if (cJSON_IsFalse(locked)) {
-        control_pending_dispose(&p);
-        control_fail(s, session->conn, req->id, "not_allowed", "Only you can unlock a chat, in tawk");
-        return;
-    }
-    if (cJSON_IsTrue(locked)) {
-        cJSON_AddBoolToObject(p.args, "locked", 1);
-        append(action, sizeof(action), "hide it behind the lock");
-    }
     if (!action[0]) {
         control_pending_dispose(&p);
-        control_fail(s, session->conn, req->id, "bad_request", "Give at least one of muted, pinned, archived or locked");
+        control_fail(s, session->conn, req->id, "bad_request", "Give at least one of muted, pinned or archived");
         return;
     }
     str_copy(p.action, sizeof(p.action), action);
