@@ -1,4 +1,5 @@
 /* Private chats: which chat is unlocked, and when it locks again. */
+#include "engines/private_chat_policy.h"
 #include "engines/private_chat_session.h"
 
 #include <stdio.h>
@@ -42,9 +43,39 @@ static void session_rules(void) {
     CHECK(s.count == 0, "a peer cannot unlock anything on its own");
 }
 
+static void policy_rules(void) {
+    PrivateChatSession s;
+    memset(&s, 0, sizeof(s));
+    Chat secret, open;
+    chat_init(&secret, A);
+    chat_init(&open, B);
+    secret.is_private = 1;
+
+    CHECK(private_chat_policy_veiled(&secret, 1, &s), "a locked private chat is veiled");
+    CHECK(!private_chat_policy_veiled(&open, 1, &s), "a public chat never is");
+    CHECK(!private_chat_policy_tui_searchable(&secret, 1, &s) && private_chat_policy_tui_searchable(&open, 1, &s),
+          "search leaves out a locked private chat and keeps a public one");
+    CHECK(private_chat_policy_needs_unlock(UNLOCK_FOR_OPEN, &secret, 1, &s), "opening a locked private chat asks first");
+    CHECK(!private_chat_policy_needs_unlock(UNLOCK_FOR_OPEN, &open, 1, &s) && !private_chat_policy_needs_unlock(UNLOCK_FOR_EXPORT, &open, 1, &s) &&
+          !private_chat_policy_needs_unlock(UNLOCK_FOR_MAKE_PUBLIC, &open, 1, &s), "a public chat never asks");
+
+    private_chat_session_unlock(&s, 1, A);
+    CHECK(!private_chat_policy_veiled(&secret, 1, &s), "an unlocked private chat shows as it is");
+    CHECK(private_chat_policy_veiled(&secret, 2, &s), "but not through another account it was not unlocked on");
+    CHECK(private_chat_policy_tui_searchable(&secret, 1, &s), "search may list the unlocked chat");
+    CHECK(!private_chat_policy_needs_unlock(UNLOCK_FOR_OPEN, &secret, 1, &s), "opening it again does not ask");
+    CHECK(private_chat_policy_needs_unlock(UNLOCK_FOR_MAKE_PUBLIC, &secret, 1, &s), "making it public asks even while it is unlocked");
+    CHECK(private_chat_policy_needs_unlock(UNLOCK_FOR_EXPORT, &secret, 1, &s), "and so does exporting it");
+    CHECK(private_chat_policy_needs_unlock(UNLOCK_FOR_PASSWORD_CHANGE, NULL, 1, &s), "changing the password always asks");
+
+    private_chat_session_leave(&s, 1, B);
+    CHECK(private_chat_policy_veiled(&secret, 1, &s), "leaving it veils it again");
+}
+
 int main(void) {
     session_rules();
+    policy_rules();
     if (failures) { printf("%d failure(s)\n", failures); return 1; }
-    printf("ok: private chats unlock one at a time and lock again\n");
+    printf("ok: private chats unlock one at a time, lock again, and stay veiled and unsearchable while locked\n");
     return 0;
 }
