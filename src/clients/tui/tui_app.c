@@ -149,9 +149,11 @@ void tui_app_save_folding(TuiApp *app) {
     tui_app_apply_settings(app, &s);
 }
 
-/* Opens a chat; with unfold set, a folded group holding it opens so it can be seen. */
-static void open_chat(TuiApp *app, const char *jid, int unfold) {
+/* Opens a chat; with unfold set, a folded group holding it opens so it can be seen.
+ * Only for a chat that needs no unlock, or one the private chat guard has just let through. */
+void tui_app_open_chat_now(TuiApp *app, const char *jid, int unfold) {
     if (!jid) return;
+    tui_app_leave_private(app, app->deps.active_account, jid);   /* a private chat left behind locks again */
     tui_app_close_peers(app);                              /* whoever opens it across accounts says so afterwards */
     const char *current = messaging_manager_open_jid(app->deps.messaging);
     if (strcmp(current, jid) != 0) {
@@ -234,8 +236,16 @@ void tui_app_open_row(TuiApp *app, const Chat *row) {
     str_copy(jid, sizeof(jid), row->jid);                  /* the row may be rebuilt while the account changes */
     Chat copy = *row;
     if (tui_app_use_account(app, copy.account) != 0) return;
-    open_chat(app, jid, 1);
+    if (tui_app_private_gate_row(app, &copy)) return;       /* private: it opens once Touch ID or the password lets it */
+    tui_app_open_chat_now(app, jid, 1);
     tui_app_open_peers(app, &copy);                        /* a merged row is the same chat on other accounts too */
+}
+
+/* Opens a chat of the account in view, asking first when it is private. */
+static void open_chat(TuiApp *app, const char *jid, int unfold) {
+    if (!jid) return;
+    if (tui_app_private_gate_open(app, jid)) return;
+    tui_app_open_chat_now(app, jid, unfold);
 }
 
 void tui_app_open_chat(TuiApp *app, const char *jid) { open_chat(app, jid, 1); }
@@ -255,7 +265,8 @@ static void restore_last_chat(TuiApp *app) {
     if (!last[0] && app->deps.active_account <= ACCOUNT_ID_FIRST) str_copy(last, sizeof(last), settings(app)->last_chat);
     for (int i = 0; i < count; i++) {
         if (strcmp(chats[i].jid, last) != 0) continue;
-        if (chats[i].is_locked != 1) open_chat(app, last, 0);      /* the groups stay folded as they were left */
+        /* The groups stay folded as they were left. A private chat is not opened by itself: you open it. */
+        if (chats[i].is_locked != 1 && !chats[i].is_private) open_chat(app, last, 0);
         app->dirty = 1;
         return;
     }

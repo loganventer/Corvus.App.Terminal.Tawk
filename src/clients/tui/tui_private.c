@@ -5,6 +5,7 @@
 #include "tui_app_state.h"
 #include "engines/private_chat_policy.h"
 #include "utilities/clock_util.h"
+#include "utilities/str_util.h"
 
 #include <string.h>
 
@@ -16,10 +17,74 @@ int tui_app_private_veiled(const TuiApp *app, const Chat *chat) {
     return private_chat_policy_veiled(chat, seen_through(app, chat), &app->privacy.session);
 }
 
+static const Chat *find_chat(TuiApp *app, const char *jid) {
+    int count = 0;
+    const Chat *chats = messaging_manager_chats(app->deps.messaging, &count);
+    for (int i = 0; i < count; i++) if (strcmp(chats[i].jid, jid) == 0) return &chats[i];
+    return NULL;
+}
+
+static PrivateRequest request_for(PrivateAction action, AccountId account, const char *jid) {
+    PrivateRequest r;
+    memset(&r, 0, sizeof(r));
+    r.action = action;
+    r.account = account;
+    str_copy(r.jid, sizeof(r.jid), jid);
+    return r;
+}
+
+/* The other accounts a merged row is on. */
+static void add_peers(TuiApp *app, const Chat *row, PrivateRequest *r) {
+    IAccountDirectory *dir = app->deps.directory;
+    if (!dir || !(row->accounts & (row->accounts - 1))) return;
+    for (int i = 0; i < ACCOUNT_MAX && r->peer_count < ACCOUNT_MAX; i++) {
+        if (!(row->accounts & (1u << i))) continue;
+        const AccountServices *sv = dir->at(dir, i);
+        if (!sv || sv->id == r->account) continue;
+        r->peers[r->peer_count].account = sv->id;
+        str_copy(r->peers[r->peer_count].jid, sizeof(r->peers[r->peer_count].jid), row->jid);
+        r->peer_count++;
+    }
+}
+
+int tui_app_private_gate_open(TuiApp *app, const char *jid) {
+    const Chat *chat = find_chat(app, jid);
+    AccountId account = app->deps.active_account;
+    if (!private_chat_policy_needs_unlock(UNLOCK_FOR_OPEN, chat, account, &app->privacy.session)) return 0;
+    memset(&app->private_row, 0, sizeof(app->private_row));
+    PrivateRequest r = request_for(PRIVATE_ACTION_OPEN, account, jid);
+    tui_app_request_private(app, &r);
+    return 1;
+}
+
+int tui_app_private_gate_row(TuiApp *app, const Chat *row) {
+    AccountId account = seen_through(app, row);
+    if (!private_chat_policy_needs_unlock(UNLOCK_FOR_OPEN, row, account, &app->privacy.session)) return 0;
+    app->private_row = *row;
+    PrivateRequest r = request_for(PRIVATE_ACTION_OPEN, account, row->jid);
+    add_peers(app, row, &r);
+    tui_app_request_private(app, &r);
+    return 1;
+}
+
+void tui_app_leave_private(TuiApp *app, AccountId account, const char *jid) {
+    private_chat_guard_leave(&app->privacy, account, jid);
+}
+
+/* The chat passed: open it, and its other accounts' sides when it came from a merged row. */
+static void open_unlocked(TuiApp *app, const PrivateRequest *done) {
+    char jid[128];
+    str_copy(jid, sizeof(jid), done->jid);
+    Chat row = app->private_row;
+    memset(&app->private_row, 0, sizeof(app->private_row));
+    tui_app_open_chat_now(app, jid, 1);
+    if (!strcmp(row.jid, jid)) tui_app_open_peers(app, &row);
+}
+
 /* What passed is carried out. Nothing reaches here without the guard's DONE. */
 static void carry_out(TuiApp *app, const PrivateRequest *done) {
     switch (done->action) {
-    case PRIVATE_ACTION_OPEN:            break;
+    case PRIVATE_ACTION_OPEN:            open_unlocked(app, done); break;
     case PRIVATE_ACTION_MAKE_PRIVATE:    break;
     case PRIVATE_ACTION_MAKE_PUBLIC:     break;
     case PRIVATE_ACTION_EXPORT:          break;

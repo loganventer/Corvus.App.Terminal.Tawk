@@ -167,6 +167,7 @@ struct TuiApp {
     int64_t             reminders_checked_ms;
     LockScreen          lock;                 /* everything is hidden until the passphrase is typed */
     PrivateChatGuard    privacy;              /* which private chat is unlocked, and what is being asked for one */
+    Chat                private_row;          /* the chat list row a private chat is being opened from */
     int                 running;
     int                 active;
     int                 dragging_divider;
@@ -259,6 +260,14 @@ void tui_app_private_tick(TuiApp *app, int64_t now_ms);
 /* 1 when a private chat dialog is up and took the key. */
 int  tui_app_private_key(TuiApp *app, int is_key, int ch);
 void tui_app_private_render(TuiApp *app, UiRect area);
+/* 1 when opening `jid` (of the account in view) must wait for an unlock, which is then asked for. */
+int  tui_app_private_gate_open(TuiApp *app, const char *jid);
+/* The same for a chat list row; a merged row is unlocked on every account it is on. */
+int  tui_app_private_gate_row(TuiApp *app, const Chat *row);
+/* Another chat is opening: an unlocked private chat that is not it locks again. */
+void tui_app_leave_private(TuiApp *app, AccountId account, const char *jid);
+/* Opens a chat without asking. Only for one that needs no unlock, or that the guard let through. */
+void tui_app_open_chat_now(TuiApp *app, const char *jid, int unfold);
 
 /* tui_lock.c: locks tawk until the passphrase of your chats is typed. tui_app_lock returns 0 where there is no lock (the chats are not encrypted). */
 int  tui_app_locked(const TuiApp *app);
