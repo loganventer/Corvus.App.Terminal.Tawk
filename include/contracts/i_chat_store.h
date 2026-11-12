@@ -26,7 +26,7 @@ typedef struct IChatStore {
     /* Conversation theme id for this chat; "" uses the app theme. */
     int  (*set_theme)(struct IChatStore *self, const char *jid, const char *theme);
     int  (*set_archived)(struct IChatStore *self, const char *jid, int archived);
-    /* Soft lock: the conversation is blurred until shown again (kept across restarts). */
+    /* Private: the chat opens only after Touch ID or the lock password (kept across restarts). */
     int  (*set_private)(struct IChatStore *self, const char *jid, int on);
     /* Forgets a chat and its preferences. */
     int  (*remove)(struct IChatStore *self, const char *jid);

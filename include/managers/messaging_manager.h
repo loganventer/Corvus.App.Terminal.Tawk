@@ -128,7 +128,6 @@ int            messaging_manager_has_newer(MessagingManager *mgr);
 void           messaging_manager_mute_until(MessagingManager *mgr, const char *jid, int64_t until);
 void           messaging_manager_set_tone(MessagingManager *mgr, const char *jid, const char *tone);
 void           messaging_manager_set_archived(MessagingManager *mgr, const char *jid, int archived);
-/* Soft-locks a chat (its conversation is blurred) or unlocks it; returns the new state. */
 /* Makes a chat private (on) or public. Only you decide this, in tawk. */
 void           messaging_manager_set_private(MessagingManager *mgr, const char *jid, int on);
 /* Deletes a whole chat here and on your other devices and phone. Permanent. */

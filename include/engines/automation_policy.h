@@ -12,7 +12,8 @@
 #include "core/write_kind.h"
 
 /* What control socket clients may see and do, from the Automation settings.
- * Locked chats, soft-locked chats and broadcast feeds are never shown; a
+ * Chats in the Locked folder and broadcast feeds are never shown (private
+ * chats are: their gate is for the screen); a
  * non-empty chat list narrows the rest to the chats it names (by name,
  * JID or phone number). */
 int               automation_policy_chat_allowed(const Settings *settings, const Chat *chat);

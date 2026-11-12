@@ -6,7 +6,7 @@
 #include "core/message.h"
 
 /* Whether a chat's long messages are summarised at all: you switched TL;DR
- * on for it, and it is not locked or soft-locked. */
+ * on for it, and it is neither in the Locked folder nor private. */
 int summary_policy_allows(const Chat *chat, const ChatPrefs *prefs);
 /* Whether this message is one to summarise: text that was not deleted and is
  * at least `min_chars` long, in a chat that allows it. */
