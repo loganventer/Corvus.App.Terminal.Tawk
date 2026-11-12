@@ -1235,7 +1235,7 @@ void tui_app_open_contact(TuiApp *app, const char *jid) {
 
 void tui_app_show_portrait(TuiApp *app, const char *jid) {
     const Chat *chat = chat_by_jid(app, jid);
-    if (!chat || chat->soft_locked) return;
+    if (!chat || chat->is_private) return;
     const char *full = profile_manager_full_picture(app->deps.profiles, jid);
     const char *preview = profile_manager_picture(app->deps.profiles, jid);
     if (!full && !preview) { tui_app_toast(app, "No profile picture", 1); return; }
@@ -1541,7 +1541,7 @@ static int typing_elsewhere(TuiApp *app, char *out, size_t size) {
     const Chat *chats = messaging_manager_chats(app->deps.messaging, &count);
     for (int i = 0; i < count; i++) {
         const Chat *c = &chats[i];
-        if (!c->typing[0] || c->soft_locked) continue;
+        if (!c->typing[0] || c->is_private) continue;
         if (strncmp(c->typing, "typing", 6) == 0) snprintf(out, size, "%s is typing", c->name);
         else if (strncmp(c->typing, "recording", 9) == 0) snprintf(out, size, "%s is recording audio", c->name);
         else {
@@ -1564,7 +1564,7 @@ static void update_tab(TuiApp *app, int64_t now) {
     AuthState auth = messaging_manager_auth_state(mm);
     /* What is happening now, for the title; a soft-locked chat stays anonymous. */
     const Chat *chat = messaging_manager_open_chat_info(mm);
-    int hidden = chat && chat->soft_locked;
+    int hidden = chat && chat->is_private;
     char activity[256] = "";
     int busy = 0, typing = 0;
     if (media_manager_is_recording(app->deps.media)) {
@@ -1608,7 +1608,7 @@ static void update_tab(TuiApp *app, int64_t now) {
 
 static int someone_typing(TuiApp *app) {
     const Chat *c = messaging_manager_open_chat_info(app->deps.messaging);
-    return c && c->typing[0] && !c->soft_locked;
+    return c && c->typing[0] && !c->is_private;
 }
 
 /* Animations that need regular frames: blink, recording counter, title flash,

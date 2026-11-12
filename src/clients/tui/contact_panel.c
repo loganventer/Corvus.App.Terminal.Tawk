@@ -193,7 +193,7 @@ static void build_details(const Chat *c, const ContactProfile *pr, int cols,
     s_count = 0;
     char buf[400];
     if (pr && pr->blocked) add(LINE_WARN, "\xF0\x9F\x9A\xAB You blocked this contact");
-    if (c->soft_locked) add(LINE_DIM, "\xF0\x9F\x99\x88 Soft-locked in tawk");
+    if (c->is_private) add(LINE_DIM, "\xF0\x9F\x99\x88 Soft-locked in tawk");
     if (c->is_muted) add(LINE_DIM, "\xF0\x9F\x94\x95 Muted");
     if (c->is_pinned) add(LINE_DIM, "\xF0\x9F\x93\x8C Pinned");
     if (c->theme[0]) { snprintf(buf, sizeof(buf), "\xF0\x9F\x8E\xA8 Theme: %s", c->theme); add(LINE_DIM, buf); }
@@ -262,7 +262,7 @@ int contact_panel_render(ContactPanel *p, UiRect area, const Chat *c, const Cont
     int prow = box.h >= 30 ? 6 : 4;
     UiRect pic = { in.y + 2, in.x + (in.w - prow * 2) / 2, prow, prow * 2 };
     p->portrait_rect = pic;
-    int placed = portrait_draw(pic, c->jid, c->name, c->soft_locked ? NULL : picture, thumbs, pixel_images, placement);
+    int placed = portrait_draw(pic, c->jid, c->name, c->is_private ? NULL : picture, thumbs, pixel_images, placement);
     int y = pic.y + pic.h + 1;
     tui_text_center(y++, in.x, in.w, c->name, base | ATTR_BOLD);
     char sub[160];
@@ -296,7 +296,7 @@ int contact_panel_render(ContactPanel *p, UiRect area, const Chat *c, const Cont
                  : danger ? tui_palette_attr(THEME_SLOT_WARN) : base;
         tui_fill((UiRect){ actions_top + i, in.x, 1, in.w }, i == p->selected ? attr : base);
         const char *label = contact_action_label(a);
-        if (a == CONTACT_ACTION_SOFT_LOCK && c->soft_locked) label = "\xF0\x9F\x91\x80  Show chat (remove soft lock)";
+        if (a == CONTACT_ACTION_SOFT_LOCK && c->is_private) label = "\xF0\x9F\x91\x80  Show chat (remove soft lock)";
         char with_value[260];
         const char *value = pref_value(p, a);
         if (value) {

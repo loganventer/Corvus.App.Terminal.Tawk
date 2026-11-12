@@ -45,7 +45,7 @@ static cJSON *do_set_chat(ControlServer *s, const ControlPending *p, ControlFail
     const cJSON *archived = cJSON_GetObjectItemCaseSensitive(p->args, "archived");
     if (cJSON_IsBool(archived)) messaging_manager_set_archived(mm, p->chat_jid, cJSON_IsTrue(archived));
     c = current(s, p->chat_jid);
-    if (c && cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(p->args, "locked")) && !c->soft_locked) {
+    if (c && cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(p->args, "locked")) && !c->is_private) {
         messaging_manager_toggle_soft_lock(mm, p->chat_jid);
     }
     c = current(s, p->chat_jid);

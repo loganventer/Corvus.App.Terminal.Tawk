@@ -64,7 +64,7 @@ static void test_subtitle(void) {
     s.show_online = 0;
     CHECK(subtitle(&s, &mom, "Hey there! I am using WhatsApp."), "switched off, it is the about text again");
     s.show_online = 1;
-    mom.soft_locked = 1;
+    mom.is_private = 1;
     CHECK(subtitle(&s, &mom, ""), "a soft-locked chat shows nothing at all");
     Chat family;
     chat_init(&family, "120363000000000001@g.us");

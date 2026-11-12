@@ -1429,8 +1429,8 @@ char *messaging_manager_take_offered_draft(MessagingManager *m, char *jid_out, s
     return text;
 }
 
-static int chat_soft_locked(const MessagingManager *m, const char *jid) {
-    for (int i = 0; i < m->chat_count; i++) if (strcmp(m->chats[i].jid, jid) == 0) return m->chats[i].soft_locked;
+static int chat_is_private(const MessagingManager *m, const char *jid) {
+    for (int i = 0; i < m->chat_count; i++) if (strcmp(m->chats[i].jid, jid) == 0) return m->chats[i].is_private;
     return 0;
 }
 
@@ -1440,7 +1440,7 @@ int messaging_manager_search(MessagingManager *m, const char *query, int limit, 
     if (rc != 0 || !*out) return rc;
     int kept = 0;
     for (int i = 0; i < *count; i++) {
-        if (chat_soft_locked(m, (*out)[i].chat_jid)) { message_dispose(&(*out)[i]); continue; }
+        if (chat_is_private(m, (*out)[i].chat_jid)) { message_dispose(&(*out)[i]); continue; }
         if (kept != i) (*out)[kept] = (*out)[i];
         kept++;
     }
@@ -1531,8 +1531,8 @@ int messaging_manager_export_chat(MessagingManager *m, const char *jid, const ch
 
 int messaging_manager_toggle_soft_lock(MessagingManager *m, const char *jid) {
     int locked = 0;
-    for (int i = 0; i < m->chat_count; i++) if (strcmp(m->chats[i].jid, jid) == 0) locked = m->chats[i].soft_locked;
-    m->deps.chats->set_soft_locked(m->deps.chats, jid, !locked);
+    for (int i = 0; i < m->chat_count; i++) if (strcmp(m->chats[i].jid, jid) == 0) locked = m->chats[i].is_private;
+    m->deps.chats->set_private(m->deps.chats, jid, !locked);
     rebuild_chats(m);
     return !locked;
 }

@@ -175,9 +175,9 @@ static void test_rules(void) {
                      chat("120363000000000001@g.us", "Work (team)"), chat("27820000002@s.whatsapp.net", "Secret") };
     list[3].is_locked = 1;
     CHECK(automation_policy_chat_allowed(&s, &list[0]) && !automation_policy_chat_allowed(&s, &list[3]), "locked chats are never allowed");
-    list[1].soft_locked = 1;
+    list[1].is_private = 1;
     CHECK(!automation_policy_chat_allowed(&s, &list[1]), "nor soft-locked ones");
-    list[1].soft_locked = 0;
+    list[1].is_private = 0;
     str_copy(s.automation_chats, sizeof(s.automation_chats), "Work (team), +27 82 000 0001");
     CHECK(automation_policy_chat_allowed(&s, &list[0]) && automation_policy_chat_allowed(&s, &list[2]) && !automation_policy_chat_allowed(&s, &list[1]),
           "the chat list matches names and numbers");

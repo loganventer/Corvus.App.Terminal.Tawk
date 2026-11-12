@@ -27,7 +27,7 @@ typedef struct IChatStore {
     int  (*set_theme)(struct IChatStore *self, const char *jid, const char *theme);
     int  (*set_archived)(struct IChatStore *self, const char *jid, int archived);
     /* Soft lock: the conversation is blurred until shown again (kept across restarts). */
-    int  (*set_soft_locked)(struct IChatStore *self, const char *jid, int locked);
+    int  (*set_private)(struct IChatStore *self, const char *jid, int on);
     /* Forgets a chat and its preferences. */
     int  (*remove)(struct IChatStore *self, const char *jid);
     int  (*set_draft)(struct IChatStore *self, const char *jid, const char *draft);

@@ -1915,7 +1915,7 @@ int main(void) {
     add_chat(WORK, "Work", 0, 0);
     add_chat(SECRET, "Secret", 1, 0);
     add_chat(HIDDEN, "Hidden", 0, 0);
-    chats->set_soft_locked(chats, HIDDEN, 1);
+    chats->set_private(chats, HIDDEN, 1);
     add_message("M0", MOM, "Morning", 0, 1790000000);
     add_message("M1", MOM, "See you at 6", 0, 1790000100);
     add_message("M2", MOM, "Bring bread", 0, 1790000150);

@@ -375,14 +375,14 @@ static void render_chat(const ChatListView *v, const Chat *c, int y, UiRect r, i
     const char *margin = shows_portraits(v) ? PORTRAIT_MARGIN : MARGIN;
     /* 📌 only where there is no Pinned group to show it: search results and other folders. */
     int pin_mark = c->is_pinned && (v->folder != CHAT_FOLDER_CHATS || v->filter[0]);
-    snprintf(title, sizeof(title), "%s%s%s%s%s", margin, c->soft_locked ? "\xF0\x9F\x99\x88 " : "", pin_mark ? "\xF0\x9F\x93\x8C " : "",
+    snprintf(title, sizeof(title), "%s%s%s%s%s", margin, c->is_private ? "\xF0\x9F\x99\x88 " : "", pin_mark ? "\xF0\x9F\x93\x8C " : "",
              c->is_muted ? "\xF0\x9F\x94\x95 " : "", c->name);
     tui_text(y, r.x, r.w - right - 2, title, c->unread ? (attr | ATTR_BOLD) : attr);
     if (!v->compact) {
         int badge_cols = badge[0] ? tui_text_right(y + 1, r.x + r.w - 1, 6, badge, badge_attr) : 0;
         char preview[300];
         /* A soft-locked chat shows nothing of its conversation, not even typing. */
-        snprintf(preview, sizeof(preview), "%s%s", margin, c->soft_locked ? "\xF0\x9F\x99\x88 Soft-locked" : typing ? c->typing : c->preview);
+        snprintf(preview, sizeof(preview), "%s%s", margin, c->is_private ? "\xF0\x9F\x99\x88 Soft-locked" : typing ? c->typing : c->preview);
         int preview_attr = typing ? tui_palette_attr(THEME_SLOT_ACCENT) | ATTR_BOLD
                          : c->has_draft ? tui_palette_attr(THEME_SLOT_WARN) : attr | ATTR_DIM;
         tui_text(y + 1, r.x, r.w - badge_cols - 2, preview, preview_attr);
@@ -390,10 +390,10 @@ static void render_chat(const ChatListView *v, const Chat *c, int y, UiRect r, i
     /* Drawn last: the accent bar on the left edge marks unread chats. */
     /* The portrait: pixels, blocks or an initials badge (a soft-locked chat shows only the badge). */
     if (shows_portraits(v)) {
-        const char *pic = c->soft_locked ? NULL : v->portraits->picture(v->portraits->ctx, c->jid);
+        const char *pic = c->is_private ? NULL : v->portraits->picture(v->portraits->ctx, c->jid);
         ImagePlacement place;
         UiRect box = { y, r.x + 2, content_rows(v), PORTRAIT_COLS };
-        if (portrait_draw(box, c->jid, c->soft_locked ? "?" : c->name, pic, v->thumbs, v->pixel_images, &place) &&
+        if (portrait_draw(box, c->jid, c->is_private ? "?" : c->name, pic, v->thumbs, v->pixel_images, &place) &&
             ((ChatListView *)v)->placement_count < CHAT_LIST_MAX_PORTRAITS) {
             ((ChatListView *)v)->placements[((ChatListView *)v)->placement_count++] = place;
         }

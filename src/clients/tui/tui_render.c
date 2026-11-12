@@ -159,7 +159,7 @@ void tui_render_frame(TuiApp *app, int64_t now) {
         const Chat *chat = messaging_manager_open_chat_info(mm);
         msgs = tui_app_messages(app, &n_msgs);
         char title[192] = "";
-        if (chat) snprintf(title, sizeof(title), "%s%s%s", chat->soft_locked ? "\xF0\x9F\x99\x88 " : "", chat->name,
+        if (chat) snprintf(title, sizeof(title), "%s%s%s", chat->is_private ? "\xF0\x9F\x99\x88 " : "", chat->name,
                            chat->is_muted ? "  \xF0\x9F\x94\x95" : "");
         char subtitle[160];
         chat_subtitle_text(s, chat, chat ? profile_manager_summary(app->deps.profiles, chat->jid) : "", (int64_t)time(NULL), subtitle, sizeof(subtitle));
@@ -176,11 +176,11 @@ void tui_render_frame(TuiApp *app, int64_t now) {
             .media = &app->media_sources,
             .pixel_images = pixels,
             .portrait_pixels = portrait_pixels,
-            .veiled = chat && chat->soft_locked,
+            .veiled = chat && chat->is_private,
             .jid = chat && s->portraits ? chat->jid : NULL,
-            .portrait = chat && s->portraits && !chat->soft_locked ? profile_manager_picture(app->deps.profiles, chat->jid) : NULL,
+            .portrait = chat && s->portraits && !chat->is_private ? profile_manager_picture(app->deps.profiles, chat->jid) : NULL,
             .subtitle = subtitle,
-            .activity = chat && !chat->soft_locked ? chat->typing : "",
+            .activity = chat && !chat->is_private ? chat->typing : "",
             .activity_phase = (int)(now / 300),
             .formatter = &app->formatter,
             .statuses = &app->status_source,

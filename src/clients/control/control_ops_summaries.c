@@ -8,7 +8,7 @@
 
 void control_tag_tldr(ControlServer *s, cJSON *object, const Chat *chat) {
     if (!s->deps.summaries || !chat) return;
-    if (summary_manager_tldr(s->deps.summaries, chat->jid) && !chat->soft_locked) cJSON_AddBoolToObject(object, "tldr", 1);
+    if (summary_manager_tldr(s->deps.summaries, chat->jid) && !chat->is_private) cJSON_AddBoolToObject(object, "tldr", 1);
 }
 
 static int available(ControlServer *s, const ControlSession *session, const ControlRequest *req) {

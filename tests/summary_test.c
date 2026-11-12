@@ -71,9 +71,9 @@ static void test_engines(void) {
     longer.deleted = 1;
     CHECK(!summary_policy_wants(&chat, &prefs, &longer, 300), "nor a deleted message");
     longer.deleted = 0;
-    chat.soft_locked = 1;
+    chat.is_private = 1;
     CHECK(!summary_policy_allows(&chat, &prefs), "never a soft-locked chat");
-    chat.soft_locked = 0;
+    chat.is_private = 0;
     chat.is_locked = 1;
     CHECK(!summary_policy_allows(&chat, &prefs) && !summary_policy_allows(NULL, &prefs), "never a locked one, or none");
 
@@ -251,10 +251,10 @@ static void test_store_and_manager(sqlite3 *db) {
           "an edit makes it worth asking about afresh");
     CHECK(summary_manager_requeue(mgr, "U1") == 1, "and its count starts again");
     while (summary_manager_next_wanted(mgr, id, sizeof(id))) summary_manager_drop_wanted(mgr);
-    mom.soft_locked = 1;
+    mom.is_private = 1;
     CHECK(summary_manager_save(mgr, &a, &mom, "x", "", "") == SUMMARY_OFF, "a soft-locked chat takes none");
     CHECK(summary_manager_decline(mgr, &d, &mom, "other", "") == SUMMARY_DECLINE_OFF, "and no answer that one needs none");
-    mom.soft_locked = 0;
+    mom.is_private = 0;
 
     /* the older messages of a TL;DR chat: the last month, newest first, once */
     SummaryManagerDeps with_history = { store, prefs, sqlite_chat_prefs_store_summaries(prefs), &settings, messages };

@@ -38,7 +38,7 @@ void tui_app_init_summaries(TuiApp *app) {
 
 const SummarySource *tui_app_summaries_for(TuiApp *app, const Chat *chat) {
     SummaryManager *mgr = app->deps.summaries;
-    if (!mgr || !chat || chat->soft_locked || !summary_manager_tldr(mgr, chat->jid)) return NULL;
+    if (!mgr || !chat || chat->is_private || !summary_manager_tldr(mgr, chat->jid)) return NULL;
     summary_manager_backfill(mgr, chat, (int64_t)time(NULL));     /* the chat's last weeks, once: see tldr_back_days */
     return &app->summary_source;
 }

@@ -72,7 +72,7 @@ static void merge_run(Chat *rows, int from, int to, const ChatSource *sources, i
         merged.unread_mention |= c->unread_mention;
         merged.is_pinned |= c->is_pinned;
         merged.has_draft |= c->has_draft;
-        merged.soft_locked |= c->soft_locked;
+        merged.is_private |= c->is_private;
         if (c->is_locked == 1) merged.is_locked = 1;          /* locked anywhere keeps it out of sight everywhere */
         merged.is_archived = merged.is_archived == 1 && c->is_archived == 1;   /* archived only when it is so on every account */
         merged.is_muted = merged.is_muted && c->is_muted;      /* muted only when no account would notify */

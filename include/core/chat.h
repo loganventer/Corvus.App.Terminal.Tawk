@@ -21,7 +21,7 @@ typedef struct Chat {
     char    tone[256];      /* per-chat notification sound; "" default, "none" silent */
     char    theme[48];      /* per-chat conversation theme id; "" uses the app theme */
     int     has_draft;
-    int     soft_locked;    /* conversation hidden behind a blur until shown again; local only */
+    int     is_private;     /* opens only after Touch ID or the lock password; local only */
     char    typing[64];     /* "typing…", "Jan is typing…", filled by the manager */
     PresenceState presence; /* whether the other person is online; filled by the manager, one-to-one chats only */
     int64_t last_seen;      /* when they were last online, 0 when unknown; filled by the manager */

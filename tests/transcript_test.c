@@ -102,9 +102,9 @@ static void test_engines(void) {
     prefs.transcribe_off = 1;
     CHECK(!transcription_policy_allows(&chat, &prefs), "not once you switched it off");
     prefs.transcribe_off = 0;
-    chat.soft_locked = 1;
+    chat.is_private = 1;
     CHECK(!transcription_policy_allows(&chat, &prefs), "never a soft-locked chat");
-    chat.soft_locked = 0;
+    chat.is_private = 0;
     chat.is_locked = 1;
     CHECK(!transcription_policy_allows(&chat, &prefs) && !transcription_policy_allows(NULL, &prefs), "never a locked one, or none");
     char list[64];
@@ -262,10 +262,10 @@ static void test_manager(sqlite3 *db) {
     CHECK(transcript_manager_save(mgr, &c, &work, "", "Stand-up in five", "", "corvus-tawk-mcp", 0) == TRANSCRIPT_SAVED, "another chat carries on");
     CHECK(transcript_manager_set_transcribing(mgr, MOM, 1) == 0 &&
           transcript_manager_save(mgr, &b, &mom, "af", "Nuwe stemnota", "", "corvus-tawk-mcp", 0) == TRANSCRIPT_SAVED, "and it can be switched on again");
-    mom.soft_locked = 1;
+    mom.is_private = 1;
     CHECK(transcript_manager_save(mgr, &b, &mom, "en", "New voice note", "", "corvus-tawk-mcp", 0) == TRANSCRIPT_OFF && transcript_manager_transcribe_chosen(mgr, MOM),
           "a soft-locked chat takes none, whatever was chosen");
-    mom.soft_locked = 0;
+    mom.is_private = 0;
 
     /* older voice notes that are looked at wait for a transcript, once each */
     Message old, mine;

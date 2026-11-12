@@ -9,7 +9,7 @@
 #include <time.h>
 
 #define COLUMNS "jid, name, preview, last_ts, unread, is_group, is_muted, is_pinned, is_archived, is_locked, muted_until, tone, " \
-                "substr(replace(draft, char(10), ' '), 1, 200), theme, soft_locked, unread_mention"
+                "substr(replace(draft, char(10), ' '), 1, 200), theme, is_private, unread_mention"
 
 static SqliteAccountScope *scope_of(IChatStore *self) { return (SqliteAccountScope *)self->ctx; }
 static sqlite3 *db_of(IChatStore *self) { return scope_of(self)->db; }
@@ -36,7 +36,7 @@ static void read_row(sqlite3_stmt *st, Chat *c) {
     c->is_muted = c->muted_until == -1 || c->muted_until > (int64_t)time(NULL);
     str_copy(c->tone, sizeof(c->tone), (const char *)sqlite3_column_text(st, 11));
     str_copy(c->theme, sizeof(c->theme), (const char *)sqlite3_column_text(st, 13));
-    c->soft_locked = sqlite3_column_int(st, 14);
+    c->is_private = sqlite3_column_int(st, 14);
     c->unread_mention = sqlite3_column_int(st, 15);
     const char *draft = (const char *)sqlite3_column_text(st, 12);
     c->has_draft = draft && draft[0];
@@ -173,8 +173,8 @@ static int store_remove(IChatStore *self, const char *jid) {
     return finish(db_of(self), st);
 }
 
-static int store_set_soft_locked(IChatStore *self, const char *jid, int locked) {
-    return update_int(self, "UPDATE chats SET soft_locked = ? WHERE account_id = {acct} AND jid = ?", locked ? 1 : 0, jid);
+static int store_set_private(IChatStore *self, const char *jid, int locked) {
+    return update_int(self, "UPDATE chats SET is_private = ? WHERE account_id = {acct} AND jid = ?", locked ? 1 : 0, jid);
 }
 
 static int store_set_archived(IChatStore *self, const char *jid, int archived) {
@@ -248,7 +248,7 @@ IChatStore *sqlite_chat_store_create(sqlite3 *db, AccountId account) {
     s->set_muted_until = store_set_muted_until;
     s->set_tone = store_set_tone;
     s->set_archived = store_set_archived;
-    s->set_soft_locked = store_set_soft_locked;
+    s->set_private = store_set_private;
     s->remove = store_remove;
     s->set_draft = store_set_draft;
     s->set_theme = store_set_theme;
