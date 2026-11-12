@@ -1232,7 +1232,7 @@ void tui_app_show_portrait(TuiApp *app, const char *jid) {
     app->dirty = 1;
 }
 
-static void export_chat(TuiApp *app, const char *jid, int with_media) {
+void tui_app_export_chat_now(TuiApp *app, const char *jid, int with_media) {
     char dir[512], out[1100];
     if (settings(app)->download_dir[0]) path_expand_home(settings(app)->download_dir, dir, sizeof(dir));
     else path_download_dir(dir, sizeof(dir));
@@ -1243,6 +1243,11 @@ static void export_chat(TuiApp *app, const char *jid, int with_media) {
     } else {
         tui_app_toast(app, "Could not export the chat (check Settings, Media, Save folder)", 1);
     }
+}
+
+void tui_app_export_chat(TuiApp *app, const char *jid, int with_media) {
+    if (tui_app_private_gate_export(app, jid, with_media)) return;     /* a private chat is exported only after an unlock */
+    tui_app_export_chat_now(app, jid, with_media);
 }
 
 void tui_app_contact_action(TuiApp *app) {
@@ -1271,8 +1276,8 @@ void tui_app_contact_action(TuiApp *app) {
         case CONTACT_ACTION_SEARCH:     app->contact.open = 0; tui_app_open_search(app, ""); break;
         case CONTACT_ACTION_OPTIONS:    app->contact.open = 0; tui_app_open_chat_options(app, jid); break;
         case CONTACT_ACTION_PRIVATE:    tui_app_toggle_private(app, jid); break;
-        case CONTACT_ACTION_EXPORT:     export_chat(app, jid, 0); break;
-        case CONTACT_ACTION_EXPORT_MEDIA: export_chat(app, jid, 1); break;
+        case CONTACT_ACTION_EXPORT:     tui_app_export_chat(app, jid, 0); break;
+        case CONTACT_ACTION_EXPORT_MEDIA: tui_app_export_chat(app, jid, 1); break;
         case CONTACT_ACTION_UNBLOCK:
             profile_manager_set_blocked(app->deps.profiles, jid, 0);
             contact_panel_open(&app->contact, chat_by_jid(app, jid), 0);

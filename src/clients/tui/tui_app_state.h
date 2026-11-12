@@ -273,6 +273,12 @@ void tui_app_toggle_private(TuiApp *app, const char *jid);
 void tui_app_toggle_private_here(TuiApp *app);
 /* /lockpassword: Touch ID or the current password, then a new one typed twice. Touch ID also recovers a forgotten password. */
 void tui_app_change_lock_password(TuiApp *app);
+/* Writes a chat to the save folder; a private chat asks for an unlock first, every time. */
+void tui_app_export_chat(TuiApp *app, const char *jid, int with_media);
+/* The same without asking. Only for a public chat, or one the guard let through. */
+void tui_app_export_chat_now(TuiApp *app, const char *jid, int with_media);
+/* 1 when exporting `jid` must wait for an unlock, which is then asked for. */
+int  tui_app_private_gate_export(TuiApp *app, const char *jid, int with_media);
 /* Every private chat locks again, and any unlock being asked for is dropped: on the screensaver, the app lock, an account switch and quit. */
 void tui_app_private_relock(TuiApp *app);
 /* Opens a chat without asking. Only for one that needs no unlock, or that the guard let through. */

@@ -333,7 +333,8 @@ TESTS := $(BUILD)/tests/pty_idle_action_test $(BUILD)/tests/ncurses_mouse_queue_
          $(BUILD)/tests/private_relock_test \
          $(BUILD)/tests/private_veil_test \
          $(BUILD)/tests/private_toggle_test \
-         $(BUILD)/tests/private_password_change_test
+         $(BUILD)/tests/private_password_change_test \
+         $(BUILD)/tests/private_export_test
 
 # The tests run with HOME and the XDG folders inside build/, so the defaults
 # they use (media, logs, the control socket) never touch your own corvus/tawk.
@@ -585,6 +586,10 @@ $(BUILD)/tests/private_toggle_test: $(BUILD)/tests/private_toggle_test.o $(filte
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 
 $(BUILD)/tests/private_password_change_test: $(BUILD)/tests/private_password_change_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
+	$(call step,LD,$@)
+	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
+
+$(BUILD)/tests/private_export_test: $(BUILD)/tests/private_export_test.o $(filter-out $(BUILD)/src/main.o,$(OBJ)) $(LINK_WM)
 	$(call step,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $(filter %.o,$^) $(LINK_WM) $(LDLIBS)
 

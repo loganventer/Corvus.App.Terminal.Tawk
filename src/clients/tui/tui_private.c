@@ -76,6 +76,16 @@ static void forget_unlocked(TuiApp *app) {
     app->dirty = 1;
 }
 
+int tui_app_private_gate_export(TuiApp *app, const char *jid, int with_media) {
+    const Chat *chat = find_chat(app, jid);
+    AccountId account = app->deps.active_account;
+    if (!private_chat_policy_needs_unlock(UNLOCK_FOR_EXPORT, chat, account, &app->privacy.session)) return 0;
+    PrivateRequest r = request_for(PRIVATE_ACTION_EXPORT, account, jid);
+    r.with_media = with_media;
+    tui_app_request_private(app, &r);
+    return 1;
+}
+
 void tui_app_leave_private(TuiApp *app, AccountId account, const char *jid) {
     int had = app->privacy.session.count > 0;
     private_chat_guard_leave(&app->privacy, account, jid);
@@ -160,7 +170,7 @@ static void carry_out(TuiApp *app, const PrivateRequest *done) {
     case PRIVATE_ACTION_OPEN:            open_unlocked(app, done); break;
     case PRIVATE_ACTION_MAKE_PRIVATE:    apply_private(app, done, 1); break;
     case PRIVATE_ACTION_MAKE_PUBLIC:     apply_private(app, done, 0); break;
-    case PRIVATE_ACTION_EXPORT:          break;
+    case PRIVATE_ACTION_EXPORT:          tui_app_export_chat_now(app, done->jid, done->with_media); break;
     case PRIVATE_ACTION_CHANGE_PASSWORD: tui_app_toast(app, "\xF0\x9F\x94\x92 The lock password for private chats is set", 0); break;
     }
     app->dirty = 1;

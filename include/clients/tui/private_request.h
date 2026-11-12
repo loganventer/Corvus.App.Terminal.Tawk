@@ -14,6 +14,7 @@ typedef struct PrivateRequest {
     char          jid[128];
     UnlockedChat  peers[ACCOUNT_MAX];      /* its other accounts' sides, for a merged chat */
     int           peer_count;
+    int           with_media;              /* an export: the chat's media go with it */
 } PrivateRequest;
 
 #endif
