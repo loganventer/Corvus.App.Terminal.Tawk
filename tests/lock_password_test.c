@@ -2,6 +2,7 @@
 #include "core/lock_verifier.h"
 #include "core/passphrase.h"
 #include "engines/lock_password_hasher.h"
+#include "engines/lock_password_rule.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -35,9 +36,30 @@ static void hasher(void) {
     passphrase_wipe(&wrong);
 }
 
+static void rule(void) {
+    Passphrase empty = pw(""), three = pw("abc"), four = pw("abcd"), other = pw("abce");
+    Passphrase multibyte = pw("\xC3\xA9\xC3\xA9\xC3\xA9\xC3\xA9");   /* four letters, eight bytes */
+    Passphrase three_multibyte = pw("\xC3\xA9\xC3\xA9\xC3\xA9");
+    Passphrase too_long;
+    memset(&too_long, 0, sizeof(too_long));
+    memset(too_long.text, 'a', PASSPHRASE_MAX);
+    too_long.length = PASSPHRASE_MAX + 1;                        /* longer than any field can hold */
+    CHECK(lock_password_rule_check(&empty, &empty) == LOCK_PASSWORD_EMPTY, "an empty password is refused");
+    CHECK(lock_password_rule_check(&three, &three) == LOCK_PASSWORD_TOO_SHORT, "three characters are too few");
+    CHECK(lock_password_rule_check(&three_multibyte, &three_multibyte) == LOCK_PASSWORD_TOO_SHORT, "and are counted as letters, not bytes");
+    CHECK(lock_password_rule_check(&too_long, &too_long) == LOCK_PASSWORD_TOO_LONG, "a password longer than a passphrase is refused");
+    CHECK(lock_password_rule_check(&four, &other) == LOCK_PASSWORD_MISMATCH, "the two must be the same");
+    CHECK(lock_password_rule_check(&four, &four) == LOCK_PASSWORD_OK, "four characters typed twice are fine");
+    CHECK(lock_password_rule_check(&multibyte, &multibyte) == LOCK_PASSWORD_OK, "four letters beyond ASCII are fine too");
+    for (int p = LOCK_PASSWORD_EMPTY; p <= LOCK_PASSWORD_MISMATCH; p++)
+        CHECK(lock_password_problem_text((LockPasswordProblem)p)[0] != '\0', "every problem has words for the dialog");
+    CHECK(lock_password_problem_text(LOCK_PASSWORD_OK)[0] == '\0', "and no problem says nothing");
+}
+
 int main(void) {
     hasher();
+    rule();
     if (failures) { printf("%d failure(s)\n", failures); return 1; }
-    printf("ok: the lock password is kept as a salted hash and checked against it\n");
+    printf("ok: the lock password is checked when it is set, kept as a salted hash and matched against it\n");
     return 0;
 }
