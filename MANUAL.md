@@ -218,7 +218,7 @@ Type a command at the start of the input. Suggestions appear above the input as 
 | `/search` | `<text>` | Search messages in every chat |
 | `/reply` | | Reply to the last message you received in this chat |
 | `/react` | `[emoji]` | React to the last message you received; without an emoji the palette opens |
-| `/attach` | `[path]` | Send a photo, video or file; without a path the file picker opens |
+| `/attach` | `[path]` | Send a photo, video or file; without a path the file picker opens. An Ogg Opus file (`.ogg`, `.opus`) goes as a voice note |
 | `/paste` | | Attach the picture on the clipboard (the same as Alt+V) |
 | `/camera` or `/photo` | | Take a photo or record a video with the camera (the same as ➕, Take a photo) |
 | `/emoji` | `[search]` | Insert an emoji; the picker opens with the search filled in |

@@ -50,7 +50,7 @@ The "Adding things" section of [ARCHITECTURE](ARCHITECTURE.md) walks through the
 
 ```sh
 make            # builds ./corvus-tawk; there must be no warnings
-make test       # the tests that need no WhatsApp account
+make test       # the tests that need no WhatsApp account, with the bridge's Go tests and the sidecar's node tests
 make check      # smoke test: runs ./corvus-tawk --version
 ```
 
