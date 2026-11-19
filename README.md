@@ -166,7 +166,7 @@ Corvus.App.Terminal.Tawk/
 │   ├── clients/cli/      the --doctor setup check, the --update installer and corvus-tawk send, tail, unread
 │   └── main.c            composition root
 ├── bridge/whatsmeow/     Go bridge, built as a static C archive
-├── sidecar/              Node.js Baileys bridge
+├── sidecar/              Node.js Baileys bridge (tests in sidecar/test)
 ├── themes/               JSON colour themes
 ├── assets/sounds/        notification sounds
 ├── assets/emoji/         Unicode emoji list for the picker

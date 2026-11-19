@@ -283,7 +283,7 @@ Writes need `access = send` (or `manage` or `admin`) in `[automation]`. Each is 
 | Operation | Arguments | Result |
 | --- | --- | --- |
 | `send_message` | `chat` (required; a chat, or someone with no chat yet), `text` (required, up to 65536 bytes), `reply_to` (a message id in that chat) | `{"id":"3EB0…"}`, the new message's id; it is queued and goes out as any message you send |
-| `send_file` | `chat` (required; a chat, or someone with no chat yet), `file` (required; the absolute path of a file on this computer), `caption` (up to 1024 bytes) | `{"id":"3EB0…","file":"report.pdf","type":"document","bytes":1153434}`; the file is copied into tawk's media folder, queued and goes out as any file you send |
+| `send_file` | `chat` (required; a chat, or someone with no chat yet), `file` (required; the absolute path of a file on this computer), `caption` (up to 1024 bytes) | `{"id":"3EB0…","file":"report.pdf","type":"document","bytes":1153434}`; the file is copied into tawk's media folder, queued and goes out as any file you send. An `.ogg` or `.opus` file that holds Opus audio goes as a voice note (0.37.1), which carries no caption |
 | `react` | `message_id` (required), `emoji` (required; an empty string removes your reaction) | `{}` |
 | `schedule_message` | `chat` (required; a chat, or someone with no chat yet), `when` (as `/later` takes it: `18:00`, `+30m`, `tomorrow 9:00`, `fri 17:30`, optionally followed by an adjustment in seconds such as `+37s` or `-12s`, which never moves it into the past), `text` (required) | `{"id":"…","due_at":ts}` |
 | `mark_read` | `chat` (required) | `{}`; sends read receipts when `send_read_receipts` is on |

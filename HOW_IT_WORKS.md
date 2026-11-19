@@ -744,6 +744,8 @@ flowchart LR
     F --> B[Backend uploads as PTT voice note]
 ```
 
+A file you attach, or an agent sends with `send_file`, takes the same last step when it is Ogg Opus audio: the backend sees the OpusHead packet on the first Ogg page, takes the length from the last page's granule position, and sends it as a push-to-talk voice note with the `audio/ogg; codecs=opus` mimetype. Any other audio goes as an audio file.
+
 The audio backend only describes commands. The recorder connects the capture command to ffmpeg with a pipe; stopping sends an interrupt to the capture side, ffmpeg sees the end of input and finishes the Ogg file cleanly. Playback asks the same backend how to play a file and runs it in the background, tracked so a second click stops it.
 
 <a id="Transcripts"></a>
