@@ -8,6 +8,7 @@ import { emit } from './protocol.js';
 import { toProtocolMessage, statusName, chatJid, aliasesFromKey, describe, parseMediaRef } from './translate.js';
 import { isJid, isMessageId, digitsOnly } from './validate.js';
 import { fetchLinkPreview } from './link-preview.js';
+import { audioContent } from './ogg-opus.js';
 
 /** The context that marks a message as forwarded. */
 const forwardContext = (score) => ({ isForwarded: true, forwardingScore: Math.max(1, Number(score) || 1) });
@@ -361,7 +362,7 @@ export class Session {
             const caption = typeof text === 'string' && text ? text : undefined;
             const content = kind === 'image' ? { image: data, caption, mimetype: mime }
                 : kind === 'video' ? { video: data, caption, mimetype: mime }
-                : kind === 'audio' ? { audio: data, mimetype: mime }
+                : kind === 'audio' ? audioContent(data, mime)
                 : { document: data, mimetype: mime, fileName: fileName || 'file', caption };
             if (forwarded) content.contextInfo = forwardContext(score);
             await this.sock.sendMessage(jid, content, { messageId: id });

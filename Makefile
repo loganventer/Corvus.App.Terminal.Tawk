@@ -8,7 +8,7 @@ APP_DIR    ?= corvus/tawk
 # The command's name before the Corvus rename, installed as a symlink to $(APP)
 # that says it is deprecated. LEGACY= (empty) installs no symlink.
 LEGACY     ?= tawk
-VERSION    ?= 0.37.0
+VERSION    ?= 0.37.1
 # The commit this build comes from, so `corvus-tawk --update` can tell whether it is current.
 COMMIT     ?= $(shell git rev-parse HEAD 2>/dev/null)
 
@@ -138,7 +138,7 @@ OBJ      := $(patsubst %.c,$(BUILD)/%.o,$(SRC)) $(patsubst %.m,$(BUILD)/%.o,$(OB
 DEP      := $(OBJ:.o=.d)
 
 WM_LIB   := $(BUILD)/bridge/libtawkwm.a
-WM_SRC   := $(wildcard bridge/whatsmeow/*.go) bridge/whatsmeow/go.mod bridge/whatsmeow/go.sum
+WM_SRC   := $(filter-out %_test.go,$(wildcard bridge/whatsmeow/*.go bridge/whatsmeow/*/*.go)) bridge/whatsmeow/go.mod bridge/whatsmeow/go.sum
 ifeq ($(WHATSMEOW),1)
   CFLAGS += -DAPP_WITH_WHATSMEOW -I$(BUILD)/bridge
   LINK_WM := $(WM_LIB)
@@ -347,6 +347,14 @@ test: $(TESTS)
 	  HOME=$(TEST_HOME) XDG_CONFIG_HOME=$(TEST_HOME)/.config XDG_DATA_HOME=$(TEST_HOME)/.local/share \
 	  XDG_STATE_HOME=$(TEST_HOME)/.local/state XDG_CACHE_HOME=$(TEST_HOME)/.cache XDG_RUNTIME_DIR=$(TEST_HOME)/runtime \
 	  CORVUS_TAWK_CONTROL_SOCKET= $$t || exit 1; done
+ifeq ($(WHATSMEOW),1)
+	$(call step,GO,test bridge/whatsmeow/oggopus)
+	$(Q)cd bridge/whatsmeow && $(GO) test -count=1 ./oggopus/
+endif
+ifeq ($(HAVE_NODE),1)
+	$(call step,NODE,test sidecar)
+	$(Q)node --test sidecar/test/*.test.js
+endif
 
 $(BUILD)/tests/pty_idle_action_test: $(BUILD)/tests/pty_idle_action_test.o $(BUILD)/src/infrastructure/pty_idle_action.o $(BUILD)/src/utilities/log.o
 	$(call step,LD,$@)

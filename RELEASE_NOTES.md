@@ -4,6 +4,16 @@ What changed in each version of tawk, newest first. `corvus-tawk --update` shows
 
 Each version has a section headed `## <version> (<date>)`, with one line for each change you would notice.
 
+## 0.37.1 (2026-11-19)
+
+An Ogg Opus file sent with `send_file` now arrives as a voice note.
+
+- **Sending an `.ogg` or `.opus` file that holds Opus audio sends it as a voice note**: push-to-talk, the `audio/ogg; codecs=opus` mimetype and its length, the same as a recording made in tawk. Before, it went as a bare audio file without them, which phones did not show, although tawk on the computer did.
+- Other audio files, and Ogg files that are not Opus, still go as audio files with their own mimetype.
+- A voice note has no caption, so a caption given with one is still not sent.
+- Both backends (whatsmeow and Baileys) behave the same. `make test` now also runs the bridge's and the sidecar's own tests.
+- The database is unchanged (still version 28).
+
 ## 0.37.0 (2026-11-12)
 
 Private chats replace soft lock: a private chat opens only after Touch ID or a lock password.
