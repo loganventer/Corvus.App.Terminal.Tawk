@@ -8,6 +8,8 @@ import (
 	"go.mau.fi/whatsmeow"
 	"go.mau.fi/whatsmeow/proto/waE2E"
 	"google.golang.org/protobuf/proto"
+
+	"tawk/bridge/whatsmeow/oggopus"
 )
 
 const maxMediaBytes = 100 * 1024 * 1024
@@ -56,6 +58,12 @@ func (s *Session) buildMediaMessage(ctx context.Context, kind, path, mime, name,
 		msg.AudioMessage = &waE2E.AudioMessage{URL: proto.String(up.URL), DirectPath: proto.String(up.DirectPath),
 			MediaKey: up.MediaKey, FileEncSHA256: up.FileEncSHA256, FileSHA256: up.FileSHA256,
 			FileLength: proto.Uint64(up.FileLength), Mimetype: proto.String(mime)}
+		if seconds, ok := oggopus.Seconds(data); ok {
+			// An Ogg Opus file goes as a voice note, the form phones show and play.
+			msg.AudioMessage.Mimetype = proto.String("audio/ogg; codecs=opus")
+			msg.AudioMessage.PTT = proto.Bool(true)
+			msg.AudioMessage.Seconds = proto.Uint32(seconds)
+		}
 	default:
 		if name == "" {
 			name = "file"

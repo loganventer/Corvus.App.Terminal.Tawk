@@ -1,6 +1,6 @@
 {
   "name": "corvus-tawk-sidecar",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "private": true,
   "description": "Baileys bridge for Corvus Tawk (corvus-tawk): speaks the tawk JSON line protocol on stdin/stdout",
   "type": "module",
